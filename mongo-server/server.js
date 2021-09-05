@@ -3,11 +3,11 @@ const express = require('express');
 var bodyParser = require('body-parser')
 
 const app = express();
-const cors=require("cors");
-const corsOptions ={
-   origin:'*', 
-   credentials:true,            //access-control-allow-credentials:true
-   optionSuccessStatus:200,
+const cors = require("cors");
+const corsOptions = {
+    origin: '*',
+    credentials: true,            
+    optionSuccessStatus: 200,
 }
 
 app.use(cors(corsOptions))
@@ -22,7 +22,7 @@ app.get("/fetchRecipes", async (req, res) => {
 
 app.post("/addRecipe", async (req, res) => {
     const result = await DBObject.addRecipe(req.body);
-    res.json({res: result})
+    res.json({ res: result })
 })
 
 app.listen(3737, async () => {
@@ -43,7 +43,7 @@ class DBClass {
     }
 
     async main() {
-        await mongoose.connect('mongodb://localhost:27017/foodDB');
+        await mongoose.connect('mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/recipesDB?retryWrites=true&w=majority');
 
         this.recipeSchema = new mongoose.Schema({
             name: String,
@@ -70,7 +70,7 @@ class DBClass {
         }
     }
 
-    async wipe(){
-        this.Recipe.deleteMany({}, function(err, res) {})
+    async wipe() {
+        this.Recipe.deleteMany({}, function (err, res) { })
     }
 }
