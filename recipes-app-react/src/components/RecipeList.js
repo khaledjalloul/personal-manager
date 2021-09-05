@@ -1,11 +1,14 @@
 import React from 'react'
 import RecipeCard from './RecipeCard'
 import add from '../assets/add.png'
+import Loader from "react-loader-spinner";
+
 
 class RecipeList extends React.Component {
     constructor() {
         super()
         this.state = {
+            loading: true,
             recipes: [],
         }
         this.viewRecipe = this.viewRecipe.bind(this)
@@ -13,10 +16,11 @@ class RecipeList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:3737/fetchRecipes")
+        fetch("http://recipes-app-node-server.herokuapp.com/fetchRecipes")
             .then(res => res.json())
             .then((result) => {
                 this.setState({
+                    loading: false,
                     recipes: result,
                 })
             })
@@ -50,9 +54,14 @@ class RecipeList extends React.Component {
             <img src={add} alt="Add Recipe" className="add" onClick={this.addRecipe} />
         )
         return (
-            <div align="center" className="listDiv">
-                {recipeData}
-            </div>
+            this.state.loading ?
+                <div style={{ marginTop: '17vh', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Loader type="ThreeDots" color="#009999" height='15vh' width='15vw' />
+                </div>
+                :
+                <div align="center" className="listDiv">
+                    {recipeData}
+                </div>
         )
     }
 }

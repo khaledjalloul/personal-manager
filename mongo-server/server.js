@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 var bodyParser = require('body-parser')
+const port = process.env.PORT || 3737;
 
 const app = express();
 const cors = require("cors");
@@ -25,7 +26,7 @@ app.post("/addRecipe", async (req, res) => {
     res.json({ res: result })
 })
 
-app.listen(3737, async () => {
+app.listen(port, async () => {
     DBObject = new DBClass();
     await DBObject.main();
     console.log("API running");

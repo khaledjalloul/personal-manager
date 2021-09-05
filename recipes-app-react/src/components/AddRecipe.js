@@ -1,6 +1,8 @@
 import React from 'react'
 import add from '../assets/add.png'
 import hint from '../assets/hint.png'
+import Loader from "react-loader-spinner";
+
 function InstructionDiv(props) {
     return (
         <div style={{ width: '100vw', margin: '20px' }}>
@@ -17,7 +19,7 @@ class AddRecipe extends React.Component {
         super(props)
         this.state = {
             name: "",
-            difficulty: 'easy',
+            difficulty: 'Easy',
             instructions: [
                 {
                     id: 1,
@@ -25,6 +27,7 @@ class AddRecipe extends React.Component {
                 }
             ],
             error: false,
+            loading: false,
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleArrayChange = this.handleArrayChange.bind(this);
@@ -124,7 +127,7 @@ class AddRecipe extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(jsonData)
         }
-        return await fetch('http://localhost:3737/addRecipe', options)
+        return await fetch('http://recipes-app-node-server.herokuapp.com/addRecipe', options)
             .then(res => res.json())
             .then(data => { console.log(data); return data; });
     }
@@ -143,7 +146,9 @@ class AddRecipe extends React.Component {
                             error: true,
                         })
                     } else {
+                        this.setState({loading: true, error: false})
                         const result = await this.postRequest();
+                        this.setState({loading: false})
                         if (result.res) this.props.history.goBack();
                     }
                 }} action="http:/localhost:3737/addRecipe">
@@ -151,9 +156,9 @@ class AddRecipe extends React.Component {
                         <input type="text" name="name" placeholder="Name *" value={this.state.name} onChange={this.handleChange} />
                     </div>
                     <select name="difficulty" value={this.state.difficulty} onChange={this.handleChange} className="select">
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
                     </select>
                     <hr style={{ width: '60vw', marginTop: '3vh' }} />
                     <h3 align="center" style={{ fontFamily: 'Verdana' }}>Instructions</h3>
@@ -161,6 +166,9 @@ class AddRecipe extends React.Component {
                     <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
                     <br />
                     <input type="submit" value="Submit" style={{ borderRadius: '10px', cursor: 'pointer' }} />
+                    <div style={{ marginTop: '2vh', display: this.state.loading ? 'block' : 'none' }}>
+                        <Loader type="ThreeDots" color="#009999" height='5vh' width='5vw' />
+                    </div>
                     <p style={{ color: 'red', display: this.state.error ? 'block' : 'none' }}>Please fill all required fields.</p>
                 </form>
             </div>

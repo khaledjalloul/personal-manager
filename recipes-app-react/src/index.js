@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { BrowserRouter, Switch, Route, useHistory } from "react-router-dom"
+
 import Title from './components/Title'
 import RecipeList from './components/RecipeList'
 import Recipe from './components/Recipe';
 import AddRecipe from './components/AddRecipe';
-import { BrowserRouter, Switch, Route, useHistory } from "react-router-dom"
+
+import './index.css';
+import Loader from "react-loader-spinner";
+
 
 function App() {
   const history = useHistory();
