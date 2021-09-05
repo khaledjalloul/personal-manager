@@ -6,7 +6,7 @@ import Loader from "react-loader-spinner";
 function InstructionDiv(props) {
     return (
         <div style={{ width: '100vw', margin: '20px' }}>
-            <input type="text" name="instruction" id={props.id} placeholder={props.placeholder + (props.id == 1 ? " *" : "")} value={props.value} onChange={props.onChange} />
+            <input type="text" name="instruction" id={props.id} placeholder={props.placeholder + (props.id === 1 ? " *" : "")} value={props.value} onChange={props.onChange} />
             {
                 props.hint || props.hint === "" ? <input type="text" name="hint" id={props.id} placeholder="Hint" value={props.hint} onChange={props.onChange} style={{ marginLeft: '3vw' }} />
                     : <img src={hint} alt="Add hint" className="hint" style={{ marginLeft: '3vw' }} onClick={(event) => { props.addHint(props.id) }} />

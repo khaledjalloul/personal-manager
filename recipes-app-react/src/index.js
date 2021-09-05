@@ -8,7 +8,6 @@ import Recipe from './components/Recipe';
 import AddRecipe from './components/AddRecipe';
 
 import './index.css';
-import Loader from "react-loader-spinner";
 
 
 function App() {
