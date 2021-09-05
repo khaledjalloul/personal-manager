@@ -1,0 +1,167 @@
+body{
+  margin: 0;
+  background-color: #DDDDDD;
+}
+
+.title {
+  background-color: #009999;
+  position: fixed;
+  z-index: 2;
+  margin-top: 0vh;
+  top: 0;
+  color: white;
+  font-size: 9vh;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  height: 15vh;
+  width: 100vw;
+  line-height: 15vh;
+  text-align: center;
+  box-shadow: 0px 5px 8px grey;
+}
+
+.listDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 17vh;
+  margin-bottom: 2vh;
+}
+
+.cardMainDiv {
+  height: 27vh;
+  width: 25vw;
+  display: table;
+  margin-top: 2.5vh;
+  margin-bottom: 2.5vh;
+  margin-right: 2.5vw;
+  margin-left: 2.5vw;
+  cursor: pointer;
+  background-color: white;
+  box-shadow: 7px 7px 7px grey;
+  transition-duration: 0.25s;
+}
+
+.cardMainDiv:hover {
+  box-shadow: 3px 3px 7px grey;
+  transition-duration: 0.25s;
+}
+
+.foodImg {
+  max-height: 75%;
+  max-width: 100%;
+}
+
+.cardSubDiv {
+  display: table-row;
+}
+
+.add {
+  max-width: 7vw;
+  background-color: white;
+  margin: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 10px 10px 10px grey;
+  transition-duration: 0.25s;
+}
+
+.add:hover {
+  box-shadow: 5px 5px 5px grey;
+  transition-duration: 0.25s;
+}
+
+.recipeMainDiv {
+  margin-top: 17vh;
+  height: 80vh;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  align-items: center;
+}
+
+.recipeStep {
+  width: 100vw;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 4vh;
+  cursor: default;
+  transition-duration: 0.25s;
+}
+
+.recipeStep:hover {
+  transition-duration: 0.25s;
+  font-size: 4.25vh;
+}
+
+.hint {
+  right: 15%;
+  position: absolute;
+  z-index: 1;
+  max-width: 5%;
+  max-height: 5%;
+  cursor: pointer;
+}
+
+.popupContainer {
+  position: absolute;
+  background: rgba(200, 200, 200, 0.5);
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  opacity: 1;
+  height: 30vh;
+  width: 70vh;
+  background-color: white;
+  border-radius: 50px;
+  box-shadow: 10px 10px 10px grey;
+  font-size: 32px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+  animation: popup 0.3s;
+}
+
+@keyframes popup {
+  0%{
+    transform: scale(0);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+.addRecipeDiv {
+  margin-top: 17vh;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  align-items: center;
+  margin-bottom: 5vh;
+}
+
+input, .select{
+  line-height: 4vh;
+  border: none;
+  padding: 10px;
+  width: 40vw;
+  font-size: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  box-shadow: 5px 5px 5px grey;
+  transition-duration: 0.2s;
+  background-color: white;
+}
+
+input:hover, .select:hover {
+  box-shadow: 3px 3px 3px grey;
+  transition-duration: 0.2s;
+}
+.select {
+  cursor: pointer;
+}
