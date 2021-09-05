@@ -9,7 +9,7 @@ function Title(props) {
                 if (props.history.location.pathname !== "/")
                     props.history.goBack();
             }}>
-            Recipee App
+            Recipe App
         </p>
     )
 }
