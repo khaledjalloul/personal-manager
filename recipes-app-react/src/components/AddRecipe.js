@@ -127,7 +127,7 @@ class AddRecipe extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(jsonData)
         }
-        return await fetch('http://recipes-app-node-server.herokuapp.com/addRecipe', options)
+        return await fetch('https://recipes-app-node-server.herokuapp.com/addRecipe', options)
             .then(res => res.json())
             .then(data => { console.log(data); return data; });
     }

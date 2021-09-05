@@ -16,7 +16,7 @@ class RecipeList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://recipes-app-node-server.herokuapp.com/fetchRecipes")
+        fetch("https://recipes-app-node-server.herokuapp.com/fetchRecipes")
             .then(res => res.json())
             .then((result) => {
                 this.setState({
@@ -56,7 +56,7 @@ class RecipeList extends React.Component {
         return (
             this.state.loading ?
                 <div style={{ marginTop: '17vh', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Loader type="ThreeDots" color="#000000" height='15vh' width='15vw' />
+                    <Loader type="ThreeDots" color="#009999" height='15vh' width='15vw' />
                 </div>
                 :
                 <div align="center" className="listDiv">
