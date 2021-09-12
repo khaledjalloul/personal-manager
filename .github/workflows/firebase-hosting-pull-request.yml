@@ -12,5 +12,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECIPES_APP_REACT_57B09 }}'
-          projectId: recipes-app-react-57b09
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GuideS_APP_REACT_57B09 }}'
+          projectId: Guides-app-react-57b09

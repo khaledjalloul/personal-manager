@@ -1,70 +1,90 @@
-const mongoose = require('mongoose');
 const express = require('express');
-var bodyParser = require('body-parser')
-const port = process.env.PORT || 3737;
-const functions = require('firebase-functions')
-const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser')
 const cors = require("cors");
+
 const corsOptions = {
     origin: '*',
-    credentials: true,            
+    credentials: true,
     optionSuccessStatus: 200,
 }
 
+const app = express();
 app.use(cors(corsOptions))
 app.use(bodyParser.json());
+const port = process.env.PORT || 3737;
 
+let mongoDB;
 
-let DBObject;
-
-app.get("/fetchRecipes", async (req, res) => {
-    res.json(await DBObject.fetchRecipes());
+app.listen(port, () => {
+    mongoDB = new Mongo();
+    console.log("API running.");
 })
 
-app.post("/addRecipe", async (req, res) => {
-    const result = await DBObject.addRecipe(req.body);
+app.get("/fetchGuides", async (req, res) => {
+    res.json(await mongoDB.fetchGuides());
+})
+
+app.post("/addGuide", async (req, res) => {
+    const result = await mongoDB.addGuide(req.body);
     res.json({ res: result })
 })
 
-exports.app = functions.https.onRequest(app)
+app.post("/addRecipe", async (req, res) => {
+    const result = await mongoDB.addRecipe(req.body);
+    res.json({ res: result })
+})
 
 app.get("/wipe", async (req, res) => {
-    await DBObject.wipe();
+    await mongoDB.wipe();
     res.send("Done.")
 })
 
-class DBClass {
+class Mongo {
     constructor() {
-        this.recipeSchema;
-        this.Recipe;
+        this.main();
     }
 
     async main() {
-        await mongoose.connect('mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/recipesDB?retryWrites=true&w=majority');
+        await mongoose.connect('mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/guidesDB?retryWrites=true&w=majority');
+        this.models = [];
 
-        this.recipeSchema = new mongoose.Schema({
+        this.RecipeSchema = new mongoose.Schema({
             name: String,
             difficulty: String,
             instructions: [{ hint: String, text: String }]
         }, { collection: 'recipes' });
+        this.Recipe = mongoose.model('Recipe', this.RecipeSchema);
+        this.models.push(this.Recipe)
 
-        this.Recipe = mongoose.model('Recipe', this.recipeSchema);
-
+        this.genericSchema = new mongoose.Schema({
+            name: String,
+            purpose: String,
+            instructions: [String]
+        }, { collection: 'generic' });
+        this.Generic = mongoose.model('Generic', this.genericSchema);
+        this.models.push(this.Generic)
     }
 
-    async fetchRecipes() {
-        return await this.Recipe.find();;
+    async fetchGuides() {
+        return await Promise.all(this.models.map(async (model) => {
+            return { "collection": model.collection.collectionName, "data": await model.find({}) }
+        }))
     }
 
     async addRecipe(recipeJSON) {
         try {
-            const recipe = new this.Recipe(recipeJSON);
-            await recipe.save();
+            const Recipe = new this.Recipe(recipeJSON);
+            await Recipe.save();
             return (1);
         } catch (e) {
             console.log(e);
             return (0);
         }
+    }
+
+    async addGeneric(data){
+        return data;
     }
 
     async wipe() {
