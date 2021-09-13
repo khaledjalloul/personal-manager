@@ -19,8 +19,7 @@ class GuidesList extends React.Component {
     }
 
     componentDidMount() {
-        //fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
-        fetch('http://localhost:3737/fetchGuides')
+        fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
             .then(res => res.json())
             .then((result) => {
                 this.setState({

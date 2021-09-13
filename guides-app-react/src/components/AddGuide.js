@@ -123,7 +123,7 @@ class AddGuide extends React.Component {
 
     async postGuide() {
         let jsonData;
-        if (this.state.selected === 'recipes'){
+        if (this.state.selected === 'recipes') {
             jsonData = {
                 collection: 'recipes',
                 name: this.state.name,
@@ -137,7 +137,7 @@ class AddGuide extends React.Component {
                     }
                 })
             };
-        } else if (this.state.selected === 'generic'){
+        } else if (this.state.selected === 'generic') {
             jsonData = {
                 collection: 'generic',
                 name: this.state.name,
@@ -154,11 +154,14 @@ class AddGuide extends React.Component {
         }
         const options = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify(jsonData)
         }
-        return await fetch('https://guides-app-node-server.herokuapp.com/addRecipe', options)
-            .then(res => res.json())
+        let test = await fetch('https://guides-app-node-server.herokuapp.com/addGuide', options)
+            .then(res => res)
             .then(data => data);
     }
 
