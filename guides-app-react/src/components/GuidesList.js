@@ -19,7 +19,8 @@ class GuidesList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
+        //fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
+        fetch('http://localhost:3737/fetchGuides')
             .then(res => res.json())
             .then((result) => {
                 this.setState({
@@ -30,7 +31,6 @@ class GuidesList extends React.Component {
     }
 
     changeSelected(event) {
-        console.log(event.target.value)
         if (this.state.selected.indexOf(event.target.value) > -1 && event.target.value !== 'all') {
             var temp = this.state.selected.slice().filter(item => {
                 return item !== event.target.value
@@ -52,6 +52,7 @@ class GuidesList extends React.Component {
             }
         }
     }
+
     viewGuide(instructions) {
         this.props.history.push({
             pathname: "/guideDetails",
@@ -73,13 +74,14 @@ class GuidesList extends React.Component {
         })
         var guidesData = [];
         this.state.guides.forEach(guide => {
-            console.log(guide.collection);
             if (this.state.selected.indexOf('all') > -1 || this.state.selected.indexOf(guide.collection) > -1) {
                 guidesData = [...guidesData, ...guide.data.map((data) => {
                     return (
                         <GuideCard
+                            collection={guide.collection}
                             name={data.name}
                             difficulty={data.difficulty}
+                            purpose={data.purpose}
                             instructions={data.instructions}
                             onClick={this.viewGuide}
                         />

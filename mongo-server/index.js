@@ -30,8 +30,8 @@ app.post("/addGuide", async (req, res) => {
     res.json({ res: result })
 })
 
-app.post("/addRecipe", async (req, res) => {
-    const result = await mongoDB.addRecipe(req.body);
+app.post("/removeGuide", async (req, res) => {
+    const result = await mongoDB.removeGuide(req.body);
     res.json({ res: result })
 })
 
@@ -60,7 +60,7 @@ class Mongo {
         this.genericSchema = new mongoose.Schema({
             name: String,
             purpose: String,
-            instructions: [String]
+            instructions: [{ hint: String, text: String }]
         }, { collection: 'generic' });
         this.Generic = mongoose.model('Generic', this.genericSchema);
         this.models.push(this.Generic)
@@ -72,10 +72,19 @@ class Mongo {
         }))
     }
 
-    async addRecipe(recipeJSON) {
+    async addGuide(data) {
+        console.log(data);
         try {
-            const Recipe = new this.Recipe(recipeJSON);
-            await Recipe.save();
+            const col = data.collection;
+            delete data["collection"];
+            if (col === 'recipes') {
+                const recipe = new this.Recipe(data);
+                await recipe.save();
+            } else if (col === 'generic') {
+                const generic = new this.Generic(data);
+                await generic.save();
+            }
+            console.log(data);
             return (1);
         } catch (e) {
             console.log(e);
@@ -83,11 +92,21 @@ class Mongo {
         }
     }
 
-    async addGeneric(data){
-        return data;
+    async removeGuide(collection, name) {
+        try {
+            if (collection === 'recipe') {
+                this.Recipe.deleteOne({name: name}, (err, res) => { })
+            } else if (collection === 'generic') {
+                this.Generic.deleteOne({name: name}, (err, res) => { })
+            }
+            return (1);
+        } catch (e) {
+            console.log(e);
+            return (0);
+        }
     }
 
     async wipe() {
-        this.Recipe.deleteMany({}, function (err, res) { })
+        this.Recipe.deleteMany({}, (err, res) => { })
     }
 }

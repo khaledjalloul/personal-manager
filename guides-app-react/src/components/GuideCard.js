@@ -9,7 +9,7 @@ class GuideCard extends React.Component {
                 <div className="cardSubDiv">
                     <p style={{lineHeight: '20%', fontWeight: 'bold'}}>{this.props.name}</p>
                     <hr style={{marginRight: '15%', marginLeft: '15%'}}/>
-                    <p>{this.props.difficulty}</p>
+                    <p>{this.props.collection == 'generic' ? this.props.purpose : this.props.difficulty}</p>
                 </div>
             </div>
         )

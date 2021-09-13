@@ -155,11 +155,11 @@ body{
 }
 
 .addGuideDiv {
-  margin-top: 17vh;
   display: flex;
   flex-wrap: wrap;
   text-align: center;
   align-items: center;
+  justify-content: center;
   margin-bottom: 5vh;
 }
 
