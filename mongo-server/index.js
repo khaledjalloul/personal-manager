@@ -27,18 +27,22 @@ app.get("/fetchGuides", async (req, res) => {
 
 app.post("/addGuide", async (req, res) => {
     const result = await mongoDB.addGuide(req.body);
-    res.json({ res: result })
+    res.json({ "res": result })
 })
 
 app.post("/deleteGuide", async (req, res) => {
     const result = await mongoDB.deleteGuide(req.body);
     console.log(result);
-    res.json({ res: result })
+    res.json({ "res": result })
 })
 
 app.get("/wipe", async (req, res) => {
-    await mongoDB.wipe();
-    res.send("Done.")
+    if (req.query.pass === "Kj542533") {
+        await mongoDB.wipe();
+        res.send("Done.")
+    } else {
+        res.send("Enter pass.")
+    }
 })
 
 class Mongo {
@@ -110,6 +114,7 @@ class Mongo {
     }
 
     async wipe() {
+        this.Generic.deleteMany({}, (err, res) => { })
         this.Recipe.deleteMany({}, (err, res) => { })
     }
 }

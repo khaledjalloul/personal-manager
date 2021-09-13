@@ -155,8 +155,7 @@ class AddGuide extends React.Component {
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(jsonData)
         }
@@ -188,6 +187,7 @@ class AddGuide extends React.Component {
                 this.setState({ loading: true, error: false })
                 const result = await this.postGuide();
                 this.setState({ loading: false })
+                console.log(result.res);
                 if (result.res) this.props.history.goBack();
             }
         }}>
