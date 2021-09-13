@@ -94,6 +94,7 @@ body{
   flex-wrap: wrap;
   text-align: center;
   align-items: center;
+  justify-content: center;
 }
 
 .guideStep {
@@ -118,6 +119,14 @@ body{
   cursor: pointer;
 }
 
+.delete {
+  bottom: 7%;
+  position: absolute;
+  z-index: 1;
+  max-width: 8%;
+  max-height: 8%;
+  cursor: pointer;
+}
 .popupContainer {
   position: absolute;
   z-index: 2;
@@ -132,7 +141,7 @@ body{
 .popup {
   opacity: 1;
   height: 30vh;
-  width: 70vh;
+  width: 60vw;
   background-color: white;
   border-radius: 50px;
   box-shadow: 10px 10px 10px grey;

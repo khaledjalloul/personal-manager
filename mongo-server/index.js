@@ -30,8 +30,9 @@ app.post("/addGuide", async (req, res) => {
     res.json({ res: result })
 })
 
-app.post("/removeGuide", async (req, res) => {
-    const result = await mongoDB.removeGuide(req.body);
+app.post("/deleteGuide", async (req, res) => {
+    const result = await mongoDB.deleteGuide(req.body);
+    console.log(result);
     res.json({ res: result })
 })
 
@@ -92,12 +93,14 @@ class Mongo {
         }
     }
 
-    async removeGuide(collection, name) {
+    async deleteGuide(data) {
+        console.log(data);
         try {
-            if (collection === 'recipe') {
-                this.Recipe.deleteOne({name: name}, (err, res) => { })
-            } else if (collection === 'generic') {
-                this.Generic.deleteOne({name: name}, (err, res) => { })
+            if (data.password !== "Kj542533") return (0);
+            if (data.collection === 'recipes') {
+                this.Recipe.deleteOne({ name: data.name }, (err, res) => { })
+            } else if (data.collection === 'generic') {
+                this.Generic.deleteOne({ name: data.name }, (err, res) => { })
             }
             return (1);
         } catch (e) {

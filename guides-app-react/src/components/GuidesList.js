@@ -53,10 +53,12 @@ class GuidesList extends React.Component {
         }
     }
 
-    viewGuide(instructions) {
+    viewGuide(name, collection, instructions) {
         this.props.history.push({
             pathname: "/guideDetails",
             state: {
+                name: name,
+                collection: collection,
                 instructions: instructions,
             }
         })

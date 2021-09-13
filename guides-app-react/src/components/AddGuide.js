@@ -157,10 +157,9 @@ class AddGuide extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(jsonData)
         }
-        //return await fetch('https://guides-app-node-server.herokuapp.com/addRecipe', options)
-        return await fetch('http://localhost:3737/addGuide', options)
+        return await fetch('https://guides-app-node-server.herokuapp.com/addRecipe', options)
             .then(res => res.json())
-            .then(data => { return data; });
+            .then(data => data);
     }
 
     render() {
