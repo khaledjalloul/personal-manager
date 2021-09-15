@@ -51,7 +51,9 @@ class Guide extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(jsonData)
         }
-        return await fetch("https://guides-app-node-server.herokuapp.com/deleteGuide", options)
+        //return await fetch("https://guides-app-node-server.herokuapp.com/deleteGuide", options)
+
+        return await fetch('http://localhost:3737/deleteGuide', options)
             .then(res => res.json())
             .then(data => data)
     }

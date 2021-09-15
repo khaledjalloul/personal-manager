@@ -5,11 +5,11 @@ import Loader from "react-loader-spinner";
 
 function InstructionDiv(props) {
     return (
-        <div style={{ width: '100vw', margin: '20px' }}>
+        <div>
             <input type="text" name="instruction" id={props.id} placeholder={props.placeholder + (props.id === 1 ? " *" : "")} value={props.value} onChange={props.onChange} />
             {
-                props.hint || props.hint === "" ? <input type="text" name="hint" id={props.id} placeholder="Hint" value={props.hint} onChange={props.onChange} style={{ marginLeft: '3vw' }} />
-                    : <img src={hint} alt="Add hint" className="hint" style={{ marginLeft: '3vw' }} onClick={(event) => { props.addHint(props.id) }} />
+                props.hint || props.hint === "" ? <input type="text" name="hint" id={props.id} placeholder="Hint" value={props.hint} onChange={props.onChange} />
+                    : <img src={hint} alt="Add hint" className="hint" onClick={(event) => { props.addHint(props.id) }} />
             }
         </div>
     )
@@ -32,6 +32,7 @@ class AddGuide extends React.Component {
             loading: false,
             selected: 'generic',
         }
+        this.imageRef = React.createRef();
         this.handleChange = this.handleChange.bind(this);
         this.handleArrayChange = this.handleArrayChange.bind(this);
         this.addHint = this.addHint.bind(this);
@@ -122,46 +123,65 @@ class AddGuide extends React.Component {
     }
 
     async postGuide() {
-        let jsonData;
-        if (this.state.selected === 'recipes') {
-            jsonData = {
-                collection: 'recipes',
-                name: this.state.name,
-                difficulty: this.state.difficulty,
-                instructions: this.state.instructions.filter((instruction) => {
-                    return instruction.text !== ""
-                }).map((instruction) => {
-                    return {
-                        text: instruction.text,
-                        hint: instruction.hint ? instruction.hint : "null"
-                    }
-                })
-            };
-        } else if (this.state.selected === 'generic') {
-            jsonData = {
-                collection: 'generic',
-                name: this.state.name,
-                purpose: this.state.purpose,
-                instructions: this.state.instructions.filter((instruction) => {
-                    return instruction.text !== ""
-                }).map((instruction) => {
-                    return {
-                        text: instruction.text,
-                        hint: instruction.hint ? instruction.hint : "null"
-                    }
-                })
-            };
+        if (this.state.name === "" || this.imageRef.current.files.length === 0 || this.state.instructions[0].text === "" || (this.state.selected === "generic" && this.state.purpose === "")) {
+            this.setState({
+                error: true,
+            })
+        } else {
+            this.setState({ loading: true, error: false })
+            var form = document.getElementById("myForm");
+            var formData = new FormData(form);
+            var imgOptions = {
+                method: "POST",
+                body: formData
+            }
+            await fetch(("http://localhost:3737/uploadImage"), imgOptions);
+            let jsonData;
+            if (this.state.selected === 'recipes') {
+                jsonData = {
+                    collection: 'recipes',
+                    name: this.state.name,
+                    image: "http://spark-guides-img.byethost31.com/images/" + this.imageRef.current.files[0].name,
+                    difficulty: this.state.difficulty,
+                    instructions: this.state.instructions.filter((instruction) => {
+                        return instruction.text !== ""
+                    }).map((instruction) => {
+                        return {
+                            text: instruction.text,
+                            hint: instruction.hint ? instruction.hint : "null"
+                        }
+                    })
+                };
+            } else if (this.state.selected === 'generic') {
+                jsonData = {
+                    collection: 'generic',
+                    name: this.state.name,
+                    image: "http://spark-guides-img.byethost31.com/images/" + this.imageRef.current.files[0].name,
+                    purpose: this.state.purpose,
+                    instructions: this.state.instructions.filter((instruction) => {
+                        return instruction.text !== ""
+                    }).map((instruction) => {
+                        return {
+                            text: instruction.text,
+                            hint: instruction.hint ? instruction.hint : "null"
+                        }
+                    })
+                };
+            }
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            }
+            //let result = await fetch('https://guides-app-node-server.herokuapp.com/addGuide', options)
+            let result = await fetch('http://localhost:3737/addGuide', options)
+                .then(res => res.json())
+                .then(data => data);
+            this.setState({ loading: false })
+            if (result.res) this.props.history.goBack();
         }
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        }
-        return await fetch('https://guides-app-node-server.herokuapp.com/addGuide', options)
-            .then(res => res.json())
-            .then(data => data);
     }
 
     render() {
@@ -177,78 +197,51 @@ class AddGuide extends React.Component {
             )
         })
 
-        const recipeDiv = <form onSubmit={async (event) => {
-            event.preventDefault();
-            if (this.state.name === "" || this.state.instructions[0].text === "") {
-                this.setState({
-                    error: true,
-                })
-            } else {
-                this.setState({ loading: true, error: false })
-                const result = await this.postGuide();
-                this.setState({ loading: false })
-                console.log(result.res);
-                if (result.res) this.props.history.goBack();
-            }
-        }}>
-            <div style={{ width: '100vw', margin: '20px' }}>
+        const recipeDiv =
+            <div>
                 <input type="text" name="name" placeholder="Name *" value={this.state.name} onChange={this.handleChange} />
-            </div>
-            <select name="difficulty" value={this.state.difficulty} onChange={this.handleChange} className="select">
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-            </select>
-            <hr style={{ width: '60vw', marginTop: '3vh' }} />
-            <h3 align="center" style={{ fontFamily: 'Verdana' }}>Instructions</h3>
-            {instructionFields}
-            <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
-            <br />
-            <input type="submit" value="Submit" style={{ borderRadius: '10px', cursor: 'pointer' }} />
-
-        </form>
-
-        const genericDiv =
-            <form onSubmit={async (event) => {
-                event.preventDefault();
-                if (this.state.name === "" || this.state.instructions[0].text === "" || this.state.purpose === "") {
-                    this.setState({
-                        error: true,
-                    })
-                } else {
-                    this.setState({ loading: true, error: false })
-                    const result = await this.postGuide();
-                    this.setState({ loading: false })
-                    if (result.res) this.props.history.goBack();
-                }
-            }}>
-                <div style={{ width: '100vw', margin: '20px' }}>
-                    <input type="text" name="name" placeholder="Name *" value={this.state.name} onChange={this.handleChange} />
-                </div>
-                <div style={{ width: '100vw', margin: '20px' }}>
-                    <input type="text" name="purpose" placeholder="Purpose *" value={this.state.purpose} onChange={this.handleChange} />
-                </div>
+                <br />
+                <select name="difficulty" value={this.state.difficulty} onChange={this.handleChange} className="select">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
                 <hr style={{ width: '60vw', marginTop: '3vh' }} />
-                <h3 align="center" style={{ fontFamily: 'Verdana' }}>Instructions</h3>
+                <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>
                 {instructionFields}
                 <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
                 <br />
-                <input type="submit" value="Submit" style={{ borderRadius: '10px', cursor: 'pointer' }} />
-            </form>;
+            </div>
+
+        const genericDiv =
+            <div>
+                <input type="text" name="name" placeholder="Name *" value={this.state.name} onChange={this.handleChange} />
+                <br />
+                <input type="text" name="purpose" placeholder="Purpose *" value={this.state.purpose} onChange={this.handleChange} />
+                <hr style={{ width: '60vw', marginTop: '3vh' }} />
+                <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>
+                {instructionFields}
+                <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
+            </div>
 
         return (
-            <div align="center" >
+            <div align="center" style={{ marginBottom: '3vh' }}>
                 <div style={{ marginTop: '17vh', width: '100vw' }}>
                     {guideSelectors}
                 </div>
-                <div className="addGuideDiv">
+                <form id="myForm" onSubmit={async (event) => {
+                    event.preventDefault();
+                    this.postGuide();
+                }}>
                     {this.state.selected === 'generic' ? genericDiv : recipeDiv}
+                    <input type="file" name="image" ref={this.imageRef} />
+                    <br />
+                    <input type="submit" value="Submit" style={{ borderRadius: '10px', cursor: 'pointer' }} />
+                    <p style={{ color: 'red', display: this.state.error ? 'block' : 'none' }}>Please fill all required fields.</p>
                     <div style={{ marginTop: '2vh', display: this.state.loading ? 'block' : 'none' }}>
                         <Loader type="ThreeDots" color="#009999" height='5vh' width='5vw' />
                     </div>
-                    <p style={{ color: 'red', display: this.state.error ? 'block' : 'none' }}>Please fill all required fields.</p>
-                </div>
-
+                </form>
             </div>
         )
     }

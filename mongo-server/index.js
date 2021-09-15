@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const cors = require("cors");
+var multer = require('multer')
+var multerFTP = require('multer-ftp')
+var path = require('path')
 
 const corsOptions = {
     origin: '*',
@@ -11,29 +14,50 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions))
-app.use(bodyParser.json());
 const port = process.env.PORT || 3737;
 
 let mongoDB;
+var upload = multer({
+    storage: new multerFTP({
+        basepath: '/htdocs/images',
+        destination: function (req, file, options, callback) {
+            callback(null, path.join(options.basepath, file.originalname))
+         },
+        ftp: {
+            host: 'ftp.byethost31.com',
+            user: 'b31_29727146',
+            password: 'Kj542533'
+        }
+    })
+})
 
 app.listen(port, () => {
     mongoDB = new Mongo();
     console.log("API running.");
 })
 
+app.get("/", async (req, res) => {
+    res.send("Guides app API.");
+})
+
 app.get("/fetchGuides", async (req, res) => {
     res.json(await mongoDB.fetchGuides());
 })
 
-app.post("/addGuide", async (req, res) => {
+app.post("/addGuide", bodyParser.json(), async (req, res) => {
     const result = await mongoDB.addGuide(req.body);
     res.json({ "res": result })
 })
 
-app.post("/deleteGuide", async (req, res) => {
+app.post("/deleteGuide", bodyParser.json(), async (req, res) => {
     const result = await mongoDB.deleteGuide(req.body);
     console.log(result);
     res.json({ "res": result })
+})
+
+app.post('/uploadImage', upload.single("image"), (req, res) => {
+    console.log(req.file);
+    res.send(req.file);
 })
 
 app.get("/wipe", async (req, res) => {
@@ -56,6 +80,7 @@ class Mongo {
 
         this.RecipeSchema = new mongoose.Schema({
             name: String,
+            image: String,
             difficulty: String,
             instructions: [{ hint: String, text: String }]
         }, { collection: 'recipes' });
@@ -64,6 +89,7 @@ class Mongo {
 
         this.genericSchema = new mongoose.Schema({
             name: String,
+            image: String,
             purpose: String,
             instructions: [{ hint: String, text: String }]
         }, { collection: 'generic' });

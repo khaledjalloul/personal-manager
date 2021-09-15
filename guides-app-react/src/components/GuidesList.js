@@ -19,7 +19,8 @@ class GuidesList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
+        //fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
+        fetch('http://localhost:3737/fetchGuides')
             .then(res => res.json())
             .then((result) => {
                 this.setState({
@@ -81,6 +82,7 @@ class GuidesList extends React.Component {
                         <GuideCard
                             collection={guide.collection}
                             name={data.name}
+                            image={data.image}
                             difficulty={data.difficulty}
                             purpose={data.purpose}
                             instructions={data.instructions}
@@ -91,7 +93,7 @@ class GuidesList extends React.Component {
             }
         })
         guidesData.push(
-            <img src={add} alt="Add Guide" className="add" onClick={this.addGuide} />
+            <img src={add} alt="Add Guide" className="add" style={{marginRight: '30px', marginLeft: '30px'}}onClick={this.addGuide} />
         )
         return (
             this.state.loading ?
