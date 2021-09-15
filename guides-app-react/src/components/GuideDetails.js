@@ -51,9 +51,8 @@ class Guide extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(jsonData)
         }
-        //return await fetch("https://guides-app-node-server.herokuapp.com/deleteGuide", options)
-
-        return await fetch('http://localhost:3737/deleteGuide', options)
+        return await fetch("https://guides-app-node-server.herokuapp.com/deleteGuide", options)
+        //return await fetch('http://localhost:3737/deleteGuide', options)
             .then(res => res.json())
             .then(data => data)
     }
@@ -62,10 +61,10 @@ class Guide extends React.Component {
         var guideData = this.state.instructions.map((data) => {
             const toReturn = [];
             if (data.hint === "null") {
-                toReturn.push(<p style={{ margin: '0 auto' }} >{data.text}</p>)
+                toReturn.push(<p style={{ margin: '0 auto', width: '80%' }} >{data.text}</p>)
             } else {
                 toReturn.push(<img src={hint} className="hint" alt="hint" onClick={(event) => { this.displayHint(data.hint) }} />)
-                toReturn.push(<p style={{ margin: '0 auto', width: '70%' }}>{data.text}</p>
+                toReturn.push(<p style={{ margin: '0 auto', width: '60%' }}>{data.text}</p>
                 )
             }
             toReturn.push(
@@ -83,6 +82,7 @@ class Guide extends React.Component {
             <div className="guideMainDiv">
                 <div>
                     {guideData}
+                    <img src={deleteIcon} alt="delete" className="delete" onClick={this.displayDelete} />
                 </div>
                 <div className="popupContainer" style={{ display: this.state.hintPopupDisplayed ? 'flex' : 'none' }} onClick={(event) => { this.setState({ hintPopupDisplayed: !this.state.hintPopupDisplayed }) }}>
                     <p className="popup">{this.state.hint}</p>
@@ -103,7 +103,6 @@ class Guide extends React.Component {
                         </div>
                     </form>
                 </div>
-                <img src={deleteIcon} alt="delete" className="delete" onClick={this.displayDelete} />
             </div>
         )
     }

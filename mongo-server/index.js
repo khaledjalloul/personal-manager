@@ -51,12 +51,10 @@ app.post("/addGuide", bodyParser.json(), async (req, res) => {
 
 app.post("/deleteGuide", bodyParser.json(), async (req, res) => {
     const result = await mongoDB.deleteGuide(req.body);
-    console.log(result);
     res.json({ "res": result })
 })
 
 app.post('/uploadImage', upload.single("image"), (req, res) => {
-    console.log(req.file);
     res.send(req.file);
 })
 
@@ -81,7 +79,7 @@ class Mongo {
         this.RecipeSchema = new mongoose.Schema({
             name: String,
             image: String,
-            difficulty: String,
+            duration: String,
             instructions: [{ hint: String, text: String }]
         }, { collection: 'recipes' });
         this.Recipe = mongoose.model('Recipe', this.RecipeSchema);
@@ -104,7 +102,6 @@ class Mongo {
     }
 
     async addGuide(data) {
-        console.log(data);
         try {
             const col = data.collection;
             delete data["collection"];
@@ -115,7 +112,6 @@ class Mongo {
                 const generic = new this.Generic(data);
                 await generic.save();
             }
-            console.log(data);
             return (1);
         } catch (e) {
             console.log(e);
@@ -124,7 +120,6 @@ class Mongo {
     }
 
     async deleteGuide(data) {
-        console.log(data);
         try {
             if (data.password !== "Kj542533") return (0);
             if (data.collection === 'recipes') {

@@ -20,7 +20,7 @@ class AddGuide extends React.Component {
         this.guideTypes = ['generic', 'recipes'];
         this.state = {
             name: "",
-            difficulty: 'Easy',
+            duration: 'Quick',
             purpose: "",
             instructions: [
                 {
@@ -135,14 +135,15 @@ class AddGuide extends React.Component {
                 method: "POST",
                 body: formData
             }
-            await fetch(("http://localhost:3737/uploadImage"), imgOptions);
+            await fetch(("https://guides-app-node-server.herokuapp.com/uploadImage"), imgOptions);
+            //await fetch(("http://localhost:3737/uploadImage"), imgOptions);
             let jsonData;
             if (this.state.selected === 'recipes') {
                 jsonData = {
                     collection: 'recipes',
                     name: this.state.name,
                     image: "http://spark-guides-img.byethost31.com/images/" + this.imageRef.current.files[0].name,
-                    difficulty: this.state.difficulty,
+                    duration: this.state.duration,
                     instructions: this.state.instructions.filter((instruction) => {
                         return instruction.text !== ""
                     }).map((instruction) => {
@@ -175,8 +176,8 @@ class AddGuide extends React.Component {
                 },
                 body: JSON.stringify(jsonData)
             }
-            //let result = await fetch('https://guides-app-node-server.herokuapp.com/addGuide', options)
-            let result = await fetch('http://localhost:3737/addGuide', options)
+            let result = await fetch('https://guides-app-node-server.herokuapp.com/addGuide', options)
+            //let result = await fetch('http://localhost:3737/addGuide', options)
                 .then(res => res.json())
                 .then(data => data);
             this.setState({ loading: false })
@@ -201,10 +202,10 @@ class AddGuide extends React.Component {
             <div>
                 <input type="text" name="name" placeholder="Name *" value={this.state.name} onChange={this.handleChange} />
                 <br />
-                <select name="difficulty" value={this.state.difficulty} onChange={this.handleChange} className="select">
-                    <option value="Easy">Easy</option>
+                <select name="duration" value={this.state.duration} onChange={this.handleChange} className="select">
+                    <option value="Quick">Quick</option>
                     <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
+                    <option value="Slow">Slow</option>
                 </select>
                 <hr style={{ width: '60vw', marginTop: '3vh' }} />
                 <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>

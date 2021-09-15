@@ -19,8 +19,8 @@ class GuidesList extends React.Component {
     }
 
     componentDidMount() {
-        //fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
-        fetch('http://localhost:3737/fetchGuides')
+        fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
+        //fetch('http://localhost:3737/fetchGuides')
             .then(res => res.json())
             .then((result) => {
                 this.setState({
@@ -83,7 +83,7 @@ class GuidesList extends React.Component {
                             collection={guide.collection}
                             name={data.name}
                             image={data.image}
-                            difficulty={data.difficulty}
+                            duration={data.duration}
                             purpose={data.purpose}
                             instructions={data.instructions}
                             onClick={this.viewGuide}

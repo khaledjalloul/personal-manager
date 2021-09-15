@@ -120,15 +120,14 @@ body{
 }
 
 .delete {
-  bottom: 7%;
-  position: absolute;
-  z-index: 1;
-  max-width: 8%;
-  max-height: 8%;
+  margin-top: 5vh;
+  margin-bottom: 2vh;
+  max-width: 4%;
+  max-height: 4%;
   cursor: pointer;
 }
 .popupContainer {
-  position: absolute;
+  position: fixed;
   z-index: 2;
   background: rgba(200, 200, 200, 0.5);
   top: 0;
