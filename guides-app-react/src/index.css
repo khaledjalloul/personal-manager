@@ -46,7 +46,7 @@ body{
 
 .cardMainDiv {
   height: 27vh;
-  width: 25vw;
+  width: 22vw;
   display: table;
   margin-top: 2.5vh;
   margin-bottom: 2.5vh;
@@ -63,7 +63,7 @@ body{
   transition-duration: 0.25s;
 }
 
-.foodImg {
+.cardImg {
   max-height: 75%;
   max-width: 100%;
 }

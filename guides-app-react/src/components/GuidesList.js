@@ -2,6 +2,16 @@ import React from 'react'
 import GuideCard from './GuideCard'
 import add from '../assets/add.png'
 import Loader from "react-loader-spinner";
+// import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+// import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+// const theme = createTheme({
+//     palette: {
+//         primary: {
+//             main: '#009999',
+//         },
+//     },
+// });
 
 class GuidesList extends React.Component {
     constructor() {
@@ -20,7 +30,7 @@ class GuidesList extends React.Component {
 
     componentDidMount() {
         fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
-        //fetch('http://localhost:3737/fetchGuides')
+            //fetch('http://localhost:3737/fetchGuides')
             .then(res => res.json())
             .then((result) => {
                 this.setState({
@@ -36,7 +46,7 @@ class GuidesList extends React.Component {
                 return item !== event.target.value
             })
             this.setState({
-                selected: temp.length ? temp : ['all'] 
+                selected: temp.length ? temp : ['all']
             })
         } else {
             if (event.target.value === 'all') {
@@ -93,7 +103,10 @@ class GuidesList extends React.Component {
             }
         })
         guidesData.push(
-            <img src={add} alt="Add Guide" className="add" style={{marginRight: '30px', marginLeft: '30px'}}onClick={this.addGuide} />
+            // <ThemeProvider theme={theme}>
+            //     <AddCircleOutlineIcon color="primary" sx={{width: '3%'}}className="add" />
+            // </ThemeProvider>
+            <img src={add} alt="Add Guide" className="add" style={{ marginRight: '30px', marginLeft: '30px' }} onClick={this.addGuide} />
         )
         return (
             this.state.loading ?

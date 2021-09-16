@@ -142,7 +142,7 @@ class AddGuide extends React.Component {
                 jsonData = {
                     collection: 'recipes',
                     name: this.state.name,
-                    image: "http://spark-guides-img.byethost31.com/images/" + this.imageRef.current.files[0].name,
+                    image: "https://guides-app-img.000webhostapp.com/images/" + this.imageRef.current.files[0].name,
                     duration: this.state.duration,
                     instructions: this.state.instructions.filter((instruction) => {
                         return instruction.text !== ""
@@ -157,7 +157,7 @@ class AddGuide extends React.Component {
                 jsonData = {
                     collection: 'generic',
                     name: this.state.name,
-                    image: "http://spark-guides-img.byethost31.com/images/" + this.imageRef.current.files[0].name,
+                    image: "https://guides-app-img.000webhostapp.com/images/" + this.imageRef.current.files[0].name,
                     purpose: this.state.purpose,
                     instructions: this.state.instructions.filter((instruction) => {
                         return instruction.text !== ""

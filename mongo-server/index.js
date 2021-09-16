@@ -19,13 +19,13 @@ const port = process.env.PORT || 3737;
 let mongoDB;
 var upload = multer({
     storage: new multerFTP({
-        basepath: '/htdocs/images',
+        basepath: '/public_html/images',
         destination: function (req, file, options, callback) {
             callback(null, path.join(options.basepath, file.originalname))
          },
         ftp: {
-            host: 'ftp.byethost31.com',
-            user: 'b31_29727146',
+            host: 'files.000webhost.com',
+            user: 'guides-app-img',
             password: 'Kj542533'
         }
     })
@@ -54,7 +54,7 @@ app.post("/deleteGuide", bodyParser.json(), async (req, res) => {
     res.json({ "res": result })
 })
 
-app.post('/uploadImage', upload.single("image"), (req, res) => {
+app.post("/uploadImage", upload.single("image"), (req, res) => {
     res.send(req.file);
 })
 

@@ -4,7 +4,7 @@ class GuideCard extends React.Component {
     render() {
         return (
             <div className="cardMainDiv" onClick={(event) => { this.props.onClick(this.props.name, this.props.collection, this.props.instructions) }}>
-                <img src={this.props.image} alt={this.props.name}/>
+                <img src={this.props.image} className="cardImg" alt={this.props.name}/>
                 <div className="cardSubDiv">
                     <p style={{ lineHeight: '20%', fontWeight: 'bold' }}>{this.props.name}</p>
                     <hr style={{ marginRight: '15%', marginLeft: '15%' }} />
