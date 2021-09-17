@@ -222,12 +222,12 @@ class AddGuide extends React.Component {
                 <hr style={{ width: '60vw', marginTop: '3vh' }} />
                 <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>
                 {instructionFields}
-                <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
+                <img src={add} alt="Add Instruction" className="addToInstructions" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
             </div>
 
         return (
             <div align="center" style={{ marginBottom: '3vh' }}>
-                <div style={{ marginTop: '17vh', width: '100vw' }}>
+                <div style={{ width: '100vw' }}>
                     {guideSelectors}
                 </div>
                 <form id="myForm" onSubmit={async (event) => {

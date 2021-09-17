@@ -72,8 +72,7 @@ body{
   display: table-row;
 }
 
-.add {
-  max-width: 7vw;
+.addToList .addToInstructions {
   background-color: white;
   margin: 10px;
   cursor: pointer;
@@ -82,13 +81,19 @@ body{
   transition-duration: 0.25s;
 }
 
-.add:hover {
+.addToList {
+  max-width: 7vw;
+  position: fixed;
+  bottom: 5vh;
+  right: 5vw;
+}
+
+.addToList:hover .addToInstructions:hover {
   box-shadow: 5px 5px 5px grey;
   transition-duration: 0.25s;
 }
 
 .guideMainDiv {
-  margin-top: 17vh;
   height: 80vh;
   display: flex;
   flex-wrap: wrap;

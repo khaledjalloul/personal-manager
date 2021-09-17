@@ -102,25 +102,20 @@ class GuidesList extends React.Component {
                 })];
             }
         })
-        guidesData.push(
-            // <ThemeProvider theme={theme}>
-            //     <AddCircleOutlineIcon color="primary" sx={{width: '3%'}}className="add" />
-            // </ThemeProvider>
-            <img src={add} alt="Add Guide" className="add" style={{ marginRight: '30px', marginLeft: '30px' }} onClick={this.addGuide} />
-        )
         return (
             this.state.loading ?
-                <div style={{ marginTop: '17vh', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Loader type="ThreeDots" color="#009999" height='15vh' width='15vw' />
                 </div>
                 :
                 <div align="center" >
-                    <div style={{ marginTop: '17vh', width: '100vw' }}>
+                    <div style={{width: '100vw' }}>
                         {guideSelectors}
                     </div>
                     <div className="listDiv">
                         {guidesData}
                     </div>
+                    <img src={add} alt="Add Guide" className="addToList" style={{ marginRight: '30px', marginLeft: '30px' }} onClick={this.addGuide} />
                 </div>
         )
     }

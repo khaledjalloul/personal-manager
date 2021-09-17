@@ -14,17 +14,19 @@ function App() {
   return (
     <div>
       <TitleBar history={history} />
-      <Switch>
-        <Route exact path="/">
-          <GuidesList history={history} />
-        </Route>
-        <Route path="/guideDetails" component={GuideDetails}>
-          <GuideDetails />
-        </Route>
-        <Route path="/addGuide" component={AddGuide}>
-          <AddGuide history={history} />
-        </Route>
-      </Switch>
+      <div style={{marginTop: '17vh'}}>
+        <Switch>
+          <Route exact path="/">
+            <GuidesList history={history} />
+          </Route>
+          <Route path="/guideDetails" component={GuideDetails}>
+            <GuideDetails />
+          </Route>
+          <Route path="/addGuide" component={AddGuide}>
+            <AddGuide history={history} />
+          </Route>
+        </Switch>
+      </div>
     </div>
   );
 }
