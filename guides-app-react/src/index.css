@@ -72,23 +72,23 @@ body{
   display: table-row;
 }
 
-.addToList .addToInstructions {
-  background-color: white;
-  margin: 10px;
+.addToList, .addToInstructions {
   cursor: pointer;
   border-radius: 50%;
+  padding: -20px;
   box-shadow: 10px 10px 10px grey;
   transition-duration: 0.25s;
 }
 
 .addToList {
-  max-width: 7vw;
+  max-width: 4vw;
   position: fixed;
-  bottom: 5vh;
-  right: 5vw;
+  z-index: 1;
+  bottom: 4vh;
+  right: 4vh;
 }
 
-.addToList:hover .addToInstructions:hover {
+.addToList:hover, .addToInstructions:hover {
   box-shadow: 5px 5px 5px grey;
   transition-duration: 0.25s;
 }
@@ -103,6 +103,7 @@ body{
 }
 
 .guideStep {
+  position: relative;
   width: 100vw;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 4vh;
@@ -116,21 +117,30 @@ body{
 }
 
 .hint {
-  right: 15%;
   position: absolute;
+  right: 15%;
   z-index: 1;
-  max-width: 5%;
-  max-height: 5%;
+  max-height: 85%;
   cursor: pointer;
 }
 
 .delete {
-  margin-top: 5vh;
-  margin-bottom: 2vh;
-  max-width: 4%;
-  max-height: 4%;
+  position: fixed;
+  z-index: 1;
+  bottom: 4vh;
+  right: 4vh;
+  max-width: 4vw;
   cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 10px 10px 10px grey;
+  transition-duration: 0.25s;
 }
+
+.delete:hover {
+  box-shadow: 5px 5px 5px grey;
+  transition-duration: 0.25s;
+}
+
 .popupContainer {
   position: fixed;
   z-index: 2;

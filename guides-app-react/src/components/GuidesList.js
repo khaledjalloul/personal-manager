@@ -115,7 +115,7 @@ class GuidesList extends React.Component {
                     <div className="listDiv">
                         {guidesData}
                     </div>
-                    <img src={add} alt="Add Guide" className="addToList" style={{ marginRight: '30px', marginLeft: '30px' }} onClick={this.addGuide} />
+                    <img src={add} alt="Add Guide" className="addToList" onClick={this.addGuide} />
                 </div>
         )
     }
