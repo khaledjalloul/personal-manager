@@ -68,10 +68,13 @@ class Guide extends React.Component {
                 )
             }
             toReturn.push(
-                <hr style={{
-                    marginRight: "30vw",
-                    marginLeft: "30vw"
-                }} />
+                <div style={{width: '100%'}}>
+                    <hr style={{
+                        marginRight: "30vw",
+                        marginLeft: "30vw"
+                    }} />
+
+                </div>
             );
             return (
                 <div class="guideStep" >

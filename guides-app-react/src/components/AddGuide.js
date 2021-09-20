@@ -5,7 +5,12 @@ import Loader from "react-loader-spinner";
 
 function InstructionDiv(props) {
     return (
-        <div>
+        <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'relative'}}>
             <input type="text" name="instruction" id={props.id} placeholder={props.placeholder + (props.id === 1 ? " *" : "")} value={props.value} onChange={props.onChange} />
             {
                 props.hint || props.hint === "" ? <input type="text" name="hint" id={props.id} placeholder="Hint" value={props.hint} onChange={props.onChange} />
@@ -210,7 +215,7 @@ class AddGuide extends React.Component {
                 <hr style={{ width: '60vw', marginTop: '3vh' }} />
                 <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>
                 {instructionFields}
-                <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
+                <img src={add} alt="Add Instruction" className="add" style={{ marginTop: '1vh', maxWidth: '4.5vw' }} onClick={this.addInstruction} />
                 <br />
             </div>
 
@@ -222,7 +227,7 @@ class AddGuide extends React.Component {
                 <hr style={{ width: '60vw', marginTop: '3vh' }} />
                 <h3 align="center" style={{ margin: '2vh', fontFamily: 'Verdana' }}>Instructions</h3>
                 {instructionFields}
-                <img src={add} alt="Add Instruction" className="addToInstructions" style={{ marginTop: '1vh', maxWidth: '5vw' }} onClick={this.addInstruction} />
+                <img src={add} alt="Add Instruction" className="addToInstructions" style={{ marginTop: '1vh', maxWidth: '4.5vw' }} onClick={this.addInstruction} />
             </div>
 
         return (
