@@ -1,15 +1,14 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import deleteIcon from '../assets/delete.png';
-import hint from '../assets/hint.png';
+import deleteIcon from '../assets/icons/delete.png';
+import hint from '../assets/icons/hint.png';
 
-class Guide extends React.Component {
+class EventDetails extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
             password: "",
-            name: this.props.location.state.name,
+            name: this.props.location.name,
             collection: this.props.location.state.collection,
             instructions: this.props.location.state.instructions,
             hintPopupDisplayed: false,
@@ -111,4 +110,4 @@ class Guide extends React.Component {
     }
 }
 
-export default withRouter(Guide)
+export default EventDetails

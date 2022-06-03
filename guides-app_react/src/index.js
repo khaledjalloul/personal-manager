@@ -1,35 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Switch, Route, useHistory } from "react-router-dom"
+import './styles/index.css';
+import Home from './components/Home'
+import CreateEvent from './components/CreateEvent'
+import EventDetails from './components/EventDetails'
 
-import TitleBar from './components/TitleBar'
-import GuidesList from './components/GuidesList.js'
-import GuideDetails from './components/GuideDetails';
-import AddGuide from './components/AddGuide';
-
-import './index.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import HeaderFooter from './components/HeaderFooter';
 
 function App() {
-  const history = useHistory();
   return (
-    <div>
-      <TitleBar history={history} />
-      <div style={{ marginTop: '17vh' }}>
-        <Switch>
-          <Route exact path="/">
-          </Route>
-          <Route path="/guideDetails" component={GuideDetails}>
-            <GuideDetails />
-          </Route>
-          <Route path="/addGuide" component={AddGuide}>
-            <AddGuide history={history} />
-          </Route>
-        </Switch>
-        <GuidesList history={history} />
-      </div>
-    </div>
+    <Router>
+      <HeaderFooter>
+        <Routes>
+          <Route exact path="/" element={<Home />}></Route>
+          <Route exact path="/createEvent" element={<CreateEvent />}></Route>
+          <Route exact path="/eventDetails" element={<EventDetails />}></Route>
+        </Routes>
+      </HeaderFooter>
+    </Router>
   );
 }
 
-ReactDOM.render(<BrowserRouter><App /></BrowserRouter>,
+ReactDOM.render(<App />,
   document.getElementById('root'));

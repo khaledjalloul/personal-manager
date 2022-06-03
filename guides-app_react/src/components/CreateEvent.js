@@ -1,6 +1,6 @@
 import React from 'react'
-import add from '../assets/add.png'
-import hint from '../assets/hint.png'
+import add from '../assets/icons/add.png'
+import hint from '../assets/icons/hint.png'
 import Loader from "react-loader-spinner";
 
 function InstructionDiv(props) {
@@ -19,7 +19,7 @@ function InstructionDiv(props) {
         </div>
     )
 }
-class AddGuide extends React.Component {
+class CreateEvent extends React.Component {
     constructor(props) {
         super(props)
         this.guideTypes = ['generic', 'recipes'];
@@ -252,4 +252,4 @@ class AddGuide extends React.Component {
         )
     }
 }
-export default AddGuide
+export default CreateEvent
