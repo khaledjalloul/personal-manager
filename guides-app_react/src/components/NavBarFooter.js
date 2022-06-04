@@ -1,4 +1,4 @@
-import '../styles/headerFooter.css';
+import '../styles/navBarFooter.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Hamburger from 'hamburger-react';
@@ -56,8 +56,8 @@ const NavBar = () => {
     if (navBarElement.type === "button")
 
       output.push(
-        <div className={navBarElementsVisible ? 'headerFooter_dropDown' : 'headerFooter_hamburgerDropDown'}>
-          <input type="button" value={navBarElement.name} onClick={navBarElement.func} className={navBarElementsVisible ? 'headerFooter_navBarElement' : 'headerFooter_hamburgerNavBarElement'} />
+        <div className={navBarElementsVisible ? 'navBarDropDown' : 'navBarHamburgerDropDown'}>
+          <input type="button" value={navBarElement.name} onClick={navBarElement.func} className={navBarElementsVisible ? 'navBarElement' : 'navBarHamburgerElement'} />
         </div>)
 
     // if (navBarElement.type === "select") {
@@ -74,16 +74,16 @@ const NavBar = () => {
   })
 
   return (
-    <div className='headerFooter_navBar' >
-      <div className='headerFooter_title' ref={titleRef}>{icon}<p style={{cursor: 'pointer'}} onClick={() => { if (location.pathname !== "/") navigate("/") }}>Event Planner</p></div>
-      <div className='headerFooter_navBarElementsDiv' ref={navBarRef}>
+    <div id='navBar' >
+      <div id='navBarTitle' ref={titleRef}>{icon}<p style={{cursor: 'pointer'}} onClick={() => { if (location.pathname !== "/") navigate("/") }}>Event Planner</p></div>
+      <div id='navBarElementsDiv' ref={navBarRef}>
         {navBarElementsVisible ?
           output :
-          <div className='headerFooter_dropDown'>
+          <div className='navBarDropDown'>
             <div style={{ height: '60px', display: 'flex', alignItems: 'center' }}>
               <Hamburger color='white' size={24} direction='right' toggled={displayHamburgerDiv} toggle={() => setDisplayHamburgerDiv(!displayHamburgerDiv)} />
             </div>
-            <div className='headerFooter_dropDownContainer' style={{ visibility: displayHamburgerDiv ? 'visible' : 'hidden', opacity: displayHamburgerDiv ? '1' : '0' }}>{output}</div>
+            <div id='navBarDropDownContainer' style={{ visibility: displayHamburgerDiv ? 'visible' : 'hidden', opacity: displayHamburgerDiv ? '1' : '0' }}>{output}</div>
           </div>}
       </div>
     </div>
@@ -93,8 +93,8 @@ const NavBar = () => {
 
 const Footer = () => {
   return (
-    <div className='headerFooter_footer'>
-      <div className='headerFooter_copyright'>
+    <div id='footer'>
+      <div id='footerCopyright'>
         <a href='https://github.com/khaledjalloul/event-planner_react'>GitHub Link: khaledjalloul/event-planner_react</a>
       </div>
     </div>
@@ -104,9 +104,9 @@ const Footer = () => {
 
 const HeaderFooter = (props) => {
   return (
-    <div style={{height: '100%'}}>
+    <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
       <NavBar />
-      <div style={{ height: 'calc(100vh - 110px)', maxWidth: '100vw' }}>
+      <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch' }}>
         {props.children}
       </div>
       <Footer />

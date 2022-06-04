@@ -6,18 +6,18 @@ import CreateEvent from './components/CreateEvent'
 import EventDetails from './components/EventDetails'
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import HeaderFooter from './components/HeaderFooter';
+import NavBarFooter from './components/NavBarFooter';
 
 function App() {
   return (
     <Router>
-      <HeaderFooter>
+      <NavBarFooter>
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route exact path="/createEvent" element={<CreateEvent />}></Route>
           <Route exact path="/eventDetails" element={<EventDetails />}></Route>
         </Routes>
-      </HeaderFooter>
+      </NavBarFooter>
     </Router>
   );
 }

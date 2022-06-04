@@ -5,17 +5,17 @@ import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
 
 const EventCard = (props) => {
     const navigate = useNavigate()
-    const date = new Date(props.data.time)
+    const dateTime = new Date(props.data.dateTime)
     return (
-        <div className="cardMainDiv" onClick={() => { navigate('/eventDetails', { state: { data: props.data } }) }}>
-            <img src={props.data.image} className="cardImg" alt={props.data.title} />
-            <div className="cardSubDiv">
-                <p style={{ fontWeight: 'bold' }}>{props.data.title}</p>
-                <hr style={{ marginRight: '15%', marginLeft: '15%' }} />
-                <div className='cardSubSubDiv'>
-                    <p><MdLocationOn style={{marginRight: '4px'}}/> {props.data.location}</p>
-                    <p><MdDateRange style={{marginRight: '4px'}}/> {date.toLocaleDateString()}</p>
-                    <p><MdAccessTime style={{marginRight: '4px'}}/> {date.toLocaleTimeString()}</p>
+        <div className="cardDiv" onClick={() => { navigate('/eventDetails', { state: { data: props.data } }) }}>
+            <img src={props.data.image} className="cardImage" alt={props.data.title} />
+            <div className="cardInfoDiv">
+                <p style={{ fontWeight: 'bold', alignSelf: 'center' }}>{props.data.title}</p>
+                <div style={{width: '70%', border: 'solid 1px black', alignSelf: 'center', marginTop: '10px', marginBottom: '10px'}} />
+                <div className='cardInfoSubDiv'>
+                    <p><MdLocationOn style={{marginRight: '4px'}}/> {props.data.eventLocation}</p>
+                    <p><MdDateRange style={{marginRight: '4px'}}/> {dateTime.toLocaleDateString()}</p>
+                    <p><MdAccessTime style={{marginRight: '4px'}}/> {dateTime.toLocaleTimeString()}</p>
                 </div>
             </div>
         </div>
@@ -31,18 +31,19 @@ const Home = () => {
         fetch('http://localhost:3737/getEvents')
             .then(res => res.json())
             .then((result) => {
-                setEvents(result[0])
+                setEvents(result)
                 setLoading(false)
-                console.log(result[0])
             })
     }, [])
 
     var eventCards = events.map(event =>
         <EventCard
             data={{
+                id: event._id,
                 title: event.title,
-                location: event.location,
-                time: event.time,
+                eventLocation: event.location,
+                dateTime: event.dateTime,
+                description: event.description,
                 attendees: event.attendees,
                 items: event.items,
                 image: event.image
@@ -51,11 +52,11 @@ const Home = () => {
 
     return (
         loading ?
-            <div style={{ height: 'calc(100vh - 110px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Loader type="TailSpin" color="#004b7d" height='10vh' width='15vw' />
             </div>
             :
-            <div align="center" className="listDiv">
+            <div id="homeMainDiv">
                 {eventCards}
             </div>
     )
