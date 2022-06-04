@@ -1,6 +1,5 @@
-body{
+p{
   margin: 0;
-  background-color: #DDDDDD;
 }
 
 .listDiv {
@@ -8,7 +7,7 @@ body{
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2vh;
+  height: calc(100vh - 110px) !important;
 }
 
 .guideTypeButton, .guideTypeButtonSelected {
@@ -29,13 +28,10 @@ body{
 }
 
 .cardMainDiv {
-  height: 27vh;
-  width: 22vw;
-  display: table;
-  margin-top: 2.5vh;
-  margin-bottom: 2.5vh;
-  margin-right: 2.5vw;
-  margin-left: 2.5vw;
+  height: clamp(150px, 50%, 300px);
+  width: clamp(200px, 23%, 400px);
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
   background-color: white;
   box-shadow: 7px 7px 7px grey;
@@ -48,14 +44,29 @@ body{
 }
 
 .cardImg {
-  max-height: 75%;
+  object-fit: cover;
+  min-height: 30%;
+  height: 60%;
+  max-height: 60%;
+  min-width: 100%;
   max-width: 100%;
 }
 
-.cardSubDiv {
-  display: table-row;
+.cardSubDiv{
+  flex: 1 1 auto;
+  margin: 2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: clamp(12px, 3vh, 16px);
 }
 
+.cardSubSubDiv{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 15%;
+}
 .addToList, .addToInstructions {
   cursor: pointer;
   border-radius: 50%;

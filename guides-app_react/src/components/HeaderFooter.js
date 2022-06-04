@@ -104,9 +104,9 @@ const Footer = () => {
 
 const HeaderFooter = (props) => {
   return (
-    <div>
+    <div style={{height: '100%'}}>
       <NavBar />
-      <div style={{ minHeight: 'calc(100vh - 60px - 50px)', maxWidth: '100vw' }}>
+      <div style={{ height: 'calc(100vh - 110px)', maxWidth: '100vw' }}>
         {props.children}
       </div>
       <Footer />

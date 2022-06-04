@@ -16,7 +16,7 @@ const app = express();
 app.use(cors(corsOptions))
 const port = process.env.PORT || 3737;
 
-let mongoDB;
+let mongoClient;
 var upload = multer({
     storage: new multerFTP({
         basepath: '/public_html/images',
@@ -32,25 +32,26 @@ var upload = multer({
 })
 
 app.listen(port, () => {
-    mongoDB = new Mongo();
-    console.log("API running.");
+    mongoClient = new MongoClient();
+    mongoClient.start()
+    console.log("Event Planner NodeJS API running.");
 })
 
 app.get("/", async (req, res) => {
-    res.send("Guides app API.");
+    res.send("Event Planner NodeJS API.");
 })
 
-app.get("/fetchGuides", async (req, res) => {
-    res.json(await mongoDB.fetchGuides().catch( e => { console.error(e) }));
+app.get("/getEvents", async (req, res) => {
+    res.json(await mongoClient.getEvents().catch( e => { console.error(e) }));
 })
 
 app.post("/addGuide", bodyParser.json(), async (req, res) => {
-    const result = await mongoDB.addGuide(req.body);
+    const result = await mongoClient.addGuide(req.body);
     res.json({ "res": result })
 })
 
 app.post("/deleteGuide", bodyParser.json(), async (req, res) => {
-    const result = await mongoDB.deleteGuide(req.body);
+    const result = await mongoClient.deleteGuide(req.body);
     res.json({ "res": result })
 })
 
@@ -60,44 +61,33 @@ app.post("/uploadImage", upload.single("image"), (req, res) => {
 
 app.get("/wipe", async (req, res) => {
     if (req.query.pass === "Kj542533") {
-        await mongoDB.wipe();
+        await mongoClient.wipe();
         res.send("Done.")
     } else {
         res.send("Enter pass.")
     }
 })
 
-class Mongo {
-    constructor() {
-        this.main();
-    }
+class MongoClient {
 
-    async main() {
-        await mongoose.connect('mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/guidesDB?retryWrites=true&w=majority');
+    async start() {
+        await mongoose.connect('mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/eventPlanner?retryWrites=true&w=majority');
         this.models = [];
 
-        this.RecipeSchema = new mongoose.Schema({
-            name: String,
-            image: String,
-            duration: String,
-            instructions: [{ hint: String, text: String }]
-        }, { collection: 'recipes' });
-        this.Recipe = mongoose.model('Recipe', this.RecipeSchema);
-        this.models.push(this.Recipe)
-
-        this.genericSchema = new mongoose.Schema({
-            name: String,
-            image: String,
-            purpose: String,
-            instructions: [{ hint: String, text: String }]
-        }, { collection: 'generic' });
-        this.Generic = mongoose.model('Generic', this.genericSchema);
-        this.models.push(this.Generic)
+        this.EventSchema = new mongoose.Schema({
+            title: String,
+            location: String,
+            time: Date,
+            attendees: [String],
+            items:[{name: String, available: Boolean}]
+        }, { collection: 'events' });
+        this.Event = mongoose.model('Event', this.EventSchema);
+        this.models.push(this.Event)
     }
 
-    async fetchGuides() {
+    async getEvents() {
         return await Promise.all(this.models.map(async (model) => {
-            return { "collection": model.collection.collectionName, "data": await model.find({}) }
+            return await model.find({})
         }))
     }
 
