@@ -27,22 +27,15 @@ p{
   transition-duration: 0.25s;
 }
 
-.cardImage {
-  min-height: 30%;
-  height: 60%;
-  max-height: 60%;
-  min-width: 100%;
-  max-width: 100%;
-  object-fit: cover;
-}
 
 .cardInfoDiv{
-  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: clamp(12px, 3vh, 16px);
-  margin: 2%;
+  font-size: clamp(12px, 2.8vh, 15px);
+  margin: 4%;
+  font-family: Helvetica;
+  letter-spacing: 0.5px;
 }
 
 .cardInfoSubDiv{
@@ -66,6 +59,8 @@ p{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-family: Helvetica;
+  letter-spacing: 1px;
 }
 
 #detailsTitle{
@@ -139,9 +134,14 @@ p{
   cursor: pointer;
 }
 
-#detailsAttendees > input:hover {
+#attendButton:hover {
   background-color: rgba(0, 75, 125, 1);
   transition-duration: 0.3s;
+}
+
+#attending {
+  background-color: rgba(0, 200, 75, 0.8) !important;
+  cursor: default !important;
 }
 
 #detailsDescription{

@@ -48,6 +48,11 @@ const NavBar = () => {
     new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/createEvent") navigate("/createEvent") }),
   ]
 
+  if (localStorage.getItem('token')) {
+    navBarElements.push(
+      new NavBarElement("Log out", 'button', () => { localStorage.removeItem('token'); window.location.reload(false) }),
+    )
+  }
   var icon = <div></div>
   // icon = <img src={} alt="icon" style={{ height: '40px', marginRight: '15px' }} />
 
@@ -75,7 +80,7 @@ const NavBar = () => {
 
   return (
     <div id='navBar' >
-      <div id='navBarTitle' ref={titleRef}>{icon}<p style={{cursor: 'pointer'}} onClick={() => { if (location.pathname !== "/") navigate("/") }}>Event Planner</p></div>
+      <div id='navBarTitle' ref={titleRef}>{icon}<p style={{ cursor: 'pointer' }} onClick={() => { if (location.pathname !== "/") navigate("/") }}>Event Planner</p></div>
       <div id='navBarElementsDiv' ref={navBarRef}>
         {navBarElementsVisible ?
           output :
@@ -91,25 +96,25 @@ const NavBar = () => {
 }
 
 
-const Footer = () => {
-  return (
-    <div id='footer'>
-      <div id='footerCopyright'>
-        <a href='https://github.com/khaledjalloul/event-planner_react'>GitHub Link: khaledjalloul/event-planner_react</a>
-      </div>
-    </div>
-  )
-}
+// const Footer = () => {
+//   return (
+//     <div id='footer'>
+//       <div id='footerCopyright'>
+//         <a href='https://github.com/khaledjalloul/event-planner_react'>GitHub Link: khaledjalloul/event-planner_react</a>
+//       </div>
+//     </div>
+//   )
+// }
 
 
 const HeaderFooter = (props) => {
   return (
-    <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar />
       <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch' }}>
         {props.children}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

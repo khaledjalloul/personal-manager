@@ -11,7 +11,7 @@ const EventCard = (props) => {
             <img src={props.data.image} className="cardImage" alt={props.data.title} />
             <div className="cardInfoDiv">
                 <p style={{ fontWeight: 'bold', alignSelf: 'center' }}>{props.data.title}</p>
-                <div style={{width: '70%', border: 'solid 1px black', alignSelf: 'center', marginTop: '10px', marginBottom: '10px'}} />
+                <div style={{width: '70%', borderTop: 'solid 2px black', alignSelf: 'center', marginTop: '10px', marginBottom: '10px'}} />
                 <div className='cardInfoSubDiv'>
                     <p><MdLocationOn style={{marginRight: '4px'}}/> {props.data.eventLocation}</p>
                     <p><MdDateRange style={{marginRight: '4px'}}/> {dateTime.toLocaleDateString()}</p>
@@ -46,7 +46,8 @@ const Home = () => {
                 description: event.description,
                 attendees: event.attendees,
                 items: event.items,
-                image: event.image
+                image: event.image,
+                creator: event.creator
             }}
         />)
 

@@ -4,8 +4,9 @@ import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
 
 const EventDetails = () => {
     const location = useLocation()
-    
-    const { id, title, eventLocation, dateTime, description, image } = location.state.data
+    const username = JSON.parse(localStorage.getItem('token')).username
+
+    const { id, title, eventLocation, dateTime, description, image, creator } = location.state.data
 
     const [attendees, setAttendees] = useState(location.state.data.attendees)
     const [items, setItems] = useState(location.state.data.items)
@@ -15,7 +16,7 @@ const EventDetails = () => {
     const attendEvent = async () => {
         await fetch('http://localhost:3737/attendEvent', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify({ id: id, name: username })
         }).then(res => res.json())
             .then(data => setAttendees(data))
     }
@@ -34,8 +35,12 @@ const EventDetails = () => {
         })
     }
 
-    const attendeesList = attendees.map(attendee =>
-        <div className='detailsAttendee'>{attendee}</div>
+    const attendeesList = attendees.map(attendee => {
+        if (attendee === creator) attendee = attendee + " (Host)"
+        if (attendee === username) attendee = attendee + " (You)"
+
+        return <div className='detailsAttendee'>{attendee}</div>
+    }
     )
     const itemsList = items.map(item =>
         <label className='detailsItem'>{item.name}<input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} /></label>
@@ -60,7 +65,12 @@ const EventDetails = () => {
                         <div id='detailsSubAttendees'>
                             {attendeesList}
                         </div>
-                        <input type='button' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
+                        {attendees.indexOf(username) === -1 ?
+                            <input type='button' id='attendButton' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
+                            :
+                            <input type='button' id='attending' value='Attending' style={{ marginTop: 'auto' }} disabled />
+                        }
+
                     </div>
                     <div style={{ height: '40%', width: '0px', borderLeft: 'solid 2px black', alignSelf: 'center' }} />
                     <div id='detailsDescription'>
