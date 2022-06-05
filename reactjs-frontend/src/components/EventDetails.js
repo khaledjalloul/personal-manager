@@ -55,7 +55,7 @@ const EventDetails = (props) => {
             body: JSON.stringify({ id: _id })
         }).then(res => res.json())
             .then(data => {
-                if (data.status === 'success') navigate('/')
+                if (data.status === 'success') navigate('/event-planner_react')
             })
     }
 

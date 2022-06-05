@@ -7,7 +7,7 @@ const EventCard = (props) => {
     const navigate = useNavigate()
     const dateTime = new Date(props.data.dateTime)
     return (
-        <div className="cardDiv" onClick={() => { navigate('/eventDetails', { state: { data: props.data } }) }}>
+        <div className="cardDiv" onClick={() => { navigate('/event-planner_react/eventDetails', { state: { data: props.data } }) }}>
             <img src={props.data.image} className="cardImage" alt={props.data.title} />
             <div className="cardInfoDiv">
                 <p style={{ fontWeight: 'bold', alignSelf: 'center' }}>{props.data.title}</p>
@@ -63,7 +63,7 @@ const Home = (props) => {
         }).then(res => res.json())
             .then(data => {
 
-                if (data.status === 'success') navigate('/eventDetails', { state: { data: data.result } })
+                if (data.status === 'success') navigate('/event-planner_react/eventDetails', { state: { data: data.result } })
             })
     }
 

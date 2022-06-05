@@ -19,16 +19,17 @@ function App() {
 
   const { token, setToken } = useToken()
 
-  const APIURL = 'http://localhost:5000'
+  // const APIURL = 'http://localhost:5000'
+  const APIURL = 'https://event-planner-express.herokuapp.com'
 
   return (
     <Router>
       <NavBarFooter>
         {!token ? <Login setToken={setToken} APIURL={APIURL}  /> :
           <Routes>
-            <Route exact path="/" element={<Home APIURL={APIURL} />}></Route>
-            <Route exact path="/createEvent" element={<CreateEvent APIURL={APIURL} />}></Route>
-            <Route exact path="/eventDetails" element={<EventDetails APIURL={APIURL} />}></Route>
+            <Route exact path="/event-planner_react" element={<Home APIURL={APIURL} />}></Route>
+            <Route exact path="/event-planner_react/createEvent" element={<CreateEvent APIURL={APIURL} />}></Route>
+            <Route exact path="/event-planner_react/eventDetails" element={<EventDetails APIURL={APIURL} />}></Route>
           </Routes>}
       </NavBarFooter>
     </Router>

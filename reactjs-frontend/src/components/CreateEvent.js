@@ -22,7 +22,7 @@ const CreateEvent = (props) => {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title, location: eventLocation, dateTime: dateTime.toISOString(), image, items: itemsList, description, creator: JSON.parse(localStorage.getItem('token')).username })
         }).then(res => res.json())
-            .then(data => { if (data.status === 'success') navigate('/') })
+            .then(data => { if (data.status === 'success') navigate('/event-planner_react') })
     }
 
     return (

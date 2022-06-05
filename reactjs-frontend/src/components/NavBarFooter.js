@@ -48,8 +48,8 @@ const NavBar = () => {
 
   if (localStorage.getItem('token')) {
     navBarElements = [
-      new NavBarElement("My Events", 'button', () => { if (location.pathname !== "/") navigate("/") }),
-      new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/createEvent") navigate("/createEvent") }),
+      new NavBarElement("My Events", 'button', () => { if (location.pathname !== "/event-planner_react") navigate("/event-planner_react") }),
+      new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/event-planner_react/createEvent") navigate("/event-planner_react/createEvent") }),
       new NavBarElement("Log out", 'button', () => { localStorage.removeItem('token'); window.location.reload(false) }),
     ]
   }
@@ -80,7 +80,7 @@ const NavBar = () => {
 
   return (
     <div id='navBar' >
-      <div id='navBarTitle' ref={titleRef}>{icon}<p style={{ cursor: 'pointer' }} onClick={() => { if (location.pathname !== "/") navigate("/") }}>Event Planner</p></div>
+      <div id='navBarTitle' ref={titleRef}>{icon}<p style={{ cursor: 'pointer' }} onClick={() => { if (location.pathname !== "/event-planner_react") navigate("/event-planner_react") }}>Event Planner</p></div>
       <div id='navBarElementsDiv' ref={navBarRef}>
         {navBarElementsVisible ?
           output :

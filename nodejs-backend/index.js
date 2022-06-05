@@ -1,10 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
-var multer = require('multer')
-var multerFTP = require('multer-ftp')
 const crypto = require('crypto');
-const { strictEqual } = require('assert');
+
 const corsOptions = {
     origin: '*',
     credentials: true,
@@ -18,19 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT || 3737;
 
 let mongoClient;
-// var upload = multer({
-//     storage: new multerFTP({
-//         basepath: '/public_html/images',
-//         destination: function (req, file, options, callback) {
-//             callback(null, path.join(options.basepath, file.originalname))
-//          },
-//         ftp: {
-//             host: 'files.000webhost.com',
-//             user: 'guides-app-img',
-//             password: 'Kj542533'
-//         }
-//     })
-// })
 
 app.listen(port, async () => {
     mongoClient = new MongoClient();
