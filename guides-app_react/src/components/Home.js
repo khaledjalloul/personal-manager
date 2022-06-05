@@ -22,7 +22,7 @@ const EventCard = (props) => {
     )
 }
 
-const Home = () => {
+const Home = (props) => {
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
     const [searchID, setSearchID] = useState()
@@ -30,17 +30,18 @@ const Home = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        // fetch("https://guides-app-node-server.herokuapp.com/fetchGuides")
-        fetch('http://localhost:3737/getEvents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: JSON.parse(localStorage.getItem('token')).username }) })
+        fetch(props.APIURL + '/getEvents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: JSON.parse(localStorage.getItem('token')).username }) })
             .then(res => res.json())
             .then((result) => {
                 setEvents(result)
                 setLoading(false)
             })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     var eventCards = events.map(event =>
         <EventCard
+            key={event._id}
             data={{
                 _id: event._id,
                 title: event.title,
@@ -52,11 +53,11 @@ const Home = () => {
                 image: event.image,
                 creator: event.creator
             }}
+            APIURL={props.APIURL}
         />)
 
     const searchForEvent = async () => {
-        console.log(searchID)
-        fetch('http://localhost:3737/getEventByID', {
+        fetch(props.APIURL + '/getEventByID', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: searchID })
         }).then(res => res.json())
@@ -85,7 +86,7 @@ const Home = () => {
                         {eventCards}
                     </div>
                     <div id='searchEventDiv'>
-                        <p style={{fontFamily: 'Helvetica', color: 'grey', fontSize: '14px'}}>Join an existing event by pasting its ID below.</p>
+                        <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>Join an existing event by pasting its ID below.</p>
                         <div id='searchEventSubDiv'>
                             <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} /><input type='button' value='Search' onClick={searchForEvent} />
                         </div>

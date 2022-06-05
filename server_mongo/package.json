@@ -15,5 +15,8 @@
     "mongoose": "^6.0.5",
     "multer": "^1.4.3",
     "multer-ftp": "^1.2.0"
+  },
+  "engines": {
+    "node": "14.16.1"
   }
 }

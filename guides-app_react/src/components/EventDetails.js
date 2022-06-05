@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MdLocationOn, MdDateRange, MdAccessTime, MdShare, MdOutlineDelete } from "react-icons/md";
 
-const EventDetails = () => {
+const EventDetails = (props) => {
     const location = useLocation()
     const navigate = useNavigate()
     const username = JSON.parse(localStorage.getItem('token')).username
 
     const { _id, title, eventLocation, dateTime, description, image, creator } = location.state.data
 
-    console.log(location.state.data)
     const [attendees, setAttendees] = useState(location.state.data.attendees)
     const [items, setItems] = useState(location.state.data.items)
     const [confirmDelete, setConfirmDelete] = useState(false)
@@ -18,7 +17,7 @@ const EventDetails = () => {
     const dateTimeFormat = new Date(dateTime)
 
     const attendEvent = async () => {
-        await fetch('http://localhost:3737/attendEvent', {
+        await fetch(props.APIURL + '/attendEvent', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: _id, name: username })
         }).then(res => res.json())
@@ -28,7 +27,7 @@ const EventDetails = () => {
     const unAttendEvent = async () => {
         if (attendees.length === 1) setConfirmDelete(true)
         else{
-            await fetch('http://localhost:3737/unAttendEvent', {
+            await fetch(props.APIURL + '/unAttendEvent', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: _id, name: username })
             }).then(res => res.json())
@@ -44,14 +43,14 @@ const EventDetails = () => {
             } else return item
         })
         setItems(newItems)
-        await fetch('http://localhost:3737/checkItem', {
+        await fetch(props.APIURL + '/checkItem', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: _id, item: event.target.value, available: event.target.checked })
         })
     }
 
     const deleteEvent = async () => {
-        await fetch('http://localhost:3737/deleteEvent', {
+        await fetch(props.APIURL + '/deleteEvent', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: _id })
         }).then(res => res.json())
@@ -65,11 +64,11 @@ const EventDetails = () => {
         if (attendee === creator) displayAttendee = displayAttendee + " (Host)"
         if (attendee === username) displayAttendee = displayAttendee + " (You)"
 
-        return <div className='detailsAttendee'>{displayAttendee}</div>
+        return <div className='detailsAttendee' key={attendee}>{displayAttendee}</div>
     }
     )
     const itemsList = items.map(item =>
-        <label className='detailsItem'>{item.name}<input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} /></label>
+        <label className='detailsItem' key={item.name}>{item.name}<input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} /></label>
     )
 
     return (
@@ -81,7 +80,7 @@ const EventDetails = () => {
                     <p style={{ fontSize: '14px' }}>ID: {_id}</p>
                     <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
                         <MdShare className='infoIcon' color='green' size={23} onClick={() => navigator.clipboard.writeText(_id)} />
-                        <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23} style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { console.log(confirmDelete); setConfirmDelete(!confirmDelete) }} />
+                        <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23} style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }} />
                         <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />
                     </div>
                 </div>

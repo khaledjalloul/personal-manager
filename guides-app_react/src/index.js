@@ -19,15 +19,17 @@ function App() {
 
   const { token, setToken } = useToken()
 
+  const APIURL = 'http://localhost:5000'
+
   return (
     <Router>
       <NavBarFooter>
-        {!token ? <Login setToken={setToken} /> :
-        <Routes>
-          <Route exact path="/" element={<Home />}></Route>
-          <Route exact path="/createEvent" element={<CreateEvent />}></Route>
-          <Route exact path="/eventDetails" element={<EventDetails />}></Route>
-        </Routes>}
+        {!token ? <Login setToken={setToken} APIURL={APIURL}  /> :
+          <Routes>
+            <Route exact path="/" element={<Home APIURL={APIURL} />}></Route>
+            <Route exact path="/createEvent" element={<CreateEvent APIURL={APIURL} />}></Route>
+            <Route exact path="/eventDetails" element={<EventDetails APIURL={APIURL} />}></Route>
+          </Routes>}
       </NavBarFooter>
     </Router>
   );

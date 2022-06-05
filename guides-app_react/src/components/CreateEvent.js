@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import DateTimePicker from 'react-datetime-picker';
 import '../styles/DateTimePicker.css'
 
-const CreateEvent = () => {
+const CreateEvent = (props) => {
 
     const navigate = useNavigate()
 
@@ -18,11 +18,11 @@ const CreateEvent = () => {
         var itemsList = items.split(',')
         itemsList = itemsList.map(item => item.trim())
 
-        await fetch("http://localhost:3737/createEvent", {
+        await fetch(props.APIURL + "/createEvent", {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title, location: eventLocation, dateTime: dateTime.toISOString(), image, items: itemsList, description, creator: JSON.parse(localStorage.getItem('token')).username })
         }).then(res => res.json())
-            .then(data => { console.log(data); if (data.status === 'success') navigate('/') })
+            .then(data => { if (data.status === 'success') navigate('/') })
     }
 
     return (

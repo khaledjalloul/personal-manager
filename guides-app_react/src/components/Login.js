@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Login = ({ setToken }) => {
+const Login = ({ setToken, APIURL }) => {
 
     const [loginUsername, setLoginUsername] = useState()
     const [loginPassword, setLoginPassword] = useState()
@@ -8,18 +8,19 @@ const Login = ({ setToken }) => {
     const [registerPassword, setRegisterPassword] = useState()
 
     const login = async (creds) => {
-        return fetch("http://localhost:3737/login", {
+        return fetch(APIURL + '/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(creds)
-        }).then(data => data.json())
+        }).then(res => res.json())
     }
 
     const handleRegister = async e => {
         e.preventDefault();
-        await fetch("http://localhost:3737/register", {
+        await fetch(APIURL + '/register', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({registerUsername, registerPassword})
-        }).then(data => console.log(data))
+        }).then(res => res.json())
+        .then(data => data)
     }
 
     const handleLogin = async e => {

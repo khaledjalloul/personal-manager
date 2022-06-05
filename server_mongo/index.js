@@ -4,6 +4,7 @@ const cors = require("cors");
 var multer = require('multer')
 var multerFTP = require('multer-ftp')
 const crypto = require('crypto');
+const { strictEqual } = require('assert');
 const corsOptions = {
     origin: '*',
     credentials: true,
@@ -34,7 +35,7 @@ let mongoClient;
 app.listen(port, async () => {
     mongoClient = new MongoClient();
     await mongoClient.start()
-    console.log("Event Planner NodeJS API running.");
+    console.log("Event Planner NodeJS API running on port " + port + ".");
 })
 
 app.post('/register', async (req, res) => {

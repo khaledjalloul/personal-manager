@@ -2,6 +2,7 @@ import '../styles/navBarFooter.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Hamburger from 'hamburger-react';
+import {MdEventNote} from 'react-icons/md'
 
 class NavBarElement {
   constructor(name, type, func) {
@@ -53,15 +54,14 @@ const NavBar = () => {
     ]
   }
 
-  var icon = <div></div>
-  // icon = <img src={} alt="icon" style={{ height: '40px', marginRight: '15px' }} />
+  var icon = <MdEventNote style={{ marginRight: '15px' }} />
 
   navBarElements.map((navBarElement, index) => {
 
     if (navBarElement.type === "button")
 
       output.push(
-        <div className={navBarElementsVisible ? 'navBarDropDown' : 'navBarHamburgerDropDown'}>
+        <div className={navBarElementsVisible ? 'navBarDropDown' : 'navBarHamburgerDropDown'} key={navBarElement.name}>
           <input type="button" value={navBarElement.name} onClick={navBarElement.func} className={navBarElementsVisible ? 'navBarElement' : 'navBarHamburgerElement'} />
         </div>)
 
@@ -96,27 +96,27 @@ const NavBar = () => {
 }
 
 
-// const Footer = () => {
-//   return (
-//     <div id='footer'>
-//       <div id='footerCopyright'>
-//         <a href='https://github.com/khaledjalloul/event-planner_react'>GitHub Link: khaledjalloul/event-planner_react</a>
-//       </div>
-//     </div>
-//   )
-// }
+const Footer = () => {
+  return (
+    <div id='footer'>
+      <div id='footerCopyright'>
+        <a href='https://github.com/khaledjalloul/event-planner_react'>GitHub Link: khaledjalloul/event-planner_react</a>
+      </div>
+    </div>
+  )
+}
 
 
-const HeaderFooter = (props) => {
+const NavBarFooter = (props) => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar />
       <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch' }}>
         {props.children}
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
 
-export default HeaderFooter;
+export default NavBarFooter;
