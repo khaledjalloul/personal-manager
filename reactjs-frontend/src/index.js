@@ -11,7 +11,7 @@ import Login from './components/Login'
 import CreateEvent from './components/CreateEvent'
 import EventDetails from './components/EventDetails'
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import NavBarFooter from './components/NavBarFooter';
 import useToken from './assets/functions/useToken';
 
@@ -24,9 +24,10 @@ function App() {
 
   return (
     <Router>
-      <NavBarFooter>
+    <NavBarFooter token={token} setToken={setToken}>
         {!token ? <Login setToken={setToken} APIURL={APIURL}  /> :
           <Routes>
+            <Route exact path='/' element={<Navigate to='/event-planner_react' />} />
             <Route exact path="/event-planner_react" element={<Home APIURL={APIURL} />}></Route>
             <Route exact path="/event-planner_react/createEvent" element={<CreateEvent APIURL={APIURL} />}></Route>
             <Route exact path="/event-planner_react/eventDetails" element={<EventDetails APIURL={APIURL} />}></Route>

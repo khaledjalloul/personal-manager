@@ -74,20 +74,21 @@ const Home = (props) => {
             </div>
             :
             eventCards.length === 0 ?
-                <div style={{ width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div>
+                <div className='searchEventDiv' style={{ width: '100vw', height:'100%' }}>
                     <p style={{ fontFamily: 'Helvetica' }}>You're not attending any events. Join one by pasting its ID below.</p>
-                    <div style={{ marginTop: '20px' }}>
+                    <div className='searchEventSubDiv' style={{ marginTop: '20px' }}>
                         <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} /><input type='button' value='Search' onClick={searchForEvent} />
                     </div>
-                </div>
+                </div></div>
                 :
                 <div id="homeMainDiv">
                     <div id='homeCardListDiv'>
                         {eventCards}
                     </div>
-                    <div id='searchEventDiv'>
+                    <div className='searchEventDiv'>
                         <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>Join an existing event by pasting its ID below.</p>
-                        <div id='searchEventSubDiv'>
+                        <div className='searchEventSubDiv'>
                             <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} /><input type='button' value='Search' onClick={searchForEvent} />
                         </div>
                     </div>

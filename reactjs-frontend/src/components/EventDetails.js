@@ -78,7 +78,7 @@ const EventDetails = (props) => {
                 <div id='detailsTitle'>
                     <p style={{ fontSize: '40px' }}>{title}</p>
                     <p style={{ fontSize: '14px' }}>ID: {_id}</p>
-                    <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ marginTop: '5px', display: 'flex', alignItems: 'center' }}>
                         <MdShare className='infoIcon' color='green' size={23} onClick={() => navigator.clipboard.writeText(_id)} />
                         <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23} style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }} />
                         <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />

@@ -12,7 +12,7 @@ class NavBarElement {
   }
 }
 
-const NavBar = () => {
+const NavBar = (props) => {
   const [navBarElementsVisible, setNavBarElementsVisible] = useState(true)
   const [lastKnownWidth, setLastKnownWidth] = useState(0)
   const [displayHamburgerDiv, setDisplayHamburgerDiv] = useState(false)
@@ -46,11 +46,11 @@ const NavBar = () => {
   var output = []
   var navBarElements = []
 
-  if (localStorage.getItem('token')) {
+  if (props.token) {
     navBarElements = [
       new NavBarElement("My Events", 'button', () => { if (location.pathname !== "/event-planner_react") navigate("/event-planner_react") }),
       new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/event-planner_react/createEvent") navigate("/event-planner_react/createEvent") }),
-      new NavBarElement("Log out", 'button', () => { localStorage.removeItem('token'); window.location.reload(false) }),
+      new NavBarElement("Log out", 'button', () => { props.setToken({}); navigate('/event-planner_react') }),
     ]
   }
 
@@ -110,7 +110,7 @@ const Footer = () => {
 const NavBarFooter = (props) => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar />
+      <NavBar token={props.token} setToken={props.setToken}/>
       <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch' }}>
         {props.children}
       </div>

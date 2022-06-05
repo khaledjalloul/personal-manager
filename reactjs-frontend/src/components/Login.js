@@ -30,15 +30,17 @@ const Login = ({ setToken, APIURL }) => {
         })
         if (token.token)
             setToken({token: token.token, username: loginUsername});
-        else console.log("Invalid username or password")
+        else {
+            
+        }
     }
 
     return (
         <div id='loginMainDiv'>
             <form onSubmit={handleLogin} className='loginForm'>
                 <p className='loginTitle'>Sign In</p>
-                <input className='loginTextField' type='text' placeholder='Username' onChange={e => setLoginUsername(e.target.value)} />
-                <input className='loginTextField' type='password' placeholder='Password' onChange={e => setLoginPassword(e.target.value)} />
+                <input className='loginTextField' type='text' placeholder='Username' onChange={e => setLoginUsername(e.target.value)} required />
+                <input className='loginTextField' type='password' placeholder='Password' onChange={e => setLoginPassword(e.target.value)} required />
                 <button className='loginButton' type='submit'>Sign In</button>
             </form>
             <div id='loginDivider'>
@@ -48,9 +50,9 @@ const Login = ({ setToken, APIURL }) => {
             </div>
             <form onSubmit={handleRegister} className='loginForm'>
                 <p className='loginTitle'>Register</p>
-                <input className='loginTextField' type='text' placeholder='Username' onChange={e => setRegisterUsername(e.target.value)} />
-                <input className='loginTextField' type='password' placeholder='Password' onChange={e => setRegisterPassword(e.target.value)} />
-                <input className='loginTextField' type='password' placeholder='Repeat Password' onChange={e => setRegisterPassword(e.target.value)} />
+                <input className='loginTextField' type='text' placeholder='Username' onChange={e => setRegisterUsername(e.target.value)} required/>
+                <input className='loginTextField' type='password' placeholder='Password' onChange={e => setRegisterPassword(e.target.value)} required/>
+                <input className='loginTextField' type='password' placeholder='Repeat Password' onChange={e => setRegisterPassword(e.target.value)} required />
                 <button className='loginButton' type='submit'>Register</button>
             </form>
         </div>
