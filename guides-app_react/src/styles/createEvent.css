@@ -1,0 +1,58 @@
+#createMainDiv {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  #createMainDiv>label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-family: Helvetica;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+  }
+  
+  #createMainDiv>label>input,
+  #createMainDiv>label>textarea {
+    width: 40vw;
+    height: 40px;
+    font-size: 17px;
+    margin-top: 5px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-family: Helvetica;
+    opacity: 0.7;
+    box-shadow: 5px 5px 5px 1px grey;
+  }
+  
+  #createMainDiv>label>input:hover,
+  #createMainDiv>label>textarea:hover,
+  #createMainDiv>label>input:focus,
+  #createMainDiv>label>textarea:focus {
+    opacity: 1;
+    transition-duration: 0.2s;
+  }
+  
+  #createEventButton {
+    width: 20vw;
+    height: 40px;
+    border: none;
+    background-color: rgb(0, 125, 200);
+    color: white;
+    font-family: Helvetica;
+    font-size: 16px;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 3px 3px 7px 1px grey;
+    transition-duration: 0.2s;
+  }
+  
+  #createEventButton:hover {
+    transition-duration: 0.2s;
+    box-shadow: 1px 1px 2px 1px grey;
+  }

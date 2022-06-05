@@ -43,16 +43,16 @@ const NavBar = () => {
   }, [])
 
   var output = []
-  var navBarElements = [
-    new NavBarElement("My Events", 'button', () => { if (location.pathname !== "/") navigate("/") }),
-    new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/createEvent") navigate("/createEvent") }),
-  ]
+  var navBarElements = []
 
   if (localStorage.getItem('token')) {
-    navBarElements.push(
+    navBarElements = [
+      new NavBarElement("My Events", 'button', () => { if (location.pathname !== "/") navigate("/") }),
+      new NavBarElement("Create Event", 'button', () => { if (location.pathname !== "/createEvent") navigate("/createEvent") }),
       new NavBarElement("Log out", 'button', () => { localStorage.removeItem('token'); window.location.reload(false) }),
-    )
+    ]
   }
+
   var icon = <div></div>
   // icon = <img src={} alt="icon" style={{ height: '40px', marginRight: '15px' }} />
 

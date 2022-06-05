@@ -1,6 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.css';
+import './styles/home.css';
+import './styles/eventDetails.css';
+import './styles/createEvent.css';
+import './styles/DateTimePicker.css';
+import './styles/navBarFooter.css';
+import './styles/login.css';
 import Home from './components/Home'
 import Login from './components/Login'
 import CreateEvent from './components/CreateEvent'
@@ -11,20 +16,18 @@ import NavBarFooter from './components/NavBarFooter';
 import useToken from './assets/functions/useToken';
 
 function App() {
-  
-  const {token, setToken} = useToken()
-  
-  if (!token)
-    return <Login setToken={setToken} />
+
+  const { token, setToken } = useToken()
 
   return (
     <Router>
       <NavBarFooter>
+        {!token ? <Login setToken={setToken} /> :
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route exact path="/createEvent" element={<CreateEvent />}></Route>
           <Route exact path="/eventDetails" element={<EventDetails />}></Route>
-        </Routes>
+        </Routes>}
       </NavBarFooter>
     </Router>
   );

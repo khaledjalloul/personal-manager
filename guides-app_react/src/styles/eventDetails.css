@@ -1,0 +1,184 @@
+#detailsMainDiv {
+    width: 100vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  #detailsHeader {
+    width: 92%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: Helvetica;
+    letter-spacing: 1px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding-left: 3%;
+    padding-right: 3%;
+    margin-top: 20px;
+    box-shadow: 5px 5px 10px 2px grey;
+  }
+  
+  #detailsTitle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .infoIcon {
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 20px;
+  }
+
+  .infoIcon:hover {
+    transition-duration: 0.2s;
+    background-color: rgba(100, 100, 100, 0.2);
+
+  }
+
+  #detailsImage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    object-fit: cover;
+    z-index: -1;
+  }
+  
+  #detailsInfo {
+    height: 70%;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  
+  #detailsContent {
+    width: 98%;
+    height: 90%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  #detailsAttendees {
+    padding-top: 20px;
+    width: 24%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 5px 5px 10px 2px grey;
+  }
+  
+  #detailsSubAttendees {
+    flex: 1 1 auto;
+    direction: rtl;
+    overflow-y: auto;
+    width: 100%;
+  }
+  
+  .detailsAttendee {
+    width: 100%;
+    background-color: rgba(0, 75, 125, 0.1);
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Helvetica;
+    cursor: default;
+  }
+  
+  .detailsAttendee:hover {
+    background-color: rgba(0, 75, 125, 0.2);
+    transition-duration: 0.3s;
+  }
+  
+  #attendButton, #attending, #unAttendButton {
+    width: 100%;
+    min-height: 35px;
+    border: none;
+    background-color: rgba(0, 75, 125, 0.8);
+    color: white;
+    cursor: pointer;
+  }
+  
+  #attendButton:hover {
+    background-color: rgba(0, 75, 125, 1);
+    transition-duration: 0.3s;
+  }
+  
+  #attending {
+    background-color: rgba(0, 200, 75, 0.8) !important;
+    cursor: default !important;
+  }
+  
+  #detailsDescription {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    width: 49%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 5px 5px 10px 2px grey;
+  }
+  
+  #detailsItems {
+    padding-top: 20px;
+    width: 24%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 5px 5px 10px 2px grey;
+  }
+  
+  #detailsSubItems {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    width: 100%;
+  }
+  
+  .detailsItem {
+    width: 80%;
+    background-color: rgba(0, 75, 125, 0.1);
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10%;
+    padding-right: 10%;
+    font-family: Helvetica;
+    cursor: pointer;
+  }
+  
+  .detailsItem:hover {
+    background-color: rgba(0, 75, 125, 0.2);
+    transition-duration: 0.3s;
+  }
+
+  #confirmDeleteButton {
+    border: none;
+    padding: 5px;
+    margin-left: 10px;
+    background-color: rgb(255, 50, 50);
+    color: white;
+    cursor: pointer;
+    box-shadow: 3px 3px 5px 1px grey;
+    transition-duration: 0.2s;
+  }
+
+  #confirmDeleteButton:hover{
+    box-shadow: 1px 1px 3px 1px grey;
+    transition-duration: 0.2s;
+  }
+
+  #confirmDeleteButtonHidden {
+    visibility: hidden;
+  }

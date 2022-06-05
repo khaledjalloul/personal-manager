@@ -38,12 +38,11 @@ app.listen(port, async () => {
 })
 
 app.post('/register', async (req, res) => {
-    res.json(await mongoClient.register(req.body.username, req.body.password).catch(e => { console.error(e) }))
+    res.json(await mongoClient.register(req.body.registerUsername, req.body.registerPassword).catch(e => { console.error(e) }))
 })
 
 app.use("/login", async (req, res) => {
-    const result = await mongoClient.login(req.body.username, req.body.password).catch(e => { console.error(e) })
-
+    const result = await mongoClient.login(req.body.loginUsername, req.body.loginPassword).catch(e => { console.error(e) })
     if (result) {
         res.json({ token: crypto.randomBytes(16).toString('hex') })
     } else {
@@ -51,39 +50,32 @@ app.use("/login", async (req, res) => {
     }
 })
 
-app.get("/getEvents", async (req, res) => {
-    res.json(await mongoClient.getEvents().catch(e => { console.error(e) }));
+app.post("/getEvents", async (req, res) => {
+    res.json(await mongoClient.getEvents(req.body.username).catch(e => { console.error(e) }))
+})
+
+app.post("/getEventByID", async (req, res) => {
+    res.json(await mongoClient.getEventbyID(req.body.id).catch(e => { console.error(e) }))
 })
 
 app.post("/attendEvent", async (req, res) => {
-    res.json(await mongoClient.attendEvent(req.body.id, req.body.name).catch(e => { console.error(e) }));
+    res.json(await mongoClient.attendEvent(req.body.id, req.body.name).catch(e => { console.error(e) }))
+})
+
+app.post("/unAttendEvent", async (req, res) => {
+    res.json(await mongoClient.unAttendEvent(req.body.id, req.body.name).catch(e => { console.error(e) }))
 })
 
 app.post("/checkItem", async (req, res) => {
-    res.json(await mongoClient.checkItem(req.body.id, req.body.item, req.body.available).catch(e => { console.error(e) }));
+    res.json(await mongoClient.checkItem(req.body.id, req.body.item, req.body.available).catch(e => { console.error(e) }))
 })
 
-// app.post("/addGuide", bodyParser.json(), async (req, res) => {
-//     const result = await mongoClient.addGuide(req.body);
-//     res.json({ "res": result })
-// })
+app.post("/createEvent", async (req, res) => {
+    res.json(await mongoClient.createEvent(req.body.title, req.body.location, req.body.dateTime, req.body.image, req.body.items, req.body.description, req.body.creator).catch(e => { console.error(e) }))
+})
 
-// app.post("/deleteGuide", bodyParser.json(), async (req, res) => {
-//     const result = await mongoClient.deleteGuide(req.body);
-//     res.json({ "res": result })
-// })
-
-// app.post("/uploadImage", upload.single("image"), (req, res) => {
-//     res.send(req.file);
-// })
-
-app.get("/wipe", async (req, res) => {
-    if (req.query.pass === "Kj542533") {
-        await mongoClient.wipe();
-        res.send("Done.")
-    } else {
-        res.send("Enter pass.")
-    }
+app.post("/deleteEvent", async (req, res) => {
+    res.json(await mongoClient.deleteEvent(req.body.id).catch(e => { console.error(e) }))
 })
 
 class MongoClient {
@@ -93,10 +85,12 @@ class MongoClient {
 
         this.EventSchema = new mongoose.Schema({
             title: String,
-            location: String,
-            time: Date,
+            eventLocation: String,
+            dateTime: Date,
+            image: String,
             attendees: [String],
             creator: String,
+            description: String,
             items: [{ name: String, available: Boolean }]
         }, { collection: 'events' });
         this.Event = mongoose.model('Event', this.EventSchema);
@@ -133,27 +127,67 @@ class MongoClient {
         try {
             const { salt, hash } = await this.User.findOne({ username: username })
             if (!salt) return false
-             
+
             const hashAttempt = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
 
             return hash === hashAttempt
 
         } catch (e) { console.log(e) }
     }
-    async getEvents() {
+    async getEvents(username) {
         try {
-            return await this.Event.find({})
+            const { events } = await this.User.findOne({ username: username })
+            const userEvents = await Promise.all(events.map(async event =>
+                await this.Event.findOne({ _id: event })
+            ))
+            return userEvents
         } catch (e) { console.log(e); }
     }
 
-    async attendEvent(id, user) {
+    async getEventbyID(id) {
         try {
-            const doc = await this.Event.findById(id)
-            doc.attendees.push(user)
-            return await doc.save().then(savedDoc => {
-                if (savedDoc === doc) {
-                    console.log("Updated users of document " + id)
-                    return doc.attendees
+            const doc = await this.Event.findById(mongoose.Types.ObjectId(id))
+            if (doc) return { status: 'success', result: doc }
+            else return { status: 'fail' }
+        } catch (e) {
+            if (e instanceof TypeError) return { status: 'fail' }
+            else console.log(e)
+        }
+    }
+
+    async attendEvent(id, username) {
+        try {
+            const userDoc = await this.User.findOne({ username: username })
+            userDoc.events.push(id)
+            return await userDoc.save().then(async savedDoc => {
+                if (savedDoc === userDoc) {
+                    const doc = await this.Event.findById(id)
+                    doc.attendees.push(username)
+                    return await doc.save().then(savedDoc => {
+                        if (savedDoc === doc) {
+                            console.log("Updated users of document " + id)
+                            return doc.attendees
+                        }
+                    })
+                }
+            })
+        } catch (e) { console.log(e) }
+    }
+    
+    async unAttendEvent(id, username) {
+        try {
+            const userDoc = await this.User.findOne({ username: username })
+            userDoc.events = userDoc.events.filter(event => event !== id.toString())
+            return await userDoc.save().then(async savedDoc => {
+                if (savedDoc === userDoc) {
+                    const doc = await this.Event.findById(id)
+                    doc.attendees = doc.attendees.filter(attendee => attendee !== username)
+                    return await doc.save().then(savedDoc => {
+                        if (savedDoc === doc) {
+                            console.log("Updated users of document " + id)
+                            return doc.attendees
+                        }
+                    })
                 }
             })
         } catch (e) { console.log(e) }
@@ -177,41 +211,38 @@ class MongoClient {
         } catch (e) { console.log(e) }
     }
 
-    async addGuide(data) {
+    async createEvent(title, location, dateTime, image, items, description, creator) {
+        
         try {
-            const col = data.collection;
-            delete data["collection"];
-            if (col === 'recipes') {
-                const recipe = new this.Recipe(data);
-                await recipe.save();
-            } else if (col === 'generic') {
-                const generic = new this.Generic(data);
-                await generic.save();
-            }
-            return (1);
-        } catch (e) {
-            console.log(e);
-            return (0);
-        }
+            var newEvent = new this.Event({
+                title: title,
+                eventLocation: location,
+                dateTime: dateTime,
+                image: image,
+                items: items.map(item => { return { name: item.charAt(0).toUpperCase() + item.slice(1), available: false } }),
+                description: description,
+                creator: creator,
+                attendees: [creator]
+            })
+            return await newEvent.save().then(async savedDoc => {
+                try {
+                    const doc = await this.User.findOne({ username: creator })
+                    doc.events.push(savedDoc._id.toString())
+                    return await doc.save().then(savedDoc => {
+                        if (savedDoc === doc) { console.log("Created event: " + title); return { status: 'success' } }
+                    })
+                } catch (e) { console.log(e) }
+            })
+        } catch (e) { console.log(e); return {status: 'fail'} }
     }
 
-    async deleteGuide(data) {
+    async deleteEvent(id){
         try {
-            if (data.password !== "Kj542533") return (0);
-            if (data.collection === 'recipes') {
-                this.Recipe.deleteOne({ name: data.name }, (err, res) => { })
-            } else if (data.collection === 'generic') {
-                this.Generic.deleteOne({ name: data.name }, (err, res) => { })
-            }
-            return (1);
-        } catch (e) {
-            console.log(e);
-            return (0);
-        }
-    }
-
-    async wipe() {
-        this.Generic.deleteMany({}, (err, res) => { })
-        this.Recipe.deleteMany({}, (err, res) => { })
+            await this.Event.deleteOne({_id: id})
+            var users = await this.User.find({})
+            console.log(users)
+            await Promise.all(users.map(async user => { user.events = user.events.filter(event => event !== id.toString()); await user.save(); return user}))
+            return {status: 'success'}
+        } catch(e) { console.error(e); }
     }
 }
