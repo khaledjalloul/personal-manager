@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import DateTimePicker from 'react-datetime-picker';
 import Loader from "react-loader-spinner";
 
-const CreateEvent = (props) => {
+const CreateEvent = ({ setToken, APIURL }) => {
 
+    setToken(JSON.parse(localStorage.getItem('token')))
     const navigate = useNavigate()
 
     const [title, setTitle] = useState('')
@@ -29,7 +30,7 @@ const CreateEvent = (props) => {
         }
         var newImage = image
         if (newImage === '') newImage = 'https://med.stanford.edu/cancer/_jcr_content/main/tabs/tab_main_tabs_3/panel_builder/panel_1/image.img.full.high.png/icon-calendar.png'
-        fetch(props.APIURL + "/createEvent", {
+        fetch(APIURL + "/createEvent", {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 title, location: eventLocation,
@@ -73,11 +74,12 @@ const CreateEvent = (props) => {
             </label>
 
             {loading ?
-                <Loader type="TailSpin" color="#004b7d" height='40px' style={{marginTop: '30px'}} />
+                <Loader type="TailSpin" color="#004b7d" height='40px' style={{ marginTop: '30px' }} />
                 :
                 <button id='createEventButton' type='submit'>Create Event!</button>
             }
         </form>
     )
 }
+
 export default CreateEvent

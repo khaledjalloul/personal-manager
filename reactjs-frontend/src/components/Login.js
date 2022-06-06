@@ -6,10 +6,11 @@ const Login = ({ setToken, APIURL }) => {
 
     const [loginUsername, setLoginUsername] = useState()
     const [loginPassword, setLoginPassword] = useState()
+    const [loginStatus, setLoginStatus] = useState(0) //status = ['default', 'loading', 'failed']
+
     const [registerUsername, setRegisterUsername] = useState()
     const [registerPassword, setRegisterPassword] = useState()
     const [repeatedPassword, setRepeatedPassword] = useState()
-    const [loginStatus, setLoginStatus] = useState(0) //status = ['default', 'loading', 'failed']
     const [registerStatus, setRegisterStatus] = useState(0)//status = ['default', 'loading', 'success', 'invalidUsername', 'invalidPassword', 'passwordMismatch, 'failed']
 
     const handleLogin = async e => {

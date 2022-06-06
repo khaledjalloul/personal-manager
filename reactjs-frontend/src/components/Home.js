@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom"
 import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
 
 const EventCard = (props) => {
+
     const navigate = useNavigate()
     const dateTime = new Date(props.data.dateTime)
+
     return (
         <div className="cardDiv" onClick={() => { navigate('/event-planner_react/eventDetails', { state: { _id: props.data._id } }) }}>
             <img src={props.data.image} className="cardImage" alt={props.data.title} />
@@ -23,16 +25,18 @@ const EventCard = (props) => {
     )
 }
 
-const Home = (props) => {
+const Home = ({ setToken, APIURL }) => {
+
+    setToken(JSON.parse(localStorage.getItem('token')))
+    const navigate = useNavigate()
+
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
     const [searchID, setSearchID] = useState()
     const [searchLoading, setSearchLoading] = useState(false)
 
-    const navigate = useNavigate()
-
     useEffect(() => {
-        fetch(props.APIURL + '/getEvents/' + JSON.parse(localStorage.getItem('token')).username)
+        fetch(APIURL + '/getEvents/' + JSON.parse(localStorage.getItem('token')).username)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -57,13 +61,12 @@ const Home = (props) => {
                 image: event.image,
                 creator: event.creator
             }}
-            APIURL={props.APIURL}
         />)
 
     const searchForEvent = async e => {
         e.preventDefault()
         setSearchLoading(true)
-        fetch(props.APIURL + '/getEvent/' + searchID)
+        fetch(APIURL + '/getEvent/' + searchID)
             .then(res => res.json())
             .then(data => {
                 setSearchLoading(false)
@@ -114,7 +117,6 @@ const Home = (props) => {
                 </div>
 
     )
-
 }
 
 export default Home

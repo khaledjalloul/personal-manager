@@ -6,12 +6,14 @@ import { MdLocationOn, MdDateRange, MdAccessTime, MdShare, MdOutlineDelete } fro
 import Loader from "react-loader-spinner";
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
-const EventDetails = (props) => {
-    const location = useLocation()
-    const navigate = useNavigate()
+const EventDetails = ({ setToken, APIURL }) => {
+
+    setToken(JSON.parse(localStorage.getItem('token')))
     const username = JSON.parse(localStorage.getItem('token')).username
 
-    const _id = location.state._id
+    const navigate = useNavigate()
+    const location = useLocation()
+
 
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [attendingButton, setAttendingButton] = useState(true)
@@ -21,10 +23,12 @@ const EventDetails = (props) => {
     const [{ title, eventLocation, dateTime, description, image, creator }, setStaticElements] = useState(
         { title: '', eventLocation: '', dateTime: '', description: '', image: '', creator: '' }
     )
+
+    const _id = location.state._id
     const dateTimeFormat = new Date(dateTime)
 
     useEffect(() => {
-        fetch(props.APIURL + '/getEvent/' + _id)
+        fetch(APIURL + '/getEvent/' + _id)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -45,7 +49,7 @@ const EventDetails = (props) => {
 
     const attendEvent = async () => {
         setAttendingLoading(true)
-        fetch(props.APIURL + '/attendEvent/' + _id, {
+        fetch(APIURL + '/attendEvent/' + _id, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: username })
         }).then(res => res.json())
@@ -58,7 +62,7 @@ const EventDetails = (props) => {
         if (attendees.length === 1) setConfirmDelete(true)
         else {
             setAttendingLoading(true)
-            fetch(props.APIURL + '/unAttendEvent/' + _id, {
+            fetch(APIURL + '/unAttendEvent/' + _id, {
                 method: 'PATCH', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: username })
             }).then(res => res.json())
@@ -76,14 +80,14 @@ const EventDetails = (props) => {
             } else return item
         })
         setItems(newItems)
-        fetch(props.APIURL + '/checkItem/' + _id, {
+        fetch(APIURL + '/checkItem/' + _id, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ item: event.target.value, available: event.target.checked })
         })
     }
 
     const deleteEvent = async () => {
-        fetch(props.APIURL + '/deleteEvent/' + _id, { method: 'DELETE' })
+        fetch(APIURL + '/deleteEvent/' + _id, { method: 'DELETE' })
             .then(res => res.json())
             .then(data => {
                 if (data.success) navigate('/event-planner_react')
@@ -96,8 +100,8 @@ const EventDetails = (props) => {
         if (attendee === username) displayAttendee = displayAttendee + " (You)"
 
         return <div className='detailsAttendee' key={attendee}>{displayAttendee}</div>
-    }
-    )
+    })
+
     const itemsList = items.map(item =>
         <label className='detailsItem' key={item.name}>{item.name}
             <input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} />
