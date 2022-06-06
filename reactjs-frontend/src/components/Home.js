@@ -27,7 +27,7 @@ const EventCard = (props) => {
 
 const Home = ({ setToken, APIURL }) => {
 
-    setToken(JSON.parse(localStorage.getItem('token')))
+    setToken(JSON.parse(localStorage.getItem('token'))) // Always check if token is still valid in case user logged out in another tab.
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(true)

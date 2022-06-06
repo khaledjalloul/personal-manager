@@ -11,7 +11,8 @@ const Login = ({ setToken, APIURL }) => {
     const [registerUsername, setRegisterUsername] = useState()
     const [registerPassword, setRegisterPassword] = useState()
     const [repeatedPassword, setRepeatedPassword] = useState()
-    const [registerStatus, setRegisterStatus] = useState(0)//status = ['default', 'loading', 'success', 'invalidUsername', 'invalidPassword', 'passwordMismatch, 'failed']
+    const [registerStatus, setRegisterStatus] = useState(0)
+    //status = ['default', 'loading', 'success', 'invalidUsername', 'invalidPassword', 'passwordMismatch, 'usernameExists', 'failed']
 
     const handleLogin = async e => {
         e.preventDefault();
@@ -44,7 +45,8 @@ const Login = ({ setToken, APIURL }) => {
                         setRegisterPassword('')
                         setRepeatedPassword('')
                     }
-                    else setRegisterStatus(4)
+                    else if (data.message === 'Username already exists.') setRegisterStatus(6)
+                    else setRegisterStatus(7)
                 })
         }
     }
@@ -83,7 +85,8 @@ const Login = ({ setToken, APIURL }) => {
                         registerStatus === 3 ? 'Username must be at least 6 characters with no spaces.' :
                             registerStatus === 4 ? 'Password must be at least 6 characters with no spaces.' :
                                 registerStatus === 5 ? 'Passwords do not match.' :
-                                    registerStatus === 6 ? 'Unknown error occured.' : ''}
+                                    registerStatus === 6 ? 'Username already exists.' :
+                                        registerStatus === 7 ? 'Unknown error occured.' : ''}
                 </p>
             </form>
         </div>

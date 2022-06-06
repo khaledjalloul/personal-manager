@@ -14,7 +14,7 @@ const EventDetails = ({ setToken, APIURL }) => {
     const navigate = useNavigate()
     const location = useLocation()
 
-
+    const [loading, setLoading] = useState(true)
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [attendingButton, setAttendingButton] = useState(true)
     const [attendingLoading, setAttendingLoading] = useState(false)
@@ -42,6 +42,7 @@ const EventDetails = ({ setToken, APIURL }) => {
                     })
                     setAttendees(data.event.attendees)
                     setItems(data.event.items)
+                    setLoading(false)
                 }
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,29 +110,33 @@ const EventDetails = ({ setToken, APIURL }) => {
     )
 
     return (
-        <div id='detailsMainDiv'>
-            <img src={image} id="detailsImage" alt={title} />
-            <div id='detailsHeader'>
-                <div id='detailsTitle'>
-                    <p style={{ fontSize: '40px' }}>{title}</p>
-                    <p style={{ fontSize: '14px' }}>ID: {_id}</p>
-                    <div style={{ marginTop: '5px', display: 'flex', alignItems: 'center' }}>
-                        <MdShare className='infoIcon' color='green' size={23}
-                            onClick={() => { navigator.clipboard.writeText(_id); NotificationManager.info('Copied to clipboard.', '', 1000) }}
-                        />
-                        <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23}
-                            style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }}
-                        />
-                        <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />
+        loading ?
+            <div style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader type="TailSpin" color="#004b7d" height='10vh' width='15vw' />
+            </div>
+            :
+            <div id='detailsMainDiv'>
+                <img src={image} id="detailsImage" alt={title} />
+                <div id='detailsHeader'>
+                    <div id='detailsTitle'>
+                        <p style={{ fontSize: 'clamp(25px, 3vw, 40px)' }}>{title}</p>
+                        <p style={{ fontSize: 'clamp(12px, 1.5vw, 14px)' }}>ID: {_id}</p>
+                        <div style={{ marginTop: '5px', display: 'flex', alignItems: 'center' }}>
+                            <MdShare className='infoIcon' color='green' size={20}
+                                onClick={() => { navigator.clipboard.writeText(_id); NotificationManager.info('Copied to clipboard.', '', 1000) }}
+                            />
+                            <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={20}
+                                style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }}
+                            />
+                            <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />
+                        </div>
+                    </div>
+                    <div id='detailsInfo'>
+                        <p>{eventLocation}<MdLocationOn style={{ marginLeft: '10px' }} /></p>
+                        <p>{dateTimeFormat.toLocaleDateString()}<MdDateRange style={{ marginLeft: '10px' }} /></p>
+                        <p>{dateTimeFormat.toLocaleTimeString()}<MdAccessTime style={{ marginLeft: '10px' }} /></p>
                     </div>
                 </div>
-                <div id='detailsInfo'>
-                    <p>{eventLocation}<MdLocationOn style={{ marginLeft: '10px' }} /></p>
-                    <p>{dateTimeFormat.toLocaleDateString()}<MdDateRange style={{ marginLeft: '10px' }} /></p>
-                    <p>{dateTimeFormat.toLocaleTimeString()}<MdAccessTime style={{ marginLeft: '10px' }} /></p>
-                </div>
-            </div>
-            <div style={{ height: '80%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div id='detailsContent'>
                     <div id='detailsAttendees'>
                         <p style={{ fontFamily: 'Helvetica', fontSize: '20px', paddingBottom: '20px' }}>Attendees ({attendees.length})</p>
@@ -144,7 +149,7 @@ const EventDetails = ({ setToken, APIURL }) => {
                             attendees.indexOf(username) === -1 ?
                                 <input type='button' id='attendButton' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
                                 :
-                                <input type='button' id={attendingButton ? 'attending' : 'unAttendButton'}
+                                <input type='button' id='attendButton'
                                     value={attendingButton ? 'Attending' : 'Leave Event'}
                                     style={{ marginTop: 'auto', backgroundColor: attendingButton ? 'rgba(0, 200, 75, 0.8)' : 'rgb(255, 50, 50)' }}
                                     onMouseEnter={() => setAttendingButton(false)} onMouseLeave={() => setAttendingButton(true)} onClick={unAttendEvent} />
@@ -162,9 +167,8 @@ const EventDetails = ({ setToken, APIURL }) => {
                         </div>
                     </div>
                 </div>
+                <NotificationContainer />
             </div>
-            <NotificationContainer />
-        </div>
     )
 }
 

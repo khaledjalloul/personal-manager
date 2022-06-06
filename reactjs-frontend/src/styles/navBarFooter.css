@@ -3,7 +3,7 @@ body{
   width: 100vw;
   margin: 0px !important;
   overflow-x: hidden;
-  background-color: rgba(0, 100, 200, 0.125) !important;
+  background-color: rgba(0, 100, 200, 0.1) !important;
 }
 
 @font-face {
