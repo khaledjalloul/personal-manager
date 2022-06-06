@@ -1,4 +1,4 @@
-#loginMainDiv{
+#loginMainDiv {
     width: 100vw;
     display: flex;
     justify-content: space-evenly;
@@ -7,16 +7,18 @@
     overflow: hidden;
 }
 
-.loginForm{
+.loginForm {
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 310px;
+    position: relative;
 }
 
 .loginTitle {
     font-family: Helvetica;
     font-size: 22px;
+    width: calc(30vw + 20px);
     margin-bottom: 10px !important;
 }
 
@@ -24,7 +26,6 @@
     font-family: Helvetica;
     font-size: 18px;
     padding: 10px;
-    text-align: center;
     border: none;
     outline: none;
     box-shadow: 5px 5px 10px 1px grey;
@@ -45,7 +46,7 @@
     padding: 15px;
     font-family: Helvetica;
     font-size: 18px;
-    width: 13vw;
+    width: 15vw;
     margin-top: auto;
     box-shadow: 5px 5px 10px 1px grey;
     cursor: pointer;

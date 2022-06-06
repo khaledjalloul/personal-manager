@@ -2,7 +2,7 @@ import '../styles/navBarFooter.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Hamburger from 'hamburger-react';
-import {MdEventNote} from 'react-icons/md'
+import { MdEventNote } from 'react-icons/md'
 
 class NavBarElement {
   constructor(name, type, func) {
@@ -39,7 +39,6 @@ const NavBar = (props) => {
     return () => {
       clearInterval(interval);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -64,16 +63,6 @@ const NavBar = (props) => {
         <div className={navBarElementsVisible ? 'navBarDropDown' : 'navBarHamburgerDropDown'} key={navBarElement.name}>
           <input type="button" value={navBarElement.name} onClick={navBarElement.func} className={navBarElementsVisible ? 'navBarElement' : 'navBarHamburgerElement'} />
         </div>)
-
-    // if (navBarElement.type === "select") {
-    //   output.push(
-    //     <div className={navBarElementsVisible ? 'headerFooter_dropDown' : 'headerFooter_hamburgerDropDown'} onMouseEnter={() => setState({ ['select' + index + 'Displayed']: true })} onMouseLeave={() => setState({ ['select' + index + 'Displayed']: false })}>
-    //       <input type='button' className={navBarElementsVisible ? state['select' + index + 'Displayed'] ? 'headerFooter_navBarElementHover' : 'headerFooter_navBarElement' : 'headerFooter_hamburgerNavBarElement'} value={navBarElementsVisible ? navBarElement.name + '' : '◄ ' + navBarElement.name} />
-    //       <div className={navBarElementsVisible ? 'headerFooter_dropDownContainer' : 'headerFooter_hamburgerDropDownContainer'} style={{ visibility: state['select' + index + 'Displayed'] ? 'visible' : 'hidden', opacity: state['select' + index + 'Displayed'] ? '1' : '0' }}>
-    //         {navBarElement.func}
-    //       </div>
-    //     </div>)
-    // }
 
     return navBarElement
   })

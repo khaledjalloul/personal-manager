@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import '../styles/home.css';
 import Loader from "react-loader-spinner";
 import { useNavigate } from "react-router-dom"
 import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
@@ -7,7 +8,7 @@ const EventCard = (props) => {
     const navigate = useNavigate()
     const dateTime = new Date(props.data.dateTime)
     return (
-        <div className="cardDiv" onClick={() => { navigate('/event-planner_react/eventDetails', { state: { data: props.data } }) }}>
+        <div className="cardDiv" onClick={() => { navigate('/event-planner_react/eventDetails', { state: { _id: props.data._id } }) }}>
             <img src={props.data.image} className="cardImage" alt={props.data.title} />
             <div className="cardInfoDiv">
                 <p style={{ fontWeight: 'bold', alignSelf: 'center' }}>{props.data.title}</p>
@@ -26,15 +27,18 @@ const Home = (props) => {
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
     const [searchID, setSearchID] = useState()
+    const [searchLoading, setSearchLoading] = useState(false)
 
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch(props.APIURL + '/getEvents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: JSON.parse(localStorage.getItem('token')).username }) })
+        fetch(props.APIURL + '/getEvents/' + JSON.parse(localStorage.getItem('token')).username)
             .then(res => res.json())
-            .then((result) => {
-                setEvents(result)
-                setLoading(false)
+            .then(data => {
+                if (data.success) {
+                    setEvents(data.events)
+                    setLoading(false)
+                }
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -56,14 +60,14 @@ const Home = (props) => {
             APIURL={props.APIURL}
         />)
 
-    const searchForEvent = async () => {
-        fetch(props.APIURL + '/getEventByID', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: searchID })
-        }).then(res => res.json())
+    const searchForEvent = async e => {
+        e.preventDefault()
+        setSearchLoading(true)
+        fetch(props.APIURL + '/getEvent/' + searchID)
+            .then(res => res.json())
             .then(data => {
-
-                if (data.status === 'success') navigate('/event-planner_react/eventDetails', { state: { data: data.result } })
+                setSearchLoading(false)
+                if (data.success) navigate('/event-planner_react/eventDetails', { state: { _id: data.event._id } })
             })
     }
 
@@ -75,22 +79,37 @@ const Home = (props) => {
             :
             eventCards.length === 0 ?
                 <div>
-                <div className='searchEventDiv' style={{ width: '100vw', height:'100%' }}>
-                    <p style={{ fontFamily: 'Helvetica' }}>You're not attending any events. Join one by pasting its ID below.</p>
-                    <div className='searchEventSubDiv' style={{ marginTop: '20px' }}>
-                        <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} /><input type='button' value='Search' onClick={searchForEvent} />
+                    <div className='searchEventDiv' style={{ width: '100vw', height: '100%' }}>
+                        <p style={{ fontFamily: 'Helvetica' }}>
+                            You're not attending any events. Join one by pasting its ID below.
+                        </p>
+                        <form onSubmit={searchForEvent} className='searchEventSubDiv' style={{ marginTop: '20px' }}>
+                            <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
+                            {searchLoading ?
+                                <Loader type="TailSpin" color="#004b7d" height='20px' />
+                                :
+                                <input type='submit' value='Search' />
+                            }
+                        </form>
                     </div>
-                </div></div>
+                </div>
                 :
                 <div id="homeMainDiv">
                     <div id='homeCardListDiv'>
                         {eventCards}
                     </div>
                     <div className='searchEventDiv'>
-                        <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>Join an existing event by pasting its ID below.</p>
-                        <div className='searchEventSubDiv'>
-                            <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} /><input type='button' value='Search' onClick={searchForEvent} />
-                        </div>
+                        <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>
+                            Join an existing event by pasting its ID below.
+                        </p>
+                        <form onSubmit={searchForEvent} className='searchEventSubDiv'>
+                            <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
+                            {searchLoading ?
+                                <Loader type="TailSpin" color="#004b7d" height='20px' />
+                                :
+                                <input type='submit' value='Search' />
+                            }
+                        </form>
                     </div>
                 </div>
 

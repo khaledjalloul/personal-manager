@@ -1,37 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import '../styles/eventDetails.css';
+import '../styles/notifications.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MdLocationOn, MdDateRange, MdAccessTime, MdShare, MdOutlineDelete } from "react-icons/md";
+import Loader from "react-loader-spinner";
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 const EventDetails = (props) => {
     const location = useLocation()
     const navigate = useNavigate()
     const username = JSON.parse(localStorage.getItem('token')).username
 
-    const { _id, title, eventLocation, dateTime, description, image, creator } = location.state.data
+    const _id = location.state._id
 
-    const [attendees, setAttendees] = useState(location.state.data.attendees)
-    const [items, setItems] = useState(location.state.data.items)
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [attendingButton, setAttendingButton] = useState(true)
-
+    const [attendingLoading, setAttendingLoading] = useState(false)
+    const [attendees, setAttendees] = useState([])
+    const [items, setItems] = useState([])
+    const [{ title, eventLocation, dateTime, description, image, creator }, setStaticElements] = useState(
+        { title: '', eventLocation: '', dateTime: '', description: '', image: '', creator: '' }
+    )
     const dateTimeFormat = new Date(dateTime)
 
+    useEffect(() => {
+        fetch(props.APIURL + '/getEvent/' + _id)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setStaticElements({
+                        title: data.event.title,
+                        eventLocation: data.event.eventLocation,
+                        dateTime: data.event.dateTime,
+                        description: data.event.description,
+                        image: data.event.image,
+                        creator: data.event.creator
+                    })
+                    setAttendees(data.event.attendees)
+                    setItems(data.event.items)
+                }
+            })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     const attendEvent = async () => {
-        await fetch(props.APIURL + '/attendEvent', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: _id, name: username })
+        setAttendingLoading(true)
+        fetch(props.APIURL + '/attendEvent/' + _id, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: username })
         }).then(res => res.json())
-            .then(data => setAttendees(data))
+            .then(data => {
+                if (data.success) { setAttendees(data.attendees); setAttendingLoading(false); }
+            })
     }
 
     const unAttendEvent = async () => {
         if (attendees.length === 1) setConfirmDelete(true)
-        else{
-            await fetch(props.APIURL + '/unAttendEvent', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: _id, name: username })
+        else {
+            setAttendingLoading(true)
+            fetch(props.APIURL + '/unAttendEvent/' + _id, {
+                method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: username })
             }).then(res => res.json())
-                .then(data => setAttendees(data))
+                .then(data => {
+                    if (data.success) { setAttendees(data.attendees); setAttendingLoading(false) }
+                })
         }
     }
 
@@ -43,19 +76,17 @@ const EventDetails = (props) => {
             } else return item
         })
         setItems(newItems)
-        await fetch(props.APIURL + '/checkItem', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: _id, item: event.target.value, available: event.target.checked })
+        fetch(props.APIURL + '/checkItem/' + _id, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item: event.target.value, available: event.target.checked })
         })
     }
 
     const deleteEvent = async () => {
-        await fetch(props.APIURL + '/deleteEvent', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: _id })
-        }).then(res => res.json())
+        fetch(props.APIURL + '/deleteEvent/' + _id, { method: 'DELETE' })
+            .then(res => res.json())
             .then(data => {
-                if (data.status === 'success') navigate('/event-planner_react')
+                if (data.success) navigate('/event-planner_react')
             })
     }
 
@@ -68,7 +99,9 @@ const EventDetails = (props) => {
     }
     )
     const itemsList = items.map(item =>
-        <label className='detailsItem' key={item.name}>{item.name}<input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} /></label>
+        <label className='detailsItem' key={item.name}>{item.name}
+            <input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} />
+        </label>
     )
 
     return (
@@ -79,8 +112,12 @@ const EventDetails = (props) => {
                     <p style={{ fontSize: '40px' }}>{title}</p>
                     <p style={{ fontSize: '14px' }}>ID: {_id}</p>
                     <div style={{ marginTop: '5px', display: 'flex', alignItems: 'center' }}>
-                        <MdShare className='infoIcon' color='green' size={23} onClick={() => navigator.clipboard.writeText(_id)} />
-                        <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23} style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }} />
+                        <MdShare className='infoIcon' color='green' size={23}
+                            onClick={() => { navigator.clipboard.writeText(_id); NotificationManager.info('Copied to clipboard.', '', 1000) }}
+                        />
+                        <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={23}
+                            style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }}
+                        />
                         <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />
                     </div>
                 </div>
@@ -97,13 +134,16 @@ const EventDetails = (props) => {
                         <div id='detailsSubAttendees'>
                             {attendeesList}
                         </div>
-                        {attendees.indexOf(username) === -1 ?
-                            <input type='button' id='attendButton' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
+                        {attendingLoading ?
+                            <Loader type="TailSpin" color="#004b7d" height='30px' style={{}} />
                             :
-                            <input type='button' id={attendingButton ? 'attending' : 'unAttendButton'}
-                                value={attendingButton ? 'Attending' : 'Leave Event'}
-                                style={{ marginTop: 'auto', backgroundColor: attendingButton ? 'rgba(0, 200, 75, 0.8)' : 'rgb(255, 50, 50)' }}
-                                onMouseEnter={() => setAttendingButton(false)} onMouseLeave={() => setAttendingButton(true)} onClick={unAttendEvent} />
+                            attendees.indexOf(username) === -1 ?
+                                <input type='button' id='attendButton' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
+                                :
+                                <input type='button' id={attendingButton ? 'attending' : 'unAttendButton'}
+                                    value={attendingButton ? 'Attending' : 'Leave Event'}
+                                    style={{ marginTop: 'auto', backgroundColor: attendingButton ? 'rgba(0, 200, 75, 0.8)' : 'rgb(255, 50, 50)' }}
+                                    onMouseEnter={() => setAttendingButton(false)} onMouseLeave={() => setAttendingButton(true)} onClick={unAttendEvent} />
                         }
 
                     </div>
@@ -119,6 +159,7 @@ const EventDetails = (props) => {
                     </div>
                 </div>
             </div>
+            <NotificationContainer />
         </div>
     )
 }

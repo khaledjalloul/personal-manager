@@ -81,7 +81,7 @@ p {
   outline: none;
 }
 
-.searchEventSubDiv > input[type='button'] {
+.searchEventSubDiv > input[type='submit'] {
   padding: 10px;
   border: none;
   border-radius: 0px;
@@ -94,7 +94,7 @@ p {
   cursor: pointer;
 }
 
-.searchEventSubDiv > input[type='button']:hover {
+.searchEventSubDiv > input[type='submit']:hover {
   box-shadow:  1px 1px 7px 1px grey;
   transition-duration: 0.2s;
 }
