@@ -26,7 +26,7 @@ const EventCard = (props) => {
     )
 }
 
-const Home = ({ BACKEND_URL }) => {
+const Home = () => {
 
     const navigate = useNavigate()
     const { user } = useAuth0()
@@ -35,15 +35,16 @@ const Home = ({ BACKEND_URL }) => {
     const [searchID, setSearchID] = useState()
     const [searchLoading, setSearchLoading] = useState(false)
 
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+
     useEffect(() => {
         fetch(BACKEND_URL + '/getEvents/' + user.sub)
-            .then(res => res.json())
+            .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
             .then(data => {
-                if (data.success) {
-                    setEvents(data.events)
-                    setLoading(false)
-                }
+                setEvents(data.events)
+                setLoading(false)
             })
+            .catch(e => { setLoading(false); console.log(e) })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -67,11 +68,12 @@ const Home = ({ BACKEND_URL }) => {
         e.preventDefault()
         setSearchLoading(true)
         fetch(BACKEND_URL + '/getEvent/' + searchID)
-            .then(res => res.json())
+            .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
             .then(data => {
                 setSearchLoading(false)
-                if (data.success) navigate('/event-planner_react/eventDetails', { state: { _id: data.event._id } })
+                navigate('/event-planner_react/eventDetails', { state: { _id: data.event._id } })
             })
+            .catch(e => { setSearchLoading(false); console.log(e) })
     }
 
     if (loading) return (

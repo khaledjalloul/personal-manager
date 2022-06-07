@@ -13,9 +13,7 @@ import Loader from 'react-loader-spinner';
 
 function App() {
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
-
-  const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0()
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0()
 
   if (isLoading) return (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -28,9 +26,9 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Navigate to="/event-planner_react" />} ></Route>
         <Route exact path="/event-planner_react" element={<NavBarFooter />}>
-          <Route exact path="" element={<Home BACKEND_URL={BACKEND_URL} />}></Route>
-          <Route exact path="createEvent" element={<CreateEvent BACKEND_URL={BACKEND_URL} />}></Route>
-          <Route exact path="eventDetails" element={<EventDetails BACKEND_URL={BACKEND_URL} />}></Route>
+          <Route exact path="" element={<Home />}></Route>
+          <Route exact path="createEvent" element={<CreateEvent />}></Route>
+          <Route exact path="eventDetails" element={<EventDetails />}></Route>
         </Route>
       </Routes>
     </HashRouter>

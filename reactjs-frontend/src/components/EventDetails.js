@@ -7,7 +7,7 @@ import Loader from "react-loader-spinner";
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const EventDetails = ({ BACKEND_URL }) => {
+const EventDetails = () => {
 
     const { user } = useAuth0()
     const userID = user.sub
@@ -26,27 +26,27 @@ const EventDetails = ({ BACKEND_URL }) => {
         { title: '', eventLocation: '', dateTime: '', description: '', image: '', creatorID: '' }
     )
 
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
     const _id = location.state._id
     const dateTimeFormat = new Date(dateTime)
 
     useEffect(() => {
         fetch(BACKEND_URL + '/getEvent/' + _id)
-            .then(res => res.json())
+            .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
             .then(data => {
-                if (data.success) {
-                    setStaticElements({
-                        title: data.event.title,
-                        eventLocation: data.event.eventLocation,
-                        dateTime: data.event.dateTime,
-                        description: data.event.description,
-                        image: data.event.image,
-                        creatorID: data.event.creatorID
-                    })
-                    setAttendees(data.event.attendees)
-                    setItems(data.event.items)
-                    setLoading(false)
-                }
+                setStaticElements({
+                    title: data.event.title,
+                    eventLocation: data.event.eventLocation,
+                    dateTime: data.event.dateTime,
+                    description: data.event.description,
+                    image: data.event.image,
+                    creatorID: data.event.creatorID
+                })
+                setAttendees(data.event.attendees)
+                setItems(data.event.items)
+                setLoading(false)
             })
+            .catch(e => { setLoading(false); console.log(e) })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -55,10 +55,10 @@ const EventDetails = ({ BACKEND_URL }) => {
         fetch(BACKEND_URL + '/attendEvent/' + _id, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username, userID: userID })
-        }).then(res => res.json())
-            .then(data => {
-                if (data.success) { setAttendees(data.attendees); setAttendingLoading(false); }
-            })
+        })
+            .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
+            .then(data => { setAttendees(data.attendees); setAttendingLoading(false) })
+            .catch(e => { setAttendingLoading(false); console.log(e) })
     }
 
     const unAttendEvent = async () => {
@@ -68,10 +68,10 @@ const EventDetails = ({ BACKEND_URL }) => {
             fetch(BACKEND_URL + '/unAttendEvent/' + _id, {
                 method: 'PATCH', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userID: userID })
-            }).then(res => res.json())
-                .then(data => {
-                    if (data.success) { setAttendees(data.attendees); setAttendingLoading(false) }
-                })
+            })
+                .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
+                .then(data => { setAttendees(data.attendees); setAttendingLoading(false) })
+                .catch(e => { setAttendingLoading(false); console.log(e) })
         }
     }
 
@@ -91,10 +91,9 @@ const EventDetails = ({ BACKEND_URL }) => {
 
     const deleteEvent = async () => {
         fetch(BACKEND_URL + '/deleteEvent/' + _id, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) navigate('/event-planner_react')
-            })
+            .then(res => { if (res.ok) return; else throw new Error(res.status) })
+            .then(() => navigate('/event-planner_react'))
+            .catch(e => console.log(e))
     }
 
     const attendeesList = attendees.map(attendee => {

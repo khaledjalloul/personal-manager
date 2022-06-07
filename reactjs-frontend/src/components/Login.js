@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import '../styles/login.css';
 import Loader from "react-loader-spinner";
 
-const Login = ({ setToken, BACKEND_URL }) => {
+const Login = ({ setToken }) => {
 
     const [loginUsername, setLoginUsername] = useState()
     const [loginPassword, setLoginPassword] = useState()
@@ -14,17 +14,21 @@ const Login = ({ setToken, BACKEND_URL }) => {
     const [registerStatus, setRegisterStatus] = useState(0)
     //status = ['default', 'loading', 'success', 'invalidUsername', 'invalidPassword', 'passwordMismatch, 'usernameExists', 'failed']
 
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+
     const handleLogin = async e => {
         e.preventDefault();
         setLoginStatus(1)
         fetch(BACKEND_URL + '/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ loginUsername, loginPassword })
-        }).then(res => res.json())
+        })
+            .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
             .then(data => {
-                if (data.success) { setLoginStatus(0); setToken({ token: data.token, username: loginUsername }) }
-                else setLoginStatus(2)
+                setLoginStatus(0);
+                setToken({ token: data.token, username: loginUsername })
             })
+            .catch(e => { setLoginStatus(2); console.log(e) })
     }
 
     const handleRegister = async e => {
@@ -37,17 +41,18 @@ const Login = ({ setToken, BACKEND_URL }) => {
             fetch(BACKEND_URL + '/register', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ registerUsername, registerPassword })
-            }).then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        setRegisterStatus(2)
-                        setRegisterUsername('')
-                        setRegisterPassword('')
-                        setRepeatedPassword('')
-                    }
-                    else if (data.message === 'Username already exists.') setRegisterStatus(6)
-                    else setRegisterStatus(7)
-                })
+            })
+                .then(res => { if (res.ok) return res.json(); else throw new Error(res.status) })
+            // .then(data => {
+            //     if (data.success) {
+            //         setRegisterStatus(2)
+            //         setRegisterUsername('')
+            //         setRegisterPassword('')
+            //         setRepeatedPassword('')
+            //     }
+            //     else if (data.message === 'Username already exists.') setRegisterStatus(6)
+            //     else setRegisterStatus(7)
+            // })
         }
     }
 

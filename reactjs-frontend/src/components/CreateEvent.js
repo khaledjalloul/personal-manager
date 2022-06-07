@@ -6,7 +6,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Loader from "react-loader-spinner";
 import { useAuth0 } from '@auth0/auth0-react';
 
-const CreateEvent = ({ BACKEND_URL }) => {
+const CreateEvent = () => {
 
     const navigate = useNavigate()
     const { user } = useAuth0()
@@ -22,32 +22,25 @@ const CreateEvent = ({ BACKEND_URL }) => {
     const createEvent = async e => {
         e.preventDefault()
         setLoading(true)
-        var newItems = items
-        if (newItems === '') {
-            newItems = []
-        } else {
-            newItems = items.split(',')
-            newItems = newItems.map(item => item.trim())
-        }
-        var newImage = image
-        if (newImage === '') newImage = 'https://med.stanford.edu/cancer/_jcr_content/main/tabs/tab_main_tabs_3/panel_builder/panel_1/image.img.full.high.png/icon-calendar.png'
-        fetch(BACKEND_URL + "/createEvent", {
+        fetch(process.env.REACT_APP_BACKEND_URL + "/createEvent", {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                title, location: eventLocation,
+                title,
+                location: eventLocation,
                 dateTime: dateTime.toISOString(),
-                image: newImage, items: newItems,
+                image: image === '' ? 'https://med.stanford.edu/cancer/_jcr_content/main/tabs/tab_main_tabs_3/panel_builder/panel_1/image.img.full.high.png/icon-calendar.png' : image,
+                items: items === '' ? [] : items.split(','),
                 description,
                 creatorName: user.nickname,
                 creatorID: user.sub
             })
-        }).then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setLoading(false)
-                    navigate('/event-planner_react')
-                }
+        })
+            .then(res => { if (res.ok) return; else throw new Error(res.status) })
+            .then(() => {
+                setLoading(false)
+                navigate('/event-planner_react')
             })
+            .catch(e => { setLoading(false); console.log(e) })
     }
 
     return (
