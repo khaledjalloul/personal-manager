@@ -5,11 +5,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { MdLocationOn, MdDateRange, MdAccessTime, MdShare, MdOutlineDelete } from "react-icons/md";
 import Loader from "react-loader-spinner";
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const EventDetails = ({ setToken, APIURL }) => {
+const EventDetails = ({ BACKEND_URL }) => {
 
-    setToken(JSON.parse(localStorage.getItem('token')))
-    const username = JSON.parse(localStorage.getItem('token')).username
+    const { user } = useAuth0()
+    const userID = user.sub
+    const username = user.nickname
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -20,15 +22,15 @@ const EventDetails = ({ setToken, APIURL }) => {
     const [attendingLoading, setAttendingLoading] = useState(false)
     const [attendees, setAttendees] = useState([])
     const [items, setItems] = useState([])
-    const [{ title, eventLocation, dateTime, description, image, creator }, setStaticElements] = useState(
-        { title: '', eventLocation: '', dateTime: '', description: '', image: '', creator: '' }
+    const [{ title, eventLocation, dateTime, description, image, creatorID }, setStaticElements] = useState(
+        { title: '', eventLocation: '', dateTime: '', description: '', image: '', creatorID: '' }
     )
 
     const _id = location.state._id
     const dateTimeFormat = new Date(dateTime)
 
     useEffect(() => {
-        fetch(APIURL + '/getEvent/' + _id)
+        fetch(BACKEND_URL + '/getEvent/' + _id)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -38,7 +40,7 @@ const EventDetails = ({ setToken, APIURL }) => {
                         dateTime: data.event.dateTime,
                         description: data.event.description,
                         image: data.event.image,
-                        creator: data.event.creator
+                        creatorID: data.event.creatorID
                     })
                     setAttendees(data.event.attendees)
                     setItems(data.event.items)
@@ -50,9 +52,9 @@ const EventDetails = ({ setToken, APIURL }) => {
 
     const attendEvent = async () => {
         setAttendingLoading(true)
-        fetch(APIURL + '/attendEvent/' + _id, {
+        fetch(BACKEND_URL + '/attendEvent/' + _id, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: username })
+            body: JSON.stringify({ username: username, userID: userID })
         }).then(res => res.json())
             .then(data => {
                 if (data.success) { setAttendees(data.attendees); setAttendingLoading(false); }
@@ -63,9 +65,9 @@ const EventDetails = ({ setToken, APIURL }) => {
         if (attendees.length === 1) setConfirmDelete(true)
         else {
             setAttendingLoading(true)
-            fetch(APIURL + '/unAttendEvent/' + _id, {
+            fetch(BACKEND_URL + '/unAttendEvent/' + _id, {
                 method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: username })
+                body: JSON.stringify({ userID: userID })
             }).then(res => res.json())
                 .then(data => {
                     if (data.success) { setAttendees(data.attendees); setAttendingLoading(false) }
@@ -81,14 +83,14 @@ const EventDetails = ({ setToken, APIURL }) => {
             } else return item
         })
         setItems(newItems)
-        fetch(APIURL + '/checkItem/' + _id, {
+        fetch(BACKEND_URL + '/checkItem/' + _id, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ item: event.target.value, available: event.target.checked })
         })
     }
 
     const deleteEvent = async () => {
-        fetch(APIURL + '/deleteEvent/' + _id, { method: 'DELETE' })
+        fetch(BACKEND_URL + '/deleteEvent/' + _id, { method: 'DELETE' })
             .then(res => res.json())
             .then(data => {
                 if (data.success) navigate('/event-planner_react')
@@ -96,16 +98,16 @@ const EventDetails = ({ setToken, APIURL }) => {
     }
 
     const attendeesList = attendees.map(attendee => {
-        var displayAttendee = attendee
-        if (attendee === creator) displayAttendee = displayAttendee + " (Host)"
-        if (attendee === username) displayAttendee = displayAttendee + " (You)"
+        var displayAttendee = attendee.username
+        if (attendee.id === creatorID) displayAttendee = displayAttendee + " (Host)"
+        if (attendee.id === userID) displayAttendee = displayAttendee + " (You)"
 
-        return <div className='detailsAttendee' key={attendee}>{displayAttendee}</div>
+        return <div className='detailsAttendee' key={attendee.id}>{displayAttendee}</div>
     })
 
     const itemsList = items.map(item =>
         <label className='detailsItem' key={item.name}>{item.name}
-            <input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={attendees.indexOf(username) === -1} />
+            <input type='checkbox' value={item.name} checked={item.available} onChange={checkItem} disabled={!attendees.some(attendee => attendee.id === userID)} />
         </label>
     )
 
@@ -126,7 +128,7 @@ const EventDetails = ({ setToken, APIURL }) => {
                                 onClick={() => { navigator.clipboard.writeText(_id); NotificationManager.info('Copied to clipboard.', '', 1000) }}
                             />
                             <MdOutlineDelete className='infoIcon' id='deleteButton' color='red' size={20}
-                                style={{ marginLeft: '10px', display: username === creator ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }}
+                                style={{ marginLeft: '10px', display: userID === creatorID ? 'block' : 'none' }} onClick={e => { setConfirmDelete(!confirmDelete) }}
                             />
                             <input id={confirmDelete ? 'confirmDeleteButton' : 'confirmDeleteButtonHidden'} type='button' value='Confirm Delete' onClick={deleteEvent} />
                         </div>
@@ -146,7 +148,7 @@ const EventDetails = ({ setToken, APIURL }) => {
                         {attendingLoading ?
                             <Loader type="TailSpin" color="#004b7d" height='30px' style={{}} />
                             :
-                            attendees.indexOf(username) === -1 ?
+                            !attendees.some(attendee => attendee.id === userID) ?
                                 <input type='button' id='attendButton' value='Attend Event' style={{ marginTop: 'auto' }} onClick={attendEvent} />
                                 :
                                 <input type='button' id='attendButton'

@@ -4,11 +4,12 @@ import '../styles/DateTimePicker.css';
 import { useNavigate } from 'react-router-dom'
 import DateTimePicker from 'react-datetime-picker';
 import Loader from "react-loader-spinner";
+import { useAuth0 } from '@auth0/auth0-react';
 
-const CreateEvent = ({ setToken, APIURL }) => {
+const CreateEvent = ({ BACKEND_URL }) => {
 
-    setToken(JSON.parse(localStorage.getItem('token')))
     const navigate = useNavigate()
+    const { user } = useAuth0()
 
     const [title, setTitle] = useState('')
     const [eventLocation, setEventLocation] = useState('')
@@ -30,14 +31,15 @@ const CreateEvent = ({ setToken, APIURL }) => {
         }
         var newImage = image
         if (newImage === '') newImage = 'https://med.stanford.edu/cancer/_jcr_content/main/tabs/tab_main_tabs_3/panel_builder/panel_1/image.img.full.high.png/icon-calendar.png'
-        fetch(APIURL + "/createEvent", {
+        fetch(BACKEND_URL + "/createEvent", {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 title, location: eventLocation,
                 dateTime: dateTime.toISOString(),
                 image: newImage, items: newItems,
                 description,
-                creator: JSON.parse(localStorage.getItem('token')).username
+                creatorName: user.nickname,
+                creatorID: user.sub
             })
         }).then(res => res.json())
             .then(data => {

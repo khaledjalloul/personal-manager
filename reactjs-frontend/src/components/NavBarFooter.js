@@ -1,16 +1,18 @@
 import React from 'react';
 import '../styles/navBarFooter.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { MdEventNote } from 'react-icons/md'
+import { useAuth0 } from '@auth0/auth0-react';
 
-const NavBar = (props) => {
+const NavBar = () => {
 
   const navigate = useNavigate()
   const location = useLocation()
+  const { isAuthenticated, logout } = useAuth0()
 
   var navBarElements = []
 
-  if (props.token) {
+  if (isAuthenticated) {
     navBarElements = [
       <div className='navBarDropDown' key='My Events' >
         <input type="button" value='My Events' className='navBarElement'
@@ -22,7 +24,7 @@ const NavBar = (props) => {
       </div>,
       <div className='navBarDropDown' key='Log out'>
         <input type="button" value='Log out' className='navBarElement'
-          onClick={() => { props.setToken({}); navigate('/event-planner_react') }} />
+          onClick={() => { logout({ returnTo: window.location.origin + '/event-planner_react'}) }} />
       </div>
     ]
   }
@@ -55,9 +57,9 @@ const Footer = () => {
 const NavBarFooter = (props) => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar token={props.token} setToken={props.setToken} />
+      <NavBar />
       <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch' }}>
-        {props.children}
+        <Outlet />
       </div>
       <Footer />
     </div>

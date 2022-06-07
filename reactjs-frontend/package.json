@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://khaledjalloul.github.io/event-planner_react",
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.1",
     "express": "^4.17.1",
     "gh-pages": "^4.0.0",
     "hamburger-react": "^2.5.0",

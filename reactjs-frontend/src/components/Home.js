@@ -3,6 +3,7 @@ import '../styles/home.css';
 import Loader from "react-loader-spinner";
 import { useNavigate } from "react-router-dom"
 import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const EventCard = (props) => {
 
@@ -25,18 +26,17 @@ const EventCard = (props) => {
     )
 }
 
-const Home = ({ setToken, APIURL }) => {
+const Home = ({ BACKEND_URL }) => {
 
-    setToken(JSON.parse(localStorage.getItem('token'))) // Always check if token is still valid in case user logged out in another tab.
     const navigate = useNavigate()
-
+    const { user } = useAuth0()
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
     const [searchID, setSearchID] = useState()
     const [searchLoading, setSearchLoading] = useState(false)
 
     useEffect(() => {
-        fetch(APIURL + '/getEvents/' + JSON.parse(localStorage.getItem('token')).username)
+        fetch(BACKEND_URL + '/getEvents/' + user.sub)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -59,14 +59,14 @@ const Home = ({ setToken, APIURL }) => {
                 attendees: event.attendees,
                 items: event.items,
                 image: event.image,
-                creator: event.creator
+                creatorID: event.creatorID
             }}
         />)
 
     const searchForEvent = async e => {
         e.preventDefault()
         setSearchLoading(true)
-        fetch(APIURL + '/getEvent/' + searchID)
+        fetch(BACKEND_URL + '/getEvent/' + searchID)
             .then(res => res.json())
             .then(data => {
                 setSearchLoading(false)
@@ -74,47 +74,47 @@ const Home = ({ setToken, APIURL }) => {
             })
     }
 
+    if (loading) return (
+        <div style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Loader type="TailSpin" color="#004b7d" height='10vh' width='15vw' />
+        </div>)
+
     return (
-        loading ?
-            <div style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Loader type="TailSpin" color="#004b7d" height='10vh' width='15vw' />
+        eventCards.length === 0 ?
+            <div>
+                <div className='searchEventDiv' style={{ width: '100vw', height: '100%' }}>
+                    <p style={{ fontFamily: 'Helvetica' }}>
+                        You're not attending any events. Join one by pasting its ID below.
+                    </p>
+                    <form onSubmit={searchForEvent} className='searchEventSubDiv' style={{ marginTop: '20px' }}>
+                        <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
+                        {searchLoading ?
+                            <Loader type="TailSpin" color="#004b7d" height='20px' />
+                            :
+                            <input type='submit' value='Search' />
+                        }
+                    </form>
+                </div>
             </div>
             :
-            eventCards.length === 0 ?
-                <div>
-                    <div className='searchEventDiv' style={{ width: '100vw', height: '100%' }}>
-                        <p style={{ fontFamily: 'Helvetica' }}>
-                            You're not attending any events. Join one by pasting its ID below.
-                        </p>
-                        <form onSubmit={searchForEvent} className='searchEventSubDiv' style={{ marginTop: '20px' }}>
-                            <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
-                            {searchLoading ?
-                                <Loader type="TailSpin" color="#004b7d" height='20px' />
-                                :
-                                <input type='submit' value='Search' />
-                            }
-                        </form>
-                    </div>
+            <div id="homeMainDiv">
+                <div id='homeCardListDiv'>
+                    {eventCards}
                 </div>
-                :
-                <div id="homeMainDiv">
-                    <div id='homeCardListDiv'>
-                        {eventCards}
-                    </div>
-                    <div className='searchEventDiv'>
-                        <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>
-                            Join an existing event by pasting its ID below.
-                        </p>
-                        <form onSubmit={searchForEvent} className='searchEventSubDiv'>
-                            <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
-                            {searchLoading ?
-                                <Loader type="TailSpin" color="#004b7d" height='20px' />
-                                :
-                                <input type='submit' value='Search' />
-                            }
-                        </form>
-                    </div>
+                <div className='searchEventDiv'>
+                    <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>
+                        Join an existing event by pasting its ID below.
+                    </p>
+                    <form onSubmit={searchForEvent} className='searchEventSubDiv'>
+                        <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />
+                        {searchLoading ?
+                            <Loader type="TailSpin" color="#004b7d" height='20px' />
+                            :
+                            <input type='submit' value='Search' />
+                        }
+                    </form>
                 </div>
+            </div>
 
     )
 }

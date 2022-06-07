@@ -60,6 +60,7 @@
   
   #detailsContent {
     width: calc(100% - 40px);
+    flex: 1 1 auto;
     padding: 20px;
     display: flex;
     justify-content: space-evenly;
@@ -118,7 +119,7 @@
   }
     
   #detailsDescription {
-    height: 380px;
+    min-height: 380px;
     min-width: 49%;
     flex: 1 1 auto;
     margin: 10px;

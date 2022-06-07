@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
-const crypto = require('crypto');
 
 const corsOptions = {
     origin: '*',
@@ -23,16 +22,8 @@ app.listen(port, async () => {
     console.log("Event Planner ExpressJS API running on port " + port + ".");
 })
 
-app.post('/register', async (req, res) => {
-    res.json(await mongoClient.register(req.body.registerUsername, req.body.registerPassword).catch(e => console.error(e)))
-})
-
-app.post("/login", async (req, res) => {
-    res.json(await mongoClient.login(req.body.loginUsername, req.body.loginPassword).catch(e => console.error(e)))
-})
-
-app.get("/getEvents/:username", async (req, res) => {
-    res.json(await mongoClient.getEvents(req.params.username).catch(e => console.error(e)))
+app.get("/getEvents/:userID", async (req, res) => {
+    res.json(await mongoClient.getEvents(req.params.userID).catch(e => console.error(e)))
 })
 
 app.get("/getEvent/:id", async (req, res) => {
@@ -40,11 +31,11 @@ app.get("/getEvent/:id", async (req, res) => {
 })
 
 app.patch("/attendEvent/:id", async (req, res) => {
-    res.json(await mongoClient.attendEvent(req.params.id, req.body.name).catch(e => console.error(e)))
+    res.json(await mongoClient.attendEvent(req.params.id, req.body.username, req.body.userID).catch(e => console.error(e)))
 })
 
 app.patch("/unAttendEvent/:id", async (req, res) => {
-    res.json(await mongoClient.unAttendEvent(req.params.id, req.body.name).catch(e => console.error(e)))
+    res.json(await mongoClient.unAttendEvent(req.params.id, req.body.userID).catch(e => console.error(e)))
 })
 
 app.patch("/checkItem/:id", async (req, res) => {
@@ -52,7 +43,7 @@ app.patch("/checkItem/:id", async (req, res) => {
 })
 
 app.post("/createEvent", async (req, res) => {
-    res.json(await mongoClient.createEvent(req.body.title, req.body.location, req.body.dateTime, req.body.image, req.body.items, req.body.description, req.body.creator).catch(e => { console.error(e) }))
+    res.json(await mongoClient.createEvent(req.body.title, req.body.location, req.body.dateTime, req.body.image, req.body.items, req.body.description, req.body.creatorName, req.body.creatorID).catch(e => { console.error(e) }))
 })
 
 app.delete("/deleteEvent/:id", async (req, res) => {
@@ -69,65 +60,18 @@ class MongoClient {
             eventLocation: String,
             dateTime: Date,
             image: String,
-            attendees: [String],
-            creator: String,
+            attendees: [{ username: String, id: String }],
+            creatorID: String,
             description: String,
             items: [{ name: String, available: Boolean }]
         }, { collection: 'events' });
         this.Event = mongoose.model('Event', this.EventSchema);
-
-        this.UserSchema = new mongoose.Schema({
-            username: String,
-            hash: String,
-            salt: String,
-            events: [String]
-        }, { collection: 'users' });
-        this.User = mongoose.model('User', this.UserSchema);
     }
 
-    async register(username, password) {
+    async getEvents(userID) {
         try {
-            const doc = await this.User.findOne({ username: username })
-            if (!doc) {
-                const salt = crypto.randomBytes(16).toString('hex');
-                const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
-                const newUser = new this.User({
-                    username: username,
-                    salt: salt,
-                    hash: hash,
-                    events: []
-                })
-                return await newUser.save().then(savedDoc => {
-                    if (savedDoc === newUser) {
-                        console.log("Registered user: " + username)
-                        return { success: true }
-                    } else return { success: false, message: 'Failed to register.' }
-                })
-            } else {
-                console.log("Failed to register " + username + ". Username already exists.")
-                return { success: false, message: 'Username already exists.' }
-            }
-        } catch (e) { console.log(e) }
-    }
-
-    async login(username, password) {
-        try {
-            const userDoc = await this.User.findOne({ username: username })
-            if (!userDoc) return { success: false, message: 'Invalid username.' }
-            const { salt, hash } = userDoc
-            const valid = hash === crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
-            if (valid) return { success: true, token: crypto.randomBytes(16).toString('hex') }
-            else return { success: false, message: 'Invalid password.' }
-
-        } catch (e) { console.log(e) }
-    }
-    async getEvents(username) {
-        try {
-            const doc = await this.User.findOne({ username: username })
-            if (!doc) return {success: false}
-            const userEvents = await Promise.all(doc.events.map(async event =>
-                await this.Event.findOne({ _id: event })
-            ))
+            const events = await this.Event.find({})
+            const userEvents = events.filter(event => event.attendees.some(attendee => attendee.id === userID))
             return { success: true, events: userEvents }
         } catch (e) { console.log(e); }
     }
@@ -143,39 +87,27 @@ class MongoClient {
         }
     }
 
-    async attendEvent(id, username) {
+    async attendEvent(id, username, userID) {
         try {
-            const userDoc = await this.User.findOne({ username: username })
-            userDoc.events.push(id)
-            return await userDoc.save().then(async savedDoc => {
-                if (savedDoc === userDoc) {
-                    const doc = await this.Event.findById(id)
-                    doc.attendees.push(username)
-                    return await doc.save().then(savedDoc => {
-                        if (savedDoc === doc) {
-                            console.log("Updated users of document " + id)
-                            return { success: true, attendees: doc.attendees }
-                        }
-                    })
+            const doc = await this.Event.findById(id)
+            doc.attendees.push({ username: username, id: userID })
+            return await doc.save().then(savedDoc => {
+                if (savedDoc === doc) {
+                    console.log("Updated users of document " + id)
+                    return { success: true, attendees: doc.attendees }
                 }
             })
         } catch (e) { console.log(e) }
     }
 
-    async unAttendEvent(id, username) {
+    async unAttendEvent(id, userID) {
         try {
-            const userDoc = await this.User.findOne({ username: username })
-            userDoc.events = userDoc.events.filter(event => event !== id.toString())
-            return await userDoc.save().then(async savedDoc => {
-                if (savedDoc === userDoc) {
-                    const doc = await this.Event.findById(id)
-                    doc.attendees = doc.attendees.filter(attendee => attendee !== username)
-                    return await doc.save().then(savedDoc => {
-                        if (savedDoc === doc) {
-                            console.log("Updated users of document " + id)
-                            return { success: true, attendees: doc.attendees }
-                        }
-                    })
+            const doc = await this.Event.findById(id)
+            doc.attendees = doc.attendees.filter(attendee => attendee.id !== userID)
+            return await doc.save().then(savedDoc => {
+                if (savedDoc === doc) {
+                    console.log("Updated users of document " + id)
+                    return { success: true, attendees: doc.attendees }
                 }
             })
         } catch (e) { console.log(e) }
@@ -199,8 +131,7 @@ class MongoClient {
         } catch (e) { console.log(e) }
     }
 
-    async createEvent(title, location, dateTime, image, items, description, creator) {
-
+    async createEvent(title, location, dateTime, image, items, description, creatorName, creatorID) {
         try {
             var newEvent = new this.Event({
                 title: title,
@@ -209,20 +140,14 @@ class MongoClient {
                 image: image,
                 items: items.map(item => { return { name: item.charAt(0).toUpperCase() + item.slice(1), available: false } }),
                 description: description,
-                creator: creator,
-                attendees: [creator]
+                creatorID: creatorID,
+                attendees: [{ username: creatorName, id: creatorID }]
             })
-            return await newEvent.save().then(async savedDoc => {
-                try {
-                    const doc = await this.User.findOne({ username: creator })
-                    doc.events.push(savedDoc._id.toString())
-                    return await doc.save().then(savedDoc => {
-                        if (savedDoc === doc) {
-                            console.log("Created event: " + title)
-                            return { success: true }
-                        }
-                    })
-                } catch (e) { console.log(e) }
+            return await newEvent.save().then(savedDoc => {
+                if (savedDoc === newEvent) {
+                    console.log("Created event: " + title)
+                    return { success: true }
+                }
             })
         } catch (e) { console.log(e); return { success: false } }
     }
@@ -230,8 +155,6 @@ class MongoClient {
     async deleteEvent(id) {
         try {
             await this.Event.deleteOne({ _id: id })
-            var users = await this.User.find({})
-            await Promise.all(users.map(async user => { user.events = user.events.filter(event => event !== id.toString()); await user.save(); return user }))
             return { success: true }
         } catch (e) { console.error(e); }
     }

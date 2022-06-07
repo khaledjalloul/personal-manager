@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import '../styles/login.css';
 import Loader from "react-loader-spinner";
 
-const Login = ({ setToken, APIURL }) => {
+const Login = ({ setToken, BACKEND_URL }) => {
 
     const [loginUsername, setLoginUsername] = useState()
     const [loginPassword, setLoginPassword] = useState()
@@ -17,7 +17,7 @@ const Login = ({ setToken, APIURL }) => {
     const handleLogin = async e => {
         e.preventDefault();
         setLoginStatus(1)
-        fetch(APIURL + '/login', {
+        fetch(BACKEND_URL + '/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ loginUsername, loginPassword })
         }).then(res => res.json())
@@ -34,7 +34,7 @@ const Login = ({ setToken, APIURL }) => {
         if (registerPassword.indexOf(' ') !== -1 || registerPassword.length < 6) setRegisterStatus(4)
         else if (registerPassword !== repeatedPassword) setRegisterStatus(5)
         else {
-            fetch(APIURL + '/register', {
+            fetch(BACKEND_URL + '/register', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ registerUsername, registerPassword })
             }).then(res => res.json())

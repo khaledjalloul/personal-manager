@@ -1,36 +1,56 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import useToken from './assets/functions/useToken';
 import NavBarFooter from './components/NavBarFooter';
-import Login from './components/Login'
 import Home from './components/Home'
 import EventDetails from './components/EventDetails'
 import CreateEvent from './components/CreateEvent'
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react'
+import Loader from 'react-loader-spinner';
+
 
 function App() {
 
-  const { token, setToken } = useToken()
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
 
-  // const APIURL = 'http://localhost:3737'
-  const APIURL = 'https://event-planner-express.herokuapp.com'
+  const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0()
 
-  return (
-    <Router>
-      <NavBarFooter token={token} setToken={setToken}>
-        {!token ? <Login setToken={setToken} APIURL={APIURL} /> :
-          <Routes>
-            <Route exact path='/' element={<Navigate to='/event-planner_react' />} />
-            <Route exact path="/event-planner_react" element={<Home setToken={setToken} APIURL={APIURL} />}></Route>
-            <Route exact path="/event-planner_react/createEvent" element={<CreateEvent setToken={setToken} APIURL={APIURL} />}></Route>
-            <Route exact path="/event-planner_react/eventDetails" element={<EventDetails setToken={setToken} APIURL={APIURL} />}></Route>
-          </Routes>}
-      </NavBarFooter>
-    </Router>
+  if (isLoading) return (
+    <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Loader type="TailSpin" color="#004b7d" height='10vh' width='15vw' />
+    </div>)
+
+  else if (!isAuthenticated) loginWithRedirect()
+  else return (
+    <HashRouter>
+      <Routes>
+        <Route exact path="/" element={<Navigate to="/event-planner_react" />} ></Route>
+        <Route exact path="/event-planner_react" element={<NavBarFooter />}>
+          <Route exact path="" element={<Home BACKEND_URL={BACKEND_URL} />}></Route>
+          <Route exact path="createEvent" element={<CreateEvent BACKEND_URL={BACKEND_URL} />}></Route>
+          <Route exact path="eventDetails" element={<EventDetails BACKEND_URL={BACKEND_URL} />}></Route>
+        </Route>
+      </Routes>
+    </HashRouter>
   );
 }
 
-ReactDOM.render(<App />,
+function AppAuthenticator() {
+
+  const domain = process.env.REACT_APP_AUTH0_DOMAIN
+  const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID
+
+  return (
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      redirectUri={window.location.origin + '/event-planner_react'}>
+      <App />
+    </Auth0Provider>
+  );
+}
+
+ReactDOM.render(<AppAuthenticator />,
   document.getElementById('root'));
