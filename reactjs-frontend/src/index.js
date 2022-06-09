@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import NavBarFooter from './components/NavBarFooter';
 import Home from './components/Home'
+import MyEvents from './components/MyEvents'
 import EventDetails from './components/EventDetails'
 import CreateEvent from './components/CreateEvent'
 
@@ -25,8 +25,8 @@ function App() {
     <HashRouter>
       <Routes>
         <Route exact path="/" element={<Navigate to="/event-planner_react" />} ></Route>
-        <Route exact path="/event-planner_react" element={<NavBarFooter />}>
-          <Route exact path="" element={<Home />}></Route>
+        <Route exact path="/event-planner_react" element={<Home />}>
+          <Route exact path="" element={<MyEvents />}></Route>
           <Route exact path="createEvent" element={<CreateEvent />}></Route>
           <Route exact path="eventDetails" element={<EventDetails />}></Route>
         </Route>
