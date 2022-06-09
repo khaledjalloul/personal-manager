@@ -5,10 +5,22 @@ html,
   height: 100%;
 }
 
+@media (max-width: 599px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 600px) {
+  html {
+    font-size: 16px;
+  }
+}
+
 body {
   height: 100%;
   width: 100vw;
-  margin: 0px !important;
+  margin: 0 !important;
   overflow-x: hidden;
   background-color: rgba(0, 100, 200, 0.1) !important;
 }
@@ -26,11 +38,9 @@ p {
   min-height: 60px;
   height: 7%;
   width: 100%;
-  z-index: 1;
   display: flex;
   position: relative;
-  align-items: center;
-  justify-content: center;
+  z-index: 2;
   background-color: rgb(0, 75, 125);
   box-shadow: 0px 1.5px 3px 1px grey;
 }
@@ -38,14 +48,13 @@ p {
 #navBarTitle {
   display: flex;
   align-items: center;
-  justify-self: center;
   color: white;
   font-family: 'Helvetica';
   font-size: 1.2rem;
   letter-spacing: 1px;
 }
 
-#navBarElementsDiv {
+.navBarElementsDiv {
   height: 100%;
   position: absolute;
   right: 0;
@@ -56,24 +65,25 @@ p {
 
 .navBarElement,
 .navBarElementHover {
-  height: 7%;
+  min-height: 60px;
+  height: 100%;
+  margin: 0;
   padding-left: clamp(7px, 1.2vw, 17px);
   padding-right: clamp(7px, 1.2vw, 17px);
-  background-color: transparent;
   border: none;
-  margin: 0;
-  color: white;
-  font-family: 'Helvetica';
-  font-size: clamp(12px, 1.2vw, 15px);
-  letter-spacing: 0.5px;
   border-bottom: solid 0px rgb(0, 200, 255);
+  color: white;
+  background-color: transparent;
+  font-family: 'Helvetica';
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
 }
 
 .navBarElement:hover,
 .navBarElementHover {
-  border-bottom: solid 5px rgb(0, 200, 255);
+  border-bottom: solid 3px rgb(0, 200, 255);
   cursor: pointer;
-  transition-duration: 0.3s;
+  transition-duration: 0.1s;
 }
 
 .navBarDropDownOuterContainer {
@@ -82,69 +92,28 @@ p {
   flex-direction: column;
 }
 
-.navBarHamburgerContainer,
-.navBarHamburgerContainerHidden {
-  position: absolute;
-  background-color: white;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  height: calc(100% - 21px);
-  left: 0px;
-  z-index: 2;
-  width: 60vw;
-  opacity: 1;
-  transition: left 0.3s;
-}
-
-.navBarHamburgerContainerHidden {
-  opacity: 0;
-  box-shadow: none;
-  left: -60vw;
-  transition: left 0.3s, opacity 0.1s 0.3s;
-}
-
-.navBarHamburgerElement {
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: transparent;
-  font-family: 'Helvetica';
-  color: rgb(0, 125, 200);
-  font-size: clamp(13px, 1.2vw, 14px);
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  cursor: pointer;
-  border: none;
-}
-
 .navBarDropDownInnerContainer {
-  position: absolute;
-  top: 60px;
   min-width: 100%;
   padding-top: 5px;
   padding-bottom: 5px;
+  position: absolute;
+  z-index: 2;
+  top: 60px;
   right: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
-  box-shadow: 3px 3px 5px 0.5px grey;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  background-color: white;
+  box-shadow: 3px 3px 5px 0.5px grey;
 }
 
-.navBarDropDownElement,
-.navBarHamburgerElement,
-.navBarHamburgerDropDownElement {
+.navBarDropDownElement {
   width: 100%;
+  margin: 0;
   padding-top: 10px;
   padding-bottom: 10px;
-  margin: 0;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -152,30 +121,72 @@ p {
   background-color: transparent;
   font-family: 'Helvetica';
   color: rgb(0, 125, 200);
-  font-size: clamp(13px, 1.2vw, 14px);
+  font-size: 0.9rem;
   letter-spacing: 0.3px;
   white-space: nowrap;
   cursor: pointer;
   border: none;
 }
 
-.navBarDropDownElement:hover,
-.navBarHamburgerElement:hover,
-.navBarHamburgerDropDownElement:hover {
+.navBarDropDownElement:hover {
   color: black;
   transition-duration: 0.2s;
 }
 
-.navBarHamburgerDropDownContainer {
-  border-left: solid 3px rgb(0, 75, 125);
+.navBarHamburgerContainer,
+.navBarHamburgerContainerHidden {
+  height: 100%;
+  width: 60vw;
+  position: absolute;
+  left: 0px;
+  z-index: 2;
+  opacity: 1;
+  background-color: white;
+  box-shadow: 3px 0px 5px 2px rgb(75, 75, 75);
+  transition: left 0.3s;
 }
 
-.navBarHamburgerDropDownContainer>* {
-  font-size: clamp(12px, 1vw, 13px);
+.navBarHamburgerContainerHidden {
+  left: -60vw;
+  opacity: 0;
+  box-shadow: none;
+  transition: left 0.3s, opacity 0.1s 0.3s;
 }
 
 .navBarHamburgerElement,
-.navBarHamburgerDropDownElement {}
+.navBarHamburgerDropDownElement {
+  width: 100%;
+  margin: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: white;
+  background-color: transparent;
+  font-family: 'Helvetica';
+  font-size: 1.2rem;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.navBarHamburgerElement:hover,
+.navBarHamburgerDropDownElement:hover {
+  border-left: solid 3px white;
+  transition-duration: 0.1s;
+}
+
+.navBarHamburgerDropDownContainer {
+  border-left: solid 3px white;
+}
+
+.navBarHamburgerDropDownElement {
+  font-size: clamp(12px, 1vw, 13px);
+}
 
 #footer {
   min-height: 50px;
@@ -185,8 +196,8 @@ p {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(0, 75, 125);
   color: white;
+  background-color: rgb(0, 75, 125);
   font-family: 'Helvetica';
   font-size: clamp(14px, 1.2vw, 16px);
   letter-spacing: 0.5px;

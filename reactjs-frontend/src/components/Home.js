@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/navBarFooter.css';
-import { NavBarFooter, NavBarElements, NavBarButton, NavBarDropDown, NavBarProfile, Footer } from './NavBarFooter'
+import { MdEventNote } from 'react-icons/md'
+import { NavBarFooter, NavBarElements, NavBarButton, NavBarProfile, Footer } from './NavBarFooter'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -11,7 +12,7 @@ const Home = () => {
   const location = useLocation()
 
   return (
-    <NavBarFooter title="Event Planner"
+    <NavBarFooter title="Event Planner" icon={<MdEventNote />}
       onClick={() => { if (location.pathname !== "/event-planner_react") navigate("/event-planner_react") }}>
       <NavBarElements >
         <NavBarButton title='My Events'
@@ -24,9 +25,6 @@ const Home = () => {
             if (location.pathname !== "/event-planner_react/createEvent")
               navigate("/event-planner_react/createEvent")
           }} />
-        <NavBarDropDown title='events'>
-          <button>test</button>
-        </NavBarDropDown>
       </NavBarElements>
       <NavBarProfile title={user.nickname} image={user.picture ? user.picture : 'default'} >
         <button onClick={() => {

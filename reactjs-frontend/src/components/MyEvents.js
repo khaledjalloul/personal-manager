@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import '../styles/home.css';
+import '../styles/myEvents.css';
 import Loader from "react-loader-spinner";
 import { useNavigate } from "react-router-dom"
 import { MdLocationOn, MdDateRange, MdAccessTime } from "react-icons/md";
@@ -85,8 +85,9 @@ const Home = () => {
         eventCards.length === 0 ?
             <div>
                 <div className='searchEventDiv' style={{ width: '100vw', height: '100%' }}>
-                    <p style={{ fontFamily: 'Helvetica' }}>
-                        You're not attending any events. Join one by pasting its ID below.
+                    <p style={{ fontFamily: 'Helvetica', display: 'flex', flexDirection: 'column' }}>
+                        <span>You're not attending any events.</span>
+                        <span style={{marginTop: '5px'}}>Join one by pasting its ID below.</span>
                     </p>
                     <form onSubmit={searchForEvent} className='searchEventSubDiv' style={{ marginTop: '20px' }}>
                         <input type='text' placeholder='Event ID' onChange={e => setSearchID(e.target.value)} required />

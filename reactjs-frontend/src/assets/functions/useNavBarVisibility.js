@@ -8,8 +8,8 @@ export default function useNavBarVisibility() {
     const updateDimensions = () => setScreenWidth(window.innerWidth)
 
     useEffect(() => {
-        if (screenWidth < 1024 && navBarElementsVisible) setNavBarElementsVisible(false)
-        else if (screenWidth > 1023 && !navBarElementsVisible) setNavBarElementsVisible(true)
+        if (screenWidth < 600 && navBarElementsVisible) setNavBarElementsVisible(false)
+        else if (screenWidth > 599 && !navBarElementsVisible) setNavBarElementsVisible(true)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [screenWidth])
 

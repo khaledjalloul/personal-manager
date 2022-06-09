@@ -121,7 +121,6 @@ const EventDetails = () => {
                 <div id='detailsHeader'>
                     <div id='detailsTitle'>
                         <p style={{ fontSize: 'clamp(25px, 3vw, 40px)' }}>{title}</p>
-                        <p style={{ fontSize: 'clamp(12px, 1.5vw, 14px)' }}>ID: {_id}</p>
                         <div style={{ marginTop: '5px', display: 'flex', alignItems: 'center' }}>
                             <MdShare className='infoIcon' color='green' size={20}
                                 onClick={() => { navigator.clipboard.writeText(_id); NotificationManager.info('Copied to clipboard.', '', 1000) }}

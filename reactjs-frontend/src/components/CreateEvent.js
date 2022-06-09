@@ -49,7 +49,7 @@ const CreateEvent = () => {
                 <input type='text' placeholder='Event Title' onChange={e => setTitle(e.target.value)} required />
             </label>
             <label>Location
-                <input type='text' placeholder={'Describe the event\'s location'}
+                <input type='text' placeholder={'Describe the event\'s location.'}
                     onChange={e => setEventLocation(e.target.value)} required />
             </label>
             <label>Date and Time
