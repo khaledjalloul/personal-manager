@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/event-planner_react/static/css/main.f18c9bdd.css",
-    "main.js": "/event-planner_react/static/js/main.74861f6f.js",
+    "main.js": "/event-planner_react/static/js/main.b95ef21d.js",
     "static/media/Helvetica.ttf": "/event-planner_react/static/media/Helvetica.06113bf748ae7dc33e05.ttf",
     "static/media/notification.svg?s3g3t9": "/event-planner_react/static/media/notification.5d0158671dd860c714c4.svg",
     "static/media/notification.eot": "/event-planner_react/static/media/notification.3657084dc0419605a91c.eot",
@@ -9,10 +9,10 @@
     "static/media/notification.ttf?s3g3t9": "/event-planner_react/static/media/notification.c5d9251ea82e42f75381.ttf",
     "index.html": "/event-planner_react/index.html",
     "main.f18c9bdd.css.map": "/event-planner_react/static/css/main.f18c9bdd.css.map",
-    "main.74861f6f.js.map": "/event-planner_react/static/js/main.74861f6f.js.map"
+    "main.b95ef21d.js.map": "/event-planner_react/static/js/main.b95ef21d.js.map"
   },
   "entrypoints": [
     "static/css/main.f18c9bdd.css",
-    "static/js/main.74861f6f.js"
+    "static/js/main.b95ef21d.js"
   ]
 }
