@@ -139,7 +139,7 @@ const EventDetails = () => {
                 </div>
                 <div id='detailsContent'>
                     <div id='detailsAttendees'>
-                        <p style={{ fontFamily: 'Helvetica', fontSize: '20px', paddingBottom: '20px' }}>Attendees ({attendees.length})</p>
+                        <p style={{ fontFamily: 'SegoeUI', fontSize: '20px', paddingBottom: '20px' }}>Attendees ({attendees.length})</p>
                         <div id='detailsSubAttendees'>
                             {attendeesList}
                         </div>
@@ -157,11 +157,11 @@ const EventDetails = () => {
 
                     </div>
                     <div id='detailsDescription'>
-                        <p style={{ fontFamily: 'Helvetica', fontSize: '20px', paddingBottom: '20px' }}>Description</p>
-                        <p style={{ fontFamily: 'Helvetica', width: '95%', flex: '1 1 auto', overflowY: 'auto' }}>{description}</p>
+                        <p style={{ fontFamily: 'SegoeUI', fontSize: '20px', paddingBottom: '20px' }}>Description</p>
+                        <p style={{ fontFamily: 'SegoeUI', width: '95%', flex: '1 1 auto', overflowY: 'auto' }}>{description}</p>
                     </div>
                     <div id='detailsItems'>
-                        <p style={{ fontFamily: 'Helvetica', fontSize: '20px', paddingBottom: '20px' }}>Bring Along</p>
+                        <p style={{ fontFamily: 'SegoeUI', fontSize: '20px', paddingBottom: '20px' }}>Bring Along</p>
                         <div id='detailsSubItems'>
                             {itemsList}
                         </div>

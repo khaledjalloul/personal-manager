@@ -17,8 +17,8 @@
 .loginTitle {
     width: calc(30vw + 20px);
     margin-bottom: 10px !important;
-    font-family: Helvetica;
-    font-size: clamp(16px, 2vw, 22px);
+    font-family: SegoeUI;
+    font-size: 1.1rem;
 }
 
 .loginTextField {
@@ -29,8 +29,8 @@
     outline: none;
     background-color: rgba(255, 255, 255, 0.6);
     box-shadow: 5px 5px 10px 1px grey;
-    font-family: Helvetica;
-    font-size: clamp(12px, 1.8vw, 18px);
+    font-family: SegoeUI;
+    font-size: 1rem;
 }
 
 .loginTextField:hover {
@@ -46,8 +46,8 @@
     color: white;
     background-color: rgb(0, 125, 200);
     box-shadow: 5px 5px 10px 1px grey;
-    font-family: Helvetica;
-    font-size: clamp(12px, 1.8vw, 18px);
+    font-family: SegoeUI;
+    font-size: 1rem;
     cursor: pointer;
 }
 

@@ -22,7 +22,6 @@ body {
   width: 100vw;
   margin: 0 !important;
   overflow-x: hidden;
-  background-color: rgba(0, 100, 200, 0.1) !important;
 }
 
 p {
@@ -30,8 +29,8 @@ p {
 }
 
 @font-face {
-  font-family: 'Helvetica';
-  src: local("Helvetica"), url(../assets/fonts/Helvetica.ttf) format("truetype");
+  font-family: 'SegoeUI';
+  src: local("SegoeUI"), url(../assets/fonts/SegoeUI.ttf) format("truetype");
 }
 
 #navBar {
@@ -40,7 +39,7 @@ p {
   width: 100%;
   display: flex;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   background-color: rgb(0, 75, 125);
   box-shadow: 0px 1.5px 3px 1px grey;
 }
@@ -49,9 +48,8 @@ p {
   display: flex;
   align-items: center;
   color: white;
-  font-family: 'Helvetica';
-  font-size: 1.2rem;
-  letter-spacing: 1px;
+  font-family: 'SegoeUI';
+  font-size: 1.4rem;
 }
 
 .navBarElementsDiv {
@@ -71,17 +69,15 @@ p {
   padding-left: clamp(7px, 1.2vw, 17px);
   padding-right: clamp(7px, 1.2vw, 17px);
   border: none;
-  border-bottom: solid 0px rgb(0, 200, 255);
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
   background-color: transparent;
-  font-family: 'Helvetica';
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
+  font-family: 'SegoeUI';
+  font-size: 1rem;
 }
 
 .navBarElement:hover,
 .navBarElementHover {
-  border-bottom: solid 3px rgb(0, 200, 255);
+  color: white;
   cursor: pointer;
   transition-duration: 0.1s;
 }
@@ -103,8 +99,8 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
   background-color: white;
   box-shadow: 3px 3px 5px 0.5px grey;
 }
@@ -119,10 +115,9 @@ p {
   justify-content: space-evenly;
   align-items: center;
   background-color: transparent;
-  font-family: 'Helvetica';
+  font-family: 'SegoeUI';
   color: rgb(0, 125, 200);
-  font-size: 0.9rem;
-  letter-spacing: 0.3px;
+  font-size: 1rem;
   white-space: nowrap;
   cursor: pointer;
   border: none;
@@ -135,9 +130,11 @@ p {
 
 .navBarHamburgerContainer,
 .navBarHamburgerContainerHidden {
-  height: 100%;
+  height: calc(100% - 20px);
   width: 60vw;
   position: absolute;
+  padding-top: 10px;
+  padding-bottom: 10px;
   left: 0px;
   z-index: 2;
   opacity: 1;
@@ -154,6 +151,7 @@ p {
 }
 
 .navBarHamburgerElement,
+.navBarHamburgerDropDownTitle,
 .navBarHamburgerDropDownElement {
   width: 100%;
   margin: 0;
@@ -164,9 +162,9 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  color: white;
+  color: rgb(0, 75, 125);
   background-color: transparent;
-  font-family: 'Helvetica';
+  font-family: 'SegoeUI';
   font-size: 1.2rem;
   white-space: nowrap;
   cursor: pointer;
@@ -174,18 +172,29 @@ p {
   outline: none;
 }
 
-.navBarHamburgerElement:hover,
-.navBarHamburgerDropDownElement:hover {
-  border-left: solid 3px white;
-  transition-duration: 0.1s;
+.navBarHamburgerElement:hover {
+  border-left: solid 3px rgb(0, 75, 125);
+  padding-left: 22px;
+  transition-duration: 0.2s;
+}
+
+.navBarHamburgerDropDownTitle {
+  color: rgb(0, 30, 75);
+  cursor: default;
 }
 
 .navBarHamburgerDropDownContainer {
-  border-left: solid 3px white;
+  border-left: solid 3px rgb(0, 75, 125);
 }
 
 .navBarHamburgerDropDownElement {
-  font-size: clamp(12px, 1vw, 13px);
+  font-size: 1.1rem;
+  padding-left: 33px;
+}
+
+.navBarHamburgerDropDownElement:hover {
+  padding-left: 37px;
+  transition-duration: 0.3s;
 }
 
 #footer {
@@ -198,9 +207,8 @@ p {
   align-items: center;
   color: white;
   background-color: rgb(0, 75, 125);
-  font-family: 'Helvetica';
-  font-size: clamp(14px, 1.2vw, 16px);
-  letter-spacing: 0.5px;
+  font-family: 'SegoeUI';
+  font-size: 1rem;
 }
 
 #footerCopyright {
@@ -212,8 +220,8 @@ p {
 
 #footerCopyright>a {
   color: white;
-  font-family: 'Helvetica';
-  font-size: clamp(14px, 1.2vw, 16px);
+  font-family: 'SegoeUI';
+  font-size: 1rem;
   text-decoration: none;
 }
 

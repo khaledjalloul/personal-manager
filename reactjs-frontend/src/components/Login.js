@@ -67,12 +67,12 @@ const Login = ({ setToken }) => {
                     :
                     <button className='loginButton' type='submit'>Sign In</button>
                 }
-                <p style={{ fontFamily: 'Helvetica', color: 'red', position: 'absolute', bottom: '-40px' }}>{loginStatus === 2 ? 'Invalid username or password.' : ''}</p>
+                <p style={{ fontFamily: 'SegoeUI', color: 'red', position: 'absolute', bottom: '-40px' }}>{loginStatus === 2 ? 'Invalid username or password.' : ''}</p>
 
             </form>
             <div id='loginDivider'>
                 <div style={{ height: '30vh', borderLeft: 'solid 1px black' }} />
-                <p style={{ height: '7vh', display: 'flex', alignItems: 'center', fontFamily: 'Helvetica' }}>or</p>
+                <p style={{ height: '7vh', display: 'flex', alignItems: 'center', fontFamily: 'SegoeUI' }}>or</p>
                 <div style={{ height: '30vh', borderLeft: 'solid 1px black' }} />
             </div>
             <form onSubmit={handleRegister} className='loginForm'>
@@ -85,7 +85,7 @@ const Login = ({ setToken }) => {
                     :
                     <button className='loginButton' type='submit'>Register</button>
                 }
-                <p style={{ fontFamily: 'Helvetica', color: registerStatus === 2 ? 'black' : 'red', position: 'absolute', bottom: '-40px' }}>
+                <p style={{ fontFamily: 'SegoeUI', color: registerStatus === 2 ? 'black' : 'red', position: 'absolute', bottom: '-40px' }}>
                     {registerStatus === 2 ? 'Registered successfully.' :
                         registerStatus === 3 ? 'Username must be at least 6 characters with no spaces.' :
                             registerStatus === 4 ? 'Password must be at least 6 characters with no spaces.' :

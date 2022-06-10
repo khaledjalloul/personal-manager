@@ -1,7 +1,7 @@
 .react-datetime-picker {
   display: inline-flex;
   position: relative;
-  background: white;
+  background-color: rgba(100, 100, 100, 0.1);
   margin-top: 5px;
   min-width: 40vw;
   height: 40px;

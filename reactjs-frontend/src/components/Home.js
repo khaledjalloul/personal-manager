@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/navBarFooter.css';
-import { MdEventNote } from 'react-icons/md'
+import { MdEventNote, MdListAlt } from 'react-icons/md'
+import { IoCreateOutline } from 'react-icons/io5'
 import { NavBarFooter, NavBarElements, NavBarButton, NavBarProfile, Footer } from './NavBarFooter'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -15,12 +16,12 @@ const Home = () => {
     <NavBarFooter title="Event Planner" icon={<MdEventNote />}
       onClick={() => { if (location.pathname !== "/event-planner_react") navigate("/event-planner_react") }}>
       <NavBarElements >
-        <NavBarButton title='My Events'
+        <NavBarButton title='My Events' icon={<MdListAlt />} active={(window.location.hash === '#/event-planner_react')}
           onClick={() => {
             if (location.pathname !== "/event-planner_react")
               navigate("/event-planner_react")
           }} />
-        <NavBarButton title='Create Event'
+        <NavBarButton title='Create Event' icon={<IoCreateOutline />} active={(window.location.hash === '#/event-planner_react/createEvent')}
           onClick={() => {
             if (location.pathname !== "/event-planner_react/createEvent")
               navigate("/event-planner_react/createEvent")

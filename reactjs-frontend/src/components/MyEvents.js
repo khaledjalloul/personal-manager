@@ -85,7 +85,7 @@ const Home = () => {
         eventCards.length === 0 ?
             <div>
                 <div className='searchEventDiv' style={{ width: '100vw', height: '100%' }}>
-                    <p style={{ fontFamily: 'Helvetica', display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ fontFamily: 'SegoeUI', display: 'flex', flexDirection: 'column' }}>
                         <span>You're not attending any events.</span>
                         <span style={{marginTop: '5px'}}>Join one by pasting its ID below.</span>
                     </p>
@@ -105,7 +105,7 @@ const Home = () => {
                     {eventCards}
                 </div>
                 <div className='searchEventDiv'>
-                    <p style={{ fontFamily: 'Helvetica', color: 'grey', fontSize: '14px' }}>
+                    <p style={{ fontFamily: 'SegoeUI', color: 'grey', fontSize: '14px' }}>
                         Join an existing event by pasting its ID below.
                     </p>
                     <form onSubmit={searchForEvent} className='searchEventSubDiv'>

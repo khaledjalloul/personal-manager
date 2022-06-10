@@ -6,9 +6,12 @@ import useNavBarVisibility from '../assets/functions/useNavBarVisibility';
 
 const NavBarElements = ({ children }) => children
 
-const NavBarButton = ({ title, onClick, setHamburgerOpen }) => {
+const NavBarButton = ({ title, onClick, setHamburgerOpen, active, icon }) => {
   const navBarElementsVisible = useNavBarVisibility()
-  return <input type="button" value={title} className={navBarElementsVisible ? 'navBarElement' : 'navBarHamburgerElement'} onClick={() => { onClick(); if (!navBarElementsVisible) setHamburgerOpen(false) }} />
+  return <button className={navBarElementsVisible ? active ? 'navBarElementHover' : 'navBarElement' : 'navBarHamburgerElement'}
+    onClick={() => { onClick(); if (!navBarElementsVisible) setHamburgerOpen(false) }} >
+    {!navBarElementsVisible && <div style={{ marginRight: '10px' }}>{icon}</div>}{title}
+  </button>
 }
 
 const NavBarProfile = ({ title, image, children }) => {
@@ -38,7 +41,8 @@ const NavBarDropDown = ({ title, children }) => {
   const [selectMenuDisplayed, setSelectMenuDisplayed] = useState(false)
 
   if (navBarElementsVisible) return (
-    <div className='navBarDropDownOuterContainer' onMouseEnter={() => setSelectMenuDisplayed(true)} onMouseLeave={() => setSelectMenuDisplayed(false)} onClick={() => setSelectMenuDisplayed(true)}>
+    <div className='navBarDropDownOuterContainer' onMouseEnter={() => setSelectMenuDisplayed(true)}
+      onMouseLeave={() => setSelectMenuDisplayed(false)} onClick={() => setSelectMenuDisplayed(true)}>
       <button className={selectMenuDisplayed ? 'navBarElementHover' : 'navBarElement'}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingRight: 'clamp(3px, 0.7vw, 12px)' }}>
         <p>{title}</p><RiArrowDropDownLine size={30} />
@@ -51,12 +55,9 @@ const NavBarDropDown = ({ title, children }) => {
     </div>
   )
   else return (
-    <div className='navBarDropDownOuterContainer'>
-      <button className='navBarHamburgerElement' onClick={() => setSelectMenuDisplayed(!selectMenuDisplayed)}>
-        <p>{title}</p>
-        <RiArrowDropDownLine size={30} style={{ position: 'absolute', right: '20px' }} />
-      </button>
-      <div className='navBarHamburgerDropDownContainer' style={{ display: selectMenuDisplayed ? 'block' : 'none' }} >
+    <div className='navBarDropDownOuterContainer' >
+      <p className='navBarHamburgerDropDownTitle'>{title}</p>
+      <div className='navBarHamburgerDropDownContainer' >
         {React.Children.count(children) === 1 ?
           React.cloneElement(children, { className: 'navBarHamburgerDropDownElement' }) :
           children.map(child => React.cloneElement(child, { className: 'navBarHamburgerDropDownElement' }))}
@@ -74,7 +75,7 @@ const NavBarFooter = ({ title, icon, onClick, children }) => {
     <div style={{ height: 'auto', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
       <div id='navBar' style={{ justifyContent: 'flex-start' }}>
         <div id='navBarTitle' style={{ paddingLeft: 'clamp(25px, 5vw, 75px)' }}>
-          {navBarElementsVisible && <div style={{ marginRight: '15px' }}>{icon}</div>}
+          {navBarElementsVisible && <div style={{ marginRight: '15px', display: 'flex', alignItems: 'center' }}>{icon}</div>}
           <p style={{ cursor: 'pointer' }} onClick={onClick}>{title}</p>
         </div>
         <div className='navBarElementsDiv'>
@@ -105,11 +106,9 @@ const NavBarFooter = ({ title, icon, onClick, children }) => {
       <div style={{ position: 'relative', display: 'flex', flex: '1 1 auto' }}>
         {children.find(child => child.type.name !== NavBarProfile.name && child.type.name !== NavBarElements.name && child.type.name !== Footer.name)}
         <div className={hamburgerOpen ? 'navBarHamburgerContainer' : 'navBarHamburgerContainerHidden'}>
-          <div style={{ backgroundColor: 'rgba(0, 75, 125, 0.9)', height: 'calc(100% + 1px)', width: 'calc(100% + 1px)' }}>
-            {React.Children.count(children.find(child => child.type.name === NavBarElements.name).props.children) === 1 ?
-              React.cloneElement(children.find(child => child.type.name === NavBarElements.name).props.children, { setHamburgerOpen: setHamburgerOpen }) :
-              children.find(child => child.type.name === NavBarElements.name).props.children.map(child => React.cloneElement(child, { setHamburgerOpen: setHamburgerOpen }))}
-          </div>
+          {React.Children.count(children.find(child => child.type.name === NavBarElements.name).props.children) === 1 ?
+            React.cloneElement(children.find(child => child.type.name === NavBarElements.name).props.children, { setHamburgerOpen: setHamburgerOpen }) :
+            children.find(child => child.type.name === NavBarElements.name).props.children.map(child => React.cloneElement(child, { setHamburgerOpen: setHamburgerOpen }))}
         </div>
         {hamburgerOpen && <div style={{ position: 'absolute', height: '100%', width: '100vw', backgroundColor: 'rgba(50, 50, 50, 0.7)', zIndex: '1' }} onClick={() => setHamburgerOpen(false)} />}
       </div>
