@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/event-planner_react/static/css/main.c11bc7d5.css",
+    "main.css": "/event-planner_react/static/css/main.c16be572.css",
     "main.js": "/event-planner_react/static/js/main.a5b9f0f8.js",
     "static/media/SegoeUI.ttf": "/event-planner_react/static/media/SegoeUI.45472284dc36b2486ce2.ttf",
     "static/media/notification.svg?s3g3t9": "/event-planner_react/static/media/notification.5d0158671dd860c714c4.svg",
@@ -8,11 +8,11 @@
     "static/media/notification.woff?s3g3t9": "/event-planner_react/static/media/notification.c392cd33d9d9de730f9d.woff",
     "static/media/notification.ttf?s3g3t9": "/event-planner_react/static/media/notification.c5d9251ea82e42f75381.ttf",
     "index.html": "/event-planner_react/index.html",
-    "main.c11bc7d5.css.map": "/event-planner_react/static/css/main.c11bc7d5.css.map",
+    "main.c16be572.css.map": "/event-planner_react/static/css/main.c16be572.css.map",
     "main.a5b9f0f8.js.map": "/event-planner_react/static/js/main.a5b9f0f8.js.map"
   },
   "entrypoints": [
-    "static/css/main.c11bc7d5.css",
+    "static/css/main.c16be572.css",
     "static/js/main.a5b9f0f8.js"
   ]
 }
