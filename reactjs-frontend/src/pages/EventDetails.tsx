@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   MdLocationOn,
   MdDateRange,
@@ -19,6 +19,7 @@ import {
   useDeleteEventMutation,
   useGetEventByIdQuery,
 } from "../api";
+import styled, { css } from "styled-components";
 
 export const EventDetails = () => {
   const { user } = useAuth0();
@@ -45,15 +46,11 @@ export const EventDetails = () => {
       displayAttendee = displayAttendee + " (Host)";
     if (attendee.id === userID) displayAttendee = displayAttendee + " (You)";
 
-    return (
-      <div className="detailsAttendee" key={attendee.id}>
-        {displayAttendee}
-      </div>
-    );
+    return <Attendee key={attendee.id}>{displayAttendee}</Attendee>;
   });
 
   const itemsList = event?.items.map((item) => (
-    <label className="detailsItem" key={item.name}>
+    <Item key={item.name}>
       {item.name}
       <input
         type="checkbox"
@@ -67,31 +64,21 @@ export const EventDetails = () => {
         }}
         disabled={!event.attendees.some((attendee) => attendee.id === userID)}
       />
-    </label>
+    </Item>
   ));
 
   return isLoading ? (
-    <div
-      style={{
-        width: "100vw",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <LoadingDiv>
       <Loader type="TailSpin" color="#004b7d" height="10vh" width="15vw" />
-    </div>
+    </LoadingDiv>
   ) : (
-    <div id="detailsMainDiv">
-      <img src={event?.image} id="detailsImage" alt={event?.title} />
-      <div id="detailsHeader">
-        <div id="detailsTitle">
-          <p style={{ fontSize: "clamp(25px, 3vw, 40px)" }}>{event?.title}</p>
-          <div
-            style={{ marginTop: "5px", display: "flex", alignItems: "center" }}
-          >
-            <MdShare
-              className="infoIcon"
+    <Wrapper>
+      <EventImage src={event?.image} alt={event?.title} />
+      <Header>
+        <TitleDiv>
+          <Title>{event?.title}</Title>
+          <ActionsDiv>
+            <ShareIcon
               color="green"
               size={20}
               onClick={() => {
@@ -101,32 +88,25 @@ export const EventDetails = () => {
                 }
               }}
             />
-            <MdOutlineDelete
-              className="infoIcon"
-              id="deleteButton"
-              color="red"
-              size={20}
-              style={{
-                marginLeft: "10px",
-                display: userID === event?.creatorID ? "block" : "none",
-              }}
-              onClick={(e) => {
-                setConfirmDelete(!confirmDelete);
-              }}
-            />
-            <input
-              id={
-                confirmDelete
-                  ? "confirmDeleteButton"
-                  : "confirmDeleteButtonHidden"
-              }
+            {event?.creatorID === userID && (
+              <DeleteIcon
+                id="deleteButton"
+                color="red"
+                size={20}
+                onClick={(e) => {
+                  setConfirmDelete(!confirmDelete);
+                }}
+              />
+            )}
+            <ConfirmDeleteButton
+              style={!confirmDelete ? { visibility: "hidden" } : undefined}
               type="button"
               value="Confirm Delete"
               onClick={() => deleteEvent()}
             />
-          </div>
-        </div>
-        <div id="detailsInfo">
+          </ActionsDiv>
+        </TitleDiv>
+        <HeaderContent>
           <p>
             {event?.eventLocation}
             <MdLocationOn style={{ marginLeft: "10px" }} />
@@ -139,28 +119,18 @@ export const EventDetails = () => {
             {dateTimeFormat.toLocaleTimeString()}
             <MdAccessTime style={{ marginLeft: "10px" }} />
           </p>
-        </div>
-      </div>
-      <div id="detailsContent">
-        <div id="detailsAttendees">
-          <p
-            style={{
-              fontFamily: "SegoeUI",
-              fontSize: "20px",
-              paddingBottom: "20px",
-            }}
-          >
-            Attendees ({event?.attendees.length})
-          </p>
-          <div id="detailsSubAttendees">{attendeesList}</div>
+        </HeaderContent>
+      </Header>
+      <DetailsDiv>
+        <Attendees>
+          <SectionTitle>Attendees ({event?.attendees.length})</SectionTitle>
+          <AttendeeList>{attendeesList}</AttendeeList>
           {attendLoading ? (
             <Loader type="TailSpin" color="#004b7d" height="30px" />
           ) : !event?.attendees.some((attendee) => attendee.id === userID) ? (
-            <input
+            <AttendButton
               type="button"
-              id="attendButton"
               value="Attend Event"
-              style={{ marginTop: "auto" }}
               onClick={() =>
                 attendEvent({
                   userID,
@@ -169,9 +139,8 @@ export const EventDetails = () => {
               }
             />
           ) : (
-            <input
+            <AttendButton
               type="button"
-              id="attendButton"
               value={attendingButton ? "Attending" : "Leave Event"}
               style={{
                 marginTop: "auto",
@@ -189,44 +158,224 @@ export const EventDetails = () => {
               }
             />
           )}
-        </div>
-        <div id="detailsDescription">
-          <p
-            style={{
-              fontFamily: "SegoeUI",
-              fontSize: "20px",
-              paddingBottom: "20px",
-            }}
-          >
-            Description
-          </p>
-          <p
-            style={{
-              fontFamily: "SegoeUI",
-              width: "95%",
-              flex: "1 1 auto",
-              overflowY: "auto",
-            }}
-          >
-            {event?.description}
-          </p>
-        </div>
-        <div id="detailsItems">
-          <p
-            style={{
-              fontFamily: "SegoeUI",
-              fontSize: "20px",
-              paddingBottom: "20px",
-            }}
-          >
-            Bring Along
-          </p>
-          <div id="detailsSubItems">{itemsList}</div>
-        </div>
-      </div>
+        </Attendees>
+        <DescriptionDiv>
+          <SectionTitle>Description</SectionTitle>
+          <EventDescription>{event?.description}</EventDescription>
+        </DescriptionDiv>
+        <ItemsDiv>
+          <SectionTitle>Bring Along</SectionTitle>
+          <ItemList>{itemsList}</ItemList>
+        </ItemsDiv>
+      </DetailsDiv>
       <NotificationContainer />
-    </div>
+    </Wrapper>
   );
 };
 
-export default EventDetails;
+const Wrapper = styled.div`
+  width: 100vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+`;
+const Header = styled.div`
+  height: 120px;
+  width: calc(100% - 100px);
+  margin-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 5px 5px 10px 2px grey;
+  font-family: SegoeUI;
+`;
+const HeaderContent = styled.div`
+  height: 70%;
+  min-width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 1rem;
+`;
+const TitleDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+const LoadingDiv = styled.div`
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Title = styled.p`
+  font-size: clamp(25px, 3vw, 40px);
+`;
+const SectionTitle = styled.p`
+  font-family: "SegoeUI";
+  font-size: 20px;
+  padding-bottom: 20px;
+`;
+const ActionsDiv = styled.div`
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+`;
+const EventDescription = styled.p`
+  font-family: "SegoeUI";
+  width: 95%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+`;
+const AttendButton = styled.input`
+  margin-top: auto;
+  min-height: 35px;
+  width: 100%;
+  border: none;
+  color: white;
+  background-color: rgba(0, 75, 125, 0.8);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(0, 75, 125, 1);
+    transition-duration: 0.3s;
+  }
+`;
+const infoIcon = css`
+  padding: 3px;
+  border-radius: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(100, 100, 100, 0.2);
+    transition-duration: 0.2s;
+  }
+`;
+const ShareIcon = styled(MdShare)`
+  ${infoIcon}
+`;
+const DeleteIcon = styled(MdOutlineDelete)`
+  ${infoIcon}
+  margin-left: 10px;
+`;
+const EventImage = styled.img`
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  object-fit: cover;
+  opacity: 0.9;
+  z-index: -1;
+`;
+const DetailsDiv = styled.div`
+  width: calc(100% - 40px);
+  flex: 1 1 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+`;
+const Attendees = styled.div`
+  min-height: 250px;
+  min-width: 350px;
+  flex: 1 1 auto;
+  margin: 10px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 5px 5px 10px 2px grey;
+`;
+const AttendeeList = styled.div`
+  width: 100%;
+  flex: 1 1 auto;
+  direction: rtl;
+  overflow-y: auto;
+  font-size: 1rem;
+`;
+const Attendee = styled.div`
+  min-height: 30px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 75, 125, 0.1);
+  font-family: SegoeUI;
+  cursor: default;
+
+  &:hover {
+    background-color: rgba(0, 75, 125, 0.2);
+    transition-duration: 0.3s;
+  }
+`;
+const DescriptionDiv = styled.div`
+  min-height: 380px;
+  min-width: 45%;
+  flex: 1 1 auto;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 5px 5px 10px 2px grey;
+  font-size: 1rem;
+`;
+const ItemsDiv = styled.div`
+  min-height: 250px;
+  min-width: 350px;
+  flex: 1 1 auto;
+  margin: 10px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 5px 5px 10px 2px grey;
+  font-size: 1rem;
+`;
+const ItemList = styled.div`
+  width: 100%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+`;
+const Item = styled.label`
+  min-height: 30px;
+  width: 80%;
+  padding-right: 10%;
+  padding-left: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 75, 125, 0.1);
+  font-family: SegoeUI;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(0, 75, 125, 0.2);
+    transition-duration: 0.3s;
+  }
+`;
+const ConfirmDeleteButton = styled.input`
+  margin-left: 10px;
+  padding: 5px;
+  border: none;
+  color: white;
+  background-color: rgb(255, 50, 50);
+  box-shadow: 3px 3px 5px 1px grey;
+  cursor: pointer;
+  transition-duration: 0.2s;
+
+  &:hover {
+    box-shadow: 1px 1px 3px 1px grey;
+    transition-duration: 0.2s;
+  }
+`;

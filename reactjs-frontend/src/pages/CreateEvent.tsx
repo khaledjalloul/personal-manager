@@ -3,6 +3,7 @@ import DateTimePicker from "react-datetime-picker";
 import Loader from "react-loader-spinner";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useCreateEventMutation } from "../api";
+import styled from "styled-components";
 
 export const CreateEvent = () => {
   const { user } = useAuth0();
@@ -16,7 +17,7 @@ export const CreateEvent = () => {
   const { mutate: createEvent, isLoading } = useCreateEventMutation();
 
   return (
-    <form
+    <Wrapper
       id="createMainDiv"
       onSubmit={(e) => {
         e.preventDefault();
@@ -34,7 +35,7 @@ export const CreateEvent = () => {
         });
       }}
     >
-      <label>
+      <Label>
         Event Title
         <input
           type="text"
@@ -42,8 +43,8 @@ export const CreateEvent = () => {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         Location
         <input
           type="text"
@@ -51,55 +52,111 @@ export const CreateEvent = () => {
           onChange={(e) => setEventLocation(e.target.value)}
           required
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         Date and Time
         <DateTimePicker id="dateTime" onChange={setDateTime} value={dateTime} />
-      </label>
-      <label>
+      </Label>
+      <Label>
         Image Link
-        <input
+        <InputField
           type="text"
-          style={{ width: "70vw" }}
           placeholder="Paste image URL here."
           onChange={(e) => setImage(e.target.value)}
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         Items to Bring Along
-        <input
+        <InputField
           type="text"
-          style={{ width: "70vw" }}
           placeholder="Separate items by a comma."
           onChange={(e) => setItems(e.target.value)}
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         Description
-        <textarea
-          style={{
-            width: "70vw",
-            height: "400px",
-            textAlign: "left",
-            resize: "none",
-            padding: "10px",
-          }}
+        <TextAreaField
           placeholder="Describe the plans for the event."
           onChange={(e) => setDescription(e.target.value)}
         />
-      </label>
+      </Label>
 
       {isLoading ? (
-        <div style={{ marginTop: "30px" }}>
+        <LoadingDiv>
           <Loader type="TailSpin" color="#004b7d" height="40px" />
-        </div>
+        </LoadingDiv>
       ) : (
-        <button id="createEventButton" type="submit">
-          Create Event!
-        </button>
+        <CreateEventButton type="submit">Create Event!</CreateEventButton>
       )}
-    </form>
+    </Wrapper>
   );
 };
 
-export default CreateEvent;
+const Wrapper = styled.form`
+  width: 100vw;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+const Label = styled.label`
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: SegoeUI;
+  font-size: 1.3rem;
+
+  & > input,
+  & > textarea {
+    height: 40px;
+    width: 70vw;
+    margin-top: 10px;
+    border: solid 1px grey;
+    background-color: rgba(100, 100, 100, 0.1);
+    outline: none;
+    opacity: 0.7;
+    box-shadow: 5px 5px 5px 1px grey;
+    font-family: SegoeUI;
+    font-size: 1rem;
+    text-align: center;
+  }
+  & > input:hover,
+  & > textarea:hover,
+  & > input:focus,
+  & > textarea:focus {
+    opacity: 1;
+    transition-duration: 0.2s;
+  }
+`;
+const InputField = styled.input`
+  width: 70vw;
+`;
+const TextAreaField = styled.textarea`
+  width: 70vw;
+  height: 400px;
+  text-align: left;
+  resize: none;
+  padding: 10px;
+`;
+const LoadingDiv = styled.div`
+  margin-top: 30px;
+`;
+const CreateEventButton = styled.button`
+  height: 40px;
+  width: 30vw;
+  margin-top: 30px;
+  color: white;
+  background-color: rgb(0, 125, 200);
+  border: none;
+  box-shadow: 3px 3px 7px 1px grey;
+  font-family: SegoeUI;
+  font-size: 1rem;
+  cursor: pointer;
+  transition-duration: 0.2s;
+
+  &:hover {
+    box-shadow: 1px 1px 2px 1px grey;
+    transition-duration: 0.2s;
+  }
+`;

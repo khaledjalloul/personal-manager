@@ -26,11 +26,13 @@
     "react-loader-spinner": "^4.0.0",
     "react-notifications": "^1.7.3",
     "react-query": "^3.39.3",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "styled-components": "^5.3.9"
   },
   "devDependencies": {
     "@types/react": "^18.0.34",
     "@types/react-dom": "^18.0.11",
+    "@types/styled-components": "^5.1.26",
     "css-loader": "^6.7.3",
     "dotenv": "^16.0.3",
     "file-loader": "^6.2.0",

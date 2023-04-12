@@ -5,11 +5,7 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import Loader from "react-loader-spinner";
 import { CreateEvent, EventDetails, Home, MyEvents } from "./pages";
 import { QueryClient, QueryClientProvider } from "react-query";
-import "./styles/createEvent.css"
 import "./styles/DateTimePicker.css"
-import "./styles/eventDetails.css"
-import "./styles/login.css"
-import "./styles/myEvents.css"
 import "./styles/navBarFooter.css"
 import "./styles/notifications.css"
 
