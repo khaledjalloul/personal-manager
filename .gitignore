@@ -1,5 +1,8 @@
 reactjs-frontend/node_modules
 reactjs-frontend/build
 reactjs-frontend/dist
+reactjs-frontend/.env.local
+
 nodejs-backend/node_modules
+
 node_modules
