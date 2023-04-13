@@ -84,7 +84,7 @@ export const EventDetails = () => {
               onClick={() => {
                 if (event) {
                   navigator.clipboard.writeText(event._id);
-                  NotificationManager.info("Copied to clipboard.", "", 1000);
+                  NotificationManager.info("Event ID copied to clipboard.", "", 1000);
                 }
               }}
             />

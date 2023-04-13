@@ -2,9 +2,9 @@
 
 ## Description
 
-The Event Planner is a web app built using ReactJS, NodeJS, and MongoDB.
+Event Planner is a web app built using ReactJS, ExpressJS, and MongoDB.
 
-Sign in and create an event to share it with your friends or join a pre-existing event. Then you'll be able to keep track of your event details and check who's attending or what to bring.
+Sign in and create an event to share with your friends or join a pre-existing event to view its details, check who's attending, and keep track of what to bring.
 
 ## Webpage
 

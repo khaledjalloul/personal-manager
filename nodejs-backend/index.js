@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 
 const corsOptions = {
   origin: "*",
@@ -13,12 +14,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT || 3737;
+const { MONGO_USERNAME, MONGO_PASSWORD } = process.env;
 
 let EventSchema, Event;
 
 app.listen(port, async () => {
   await mongoose.connect(
-    "mongodb+srv://khaledjalloul:Kj542533@cluster0.qpcmz.mongodb.net/?retryWrites=true&w=majority"
+    `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.qpcmz.mongodb.net/?retryWrites=true&w=majority`
   );
 
   EventSchema = new mongoose.Schema(
