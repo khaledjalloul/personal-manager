@@ -4,6 +4,7 @@ reactjs-frontend/dist
 reactjs-frontend/.env.local
 
 nodejs-backend/node_modules
+nodejs-backend/keys
 nodejs-backend/.env
 
 node_modules

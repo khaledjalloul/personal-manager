@@ -1,0 +1,17 @@
+version: '3.2'
+
+services:
+  event-planner:
+    image: event-planner:latest
+    container_name: event-planner
+    build: .
+    volumes:
+      - .:/node-server
+    ports:
+      - 3737:3737
+    restart: unless-stopped
+    privileged: true
+    stdin_open: true
+    tty: true
+
+

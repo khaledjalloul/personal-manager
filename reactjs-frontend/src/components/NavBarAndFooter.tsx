@@ -63,9 +63,7 @@ const NavBarProfile = ({
       onClick={() => setSelectMenuDisplayed(true)}
     >
       <button
-        className={
-          selectMenuDisplayed ? "navBarElementHover" : "navBarElement"
-        }
+        className={selectMenuDisplayed ? "navBarElementHover" : "navBarElement"}
         style={{
           display: "flex",
           alignItems: "center",
@@ -90,8 +88,11 @@ const NavBarProfile = ({
       >
         {React.Children.count(children) === 1
           ? React.cloneElement(children, { className: "navBarDropDownElement" })
-          : children.map((child: any) =>
-              React.cloneElement(child, { className: "navBarDropDownElement" })
+          : children.map((child: any, index: number) =>
+              React.cloneElement(child, {
+                className: "navBarDropDownElement",
+                key: index,
+              })
             )}
       </div>
     </div>
@@ -138,9 +139,10 @@ const NavBarDropDown = ({
             ? React.cloneElement(children, {
                 className: "navBarDropDownElement",
               })
-            : children.map((child: any) =>
+            : children.map((child: any, index: number) =>
                 React.cloneElement(child, {
                   className: "navBarDropDownElement",
+                  key: index,
                 })
               )}
         </div>
@@ -155,9 +157,10 @@ const NavBarDropDown = ({
             ? React.cloneElement(children, {
                 className: "navBarHamburgerDropDownElement",
               })
-            : children.map((child: any) =>
+            : children.map((child: any, index: number) =>
                 React.cloneElement(child, {
                   className: "navBarHamburgerDropDownElement",
+                  key: index,
                 })
               )}
         </div>
@@ -296,9 +299,10 @@ const NavBarAndFooter = ({
                 )
               : children
                   .find((child: any) => child.type.name === NavBarElements.name)
-                  .props.children.map((child: any) =>
+                  .props.children.map((child: any, index: number) =>
                     React.cloneElement(child, {
                       setHamburgerOpen: setHamburgerOpen,
+                      key: index,
                     })
                   )}
           </div>

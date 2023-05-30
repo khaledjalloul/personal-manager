@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+// const https = require("https");
+// const fs = require("fs");
+
 require("dotenv").config();
 
 const corsOptions = {
@@ -13,10 +16,20 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 const port = process.env.PORT || 3737;
 const { MONGO_USERNAME, MONGO_PASSWORD } = process.env;
 
 let EventSchema, Event;
+
+// https
+//   .createServer(
+//     {
+//       key: fs.readFileSync("keys/key.pem"),
+//       cert: fs.readFileSync("keys/cert.pem"),
+//     },
+//     app
+//   )
 
 app.listen(port, async () => {
   await mongoose.connect(
