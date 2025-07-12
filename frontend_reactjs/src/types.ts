@@ -48,3 +48,17 @@ export type ExpensesCategory = {
   name: string;
   color: string;
 };
+
+export type Hike = {
+  id?: number;
+  date: Date;
+  description: string;
+  distance: number;
+  ascent: number;
+  descent: number;
+  duration: number;
+  durationWithBreaks: number;
+  coverImage: string;
+  images: string[];
+  googleMapsUrl: string;
+}

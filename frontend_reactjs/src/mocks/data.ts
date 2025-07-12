@@ -1,4 +1,4 @@
-import { User, Group, Expense, Income, ExpensesCategory } from '../types';
+import { User, Group, Expense, Income, ExpensesCategory, Hike } from '../types';
 
 export const user: User = {
     id: 1,
@@ -83,5 +83,34 @@ export const incomes: Income[] = [
         date: new Date(),
         source: 'Freelance Work',
         amount: 1500.00
+    }
+];
+
+export const hikes: Hike[] = [
+    {
+        id: 1,
+        date: new Date("2025-07-01"),
+        description: 'Morning hike in the mountains',
+        distance: 5.0,
+        ascent: 300,
+        descent: 200,
+        duration: 3.4,
+        durationWithBreaks: 3.9,
+        coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
+        images: [],
+        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+    },
+    {
+        id: 2,
+        date: new Date("2025-07-05"),
+        description: 'Evening walk in the park',
+        distance: 2.0,
+        ascent: 50,
+        descent: 30,
+        duration: 5.1,
+        durationWithBreaks: 6.8,
+        coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
+        images: [],
+        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
     }
 ];

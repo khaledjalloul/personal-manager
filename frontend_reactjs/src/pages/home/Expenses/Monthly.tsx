@@ -27,7 +27,7 @@ type SummaryEntry = {
   };
 }
 
-export const ExpensesTotals = () => {
+export const MonthlyExpenses = () => {
   const navigate = useNavigate();
   //   const { userData } = useContext(UserContext);
 

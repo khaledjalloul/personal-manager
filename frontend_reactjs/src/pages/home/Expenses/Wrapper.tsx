@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
-import { Settings, Insights, Clear, Calculate, Today } from "@mui/icons-material";
+import { Settings, Insights, Clear, Calculate, Today, ViewList } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useExpenses, useIncomes } from "../../../api";
 import { ExpenseCard, ExpenseCardHeader } from "../../../components";
@@ -51,17 +51,17 @@ export const ExpensesWrapper = () => {
           variant="contained"
           onClick={location.pathname === "/expenses/daily" ? undefined : () => navigate("/expenses/daily")}
           color="secondary"
-          startIcon={<Today />}
+          startIcon={<ViewList />}
         >
           Daily
         </Button>
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/totals" ? undefined : () => navigate("/expenses/totals")}
+          onClick={location.pathname === "/expenses/monthly" ? undefined : () => navigate("/expenses/monthly")}
           color="secondary"
-          startIcon={<Calculate />}
+          startIcon={<Today />}
         >
-          Totals
+          Monthly
         </Button>
         <Button
           variant="contained"
@@ -85,7 +85,11 @@ export const ExpensesWrapper = () => {
           ))}
         </TextField> */}
         <TextField
-          sx={{ minWidth: "35vw", ml: "auto" }}
+          sx={{
+            minWidth: "35vw", ml: "auto",
+            opacity: location.pathname !== "/expenses" ? 1 : 0
+          }}
+          disabled={location.pathname === "/expenses"}
           label="Search for expense"
           placeholder="Category, description, vendor, tags, etc."
           value={searchText}

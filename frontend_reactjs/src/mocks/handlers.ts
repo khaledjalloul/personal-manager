@@ -1,7 +1,7 @@
 import { DefaultBodyType, http, HttpResponse, PathParams } from 'msw';
-import { User, Group, Expense, Income, ExpensesCategory } from '../types';
+import { User, Group, Expense, Income, ExpensesCategory, Hike } from '../types';
 import { CreateGroupRequestBody } from '../api';
-import { groups, user, expenses, incomes, expensesCategories } from './data';
+import { groups, user, expenses, incomes, expensesCategories, hikes } from './data';
 
 export const authHandlers = [
   http.post<PathParams, DefaultBodyType, User>('/auth/signin', () => {
@@ -62,4 +62,12 @@ export const expenseHandlers = [
   http.get<PathParams, DefaultBodyType, ExpensesCategory[]>('/expenses/categories', () => {
     return HttpResponse.json(expensesCategories);
   }),
+];
+
+export const hikeHandlers = [
+  http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => {
+    const duplicatedHikes = Array.from({ length: 25 }, () => hikes).flat();
+    return HttpResponse.json(duplicatedHikes)
+  }
+  ),
 ];

@@ -107,67 +107,67 @@ export const ExpensesStatistics = () => {
           <Grid container spacing={2} flexGrow={1}>
 
             <Grid item xs={12} sx={{ display: 'flex' }} >
-              <Box sx={{ borderRadius: 2, p: 4, backgroundColor: "primary.dark", flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >
+              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
                 <Typography variant="h6" color="white">
                   Total Balance
                 </Typography>
                 <Typography variant="h3" color="white">
                   1300.00 CHF
                 </Typography>
-              </Box>
+              </StatisticsCard>
             </Grid>
 
             <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <Box sx={{ borderRadius: 2, p: 4, backgroundColor: "primary.dark", flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
                 <Typography variant="h6" color="white">
                   ZKB Balance
                 </Typography>
                 <Typography variant="h3" color="white">
                   3,732.00 CHF
                 </Typography>
-              </Box>
+              </StatisticsCard>
             </Grid>
 
 
             <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <Box sx={{ borderRadius: 2, p: 4, backgroundColor: "primary.dark", flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
                 <Typography variant="h6" color="white">
                   Cash Balance
                 </Typography>
                 <Typography variant="h3" color="white">
                   300.00 CHF
                 </Typography>
-              </Box>
+              </StatisticsCard>
             </Grid>
 
 
             <Grid item xs={12} lg={6} sx={{ display: 'flex' }}  >
-              <Box sx={{ borderRadius: 2, p: 4, backgroundColor: "primary.dark", flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
                 <Typography variant="h6" color="white">
                   Total Spent This Month
                 </Typography>
                 <Typography variant="h3" color="white">
                   {statistics.totalExpensesThisMonth.toFixed(2)} CHF
                 </Typography>
-              </Box>
+              </StatisticsCard>
             </Grid>
 
 
             <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <Box sx={{ borderRadius: 2, p: 4, backgroundColor: "primary.dark", flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
                 <Typography variant="h6" color="white">
                   Average Spendings Per Month
                 </Typography>
                 <Typography variant="h3" color="white">
                   {statistics.totalMonthlyAverage.toFixed(2)} CHF
                 </Typography>
-              </Box>
+              </StatisticsCard>
             </Grid>
           </Grid>
         </Box>
 
 
-        <Box sx={{ flex: 1, pt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
 
           <Typography variant="h5">
             Total Spendings Per Category
@@ -250,25 +250,11 @@ const Wrapper = styled(Box)`
   gap: 16px;
 `;
 
-const Header = styled(Box)`
+const StatisticsCard = styled(Box)`
+  border-radius: 8px;
+  padding: 32px;
+  flex-grow: 1;
   display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ExpensesScrollWrapper = styled(Box)`
-  overflow-y: scroll;
-  flex-grow: 0;
-  max-height: 75vh;
-  margin-top: -16px;
-`;
-
-const ExpenseCard = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 16px;
-`;
+  flex-direction: column;
+  justify-content: center;
+`; 
