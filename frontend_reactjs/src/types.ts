@@ -46,4 +46,5 @@ export type Income = {
 export type ExpensesCategory = {
   id?: number;
   name: string;
+  color: string;
 };

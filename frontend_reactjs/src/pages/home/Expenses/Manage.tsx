@@ -54,10 +54,10 @@ export const ManageExpenses = () => {
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
             <TableHead>
               <TableRow >
-                <TableCell>Date</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell sx={{ textWrap: "nowrap" }}>Amount (CHF)</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Source</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,12 +83,12 @@ export const ManageExpenses = () => {
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
             <TableHead>
               <TableRow >
-                <TableCell>Date</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Vendor</TableCell>
-                <TableCell sx={{ textWrap: "nowrap" }}>Amount (CHF)</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

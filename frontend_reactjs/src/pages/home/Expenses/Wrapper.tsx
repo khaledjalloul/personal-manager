@@ -43,25 +43,25 @@ export const ExpensesWrapper = () => {
           variant="contained"
           onClick={location.pathname === "/expenses" ? undefined : () => navigate("/expenses")}
           color="secondary"
+          startIcon={<Insights />}
+        >
+          Statistics
+        </Button>
+        <Button
+          variant="contained"
+          onClick={location.pathname === "/expenses/daily" ? undefined : () => navigate("/expenses/daily")}
+          color="secondary"
           startIcon={<Today />}
         >
           Daily
         </Button>
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/summary" ? undefined : () => navigate("/expenses/summary")}
+          onClick={location.pathname === "/expenses/totals" ? undefined : () => navigate("/expenses/totals")}
           color="secondary"
           startIcon={<Calculate />}
         >
-          Summary
-        </Button>
-        <Button
-          variant="contained"
-          onClick={location.pathname === "/expenses/statistics" ? undefined : () => navigate("/expenses/statistics")}
-          color="secondary"
-          startIcon={<Insights />}
-        >
-          Statistics
+          Totals
         </Button>
         <Button
           variant="contained"

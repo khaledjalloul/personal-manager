@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { About, CreateGroup, Home, Diary, ViewExpenses, ManageExpenses, ExpensesStatistics, Journal, Notes, Hikes, Games, Recipes, Piano, ExpensesWrapper, ExpensesSummary } from "../pages";
+import { About, CreateGroup, Home, Diary, ManageExpenses, ExpensesStatistics, Journal, Notes, Hikes, Games, Recipes, Piano, ExpensesWrapper, DailyExpenses, ExpensesTotals } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
 
@@ -55,19 +55,19 @@ export const Navigator = () => {
           children: [
             {
               path: "/expenses",
-              element: <ViewExpenses />,
+              element: <ExpensesStatistics />,
+            },
+            {
+              path: "/expenses/daily",
+              element: <DailyExpenses />,
+            },
+            {
+              path: "/expenses/totals",
+              element: <ExpensesTotals />,
             },
             {
               path: "/expenses/manage",
               element: <ManageExpenses />,
-            },
-            {
-              path: "/expenses/statistics",
-              element: <ExpensesStatistics />,
-            },
-            {
-              path: "/expenses/summary",
-              element: <ExpensesSummary />,
             },
           ]
         }

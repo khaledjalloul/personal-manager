@@ -27,7 +27,7 @@ type SummaryEntry = {
   };
 }
 
-export const ExpensesSummary = () => {
+export const ExpensesTotals = () => {
   const navigate = useNavigate();
   //   const { userData } = useContext(UserContext);
 
@@ -50,8 +50,7 @@ export const ExpensesSummary = () => {
     const categoryNames = expensesCategories?.map(c => c.name) || [];
 
     return expenses?.reduce<SummaryEntry>((acc, expense) => {
-      const date = expense.date;
-      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const month = `${expense.date.getFullYear()}-${String(expense.date.getMonth() + 1).padStart(2, '0')}`;
 
       // Init month if not there
       if (!acc[month]) {
@@ -77,13 +76,13 @@ export const ExpensesSummary = () => {
         <Table size="small" >
           <TableHead>
             <TableRow sx={{ backgroundColor: "primary.light" }}>
-              <TableCell>Month</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
               {expensesCategories?.map((category) => (
-                <TableCell key={category.id}>
+                <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
                   {category.name}
                 </TableCell>
               ))}
-              <TableCell>Total</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -92,7 +91,6 @@ export const ExpensesSummary = () => {
                 key={index}
                 sx={{
                   backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-                  ":hover": { backgroundColor: "secondary.dark" }
                 }}
               // onClick={() => navigate(`/expenses/${expense.id}`)}
               >

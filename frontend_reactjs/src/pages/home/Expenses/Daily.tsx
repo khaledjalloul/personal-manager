@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useExpenses, useIncomes } from "../../../api";
 import { ExpenseCard, ExpenseCardHeader, ExpenseTableRow } from "../../../components";
 
-export const ViewExpenses = () => {
+export const DailyExpenses = () => {
   const navigate = useNavigate();
   //   const { userData } = useContext(UserContext);
 
@@ -44,12 +44,12 @@ export const ViewExpenses = () => {
       <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
         <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
           <TableHead>
-            <TableRow >
-              <TableCell>Date</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Vendor</TableCell>
-              <TableCell>Amount (CHF)</TableCell>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Amount (CHF)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

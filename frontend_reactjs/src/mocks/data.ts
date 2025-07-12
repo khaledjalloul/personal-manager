@@ -20,18 +20,18 @@ export const groups: Group[] = [{
 }];
 
 export const expensesCategories: ExpensesCategory[] = [
-    { id: 1, name: 'Groceries' },
-    { id: 2, name: 'Tools/Services' },
-    { id: 3, name: 'Entertainment' },
-    { id: 4, name: 'Housing' },
-    { id: 5, name: 'One-time' },
-    { id: 6, name: 'Tuition' },
+    { id: 1, name: 'Groceries', color: 'green' },
+    { id: 2, name: 'Tools/Services', color: 'yellow' },
+    { id: 3, name: 'Entertainment', color: 'purple' },
+    { id: 4, name: 'Housing', color: 'orange' },
+    { id: 5, name: 'One-time', color: 'blue' },
+    { id: 6, name: 'Tuition', color: 'red' },
 ];
 
 export const expenses: Expense[] = [
     {
         id: 1,
-        date: new Date(),
+        date: new Date("2025-07-01"),
         category: expensesCategories[0],
         description: 'Lunch at the cafe',
         vendor: 'Cafe XYZ',
@@ -41,7 +41,7 @@ export const expenses: Expense[] = [
     },
     {
         id: 2,
-        date: new Date(),
+        date: new Date("2025-07-05"),
         category: expensesCategories[1],
         description: 'Bus ticket',
         vendor: 'City Bus',
@@ -51,7 +51,7 @@ export const expenses: Expense[] = [
     },
     {
         id: 3,
-        date: new Date(),
+        date: new Date("2024-12-20"),
         category: expensesCategories[2],
         description: 'Movie ticket',
         vendor: 'Cinema ABC',
@@ -61,7 +61,7 @@ export const expenses: Expense[] = [
     },
     {
         id: 4,
-        date: new Date(),
+        date: new Date("2025-02-10"),
         category: expensesCategories[3],
         description: 'Electricity bill',
         vendor: 'Power Company',
