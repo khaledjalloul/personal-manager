@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 import { Group } from "../../../types";
 import { useNavigate } from "react-router-dom";
 
-type Request = {
+export type CreateGroupBody = {
   name: string;
   subject: string;
   location: string;
@@ -13,7 +13,7 @@ type Request = {
   notes?: string;
 };
 
-const createGroup = async (data: Request) => {
+const createGroup = async (data: CreateGroupBody) => {
   return await client
     .post("/groups", data)
     .then((res) => res.data)
@@ -27,7 +27,7 @@ export const useCreateGroup = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  return useMutation<Group, AxiosError<{ message: string }>, Request>({
+  return useMutation<Group, AxiosError<{ message: string }>, CreateGroupBody>({
     mutationFn: createGroup,
     onSuccess: (data) => {
       queryClient.refetchQueries({
