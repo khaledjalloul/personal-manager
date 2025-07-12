@@ -1,10 +1,4 @@
-reactjs-frontend/node_modules
-reactjs-frontend/build
-reactjs-frontend/dist
-reactjs-frontend/.env.local
-
-nodejs-backend/node_modules
-nodejs-backend/keys
-nodejs-backend/.env
-
-node_modules
+**/dist
+**/node_modules
+**/build
+**/.env.local
