@@ -20,6 +20,14 @@ const toolbarButtons = [
     label: "Home",
     path: "/",
   },
+  { label: "Expenses", path: "/expenses" },
+  { label: "Piano", path: "/piano" },
+  { label: "Diary", path: "/diary" },
+  { label: "Journal", path: "/journal" },
+  { label: "Notes", path: "/notes" },
+  { label: "Hikes", path: "/hikes" },
+  { label: "Recipes", path: "/recipes" },
+  { label: "Games", path: "/games" },
   { label: "Create Group", path: "/create" },
   { label: "About", path: "/about" },
 ];
@@ -145,7 +153,7 @@ export const NavigationBar = () => {
   );
 };
 
-const StyledLink = styled(Link)<{ $path: string; $currentPath: string }>`
+const StyledLink = styled(Link) <{ $path: string; $currentPath: string }>`
   text-decoration: none;
   color: ${({ $path, $currentPath }) =>
     $path === "/"
@@ -153,17 +161,17 @@ const StyledLink = styled(Link)<{ $path: string; $currentPath: string }>`
         ? "primary.main"
         : "black"
       : $currentPath.includes($path)
-      ? "primary.main"
-      : "black"};
+        ? "primary.main"
+        : "black"};
   transition-duration: 0.3s;
 
   &:hover {
     color: ${({ theme, $path, $currentPath }) =>
-      $path === "/"
-        ? $currentPath === "/"
-          ? theme.palette.primary.main
-          : theme.palette.primary.dark
-        : $currentPath.includes($path)
+    $path === "/"
+      ? $currentPath === "/"
+        ? theme.palette.primary.main
+        : theme.palette.primary.dark
+      : $currentPath.includes($path)
         ? theme.palette.primary.main
         : theme.palette.primary.dark};
   }

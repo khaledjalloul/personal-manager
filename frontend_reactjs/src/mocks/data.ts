@@ -1,4 +1,4 @@
-import { User, Group } from '../types';
+import { User, Group, Expense, Income, ExpensesCategory } from '../types';
 
 export const user: User = {
     id: 1,
@@ -18,3 +18,70 @@ export const groups: Group[] = [{
     admin: user,
     joinsGroups: []
 }];
+
+export const expensesCategories: ExpensesCategory[] = [
+    { id: 1, name: 'Groceries' },
+    { id: 2, name: 'Tools/Services' },
+    { id: 3, name: 'Entertainment' },
+    { id: 4, name: 'Housing' },
+    { id: 5, name: 'One-time' },
+    { id: 6, name: 'Tuition' },
+];
+
+export const expenses: Expense[] = [
+    {
+        id: 1,
+        date: new Date(),
+        category: expensesCategories[0],
+        description: 'Lunch at the cafe',
+        vendor: 'Cafe XYZ',
+        amount: 15.99,
+        tags: ['lunch', 'cafe'],
+        type: 'manual'
+    },
+    {
+        id: 2,
+        date: new Date(),
+        category: expensesCategories[1],
+        description: 'Bus ticket',
+        vendor: 'City Bus',
+        amount: 2.50,
+        tags: ['transport', 'bus'],
+        type: 'auto'
+    },
+    {
+        id: 3,
+        date: new Date(),
+        category: expensesCategories[2],
+        description: 'Movie ticket',
+        vendor: 'Cinema ABC',
+        amount: 12.00,
+        tags: ['movie', 'entertainment'],
+        type: 'manual'
+    },
+    {
+        id: 4,
+        date: new Date(),
+        category: expensesCategories[3],
+        description: 'Electricity bill',
+        vendor: 'Power Company',
+        amount: 45.00,
+        tags: ['utilities', 'electricity'],
+        type: 'auto'
+    }
+];
+
+export const incomes: Income[] = [
+    {
+        id: 1,
+        date: new Date(),
+        source: 'Salary',
+        amount: 3000.00
+    },
+    {
+        id: 2,
+        date: new Date(),
+        source: 'Freelance Work',
+        amount: 1500.00
+    }
+];
