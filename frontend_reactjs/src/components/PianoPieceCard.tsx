@@ -30,6 +30,8 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
   const [composer, setComposer] = useState(pianoPiece.composer);
   const [status, setStatus] = useState(pianoPiece.status);
   const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned);
+  const [youtubeUrl, setYoutubeUrl] = useState(pianoPiece.youtubeUrl);
+  const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
 
   return (
     <TableRow
@@ -77,7 +79,6 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
           <Select
             variant="standard"
             value={status}
-
             onChange={(e) => setStatus(e.target.value as PianoPieceStatus)}
           >
             <MenuItem value={PianoPieceStatus.PLANNED}>Planned</MenuItem>
@@ -102,7 +103,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       {!isEditing ? (
-        <TableCell sx={{ display: 'flex', gap: 1 }}>
+        <TableCell>
           <IconButton size="small">
             <YouTube />
           </IconButton>
@@ -112,30 +113,24 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
           </IconButton>
         </TableCell>
       ) : (
-        <TableCell sx={{ display: 'flex', gap: 1 }}>
+        <TableCell>
           <TextField
             variant="standard"
-            value={monthLearned.toLocaleDateString("en-US")}
-            onChange={(e) => {
-              const newDate = new Date(e.target.value);
-              setMonthLearned(isNaN(newDate.getTime()) ? monthLearned : newDate);
-            }}
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
           />
 
           <TextField
             variant="standard"
-            value={monthLearned.toLocaleDateString("en-US")}
-            onChange={(e) => {
-              const newDate = new Date(e.target.value);
-              setMonthLearned(isNaN(newDate.getTime()) ? monthLearned : newDate);
-            }}
+            value={sheetMusicUrl}
+            onChange={(e) => setSheetMusicUrl(e.target.value)}
           />
         </TableCell>
       )}
 
       {editable && (
         !isEditing ? (
-          <TableCell sx={{ display: 'flex', gap: 1 }}>
+          <TableCell>
             <IconButton size="small" onClick={() => setIsEditing(true)}>
               <Edit />
             </IconButton>
@@ -145,7 +140,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
             </IconButton>
           </TableCell>
         ) : (
-          <TableCell sx={{ display: 'flex', gap: 1 }}>
+          <TableCell>
             <IconButton size="small">
               <Save color="success" />
             </IconButton>
@@ -156,6 +151,8 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
               setComposer(pianoPiece.composer);
               setStatus(pianoPiece.status);
               setMonthLearned(pianoPiece.monthLearned);
+              setYoutubeUrl(pianoPiece.youtubeUrl);
+              setSheetMusicUrl(pianoPiece.sheetMusicUrl);
               setIsEditing(false)
             }}>
               <Clear />
@@ -167,14 +164,3 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
   )
 
 }
-
-const Wrapper = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 16px;
-`;

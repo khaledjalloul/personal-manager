@@ -1,10 +1,14 @@
 import {
   Box,
   Button,
+  FormControl,
+  FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
   Paper,
+  Radio,
+  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +17,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import * as React from 'react';
 
@@ -20,12 +25,28 @@ import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { Settings, Insights, Clear } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useExpenseCategories, useExpenses } from "../../../api";
+import { useExpenseCategories, useExpenses, useIncomes } from "../../../api";
 import { Expense } from "../../../types";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut, Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS, ArcElement, Tooltip, Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from 'chart.js';
+import { Doughnut, Line, Pie } from 'react-chartjs-2';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 type Statistics = {
   totalMonthlyAverage: number;
@@ -37,15 +58,23 @@ type Statistics = {
       total: number;
     };
   }
+  months: {
+    [month: string]: {
+      expenses: number;
+      incomes: number;
+    }
+  }
 };
 
 
 export const ExpensesStatistics = () => {
   const navigate = useNavigate();
+  const { palette } = useTheme();
   //   const { userData } = useContext(UserContext);
 
   //   const [maxUsers, setMaxUsers] = useState(maxUsersOptions[0]);
   const [searchText, setSearchText] = useState("");
+  const [overTimeType, setOverTimeType] = useState("both");
   //   const [modalItem, setModalItem] = useState<Group>();
 
   const { data: expensesCategories } = useExpenseCategories();
@@ -54,6 +83,9 @@ export const ExpensesStatistics = () => {
     tags: [],
     searchText: searchText.trim(),
   });
+  const { data: incomes } = useIncomes({
+    searchText: searchText.trim(),
+  })
   // const { data: expenses } = useExpenses({
   //   // maxUsers: maxUsers !== "Any" ? maxUsers : undefined,
   //   searchText: searchText.trim(),
@@ -64,23 +96,32 @@ export const ExpensesStatistics = () => {
     const thisMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
     const categoryNames = expensesCategories?.map(c => c.name) || [];
 
-    const result: Statistics = { totalMonthlyAverage: 0, totalExpenses: 0, totalExpensesThisMonth: 0, categories: {} };
+    const result: Statistics = {
+      totalMonthlyAverage: 0,
+      totalExpenses: 0,
+      totalExpensesThisMonth: 0,
+      categories: {},
+      months: {}
+    };
+
     result.categories = categoryNames.reduce((acc, category) => {
       acc[category] = { monthlyAverage: 0, total: 0 };
       return acc;
     }, {} as Statistics["categories"]);
 
-    const monthsSet = new Set<string>();
-
     for (const { date, category, amount } of expenses ?? []) {
       const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthsSet.add(month);
 
       if (!result.categories[category.name]) {
         result.categories[category.name] = { monthlyAverage: 0, total: 0 };
       }
 
+      if (!result.months[month]) {
+        result.months[month] = { expenses: 0, incomes: 0 };
+      }
+
       result.categories[category.name].total += amount;
+      result.months[month].expenses += amount;
       result.totalExpenses += amount;
 
       if (month === thisMonth) {
@@ -88,8 +129,17 @@ export const ExpensesStatistics = () => {
       }
     }
 
-    const numMonths = monthsSet.size;
+    for (const { date, amount } of incomes ?? []) {
+      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
+      if (!result.months[month]) {
+        result.months[month] = { expenses: 0, incomes: 0 };
+      }
+
+      result.months[month].incomes += amount;
+    }
+
+    const numMonths = Object.keys(result.months).length;
     for (const category in result.categories) {
       result.categories[category].monthlyAverage = result.categories[category].total / numMonths;
       result.totalMonthlyAverage += result.categories[category].monthlyAverage;
@@ -97,78 +147,123 @@ export const ExpensesStatistics = () => {
 
     return result;
 
-  }, [JSON.stringify(expenses), JSON.stringify(expensesCategories)]);
+  }, [JSON.stringify(expenses), JSON.stringify(incomes), JSON.stringify(expensesCategories)]);
 
   return (
     <Wrapper>
+
+      <Box sx={{ flex: 1, display: 'flex' }}>
+        <Grid container spacing={2} flexGrow={1}>
+
+          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+              <Typography variant="h6" color="white">
+                Total Balance
+              </Typography>
+              <Typography variant="h3" color="white">
+                1300.00 CHF
+              </Typography>
+            </StatisticsCard>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+              <Typography variant="h6" color="white">
+                ZKB Balance
+              </Typography>
+              <Typography variant="h3" color="white">
+                3,732.00 CHF
+              </Typography>
+            </StatisticsCard>
+          </Grid>
+
+
+          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+              <Typography variant="h6" color="white">
+                Cash Balance
+              </Typography>
+              <Typography variant="h3" color="white">
+                300.00 CHF
+              </Typography>
+            </StatisticsCard>
+          </Grid>
+
+
+          <Grid item xs={12} lg={6} sx={{ display: 'flex' }}  >
+            <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
+              <Typography variant="h6" color="white">
+                Total Spent This Month
+              </Typography>
+              <Typography variant="h3" color="white">
+                {statistics.totalExpensesThisMonth.toFixed(2)} CHF
+              </Typography>
+            </StatisticsCard>
+          </Grid>
+
+
+          <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
+            <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
+              <Typography variant="h6" color="white">
+                Average Spendings Per Month
+              </Typography>
+              <Typography variant="h3" color="white">
+                {statistics.totalMonthlyAverage.toFixed(2)} CHF
+              </Typography>
+            </StatisticsCard>
+          </Grid>
+        </Grid>
+      </Box>
+
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, height: '50vh' }} >
 
-        <Box sx={{ flex: 1, display: 'flex' }}>
-          <Grid container spacing={2} flexGrow={1}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <Typography variant="h5">
+            Expenses Over Time
+          </Typography>
 
-            <Grid item xs={12} sx={{ display: 'flex' }} >
-              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-                <Typography variant="h6" color="white">
-                  Total Balance
-                </Typography>
-                <Typography variant="h3" color="white">
-                  1300.00 CHF
-                </Typography>
-              </StatisticsCard>
-            </Grid>
+          <FormControl>
+            <RadioGroup row value={overTimeType} onChange={(e) => setOverTimeType(e.target.value)}>
+              <FormControlLabel value="expenses" control={<Radio />} label="Expenses" />
+              <FormControlLabel value="incomes" control={<Radio />} label="Incomes" />
+              <FormControlLabel value="both" control={<Radio />} label="Both" />
+            </RadioGroup>
+          </FormControl>
 
-            <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-                <Typography variant="h6" color="white">
-                  ZKB Balance
-                </Typography>
-                <Typography variant="h3" color="white">
-                  3,732.00 CHF
-                </Typography>
-              </StatisticsCard>
-            </Grid>
-
-
-            <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-                <Typography variant="h6" color="white">
-                  Cash Balance
-                </Typography>
-                <Typography variant="h3" color="white">
-                  300.00 CHF
-                </Typography>
-              </StatisticsCard>
-            </Grid>
-
-
-            <Grid item xs={12} lg={6} sx={{ display: 'flex' }}  >
-              <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
-                <Typography variant="h6" color="white">
-                  Total Spent This Month
-                </Typography>
-                <Typography variant="h3" color="white">
-                  {statistics.totalExpensesThisMonth.toFixed(2)} CHF
-                </Typography>
-              </StatisticsCard>
-            </Grid>
-
-
-            <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
-              <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
-                <Typography variant="h6" color="white">
-                  Average Spendings Per Month
-                </Typography>
-                <Typography variant="h3" color="white">
-                  {statistics.totalMonthlyAverage.toFixed(2)} CHF
-                </Typography>
-              </StatisticsCard>
-            </Grid>
-          </Grid>
+          <Line
+            data={{
+              labels: Object.keys(statistics.months),
+              datasets: [
+                {
+                  label: 'Amount (CHF)',
+                  data: Object.values(statistics.months).map(m => (
+                    overTimeType === "expenses" ? m.expenses :
+                      overTimeType === "incomes" ? m.incomes :
+                        m.incomes - m.expenses
+                  )),
+                  backgroundColor:
+                    overTimeType === "expenses" ? palette.warning.main :
+                      overTimeType === "incomes" ? palette.success.main :
+                        palette.primary.main,
+                  borderColor:
+                    overTimeType === "expenses" ? palette.warning.main :
+                      overTimeType === "incomes" ? palette.success.main :
+                        palette.primary.main,
+                }
+              ],
+            }}
+            options={{
+              scales: {
+                y: {
+                  ticks: {
+                    callback: (value) => `${value} CHF`
+                  }
+                }
+              }
+            }} />
         </Box>
 
-
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-
           <Typography variant="h5">
             Total Spendings Per Category
           </Typography>
@@ -244,7 +339,6 @@ export const ExpensesStatistics = () => {
 
 const Wrapper = styled(Box)`
   flex-grow: 1;
-  /* padding: 32px; */
   display: flex;
   flex-direction: column;
   gap: 16px;

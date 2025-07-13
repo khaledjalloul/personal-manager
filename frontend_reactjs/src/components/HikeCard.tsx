@@ -4,6 +4,20 @@ import { Hike } from "../types";
 import { AccessTime, Edit, MoreTime, PermMedia, Straighten, Today, TrendingDown, TrendingUp, Place, Save, Delete, Clear } from "@mui/icons-material";
 import { useState } from "react";
 
+const GoogleMapsIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24">
+    <defs>
+      <linearGradient id="mapGradient" x1="0" y1="0.5" x2="1" y2="1">
+        <stop offset="0%" stopColor="#4285f4" />
+        <stop offset="33%" stopColor="#34a853" />
+        <stop offset="66%" stopColor="#fbbc05" />
+        <stop offset="100%" stopColor="#ea4335" />
+      </linearGradient>
+    </defs>
+    <Place sx={{ fill: "url(#mapGradient)" }} />
+  </svg>
+)
+
 export const HikeCard = ({ hike }: { hike: Hike }) => {
 
   const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +28,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
   const [descent, setDescent] = useState(hike.descent);
   const [duration, setDuration] = useState(hike.duration);
   const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
+  const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
 
   const durationHours = Math.floor(hike.duration);
   const durationMinutes = Math.round((hike.duration - durationHours) * 60);
@@ -26,9 +41,17 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
       <CoverImage src={hike.coverImage} />
       <ContentBox sx={{ backgroundColor: "secondary.main" }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
-            {hike.description}
-          </Typography>
+          {!isEditing ? (
+            <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
+              {description}
+            </Typography>
+          ) : (
+            <TextField
+              variant="standard"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          )}
 
           {!isEditing && (
             <IconButton sx={{ ml: 'auto' }} onClick={() => setIsEditing(true)}>
@@ -49,28 +72,32 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
           )}
 
           {isEditing && (
-            <IconButton onClick={() => setIsEditing(false)}>
+            <IconButton onClick={() => {
+              setDate(hike.date);
+              setDescription(hike.description);
+              setDistance(hike.distance);
+              setAscent(hike.ascent);
+              setDescent(hike.descent);
+              setDuration(hike.duration);
+              setDurationWithBreaks(hike.durationWithBreaks);
+              setGoogleMapsUrl(hike.googleMapsUrl);
+              setIsEditing(false)
+            }}>
               <Clear />
             </IconButton>
           )}
 
-          <IconButton disabled>
-            <PermMedia />
-          </IconButton>
+          {!isEditing && (
+            <IconButton disabled>
+              <PermMedia />
+            </IconButton>
+          )}
 
-          <IconButton onClick={() => window.open(hike.googleMapsUrl, '_blank')}>
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <defs>
-                <linearGradient id="mapGradient" x1="0" y1="0.5" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#4285f4" />
-                  <stop offset="33%" stopColor="#34a853" />
-                  <stop offset="66%" stopColor="#fbbc05" />
-                  <stop offset="100%" stopColor="#ea4335" />
-                </linearGradient>
-              </defs>
-              <Place sx={{ fill: "url(#mapGradient)" }} />
-            </svg>
-          </IconButton>
+          {!isEditing && (
+            <IconButton onClick={() => window.open(googleMapsUrl, '_blank')}>
+              <GoogleMapsIcon />
+            </IconButton>
+          )}
         </Box>
 
         <Grid container spacing={1} sx={{ marginTop: 1 }}>
@@ -78,7 +105,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             <Today />
             {!isEditing ? (
               <Typography variant="body1">
-                {hike.date.toLocaleDateString("en-US")}
+                {date.toLocaleDateString("en-US")}
               </Typography>
             ) : (
               <TextField
@@ -96,7 +123,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             <Straighten />
             {!isEditing ? (
               <Typography variant="body1">
-                {hike.distance} km
+                {distance} km
               </Typography>
             ) : (
               <TextField
@@ -117,7 +144,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             <TrendingUp />
             {!isEditing ? (
               <Typography variant="body1">
-                {hike.ascent} m
+                {ascent} m
               </Typography>
             ) : (
               <TextField
@@ -138,7 +165,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             <TrendingDown />
             {!isEditing ? (
               <Typography variant="body1">
-                {hike.descent} m
+                {descent} m
               </Typography>
             ) : (
               <TextField
@@ -196,6 +223,17 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
               />
             )}
           </Grid>
+
+          {isEditing && (
+            <TextField
+              variant="standard"
+              value={googleMapsUrl}
+              onChange={(e) => setGoogleMapsUrl(e.target.value)}
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><GoogleMapsIcon /></InputAdornment>,
+              }}
+            />
+          )}
         </Grid>
       </ContentBox>
     </Wrapper>

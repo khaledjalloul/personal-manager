@@ -34,7 +34,7 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 
 		>
 			<TableCell >
-				{!isEditing ? income.date.toLocaleDateString() :
+				{!isEditing ? date.toLocaleDateString() :
 					<TextField
 						variant="standard"
 						value={date.toLocaleDateString("en-US")}
@@ -47,7 +47,7 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 			</TableCell>
 
 			<TableCell width={"40%"}>
-				{!isEditing ? income.source :
+				{!isEditing ? source :
 					<TextField
 						variant="standard"
 						value={source}
@@ -58,7 +58,7 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 			</TableCell>
 
 			<TableCell>
-				{!isEditing ? income.amount.toFixed(2) :
+				{!isEditing ? amount.toFixed(2) :
 					<TextField
 						variant="standard"
 						value={amount.toFixed(2)}

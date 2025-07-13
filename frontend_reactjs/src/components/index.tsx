@@ -2,7 +2,7 @@ export * from "./modals";
 
 export * from "./AuthTextField";
 export * from "./GroupCard";
-export * from "./ExpenseCard";
-export * from "./IncomeCard";
+export * from "./ExpenseTableRow";
+export * from "./IncomeTableRow";
 export * from "./HikeCard";
 export * from "./PianoPieceCard";

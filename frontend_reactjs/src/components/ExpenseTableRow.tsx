@@ -41,7 +41,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
 
     >
       <TableCell>
-        {!isEditing ? expense.date.toLocaleDateString() :
+        {!isEditing ? date.toLocaleDateString() :
           <TextField
             variant="standard"
             value={date.toLocaleDateString("en-US")}
@@ -54,7 +54,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? expense.category.name :
+        {!isEditing ? category.name :
           <Select
             variant="standard"
             value={category.id}
@@ -71,7 +71,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       </TableCell>
 
       <TableCell width={"40%"}>
-        {!isEditing ? expense.description :
+        {!isEditing ? description :
           <TextField
             variant="standard"
             value={description}
@@ -82,7 +82,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? expense.vendor :
+        {!isEditing ? vendor :
           <TextField
             variant="standard"
             value={vendor}
@@ -92,7 +92,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? expense.amount.toFixed(2) :
+        {!isEditing ? amount.toFixed(2) :
           <TextField
             variant="standard"
             value={amount.toFixed(2)}
