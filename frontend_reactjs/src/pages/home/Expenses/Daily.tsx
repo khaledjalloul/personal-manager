@@ -18,7 +18,7 @@ import { useState } from "react";
 import { Settings, Insights, Clear, Calculate, Today } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useExpenses, useIncomes } from "../../../api";
-import { ExpenseCard, ExpenseCardHeader, ExpenseTableRow } from "../../../components";
+import { ExpenseTableRow } from "../../../components";
 
 export const DailyExpenses = () => {
   const navigate = useNavigate();
@@ -59,22 +59,7 @@ export const DailyExpenses = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* 
-      <ExpenseCardHeader />
 
-      <ExpensesScrollWrapper>
-        {expenses && expenses.length > 0 && expenses.map((expense, index) => (
-          <ExpenseCard key={index} index={index} expense={expense} />
-        ))}
-      </ExpensesScrollWrapper>
-
-      {expenses && expenses.length === 0 && (
-        <Typography textAlign={"center"} mt={10}>
-          There are no current expenses that match your search.
-        </Typography>
-      )}
-
-      <GroupModal group={modalItem} setGroup={setModalItem} /> */}
     </Wrapper>
   );
 };

@@ -1,7 +1,7 @@
 import { DefaultBodyType, http, HttpResponse, PathParams } from 'msw';
-import { User, Group, Expense, Income, ExpensesCategory, Hike } from '../types';
+import { User, Group, Expense, Income, ExpensesCategory, Hike, PianoPiece } from '../types';
 import { CreateGroupRequestBody } from '../api';
-import { groups, user, expenses, incomes, expensesCategories, hikes } from './data';
+import { groups, user, expenses, incomes, expensesCategories, hikes, pianoPieces } from './data';
 
 export const authHandlers = [
   http.post<PathParams, DefaultBodyType, User>('/auth/signin', () => {
@@ -68,6 +68,12 @@ export const hikeHandlers = [
   http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => {
     const duplicatedHikes = Array.from({ length: 25 }, () => hikes).flat();
     return HttpResponse.json(duplicatedHikes)
-  }
-  ),
+  }),
+];
+
+export const pianoHandlers = [
+  http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => {
+    const duplicatedPianoPieces = Array.from({ length: 25 }, () => pianoPieces).flat();
+    return HttpResponse.json(duplicatedPianoPieces)
+  })
 ];

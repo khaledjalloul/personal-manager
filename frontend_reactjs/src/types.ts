@@ -62,3 +62,21 @@ export type Hike = {
   images: string[];
   googleMapsUrl: string;
 }
+
+export enum PianoPieceStatus {
+  PLANNED = "Planned",
+  LEARNING = "Learning",
+  LEARNED = "Learned",
+  LEARNED_FORGOTTEN = "Learned (Forgotten)",
+}
+
+export type PianoPiece = {
+  id?: number;
+  name: string;
+  origin: string;
+  composer: string;
+  status: PianoPieceStatus;
+  monthLearned: Date;
+  sheetMusicUrl: string;
+  youtubeUrl: string;
+}

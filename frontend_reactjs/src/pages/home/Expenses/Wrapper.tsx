@@ -11,7 +11,6 @@ import { useState } from "react";
 import { Settings, Insights, Clear, Calculate, Today, ViewList } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useExpenses, useIncomes } from "../../../api";
-import { ExpenseCard, ExpenseCardHeader } from "../../../components";
 
 export const ExpensesWrapper = () => {
   const navigate = useNavigate();
@@ -127,10 +126,3 @@ const Header = styled(Box)`
   align-items: center;
   gap: 8px;
 `;
-
-const ExpensesScrollWrapper = styled(Box)`
-  overflow-y: scroll;
-  max-height: 75vh;
-  margin-top: -16px;
-`;
-

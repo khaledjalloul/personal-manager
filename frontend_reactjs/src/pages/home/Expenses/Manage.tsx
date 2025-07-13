@@ -18,7 +18,7 @@ import { useState } from "react";
 import { Settings, Insights, Clear, Man } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useExpenseCategories, useExpenses, useIncomes } from "../../../api";
-import { ExpenseCard, ExpenseCardHeader, ExpenseTableRow, IncomeCard, IncomeCardHeader, IncomeTableRow } from "../../../components";
+import { ExpenseTableRow, IncomeTableRow } from "../../../components";
 
 export const ManageExpenses = () => {
   const navigate = useNavigate();
@@ -42,13 +42,6 @@ export const ManageExpenses = () => {
     <Wrapper>
       <Income>
         <Typography variant="h6" sx={{ alignSelf: "center" }}>Income</Typography>
-        {/* <IncomeCardHeader />
-        <IncomeScrollWrapper>
-          {incomes?.map((income, index) => (
-            <IncomeCard key={index} income={income} index={index} editable />
-          ))}
-        </IncomeScrollWrapper> */}
-
 
         <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
@@ -71,12 +64,6 @@ export const ManageExpenses = () => {
       </Income>
       <ManualExpenses>
         <Typography variant="h6" sx={{ alignSelf: "center" }}>Manual Expenses</Typography>
-        {/* <ExpenseCardHeader />
-        <ManualExpensesScrollWrapper>
-          {manualExpenses?.map((expense, index) => (
-            <ExpenseCard key={index} expense={expense} index={index} editable />
-          ))}
-        </ManualExpensesScrollWrapper> */}
 
 
         <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>

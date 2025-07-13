@@ -121,26 +121,3 @@ const Wrapper = styled(Box)`
   flex-direction: column;
   gap: 16px;
 `;
-
-const Header = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ExpensesScrollWrapper = styled(Box)`
-  overflow-y: scroll;
-  flex-grow: 0;
-  max-height: 75vh;
-  margin-top: -16px;
-`;
-
-const ExpenseCard = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 16px;
-`;

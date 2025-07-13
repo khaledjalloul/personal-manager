@@ -1,4 +1,4 @@
-import { User, Group, Expense, Income, ExpensesCategory, Hike } from '../types';
+import { User, Group, Expense, Income, ExpensesCategory, Hike, PianoPiece, PianoPieceStatus } from '../types';
 
 export const user: User = {
     id: 1,
@@ -112,5 +112,48 @@ export const hikes: Hike[] = [
         coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
         images: [],
         googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+    }
+];
+
+export const pianoPieces: PianoPiece[] = [
+    {
+        id: 1,
+        name: 'Fur Elise',
+        composer: 'Beethoven',
+        origin: 'Classical',
+        status: PianoPieceStatus.LEARNED,
+        monthLearned: new Date("2025-01-01"),
+        sheetMusicUrl: 'https://example.com/fur-elise-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+    },
+    {
+        id: 2,
+        name: 'Clair de Lune',
+        composer: 'Debussy',
+        origin: 'Impressionist',
+        status: PianoPieceStatus.LEARNING,
+        monthLearned: new Date("2025-02-01"),
+        sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
+    },
+    {
+        id: 3,
+        name: 'Prelude in C Major',
+        composer: 'Bach',
+        origin: 'Baroque',
+        status: PianoPieceStatus.PLANNED,
+        monthLearned: new Date("2025-03-01"),
+        sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+    },
+    {
+        id: 4,
+        name: 'Moonlight Sonata',
+        composer: 'Beethoven',
+        origin: 'Classical',
+        status: PianoPieceStatus.LEARNED_FORGOTTEN,
+        monthLearned: new Date("2025-04-01"),
+        sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
     }
 ];
