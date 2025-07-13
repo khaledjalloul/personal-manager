@@ -1,5 +1,20 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { About, CreateGroup, Home, Diary, ManageExpenses, ExpensesStatistics, Journal, Notes, Hikes, Games, Recipes, Piano, ExpensesWrapper, DailyExpenses, MonthlyExpenses } from "../pages";
+import {
+  About,
+  Home,
+  Diary,
+  ManageExpenses,
+  ExpensesStatistics,
+  Journal,
+  Notes,
+  Hikes,
+  Games,
+  Recipes,
+  Piano,
+  ExpensesWrapper,
+  DailyExpenses,
+  MonthlyExpenses
+} from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
 
@@ -12,10 +27,6 @@ export const Navigator = () => {
         {
           path: "/",
           element: <Home />,
-        },
-        {
-          path: "/create",
-          element: <CreateGroup />,
         },
         {
           path: "/about",

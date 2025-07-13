@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  IconButton,
-  InputAdornment,
   Paper,
   Table,
   TableBody,
@@ -10,23 +8,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useState } from "react";
-import { Settings, Insights, Clear, Man } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useExpenseCategories, useExpenses, useIncomes } from "../../../api";
+import { useExpenses, useIncomes } from "../../../api";
 import { ExpenseTableRow, IncomeTableRow } from "../../../components";
 
 export const ManageExpenses = () => {
-  const navigate = useNavigate();
-  //   const { userData } = useContext(UserContext);
-
-  //   const [maxUsers, setMaxUsers] = useState(maxUsersOptions[0]);
-  // const [searchText, setSearchText] = useState("");
-  //   const [modalItem, setModalItem] = useState<Group>();
 
   const { data: manualExpenses } = useExpenses({
     type: "manual",
@@ -60,11 +48,10 @@ export const ManageExpenses = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
       </Income>
+
       <ManualExpenses>
         <Typography variant="h6" sx={{ alignSelf: "center" }}>Manual Expenses</Typography>
-
 
         <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
@@ -85,8 +72,8 @@ export const ManageExpenses = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
       </ManualExpenses>
+
       <CSVImporter>
         <Typography variant="h6" sx={{ alignSelf: "center" }}>Import Bank Expenses CSV</Typography>
 
@@ -99,7 +86,6 @@ export const ManageExpenses = () => {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                // handle file upload logic here
                 console.log("Selected file:", file.name);
               }
             }}
@@ -123,13 +109,6 @@ const Wrapper = styled(Box)`
   gap: 16px;
 `;
 
-// const Header = styled(Box)`
-//   display: flex;
-//   align-items: center;
-//   flex-grow: 1;
-//   gap: 8px;
-// `;
-
 const Income = styled(Box)`
   flex-grow: 0.3;
   display: flex;
@@ -137,23 +116,11 @@ const Income = styled(Box)`
   gap: 16px;
 `;
 
-const IncomeScrollWrapper = styled(Box)`
-  overflow-y: scroll;
-  max-height: 75vh;
-  margin-top: -16px;
-`;
-
 const ManualExpenses = styled(Box)`
   flex-grow: 0.6;
   display: flex;
   flex-direction: column;
   gap: 16px;
-`;
-
-const ManualExpensesScrollWrapper = styled(Box)`
-  overflow-y: scroll;
-  max-height: 75vh;
-  margin-top: -16px;
 `;
 
 const CSVImporter = styled(Box)`

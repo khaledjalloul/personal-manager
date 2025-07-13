@@ -1,21 +1,14 @@
 import {
-  Box,
-  Button,
   IconButton,
-  InputAdornment,
   MenuItem,
   Select,
-  Table,
   TableCell,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
-import styled from "styled-components";
-import { Expense, PianoPiece, PianoPieceStatus } from "../types";
+import { PianoPiece, PianoPieceStatus } from "../types";
 import { Clear, Delete, Edit, PictureAsPdf, Save, YouTube } from "@mui/icons-material";
 import { useState } from "react";
-import { useExpenseCategories } from "../api";
 
 
 export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
@@ -39,11 +32,9 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
         ":hover": editable ? { backgroundColor: "secondary.dark" } : {}
       }}
-
     >
-
       <TableCell>
-        {!isEditing ? pianoPiece.name :
+        {!isEditing ? name :
           <TextField
             variant="standard"
             value={name}
@@ -54,7 +45,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       <TableCell width={"40%"}>
-        {!isEditing ? pianoPiece.origin :
+        {!isEditing ? origin :
           <TextField
             variant="standard"
             value={origin}
@@ -65,7 +56,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? pianoPiece.composer :
+        {!isEditing ? composer :
           <TextField
             variant="standard"
             value={composer}
@@ -75,7 +66,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? pianoPiece.status :
+        {!isEditing ? status :
           <Select
             variant="standard"
             value={status}
@@ -90,10 +81,10 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? pianoPiece.monthLearned.toLocaleDateString() :
+        {!isEditing ? (monthLearned ? monthLearned.toLocaleDateString() : "") :
           <TextField
             variant="standard"
-            value={monthLearned.toLocaleDateString("en-US")}
+            value={monthLearned ? monthLearned.toLocaleDateString("en-US") : ""}
             onChange={(e) => {
               const newDate = new Date(e.target.value);
               setMonthLearned(isNaN(newDate.getTime()) ? monthLearned : newDate);
@@ -162,5 +153,4 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       )}
     </TableRow>
   )
-
 }

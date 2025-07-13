@@ -1,8 +1,5 @@
 import {
   Box,
-  Button,
-  IconButton,
-  InputAdornment,
   Paper,
   Table,
   TableBody,
@@ -10,17 +7,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
-  Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useMemo, useState } from "react";
-import { Settings, Insights, Clear } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 import { useExpenseCategories, useExpenses } from "../../../api";
-import { Expense } from "../../../types";
 
-type SummaryEntry = {
+type MonthlyEntry = {
   [month: string]: {
     [category: string]: number;
     total: number;
@@ -28,31 +20,20 @@ type SummaryEntry = {
 }
 
 export const MonthlyExpenses = () => {
-  const navigate = useNavigate();
-  //   const { userData } = useContext(UserContext);
-
-  //   const [maxUsers, setMaxUsers] = useState(maxUsersOptions[0]);
-  const [searchText, setSearchText] = useState("");
-  //   const [modalItem, setModalItem] = useState<Group>();
 
   const { data: expensesCategories } = useExpenseCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
-    searchText: searchText.trim(),
+    searchText: "", // TODO
   });
-  // const { data: expenses } = useExpenses({
-  //   // maxUsers: maxUsers !== "Any" ? maxUsers : undefined,
-  //   searchText: searchText.trim(),
-  // });
 
   const summary = useMemo(() => {
     const categoryNames = expensesCategories?.map(c => c.name) || [];
 
-    return expenses?.reduce<SummaryEntry>((acc, expense) => {
+    return expenses?.reduce<MonthlyEntry>((acc, expense) => {
       const month = `${expense.date.getFullYear()}-${String(expense.date.getMonth() + 1).padStart(2, '0')}`;
 
-      // Init month if not there
       if (!acc[month]) {
         acc[month] = { total: 0 };
         for (const category of categoryNames) {
@@ -60,7 +41,6 @@ export const MonthlyExpenses = () => {
         }
       }
 
-      // Add expense to correct category
       if (categoryNames.includes(expense.category.name)) {
         acc[month][expense.category.name] += expense.amount;
         acc[month].total += expense.amount;
@@ -92,7 +72,6 @@ export const MonthlyExpenses = () => {
                 sx={{
                   backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
                 }}
-              // onClick={() => navigate(`/expenses/${expense.id}`)}
               >
                 <TableCell sx={{ width: '10%' }}>
                   {month}
@@ -103,20 +82,17 @@ export const MonthlyExpenses = () => {
                   </TableCell>
                 ))}
                 <TableCell sx={{ width: '10%' }}>{summary[month].total.toFixed(2)}</TableCell>
-
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
     </Wrapper>
   );
 };
 
 const Wrapper = styled(Box)`
   flex-grow: 1;
-  /* padding: 32px; */
   display: flex;
   flex-direction: column;
   gap: 16px;

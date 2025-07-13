@@ -1,15 +1,11 @@
 import {
-	Box,
-	Button,
 	IconButton,
 	InputAdornment,
 	TableCell,
 	TableRow,
 	TextField,
-	Typography,
 } from "@mui/material";
-import styled from "styled-components";
-import { Expense, Income } from "../types";
+import { Income } from "../types";
 import { useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 
@@ -31,7 +27,6 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 				backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
 				":hover": editable ? { backgroundColor: "secondary.dark" } : {}
 			}}
-
 		>
 			<TableCell >
 				{!isEditing ? date.toLocaleDateString() :
@@ -108,14 +103,3 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 		</TableRow>
 	)
 }
-
-
-const Wrapper = styled(Box)`
-display: flex;
-flex-direction: row;
-padding-left: 16px;
-padding-right: 16px;
-padding-top: 8px;
-padding-bottom: 8px;
-gap: 16px;
-`;

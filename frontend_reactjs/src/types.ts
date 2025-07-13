@@ -5,26 +5,6 @@ export type User = {
   token?: string;
 };
 
-export type Group = {
-  id?: number;
-  name: string;
-  subject: string;
-  location: string;
-  notes?: string;
-  time: Date;
-  maxUsers: number;
-  admin: User;
-  joinsGroups: JoinsGroup[];
-};
-
-export type JoinsGroup = {
-  user: User;
-  group: Group;
-  userId: number;
-  groupId: number;
-};
-
-
 export type Expense = {
   id?: number;
   date: Date;
@@ -76,7 +56,29 @@ export type PianoPiece = {
   origin: string;
   composer: string;
   status: PianoPieceStatus;
-  monthLearned: Date;
   sheetMusicUrl: string;
   youtubeUrl: string;
+  monthLearned?: Date;
 }
+
+export type NoteCategory = {
+  id?: number;
+  name: string;
+}
+
+export type Note = {
+  id?: number;
+  dateCreated: Date;
+  dateModified: Date;
+  category: NoteCategory;
+  title: string;
+  content: string;
+  tags: string[];
+}
+
+export type DiaryEntry = {
+  id?: number;
+  date: Date;
+  content: string;
+  workContent: string;
+};

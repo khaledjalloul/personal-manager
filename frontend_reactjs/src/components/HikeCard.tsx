@@ -1,7 +1,20 @@
 import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import styled from "styled-components";
 import { Hike } from "../types";
-import { AccessTime, Edit, MoreTime, PermMedia, Straighten, Today, TrendingDown, TrendingUp, Place, Save, Delete, Clear } from "@mui/icons-material";
+import {
+  AccessTime,
+  Edit,
+  MoreTime,
+  PermMedia,
+  Straighten,
+  Today,
+  TrendingDown,
+  TrendingUp,
+  Place,
+  Save,
+  Delete,
+  Clear
+} from "@mui/icons-material";
 import { useState } from "react";
 
 const GoogleMapsIcon = () => (

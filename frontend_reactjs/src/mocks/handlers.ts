@@ -1,38 +1,32 @@
 import { DefaultBodyType, http, HttpResponse, PathParams } from 'msw';
-import { User, Group, Expense, Income, ExpensesCategory, Hike, PianoPiece } from '../types';
-import { CreateGroupRequestBody } from '../api';
-import { groups, user, expenses, incomes, expensesCategories, hikes, pianoPieces } from './data';
+import {
+  User,
+  Expense,
+  Income,
+  ExpensesCategory,
+  Hike,
+  PianoPiece,
+  Note,
+  NoteCategory
+} from '../types';
+import {
+  user,
+  expenses,
+  incomes,
+  expensesCategories,
+  hikes,
+  pianoPieces,
+  noteCategories,
+  notes
+} from './data';
 
-export const authHandlers = [
+const authHandlers = [
   http.post<PathParams, DefaultBodyType, User>('/auth/signin', () => {
     return HttpResponse.json(user)
   })
 ];
 
-export const groupHandlers = [
-  http.get<PathParams, DefaultBodyType, Group[]>('/groups', () => {
-    return HttpResponse.json(groups);
-  }),
-  http.post<PathParams, CreateGroupRequestBody, Group>('/groups', async ({ request }) => {
-    const reqBody = await request.json();
-    const newGroup: Group = {
-      id: 1,
-      name: reqBody.name,
-      subject: reqBody.subject,
-      location: reqBody.location,
-      time: new Date(),
-      maxUsers: reqBody.maxUsers || 10,
-      notes: reqBody.notes,
-      admin: user,
-      joinsGroups: [],
-    }
-
-    groups.push(newGroup);
-    return HttpResponse.json(newGroup, { status: 201 });
-  })
-];
-
-export const expenseHandlers = [
+const expenseHandlers = [
   http.get<PathParams, DefaultBodyType, Expense[]>('/expenses', ({ request }) => {
     const url = new URL(request.url)
     var type = url.searchParams.get('type')
@@ -64,16 +58,50 @@ export const expenseHandlers = [
   }),
 ];
 
-export const hikeHandlers = [
+const hikeHandlers = [
   http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => {
     const duplicatedHikes = Array.from({ length: 25 }, () => hikes).flat();
     return HttpResponse.json(duplicatedHikes)
   }),
 ];
 
-export const pianoHandlers = [
+const pianoHandlers = [
   http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => {
     const duplicatedPianoPieces = Array.from({ length: 25 }, () => pianoPieces).flat();
     return HttpResponse.json(duplicatedPianoPieces)
   })
+];
+
+const noteHandlers = [
+  http.get<PathParams, DefaultBodyType, NoteCategory[]>('/notes/categories', () => (
+    HttpResponse.json(noteCategories)
+  )),
+  http.get<PathParams, DefaultBodyType, Note[]>('/notes', ({ request }) => {
+    const url = new URL(request.url)
+    var categoryId = url.searchParams.get('categoryId') ?? ""
+
+    var notesToReturn = notes;
+
+    if (categoryId) {
+      notesToReturn = notes.filter(note => note.category.id === parseInt(categoryId));
+    }
+
+    return HttpResponse.json(notesToReturn)
+  })
+];
+
+const diaryHandlers = [
+  http.get<PathParams, DefaultBodyType, Note[]>('/diary', () => {
+    const duplicatedDiaryEntries = Array.from({ length: 25 }, () => notes).flat();
+    return HttpResponse.json(duplicatedDiaryEntries)
+  })
+];
+
+export const handlers = [
+  ...authHandlers,
+  ...expenseHandlers,
+  ...hikeHandlers,
+  ...pianoHandlers,
+  ...noteHandlers,
+  ...diaryHandlers
 ];

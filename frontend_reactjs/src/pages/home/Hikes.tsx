@@ -1,5 +1,4 @@
-import { AccessTime, Image, MoreTime, Straighten, Today, TrendingDown, TrendingUp } from "@mui/icons-material";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import styled from "styled-components";
 import { useHikes } from "../../api";
 import { HikeCard } from "../../components";
@@ -17,7 +16,6 @@ export const Hikes = () => {
           </Grid>
         ))}
       </Grid>
-
     </Wrapper>
   );
 }

@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Expense, ExpensesCategory } from "../../../types";
+import { ExpensesCategory } from "../../../types";
 import client from "../../client";
 
 const ENDPOINT = "expenses/categories";

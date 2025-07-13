@@ -1,17 +1,12 @@
 import {
-  Box,
-  Button,
   IconButton,
   InputAdornment,
   MenuItem,
   Select,
-  Table,
   TableCell,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
-import styled from "styled-components";
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { useState } from "react";
@@ -38,7 +33,6 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
         backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
         ":hover": editable ? { backgroundColor: "secondary.dark" } : {}
       }}
-
     >
       <TableCell>
         {!isEditing ? date.toLocaleDateString() :
@@ -139,16 +133,4 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       )}
     </TableRow>
   )
-
 }
-
-const Wrapper = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  gap: 16px;
-`;

@@ -1,11 +1,8 @@
 import {
   Box,
-  Button,
   FormControl,
   FormControlLabel,
   Grid,
-  IconButton,
-  InputAdornment,
   Paper,
   Radio,
   RadioGroup,
@@ -15,18 +12,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import * as React from 'react';
-
 import styled from "styled-components";
 import { useMemo, useState } from "react";
-import { Settings, Insights, Clear } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import { useExpenseCategories, useExpenses, useIncomes } from "../../../api";
-import { Expense } from "../../../types";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
   CategoryScale,
@@ -35,7 +26,7 @@ import {
   LineElement,
   Title,
 } from 'chart.js';
-import { Doughnut, Line, Pie } from 'react-chartjs-2';
+import { Doughnut, Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -68,28 +59,19 @@ type Statistics = {
 
 
 export const ExpensesStatistics = () => {
-  const navigate = useNavigate();
   const { palette } = useTheme();
-  //   const { userData } = useContext(UserContext);
 
-  //   const [maxUsers, setMaxUsers] = useState(maxUsersOptions[0]);
-  const [searchText, setSearchText] = useState("");
   const [overTimeType, setOverTimeType] = useState("both");
-  //   const [modalItem, setModalItem] = useState<Group>();
 
   const { data: expensesCategories } = useExpenseCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
-    searchText: searchText.trim(),
+    searchText: "",
   });
   const { data: incomes } = useIncomes({
-    searchText: searchText.trim(),
+    searchText: "",
   })
-  // const { data: expenses } = useExpenses({
-  //   // maxUsers: maxUsers !== "Any" ? maxUsers : undefined,
-  //   searchText: searchText.trim(),
-  // });
 
   const statistics = useMemo(() => {
     const today = new Date();
@@ -151,7 +133,6 @@ export const ExpensesStatistics = () => {
 
   return (
     <Wrapper>
-
       <Box sx={{ flex: 1, display: 'flex' }}>
         <Grid container spacing={2} flexGrow={1}>
 
@@ -177,7 +158,6 @@ export const ExpensesStatistics = () => {
             </StatisticsCard>
           </Grid>
 
-
           <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
             <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
               <Typography variant="h6" color="white">
@@ -189,7 +169,6 @@ export const ExpensesStatistics = () => {
             </StatisticsCard>
           </Grid>
 
-
           <Grid item xs={12} lg={6} sx={{ display: 'flex' }}  >
             <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
               <Typography variant="h6" color="white">
@@ -200,7 +179,6 @@ export const ExpensesStatistics = () => {
               </Typography>
             </StatisticsCard>
           </Grid>
-
 
           <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
             <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
@@ -216,7 +194,6 @@ export const ExpensesStatistics = () => {
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, height: '50vh' }} >
-
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
           <Typography variant="h5">
             Expenses Over Time
@@ -298,7 +275,7 @@ export const ExpensesStatistics = () => {
         </Box>
       </Box>
 
-      <Typography variant="h5" mt={3}>
+      <Typography variant="h5">
         Monthly Statistics
       </Typography>
 
@@ -315,13 +292,7 @@ export const ExpensesStatistics = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-            // sx={{
-            //   backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-            //   ":hover": { backgroundColor: "secondary.dark" }
-            // }}
-            // onClick={() => navigate(`/expenses/${expense.id}`)}
-            >
+            <TableRow>
               {expensesCategories?.map((category) => (
                 <TableCell key={category.id}>
                   {statistics.categories[category.name].monthlyAverage.toFixed(2)} CHF
@@ -332,7 +303,6 @@ export const ExpensesStatistics = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
     </Wrapper>
   );
 };

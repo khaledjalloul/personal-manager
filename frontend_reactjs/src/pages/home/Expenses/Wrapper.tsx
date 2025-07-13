@@ -4,40 +4,21 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
-import { Settings, Insights, Clear, Calculate, Today, ViewList } from "@mui/icons-material";
+import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useExpenses, useIncomes } from "../../../api";
 
 export const ExpensesWrapper = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("Current location:", location.pathname);
-  //   const { userData } = useContext(UserContext);
 
-  //   const [maxUsers, setMaxUsers] = useState(maxUsersOptions[0]);
   const [searchText, setSearchText] = useState("");
-  //   const [modalItem, setModalItem] = useState<Group>();
-
-  const { data: expenses } = useExpenses({
-    type: "all",
-    tags: [],
-    searchText: searchText.trim(),
-  });
-  // const { data: incomes } = useIncomes({
-  //   searchText: searchText.trim(),
-  // });
 
   return (
     <Wrapper>
       <Header>
-        {/* <Typography variant="h6">Groups</Typography> */}
-        {/* <IconButton onClick={() => navigate("/create")}>
-          <Add color="success" />
-        </IconButton> */}
         <Button
           variant="contained"
           onClick={location.pathname === "/expenses" ? undefined : () => navigate("/expenses")}
@@ -46,6 +27,7 @@ export const ExpensesWrapper = () => {
         >
           Statistics
         </Button>
+
         <Button
           variant="contained"
           onClick={location.pathname === "/expenses/daily" ? undefined : () => navigate("/expenses/daily")}
@@ -54,6 +36,7 @@ export const ExpensesWrapper = () => {
         >
           Daily
         </Button>
+
         <Button
           variant="contained"
           onClick={location.pathname === "/expenses/monthly" ? undefined : () => navigate("/expenses/monthly")}
@@ -62,6 +45,7 @@ export const ExpensesWrapper = () => {
         >
           Monthly
         </Button>
+
         <Button
           variant="contained"
           onClick={location.pathname === "/expenses/manage" ? undefined : () => navigate("/expenses/manage")}
@@ -70,19 +54,7 @@ export const ExpensesWrapper = () => {
         >
           Manage
         </Button>
-        {/* <TextField
-          select
-          value={maxUsers}
-          label={"Maximum Users"}
-          sx={{ ml: "auto", minWidth: 125 }}
-          onChange={(item) => setMaxUsers(item.target.value)}
-        >
-          {maxUsersOptions.map((option, index) => (
-            <MenuItem key={index} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField> */}
+
         <TextField
           sx={{
             minWidth: "35vw", ml: "auto",

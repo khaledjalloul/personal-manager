@@ -1,4 +1,16 @@
-import { User, Group, Expense, Income, ExpensesCategory, Hike, PianoPiece, PianoPieceStatus } from '../types';
+import {
+    User,
+    Expense,
+    Income,
+    ExpensesCategory,
+    Hike,
+    PianoPiece,
+    PianoPieceStatus,
+    NoteCategory,
+    DiaryEntry,
+    Note
+} from '../types';
+
 
 export const user: User = {
     id: 1,
@@ -6,18 +18,6 @@ export const user: User = {
     email: 'jdoe@hotmail.com',
     token: 'fake-jwt-token'
 };
-
-export const groups: Group[] = [{
-    id: 1,
-    name: 'Group 1',
-    subject: 'Subject 1',
-    location: 'Location 1',
-    time: new Date(),
-    maxUsers: 10,
-    notes: 'Notes for Group 1',
-    admin: user,
-    joinsGroups: []
-}];
 
 export const expensesCategories: ExpensesCategory[] = [
     { id: 1, name: 'Groceries', color: 'green' },
@@ -155,5 +155,90 @@ export const pianoPieces: PianoPiece[] = [
         monthLearned: new Date("2025-04-01"),
         sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+    }
+];
+
+export const noteCategories: NoteCategory[] = [
+    { id: 1, name: 'Personal' },
+    { id: 2, name: 'Work' },
+    { id: 3, name: 'Ideas' },
+    { id: 4, name: 'Reminders' }
+];
+
+export const notes: Note[] = [
+    {
+        id: 1,
+        category: noteCategories[0],
+        title: 'Grocery List',
+        content: 'Milk, Eggs, Bread',
+        dateCreated: new Date("2025-07-01"),
+        dateModified: new Date("2025-07-02"),
+        tags: ['shopping', 'groceries']
+    },
+    {
+        id: 2,
+        category: noteCategories[1],
+        title: 'Project Update',
+        content: 'Completed the first phase of the project.',
+        dateCreated: new Date("2025-07-05"),
+        dateModified: new Date("2025-07-06"),
+        tags: ['work', 'project']
+    },
+    {
+        id: 3,
+        category: noteCategories[2],
+        title: 'New App Idea',
+        content: 'An app that helps track daily habits.',
+        dateCreated: new Date("2025-07-10"),
+        dateModified: new Date("2025-07-11"),
+        tags: ['ideas', 'app']
+    },
+    {
+        id: 4,
+        category: noteCategories[3],
+        title: 'Doctor Appointment',
+        content: 'Check-up on July 15th at 10 AM.',
+        dateCreated: new Date("2025-07-15"),
+        dateModified: new Date("2025-07-16"),
+        tags: ['reminder', 'health']
+    },
+    {
+        id: 5,
+        category: noteCategories[0],
+        title: 'Book Recommendations',
+        content: '1. The Great Gatsby\n2. To Kill a Mockingbird',
+        dateCreated: new Date("2025-07-20"),
+        dateModified: new Date("2025-07-21"),
+        tags: ['books', 'reading']
+    },
+    {
+        id: 6,
+        category: noteCategories[1],
+        title: 'Meeting Notes',
+        content: 'Discussed project timelines and deliverables.',
+        dateCreated: new Date("2025-07-25"),
+        dateModified: new Date("2025-07-26"),
+        tags: ['meeting', 'notes']
+    }
+];
+
+export const diaryEntries: DiaryEntry[] = [
+    {
+        id: 1,
+        date: new Date("2025-07-01"),
+        content: 'Had a productive day at work.',
+        workContent: 'Completed the project presentation.'
+    },
+    {
+        id: 2,
+        date: new Date("2025-07-02"),
+        content: 'Went for a long hike in the mountains.',
+        workContent: 'Reviewed the project requirements.'
+    },
+    {
+        id: 3,
+        date: new Date("2025-07-03"),
+        content: 'Relaxed at home and read a book.',
+        workContent: 'Attended a team meeting.'
     }
 ];
