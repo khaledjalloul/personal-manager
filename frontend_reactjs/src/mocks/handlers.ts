@@ -7,7 +7,8 @@ import {
   Hike,
   PianoPiece,
   Note,
-  NoteCategory
+  NoteCategory,
+  DiaryEntry
 } from '../types';
 import {
   user,
@@ -17,7 +18,8 @@ import {
   hikes,
   pianoPieces,
   noteCategories,
-  notes
+  notes,
+  diaryEntries
 } from './data';
 
 const authHandlers = [
@@ -91,8 +93,8 @@ const noteHandlers = [
 ];
 
 const diaryHandlers = [
-  http.get<PathParams, DefaultBodyType, Note[]>('/diary', () => {
-    const duplicatedDiaryEntries = Array.from({ length: 25 }, () => notes).flat();
+  http.get<PathParams, DefaultBodyType, DiaryEntry[]>('/diary', () => {
+    const duplicatedDiaryEntries = Array.from({ length: 25 }, () => diaryEntries).flat();
     return HttpResponse.json(duplicatedDiaryEntries)
   })
 ];

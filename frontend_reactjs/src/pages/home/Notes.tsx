@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { Clear, Preview, Edit, EditOff, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Clear, Edit, EditOff, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNoteCategories } from "../../api";
 import { NoteCategoryContainer } from "../../components";
 import { Note } from "../../types";
@@ -35,7 +35,6 @@ export const Notes = () => {
     }
   }, [JSON.stringify(selectedNote)]);
 
-  console.log(noteContent)
   return (
     <Wrapper>
       <Header>
@@ -55,8 +54,8 @@ export const Notes = () => {
             ml: 1,
             minWidth: "35vw",
           }}
-          label="Search for piano piece"
-          placeholder="Name, origin, composer, status"
+          label="Search for notes"
+          placeholder="Title, content, tags"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           InputProps={{

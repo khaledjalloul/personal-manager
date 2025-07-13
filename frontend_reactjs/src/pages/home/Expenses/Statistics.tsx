@@ -133,6 +133,7 @@ export const ExpensesStatistics = () => {
 
   return (
     <Wrapper>
+      {/* TODO: check if the box is needed */}
       <Box sx={{ flex: 1, display: 'flex' }}>
         <Grid container spacing={2} flexGrow={1}>
 

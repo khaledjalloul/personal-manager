@@ -232,13 +232,13 @@ export const diaryEntries: DiaryEntry[] = [
     {
         id: 2,
         date: new Date("2025-07-02"),
-        content: 'Went for a long hike in the mountains.',
-        workContent: 'Reviewed the project requirements.'
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        workContent: 'Duis aute irure dolor in reprehenderit in voluptate'
     },
     {
         id: 3,
         date: new Date("2025-07-03"),
-        content: 'Relaxed at home and read a book.',
-        workContent: 'Attended a team meeting.'
+        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
+        workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.'
     }
 ];
