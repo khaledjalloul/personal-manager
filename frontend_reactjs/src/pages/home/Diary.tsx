@@ -10,6 +10,8 @@ import { useState } from "react";
 import { Clear } from "@mui/icons-material";
 import { useDiaryEntries } from "../../api";
 import { DiaryGridRow } from "../../components";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export const Diary = () => {
 
@@ -21,6 +23,10 @@ export const Diary = () => {
     <Wrapper>
       <Header>
 
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker label={'"year"'} openTo="year" />
+          {/* <StyledPlace as={AccessTime} /> */}
+        </LocalizationProvider>
         {/* year picker with buttons up and down */}
 
         {/* month picker horizontal slider or buttons */}
@@ -30,7 +36,7 @@ export const Diary = () => {
             ml: 'auto',
             minWidth: "35vw",
           }}
-          label="Search for diary entries"
+          label="Search diary entries"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           InputProps={{
@@ -47,18 +53,21 @@ export const Diary = () => {
         />
       </Header>
 
-      <Grid container rowSpacing={1} flexGrow={1}>
-        {diaryEntries?.map((entry, index) => (
-          <DiaryGridRow key={index} entry={entry} />
-        ))}
-      </Grid>
+      <Box sx={{ overflowY: 'auto' }}>
+        <Grid container rowSpacing={1} flexGrow={1}>
+          {diaryEntries?.map((entry, index) => (
+            <DiaryGridRow key={index} entry={entry} />
+          ))}
+        </Grid>
+      </Box>
 
     </Wrapper>
   );
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;

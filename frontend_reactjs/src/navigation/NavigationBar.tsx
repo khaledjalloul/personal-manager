@@ -52,9 +52,9 @@ export const NavigationBar = () => {
               <ArrowBack sx={{ color: "text.primary" }} />
             </IconButton>
           )}
-          <Typography variant="h5" color="text.primary" noWrap>
-            Group Finder
-          </Typography>
+          {/* <Typography variant="h5" color="text.primary" noWrap>
+            Personal Manager
+          </Typography> */}
 
           <Box
             sx={{
@@ -146,9 +146,11 @@ export const NavigationBar = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box display={"flex"} flexGrow={1} mt={8}>
+
+      <Box width={'100vw'} height={'calc(100vh - 64px)'} mt={8}>
         <Outlet />
       </Box>
+
     </Box>
   );
 };

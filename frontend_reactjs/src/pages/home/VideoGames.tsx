@@ -24,7 +24,7 @@ export const VideoGames = () => {
           sx={{
             minWidth: "35vw", ml: "auto",
           }}
-          label="Search for video games"
+          label="Search video games"
           placeholder="Name, platform, type"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -42,7 +42,7 @@ export const VideoGames = () => {
         />
       </Header>
 
-      <Box style={{ overflowY: 'scroll', maxHeight: '75vh' }}>
+      <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3}>
           {games?.map((game, index) => (
             <Grid key={index} item xs={12} md={6} lg={4} xl={3} sx={{ display: 'flex' }}>
@@ -56,7 +56,8 @@ export const VideoGames = () => {
 }
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;

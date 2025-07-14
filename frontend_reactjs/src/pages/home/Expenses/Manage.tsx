@@ -39,7 +39,7 @@ export const ManageExpenses = () => {
           </IconButton>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
+        <TableContainer component={Paper}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
             <TableHead>
               <TableRow >
@@ -67,7 +67,7 @@ export const ManageExpenses = () => {
           </IconButton>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
+        <TableContainer component={Paper}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
             <TableHead>
               <TableRow >
@@ -116,10 +116,10 @@ export const ManageExpenses = () => {
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  overflow-y: auto; // Idk why but needed to prevent extra scroll
   gap: 16px;
 `;
 

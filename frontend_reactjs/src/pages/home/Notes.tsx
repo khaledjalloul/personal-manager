@@ -69,7 +69,7 @@ export const Notes = () => {
             ml: 1,
             minWidth: "35vw",
           }}
-          label="Search for notes"
+          label="Search notes"
           placeholder="Title, content, tags"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -151,7 +151,8 @@ export const Notes = () => {
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;
@@ -165,8 +166,9 @@ const Header = styled(Box)`
 `;
 
 const NoteEditor = styled.textarea`
-  width: calc(100% - 32px);
-  height: calc(100% - 32px);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   resize: none;
   padding: 16px;
   margin: 0;

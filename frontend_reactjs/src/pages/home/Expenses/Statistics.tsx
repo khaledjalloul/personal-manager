@@ -134,71 +134,75 @@ export const ExpensesStatistics = () => {
   console.log("Statistics:", statistics);
   return (
     <Wrapper>
-      {/* TODO: check if the box is needed */}
-      <Box sx={{ flex: 1, display: 'flex' }}>
-        <Grid container spacing={2} flexGrow={1}>
+      <Grid container spacing={2} flexGrow={1}>
 
-          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
-            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-              <Typography variant="h6" color="white">
-                Total Balance
-              </Typography>
-              <Typography variant="h3" color="white">
-                1300.00 CHF
-              </Typography>
-            </StatisticsCard>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
-            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-              <Typography variant="h6" color="white">
-                ZKB Balance
-              </Typography>
-              <Typography variant="h3" color="white">
-                3,732.00 CHF
-              </Typography>
-            </StatisticsCard>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
-            <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
-              <Typography variant="h6" color="white">
-                Cash Balance
-              </Typography>
-              <Typography variant="h3" color="white">
-                300.00 CHF
-              </Typography>
-            </StatisticsCard>
-          </Grid>
-
-          <Grid item xs={12} md={6} sx={{ display: 'flex' }}  >
-            <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
-              <Typography variant="h6" color="white">
-                Total Spent This Month
-              </Typography>
-              <Typography variant="h3" color="white">
-                {statistics.totalExpensesThisMonth.toFixed(2)} CHF
-              </Typography>
-            </StatisticsCard>
-          </Grid>
-
-          <Grid item xs={12} md={6} sx={{ display: 'flex' }} >
-            <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
-              <Typography variant="h6" color="white">
-                Average Expenses Per Month
-              </Typography>
-              <Typography variant="h3" color="white">
-                {statistics.totalMonthlyAverage.toFixed(2)} CHF
-              </Typography>
-            </StatisticsCard>
-          </Grid>
+        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+            <Typography variant="h6" color="white">
+              Total Balance
+            </Typography>
+            <Typography variant="h3" color="white">
+              1300.00 CHF
+            </Typography>
+          </StatisticsCard>
         </Grid>
-      </Box>
+
+        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+            <Typography variant="h6" color="white">
+              ZKB Balance
+            </Typography>
+            <Typography variant="h3" color="white">
+              3,732.00 CHF
+            </Typography>
+          </StatisticsCard>
+        </Grid>
+
+        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+            <Typography variant="h6" color="white">
+              Cash Balance
+            </Typography>
+            <Typography variant="h3" color="white">
+              300.00 CHF
+            </Typography>
+          </StatisticsCard>
+        </Grid>
+
+        <Grid item xs={12} md={6} sx={{ display: 'flex' }}  >
+          <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
+            <Typography variant="h6" color="white">
+              Total Spent This Month
+            </Typography>
+            <Typography variant="h3" color="white">
+              {statistics.totalExpensesThisMonth.toFixed(2)} CHF
+            </Typography>
+          </StatisticsCard>
+        </Grid>
+
+        <Grid item xs={12} md={6} sx={{ display: 'flex' }} >
+          <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
+            <Typography variant="h6" color="white">
+              Average Expenses Per Month
+            </Typography>
+            <Typography variant="h3" color="white">
+              {statistics.totalMonthlyAverage.toFixed(2)} CHF
+            </Typography>
+          </StatisticsCard>
+        </Grid>
+      </Grid>
 
       <Box sx={{ mt: 5, mb: 5 }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={6}>
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, maxHeight: '50vh' }}>
+            <Box sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 1,
+              maxHeight: '50vh',
+            }}>
               <Typography variant="h5">
                 Expenses Over Time
               </Typography>
@@ -251,7 +255,14 @@ export const ExpensesStatistics = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, maxHeight: '50vh' }}>
+            <Box sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+              maxHeight: '50vh',
+            }}>
               <Typography variant="h5">
                 Total Expenses Per Category
               </Typography>
@@ -292,39 +303,41 @@ export const ExpensesStatistics = () => {
         Expenses per Month
       </Typography>
 
-      <TableContainer component={Paper}>
-        <Table size="medium" >
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "primary.light" }}>
-              {expensesCategories?.map((category) => (
-                <TableCell key={category.id} sx={{ fontWeight: 'bold' }}>
-                  {category.name}
-                </TableCell>
-              ))}
-              <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              {expensesCategories?.map((category) => (
-                <TableCell key={category.id}>
-                  {statistics.categories[category.name].monthlyAverage.toFixed(2)} CHF
-                </TableCell>
-              ))}
-              <TableCell>{statistics.totalMonthlyAverage.toFixed(2)} CHF</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Wrapper>
+      <Box>
+        <TableContainer component={Paper} sx={{ maxWidth: 'calc(100vw - 64px - 16px)' }}>
+          <Table size="medium" >
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "primary.light" }}>
+                {expensesCategories?.map((category) => (
+                  <TableCell key={category.id} sx={{ fontWeight: 'bold' }}>
+                    {category.name}
+                  </TableCell>
+                ))}
+                <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                {expensesCategories?.map((category) => (
+                  <TableCell key={category.id}>
+                    {statistics.categories[category.name].monthlyAverage.toFixed(2)} CHF
+                  </TableCell>
+                ))}
+                <TableCell>{statistics.totalMonthlyAverage.toFixed(2)} CHF</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Wrapper >
   );
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 `;
 
 const StatisticsCard = styled(Box)`

@@ -1,4 +1,4 @@
-# Group Finder Web App
+# Personal Manager Web App
 
 ## Frontend: ReactJS
 

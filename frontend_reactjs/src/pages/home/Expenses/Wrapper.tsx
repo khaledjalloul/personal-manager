@@ -57,11 +57,12 @@ export const ExpensesWrapper = () => {
 
         <TextField
           sx={{
-            minWidth: "35vw", ml: "auto",
-            opacity: location.pathname !== "/expenses" ? 1 : 0
+            ml: "auto",
+            minWidth: location.pathname !== "/expenses" ? "35vw" : 0,
+            opacity: location.pathname !== "/expenses" ? 1 : 0,
           }}
           disabled={location.pathname === "/expenses"}
-          label="Search for expense"
+          label="Search expense"
           placeholder="Category, description, vendor, tags, etc."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -86,7 +87,8 @@ export const ExpensesWrapper = () => {
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;

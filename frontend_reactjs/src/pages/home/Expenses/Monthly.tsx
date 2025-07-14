@@ -1,5 +1,4 @@
 import {
-  Box,
   Paper,
   Table,
   TableBody,
@@ -8,7 +7,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import styled from "styled-components";
 import { useMemo } from "react";
 import { useExpenseCategories, useExpenses } from "../../../api";
 
@@ -51,49 +49,40 @@ export const MonthlyExpenses = () => {
   }, [JSON.stringify(expenses), JSON.stringify(expensesCategories)]);
 
   return (
-    <Wrapper>
-      <TableContainer component={Paper}>
-        <Table size="small" >
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "primary.light" }}>
-              <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
+    <TableContainer component={Paper}>
+      <Table size="small" >
+        <TableHead>
+          <TableRow sx={{ backgroundColor: "primary.light" }}>
+            <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
+            {expensesCategories?.map((category) => (
+              <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
+                {category.name}
+              </TableCell>
+            ))}
+            <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Object.keys(summary).map((month, index) => (
+            <TableRow
+              key={index}
+              sx={{
+                backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
+              }}
+            >
+              <TableCell sx={{ width: '10%' }}>
+                {month}
+              </TableCell>
               {expensesCategories?.map((category) => (
-                <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
-                  {category.name}
+                <TableCell key={category.id} sx={{ width: '10%' }}>
+                  {summary[month][category.name].toFixed(2)}
                 </TableCell>
               ))}
-              <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+              <TableCell sx={{ width: '10%' }}>{summary[month].total.toFixed(2)}</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.keys(summary).map((month, index) => (
-              <TableRow
-                key={index}
-                sx={{
-                  backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-                }}
-              >
-                <TableCell sx={{ width: '10%' }}>
-                  {month}
-                </TableCell>
-                {expensesCategories?.map((category) => (
-                  <TableCell key={category.id} sx={{ width: '10%' }}>
-                    {summary[month][category.name].toFixed(2)}
-                  </TableCell>
-                ))}
-                <TableCell sx={{ width: '10%' }}>{summary[month].total.toFixed(2)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Wrapper>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
-
-const Wrapper = styled(Box)`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;

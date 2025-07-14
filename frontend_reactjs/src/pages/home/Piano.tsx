@@ -38,7 +38,7 @@ export const Piano = () => {
           sx={{
             minWidth: "35vw", ml: "auto",
           }}
-          label="Search for piano piece"
+          label="Search piano pieces"
           placeholder="Name, origin, composer, status"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -56,7 +56,7 @@ export const Piano = () => {
         />
       </Header>
 
-      <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
+      <TableContainer component={Paper}>
         <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
           <TableHead>
             <TableRow>
@@ -81,7 +81,8 @@ export const Piano = () => {
 };
 
 const Wrapper = styled(Box)`
-  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;
