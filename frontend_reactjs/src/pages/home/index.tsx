@@ -3,7 +3,7 @@ export * from "./CreateGroup";
 export * from "./About";
 export * from "./Expenses"
 export * from "./Diary";
-export * from "./Games";
+export * from "./VideoGames";
 export * from "./Hikes";
 export * from "./Journal";
 export * from "./Notes";

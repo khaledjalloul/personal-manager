@@ -8,7 +8,9 @@ import {
     PianoPieceStatus,
     NoteCategory,
     DiaryEntry,
-    Note
+    Note,
+    VideoGame,
+    VideoGameType
 } from '../types';
 
 
@@ -240,5 +242,49 @@ export const diaryEntries: DiaryEntry[] = [
         date: new Date("2025-07-03"),
         content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
         workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.'
+    }
+];
+
+export const videoGames: VideoGame[] = [
+    {
+        id: 1,
+        name: 'The Legend of Zelda: Breath of the Wild',
+        platform: 'Nintendo Switch',
+        type: VideoGameType.BOTH,
+        completed: true,
+        firstPlayed: new Date("2025-01-01"),
+        price: 59.99,
+        extraPurchases: [
+            { name: 'DLC Pack 1', price: 19.99 },
+            { name: 'DLC Pack 2', price: 19.99 }
+        ],
+        coverImage: 'https://example.com/zelda-cover.jpg',
+        storeUrl: 'https://www.zelda.com/breath-of-the-wild/'
+    },
+    {
+        id: 2,
+        name: 'Stardew Valley',
+        platform: 'PC',
+        type: VideoGameType.SINGLE_PLAYER,
+        completed: false,
+        firstPlayed: new Date("2025-02-01"),
+        price: 14.99,
+        extraPurchases: [],
+        coverImage: 'https://example.com/stardew-cover.jpg',
+        storeUrl: 'https://www.stardewvalley.net/'
+    },
+    {
+        id: 3,
+        name: 'Call of Duty: Warzone',
+        platform: 'PC',
+        type: VideoGameType.ONLINE,
+        completed: false,
+        firstPlayed: new Date("2025-03-01"),
+        price: 0.00, // Free to play
+        extraPurchases: [
+            { name: 'Battle Pass', price: 9.99 }
+        ],
+        coverImage: 'https://example.com/cod-cover.jpg',
+        storeUrl: 'https://www.callofduty.com/warzone'
     }
 ];

@@ -8,7 +8,7 @@ import {
   Journal,
   Notes,
   Hikes,
-  Games,
+  VideoGames,
   Recipes,
   Piano,
   ExpensesWrapper,
@@ -54,7 +54,7 @@ export const Navigator = () => {
         },
         {
           path: "/games",
-          element: <Games />,
+          element: <VideoGames />,
         },
         {
           path: "/recipes",

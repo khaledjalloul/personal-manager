@@ -42,6 +42,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
   const [duration, setDuration] = useState(hike.duration);
   const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
+  const [coverImage, setCoverImage] = useState(hike.coverImage);
 
   const durationHours = Math.floor(hike.duration);
   const durationMinutes = Math.round((hike.duration - durationHours) * 60);
@@ -51,7 +52,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
 
   return (
     <Wrapper>
-      <CoverImage src={hike.coverImage} />
+      <CoverImage src={coverImage} />
       <ContentBox sx={{ backgroundColor: "secondary.main" }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (

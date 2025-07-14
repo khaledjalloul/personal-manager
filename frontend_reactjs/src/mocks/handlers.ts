@@ -8,7 +8,8 @@ import {
   PianoPiece,
   Note,
   NoteCategory,
-  DiaryEntry
+  DiaryEntry,
+  VideoGame
 } from '../types';
 import {
   user,
@@ -19,7 +20,8 @@ import {
   pianoPieces,
   noteCategories,
   notes,
-  diaryEntries
+  diaryEntries,
+  videoGames
 } from './data';
 
 const authHandlers = [
@@ -99,11 +101,19 @@ const diaryHandlers = [
   })
 ];
 
+const videoGameHandlers = [
+  http.get<PathParams, DefaultBodyType, VideoGame[]>('/video-games', () => {
+    const duplicateVideoGames = Array.from({ length: 25 }, () => videoGames).flat();
+    return HttpResponse.json(duplicateVideoGames);
+  })
+];
+
 export const handlers = [
   ...authHandlers,
   ...expenseHandlers,
   ...hikeHandlers,
   ...pianoHandlers,
   ...noteHandlers,
-  ...diaryHandlers
+  ...diaryHandlers,
+  ...videoGameHandlers
 ];

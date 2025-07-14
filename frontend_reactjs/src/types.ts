@@ -6,7 +6,7 @@ export type User = {
 };
 
 export type Expense = {
-  id?: number;
+  id: number;
   date: Date;
   category: ExpensesCategory;
   description: string;
@@ -17,20 +17,20 @@ export type Expense = {
 };
 
 export type Income = {
-  id?: number;
+  id: number;
   date: Date;
   source: string;
   amount: number;
 };
 
 export type ExpensesCategory = {
-  id?: number;
+  id: number;
   name: string;
   color: string;
 };
 
 export type Hike = {
-  id?: number;
+  id: number;
   date: Date;
   description: string;
   distance: number;
@@ -51,7 +51,7 @@ export enum PianoPieceStatus {
 }
 
 export type PianoPiece = {
-  id?: number;
+  id: number;
   name: string;
   origin: string;
   composer: string;
@@ -62,12 +62,12 @@ export type PianoPiece = {
 }
 
 export type NoteCategory = {
-  id?: number;
+  id: number;
   name: string;
 }
 
 export type Note = {
-  id?: number;
+  id: number;
   dateCreated: Date;
   dateModified: Date;
   category: NoteCategory;
@@ -77,8 +77,30 @@ export type Note = {
 }
 
 export type DiaryEntry = {
-  id?: number;
+  id: number;
   date: Date;
   content: string;
   workContent: string;
 };
+
+export enum VideoGameType {
+  ONLINE = "Online",
+  SINGLE_PLAYER = "Single Player",
+  BOTH = "Online & Single Player",
+}
+
+export type VideoGame = {
+  id: number;
+  name: string;
+  platform: string;
+  type: VideoGameType;
+  completed: boolean;
+  firstPlayed: Date;
+  price: number;
+  extraPurchases: {
+    name: string;
+    price: number;
+  }[];
+  storeUrl: string;
+  coverImage: string;
+}
