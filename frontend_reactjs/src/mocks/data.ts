@@ -76,13 +76,13 @@ export const expenses: Expense[] = [
 export const incomes: Income[] = [
     {
         id: 1,
-        date: new Date(),
+        date: new Date("2025-01-01"),
         source: 'Salary',
         amount: 3000.00
     },
     {
         id: 2,
-        date: new Date(),
+        date: new Date("2025-02-01"),
         source: 'Freelance Work',
         amount: 1500.00
     }
@@ -98,7 +98,7 @@ export const hikes: Hike[] = [
         descent: 200,
         duration: 3.4,
         durationWithBreaks: 3.9,
-        coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
+        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuRviGmuOIjiaBd9elsOJ9lthIA9hKV6JGQ&s",
         images: [],
         googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
     },
@@ -258,7 +258,7 @@ export const videoGames: VideoGame[] = [
             { name: 'DLC Pack 1', price: 19.99 },
             { name: 'DLC Pack 2', price: 19.99 }
         ],
-        coverImage: 'https://example.com/zelda-cover.jpg',
+        coverImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT8XEMG4EYPrDFtsYlOqoIWqLw14e7eNwVpA&s',
         storeUrl: 'https://www.zelda.com/breath-of-the-wild/'
     },
     {
@@ -270,7 +270,7 @@ export const videoGames: VideoGame[] = [
         firstPlayed: new Date("2025-02-01"),
         price: 14.99,
         extraPurchases: [],
-        coverImage: 'https://example.com/stardew-cover.jpg',
+        coverImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkeLlFQDTHsYjSHtbBsInAYl2aIF54Qz_8zQ&s',
         storeUrl: 'https://www.stardewvalley.net/'
     },
     {
@@ -284,7 +284,7 @@ export const videoGames: VideoGame[] = [
         extraPurchases: [
             { name: 'Battle Pass', price: 9.99 }
         ],
-        coverImage: 'https://example.com/cod-cover.jpg',
+        coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/311210/header.jpg?t=1748022663',
         storeUrl: 'https://www.callofduty.com/warzone'
     }
 ];

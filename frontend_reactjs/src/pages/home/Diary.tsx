@@ -47,7 +47,7 @@ export const Diary = () => {
         />
       </Header>
 
-      <Grid container rowSpacing={2} flexGrow={1}>
+      <Grid container rowSpacing={1} flexGrow={1}>
         {diaryEntries?.map((entry, index) => (
           <DiaryGridRow key={index} entry={entry} />
         ))}

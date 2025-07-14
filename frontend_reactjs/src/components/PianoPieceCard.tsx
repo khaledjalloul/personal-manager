@@ -1,4 +1,5 @@
 import {
+  Box,
   IconButton,
   MenuItem,
   Select,
@@ -33,7 +34,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         ":hover": editable ? { backgroundColor: "secondary.dark" } : {}
       }}
     >
-      <TableCell>
+      <TableCell sx={{ fontWeight: 'bold' }}>
         {!isEditing ? name :
           <TextField
             variant="standard"
@@ -44,7 +45,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         }
       </TableCell>
 
-      <TableCell width={"40%"}>
+      <TableCell>
         {!isEditing ? origin :
           <TextField
             variant="standard"
@@ -95,59 +96,67 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
 
       {!isEditing ? (
         <TableCell>
-          <IconButton size="small">
-            <YouTube />
-          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton size="small">
+              <YouTube sx={{ color: "#F00" }} />
+            </IconButton>
 
-          <IconButton size="small">
-            <PictureAsPdf />
-          </IconButton>
+            <IconButton size="small">
+              <PictureAsPdf />
+            </IconButton>
+          </Box>
         </TableCell>
       ) : (
         <TableCell>
-          <TextField
-            variant="standard"
-            value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <TextField
+              variant="standard"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+            />
 
-          <TextField
-            variant="standard"
-            value={sheetMusicUrl}
-            onChange={(e) => setSheetMusicUrl(e.target.value)}
-          />
+            <TextField
+              variant="standard"
+              value={sheetMusicUrl}
+              onChange={(e) => setSheetMusicUrl(e.target.value)}
+            />
+          </Box>
         </TableCell>
       )}
 
       {editable && (
         !isEditing ? (
           <TableCell>
-            <IconButton size="small" onClick={() => setIsEditing(true)}>
-              <Edit />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton size="small" onClick={() => setIsEditing(true)}>
+                <Edit />
+              </IconButton>
 
-            <IconButton size="small">
-              <Delete color="error" />
-            </IconButton>
+              <IconButton size="small">
+                <Delete color="error" />
+              </IconButton>
+            </Box>
           </TableCell>
         ) : (
           <TableCell>
-            <IconButton size="small">
-              <Save color="success" />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton size="small">
+                <Save color="success" />
+              </IconButton>
 
-            <IconButton size="small" onClick={() => {
-              setName(pianoPiece.name);
-              setOrigin(pianoPiece.origin);
-              setComposer(pianoPiece.composer);
-              setStatus(pianoPiece.status);
-              setMonthLearned(pianoPiece.monthLearned);
-              setYoutubeUrl(pianoPiece.youtubeUrl);
-              setSheetMusicUrl(pianoPiece.sheetMusicUrl);
-              setIsEditing(false)
-            }}>
-              <Clear />
-            </IconButton>
+              <IconButton size="small" onClick={() => {
+                setName(pianoPiece.name);
+                setOrigin(pianoPiece.origin);
+                setComposer(pianoPiece.composer);
+                setStatus(pianoPiece.status);
+                setMonthLearned(pianoPiece.monthLearned);
+                setYoutubeUrl(pianoPiece.youtubeUrl);
+                setSheetMusicUrl(pianoPiece.sheetMusicUrl);
+                setIsEditing(false)
+              }}>
+                <Clear />
+              </IconButton>
+            </Box>
           </TableCell>
         )
       )}

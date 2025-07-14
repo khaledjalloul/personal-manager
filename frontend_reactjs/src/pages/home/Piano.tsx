@@ -10,10 +10,11 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
-import { Clear } from "@mui/icons-material";
+import { Add, Clear } from "@mui/icons-material";
 import { usePianoPieces } from "../../api";
 import { PianoPieceTableRow } from "../../components";
 
@@ -27,6 +28,12 @@ export const Piano = () => {
   return (
     <Wrapper>
       <Header>
+        <Typography variant="h5">
+          Piano Pieces
+        </Typography>
+        <IconButton>
+          <Add />
+        </IconButton>
         <TextField
           sx={{
             minWidth: "35vw", ml: "auto",

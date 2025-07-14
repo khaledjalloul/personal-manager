@@ -8,7 +8,15 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { Clear, Edit, EditOff, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Clear,
+  CreateNewFolder,
+  Edit,
+  EditOff,
+  NoteAdd,
+  Visibility,
+  VisibilityOff
+} from "@mui/icons-material";
 import { useNoteCategories } from "../../api";
 import { NoteCategoryContainer } from "../../components";
 import { Note } from "../../types";
@@ -38,6 +46,13 @@ export const Notes = () => {
   return (
     <Wrapper>
       <Header>
+        <Typography variant="h5">
+          Notes
+        </Typography>
+        <IconButton>
+          <NoteAdd />
+        </IconButton>
+
         <IconButton
           sx={{ ml: "auto" }}
           onClick={() => setEditorEnabled(!editorEnabled)}
@@ -74,9 +89,14 @@ export const Notes = () => {
 
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', gap: 2 }}>
         <Box sx={{ minWidth: '200px', display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="h6" gutterBottom>
-            Notes
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Typography variant="h6" mr={1}>
+              Categories
+            </Typography>
+            <IconButton size="small">
+              <CreateNewFolder />
+            </IconButton>
+          </Box>
 
           <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
             {noteCategories?.map((category, index) => (
@@ -90,25 +110,25 @@ export const Notes = () => {
           </Box>
         </Box>
 
-        {selectedNote && editorEnabled && (
+        {editorEnabled && (
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom>
-              {selectedNote.title}
+            <Typography variant="h6" mb={1}>
+              Text Editor: {selectedNote?.title}
             </Typography>
 
             <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
               <NoteEditor
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
+                disabled={!selectedNote}
               />
             </Box>
-
           </Box>
         )}
 
-        {selectedNote && previewEnabled && (
+        {previewEnabled && (
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" mb={1}>
               Markdown Preview
             </Typography>
 
@@ -123,7 +143,6 @@ export const Notes = () => {
                 padding: '16px',
               }}
             />
-
           </Box>
         )}
       </Box>

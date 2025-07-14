@@ -30,11 +30,11 @@ export const ExpensesWrapper = () => {
 
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/daily" ? undefined : () => navigate("/expenses/daily")}
+          onClick={location.pathname === "/expenses/details" ? undefined : () => navigate("/expenses/details")}
           color="secondary"
           startIcon={<ViewList />}
         >
-          Daily
+          Details
         </Button>
 
         <Button

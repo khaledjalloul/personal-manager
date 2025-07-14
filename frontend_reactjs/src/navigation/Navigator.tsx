@@ -12,7 +12,7 @@ import {
   Recipes,
   Piano,
   ExpensesWrapper,
-  DailyExpenses,
+  ExpensesDetails,
   MonthlyExpenses
 } from "../pages";
 import { PageNotFound } from "./404";
@@ -69,8 +69,8 @@ export const Navigator = () => {
               element: <ExpensesStatistics />,
             },
             {
-              path: "/expenses/daily",
-              element: <DailyExpenses />,
+              path: "/expenses/details",
+              element: <ExpensesDetails />,
             },
             {
               path: "/expenses/monthly",

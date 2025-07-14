@@ -12,7 +12,7 @@ import styled from "styled-components";
 import { useExpenses } from "../../../api";
 import { ExpenseTableRow } from "../../../components";
 
-export const DailyExpenses = () => {
+export const ExpensesDetails = () => {
 
   const { data: expenses } = useExpenses({
     type: "all",

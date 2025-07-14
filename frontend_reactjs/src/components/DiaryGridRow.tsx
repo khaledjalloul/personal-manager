@@ -1,9 +1,11 @@
 import { Fragment, useState } from "react";
 import { DiaryEntry } from "../types";
-import { Box, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
 
 export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
+
+  const { palette } = useTheme();
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
@@ -14,9 +16,10 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
       <Grid item xs={2} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
-          borderRadius: 1,
+          borderRadius: '8px',
           backgroundColor: 'secondary.main',
           p: 1,
+          pl: 2,
           mr: 1,
           display: 'flex',
           alignItems: 'center',
@@ -57,11 +60,11 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
       <Grid item xs={7} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
-          borderTopLeftRadius: 1,
-          borderBottomLeftRadius: 1,
+          borderTopLeftRadius: '8px',
+          borderBottomLeftRadius: '8px',
           backgroundColor: 'secondary.main',
-          p: 1,
-          pr: 2,
+          p: !isEditing ? 1 : 0,
+          pr: !isEditing ? 2 : 1,
         }}>
           {!isEditing ? (
             <Typography variant="body1">
@@ -70,6 +73,18 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           ) : (
             <textarea
               value={content}
+              rows={10}
+              style={{
+                width: 'calc(100% - 16px)',
+                minHeight: 'calc(100% - 16px)',
+                resize: 'none',
+                padding: '8px',
+                outline: 'none',
+                border: 'none',
+                backgroundColor: palette.secondary.main,
+                borderTopLeftRadius: '8px',
+                borderBottomLeftRadius: '8px',
+              }}
               onChange={(e) => setContent(e.target.value)}
             />
           )}
@@ -79,11 +94,11 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
       <Grid item xs={3} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
-          borderTopRightRadius: 1,
-          borderBottomRightRadius: 1,
+          borderTopRightRadius: '8px',
+          borderBottomRightRadius: '8px',
           backgroundColor: 'secondary.main',
-          p: 1,
-          pl: 2,
+          p: !isEditing ? 1 : 0,
+          pl: !isEditing ? 2 : 1,
         }}>
           {!isEditing ? (
             <Typography variant="body1">
@@ -92,6 +107,17 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           ) : (
             <textarea
               value={workContent}
+              style={{
+                width: 'calc(100% - 16px)',
+                height: 'calc(100% - 16px)',
+                resize: 'none',
+                padding: '8px',
+                outline: 'none',
+                border: 'none',
+                backgroundColor: palette.secondary.main,
+                borderTopRightRadius: '8px',
+                borderBottomRightRadius: '8px'
+              }}
               onChange={(e) => setWorkContent(e.target.value)}
             />
           )}

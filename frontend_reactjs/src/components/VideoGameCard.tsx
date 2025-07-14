@@ -1,19 +1,27 @@
-import { Box, Grid, IconButton, InputAdornment, MenuItem, Select, TextField, Typography } from "@mui/material";
-import styled from "styled-components";
-import { Hike, VideoGame, VideoGameType } from "../types";
 import {
-  AccessTime,
+  Box,
+  Grid,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
+} from "@mui/material";
+import styled from "styled-components";
+import { VideoGame, VideoGameType } from "../types";
+import {
   Edit,
-  MoreTime,
-  PermMedia,
-  Straighten,
   Today,
-  TrendingDown,
-  TrendingUp,
-  Place,
   Save,
   Delete,
-  Clear
+  Clear,
+  Check,
+  CreditCard,
+  SellOutlined,
+  SportsEsportsOutlined,
+  PeopleOutlineOutlined,
+  InsertLink
 } from "@mui/icons-material";
 import { useState } from "react";
 
@@ -30,10 +38,13 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
 
+  const sumExtraPurchases = extraPurchases.reduce((acc, purchase) => acc + purchase.price, 0);
+
   return (
     <Wrapper>
       <CoverImage src={coverImage} />
-      <ContentBox sx={{ backgroundColor: "secondary.main" }}>
+
+      <ContentBox sx={{ backgroundColor: "secondary.main", display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
@@ -83,19 +94,47 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
           )}
 
           {!isEditing && (
-            <IconButton disabled>
-              <PermMedia />
-            </IconButton>
-          )}
-
-          {!isEditing && (
             <IconButton onClick={() => window.open(storeUrl, '_blank')}>
-              {/* <Steam /> */}
+              <InsertLink />
             </IconButton>
           )}
         </Box>
 
-        <Grid container spacing={1} sx={{ marginTop: 1 }}>
+        <Grid container rowSpacing={1} columnSpacing={2}>
+          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <SportsEsportsOutlined />
+            {!isEditing ? (
+              <Typography variant="body1">
+                {platform}
+              </Typography>
+            ) : (
+              <TextField
+                variant="standard"
+                value={platform}
+                onChange={(e) => setPlatform(e.target.value)}
+              />
+            )}
+          </Grid>
+
+          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <PeopleOutlineOutlined />
+            {!isEditing ? (
+              <Typography variant="body1">
+                {type}
+              </Typography>
+            ) : (
+              <Select
+                variant="standard"
+                value={type}
+                onChange={(e) => setType(e.target.value as VideoGameType)}
+              >
+                <MenuItem value={VideoGameType.ONLINE}>Online</MenuItem>
+                <MenuItem value={VideoGameType.SINGLE_PLAYER}>Single Player</MenuItem>
+                <MenuItem value={VideoGameType.BOTH}>Online & Single Player</MenuItem>
+              </Select>
+            )}
+          </Grid>
+
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Today />
             {!isEditing ? (
@@ -115,22 +154,25 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
           </Grid>
 
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Straighten />
+            <Check />
             {!isEditing ? (
               <Typography variant="body1">
-                {platform}
+                {completed ? "Completed" : "Not Completed"}
               </Typography>
             ) : (
-              <TextField
+              <Select
                 variant="standard"
-                value={platform}
-                onChange={(e) => setPlatform(e.target.value)}
-              />
+                value={completed ? "true" : "false"}
+                onChange={(e) => setCompleted(e.target.value === "true")}
+              >
+                <MenuItem value="true">Completed</MenuItem>
+                <MenuItem value="false">Not Completed</MenuItem>
+              </Select>
             )}
           </Grid>
 
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <TrendingDown />
+            <SellOutlined />
             {!isEditing ? (
               <Typography variant="body1">
                 {price} $
@@ -151,30 +193,38 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
           </Grid>
 
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AccessTime />
+            <CreditCard />
             {!isEditing ? (
               <Typography variant="body1">
-                {type}
+                {sumExtraPurchases} $
               </Typography>
             ) : (
-              <Select
+              <TextField
                 variant="standard"
-                value={type}
-                onChange={(e) => setType(e.target.value as VideoGameType)}
-              >
-                <MenuItem value={VideoGameType.ONLINE}>Online</MenuItem>
-                <MenuItem value={VideoGameType.SINGLE_PLAYER}>Single Player</MenuItem>
-                <MenuItem value={VideoGameType.BOTH}>Online & Single Player</MenuItem>
-              </Select>
+                value={price.toFixed(2)}
+                onChange={(e) => {
+                  const newPrice = parseFloat(e.target.value);
+                  setPrice(isNaN(newPrice) ? price : newPrice);
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                }}
+              />
             )}
           </Grid>
 
           {isEditing && (
-            <TextField
-              variant="standard"
-              value={storeUrl}
-              onChange={(e) => setStoreUrl(e.target.value)}
-            />
+            <Grid item xs={12} sx={{ display: 'flex' }}>
+              <TextField
+                variant="standard"
+                value={storeUrl}
+                sx={{ flexGrow: 1 }}
+                onChange={(e) => setStoreUrl(e.target.value)}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start"><InsertLink /></InputAdornment>,
+                }}
+              />
+            </Grid>
           )}
         </Grid>
       </ContentBox>
@@ -191,6 +241,7 @@ const CoverImage = styled.img`
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     width: 100%;
+    aspect-ratio: 16/9;
 `;
 
 const ContentBox = styled(Box)`

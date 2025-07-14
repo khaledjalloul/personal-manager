@@ -53,7 +53,8 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
   return (
     <Wrapper>
       <CoverImage src={coverImage} />
-      <ContentBox sx={{ backgroundColor: "secondary.main" }}>
+
+      <ContentBox sx={{ backgroundColor: "secondary.main", display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
@@ -114,7 +115,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
           )}
         </Box>
 
-        <Grid container spacing={1} sx={{ marginTop: 1 }}>
+        <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Today />
             {!isEditing ? (
@@ -239,14 +240,17 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
           </Grid>
 
           {isEditing && (
-            <TextField
-              variant="standard"
-              value={googleMapsUrl}
-              onChange={(e) => setGoogleMapsUrl(e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><GoogleMapsIcon /></InputAdornment>,
-              }}
-            />
+            <Grid item xs={12} sx={{ display: 'flex' }}>
+              <TextField
+                variant="standard"
+                value={googleMapsUrl}
+                sx={{ flexGrow: 1 }}
+                onChange={(e) => setGoogleMapsUrl(e.target.value)}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start"><GoogleMapsIcon /></InputAdornment>,
+                }}
+              />
+            </Grid>
           )}
         </Grid>
       </ContentBox>
@@ -263,6 +267,7 @@ const CoverImage = styled.img`
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     width: 100%;
+    aspect-ratio: 16/9;
 `;
 
 const ContentBox = styled(Box)`

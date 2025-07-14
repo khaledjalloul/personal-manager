@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Note, NoteCategory } from "../types";
 import { useNotes } from "../api";
 import { Box, Typography } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 export const NoteCategoryContainer = (
   { category,
@@ -29,12 +30,18 @@ export const NoteCategoryContainer = (
           pt: 0.5,
           pb: 0.5,
           cursor: 'pointer',
-          ":hover": { backgroundColor: "secondary.dark" },
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          ":hover": { backgroundColor: "secondary.main" },
         }}
       >
         <Typography variant="body1" key={category.id}>
           {category.name}
         </Typography>
+
+        {isOpen ? <ExpandLess /> : <ExpandMore />}
       </Box>
 
       {isOpen && (
@@ -49,8 +56,9 @@ export const NoteCategoryContainer = (
                 pt: 0.5,
                 pb: 0.5,
                 cursor: 'pointer',
-                backgroundColor: selectedNote?.id === note.id ? "secondary.main" : "background.main",
-                ":hover": selectedNote?.id !== note.id ? { backgroundColor: "secondary.dark" } : {},
+                borderRadius: '8px',
+                backgroundColor: selectedNote?.id === note.id ? "secondary.dark" : "background.main",
+                ":hover": selectedNote?.id !== note.id ? { backgroundColor: "secondary.main" } : {},
               }}
             >
               <Typography variant="body1">{note.title}</Typography>

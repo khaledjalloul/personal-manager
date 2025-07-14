@@ -131,6 +131,7 @@ export const ExpensesStatistics = () => {
 
   }, [JSON.stringify(expenses), JSON.stringify(incomes), JSON.stringify(expensesCategories)]);
 
+  console.log("Statistics:", statistics);
   return (
     <Wrapper>
       {/* TODO: check if the box is needed */}
@@ -170,7 +171,7 @@ export const ExpensesStatistics = () => {
             </StatisticsCard>
           </Grid>
 
-          <Grid item xs={12} lg={6} sx={{ display: 'flex' }}  >
+          <Grid item xs={12} md={6} sx={{ display: 'flex' }}  >
             <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
               <Typography variant="h6" color="white">
                 Total Spent This Month
@@ -181,10 +182,10 @@ export const ExpensesStatistics = () => {
             </StatisticsCard>
           </Grid>
 
-          <Grid item xs={12} lg={6} sx={{ display: 'flex' }} >
+          <Grid item xs={12} md={6} sx={{ display: 'flex' }} >
             <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
               <Typography variant="h6" color="white">
-                Average Spendings Per Month
+                Average Expenses Per Month
               </Typography>
               <Typography variant="h3" color="white">
                 {statistics.totalMonthlyAverage.toFixed(2)} CHF
@@ -194,90 +195,101 @@ export const ExpensesStatistics = () => {
         </Grid>
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, height: '50vh' }} >
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <Typography variant="h5">
-            Expenses Over Time
-          </Typography>
+      <Box sx={{ mt: 5, mb: 5 }}>
+        <Grid container spacing={5}>
+          <Grid item xs={12} md={6}>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, maxHeight: '50vh' }}>
+              <Typography variant="h5">
+                Expenses Over Time
+              </Typography>
 
-          <FormControl>
-            <RadioGroup row value={overTimeType} onChange={(e) => setOverTimeType(e.target.value)}>
-              <FormControlLabel value="expenses" control={<Radio />} label="Expenses" />
-              <FormControlLabel value="incomes" control={<Radio />} label="Incomes" />
-              <FormControlLabel value="both" control={<Radio />} label="Both" />
-            </RadioGroup>
-          </FormControl>
+              <FormControl>
+                <RadioGroup row value={overTimeType} onChange={(e) => setOverTimeType(e.target.value)}>
+                  <FormControlLabel value="expenses" control={<Radio />} label="Expenses" />
+                  <FormControlLabel value="incomes" control={<Radio />} label="Incomes" />
+                  <FormControlLabel value="both" control={<Radio />} label="Both" />
+                </RadioGroup>
+              </FormControl>
 
-          <Line
-            data={{
-              labels: Object.keys(statistics.months),
-              datasets: [
-                {
-                  label: 'Amount (CHF)',
-                  data: Object.values(statistics.months).map(m => (
-                    overTimeType === "expenses" ? m.expenses :
-                      overTimeType === "incomes" ? m.incomes :
-                        m.incomes - m.expenses
-                  )),
-                  backgroundColor:
-                    overTimeType === "expenses" ? palette.warning.main :
-                      overTimeType === "incomes" ? palette.success.main :
-                        palette.primary.main,
-                  borderColor:
-                    overTimeType === "expenses" ? palette.warning.main :
-                      overTimeType === "incomes" ? palette.success.main :
-                        palette.primary.main,
-                }
-              ],
-            }}
-            options={{
-              scales: {
-                y: {
-                  ticks: {
-                    callback: (value) => `${value} CHF`
-                  }
-                }
-              }
-            }} />
-        </Box>
-
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <Typography variant="h5">
-            Total Spendings Per Category
-          </Typography>
-
-          <Doughnut
-            data={{
-              labels: expensesCategories?.map(c => c.name),
-              datasets: [
-                {
-                  label: 'Amount (CHF)',
-                  data: expensesCategories?.map(c => statistics.categories[c.name]?.total),
-                  backgroundColor: expensesCategories?.map(c => c.color),
-                }
-              ],
-            }}
-            options={{
-              plugins: {
-                legend: {
-                  position: "right",
-                  align: "start",
-                  labels:
-                  {
-                    font:
+              <Line
+                data={{
+                  labels: Object.keys(statistics.months),
+                  datasets: [
                     {
-                      family: "Poppins, Inter, Segoe UI, sans-serif",
-                      size: 18
+                      label: 'Amount (CHF)',
+                      data: Object.values(statistics.months).map(m => (
+                        overTimeType === "expenses" ? m.expenses :
+                          overTimeType === "incomes" ? m.incomes :
+                            m.incomes - m.expenses
+                      )),
+                      backgroundColor:
+                        overTimeType === "expenses" ? palette.warning.main :
+                          overTimeType === "incomes" ? palette.success.main :
+                            palette.primary.main,
+                      borderColor:
+                        overTimeType === "expenses" ? palette.warning.main :
+                          overTimeType === "incomes" ? palette.success.main :
+                            palette.primary.main,
+                    }
+                  ],
+                }}
+                options={{
+                  scales: {
+                    y: {
+                      ticks: {
+                        callback: (value) => `${value} CHF`
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
                     }
                   }
-                },
-              },
-            }} />
-        </Box>
+                }} />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, maxHeight: '50vh' }}>
+              <Typography variant="h5">
+                Total Expenses Per Category
+              </Typography>
+
+              <Doughnut
+                data={{
+                  labels: expensesCategories?.map(c => c.name),
+                  datasets: [
+                    {
+                      label: 'Amount (CHF)',
+                      data: expensesCategories?.map(c => statistics.categories[c.name]?.total),
+                      backgroundColor: expensesCategories?.map(c => c.color),
+                    }
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      position: "right",
+                      align: "start",
+                      labels:
+                      {
+                        font:
+                        {
+                          family: "Poppins, Inter, Segoe UI, sans-serif",
+                          size: 18
+                        }
+                      }
+                    },
+                  },
+                }} />
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
 
       <Typography variant="h5">
-        Monthly Statistics
+        Expenses per Month
       </Typography>
 
       <TableContainer component={Paper}>

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import {
 import styled from "styled-components";
 import { useExpenses, useIncomes } from "../../../api";
 import { ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { Add } from "@mui/icons-material";
 
 export const ManageExpenses = () => {
 
@@ -29,7 +31,13 @@ export const ManageExpenses = () => {
   return (
     <Wrapper>
       <Income>
-        <Typography variant="h6" sx={{ alignSelf: "center" }}>Income</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h6">Income</Typography>
+
+          <IconButton size="small">
+            <Add />
+          </IconButton>
+        </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
@@ -51,7 +59,13 @@ export const ManageExpenses = () => {
       </Income>
 
       <ManualExpenses>
-        <Typography variant="h6" sx={{ alignSelf: "center" }}>Manual Expenses</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h6">Manual Expenses</Typography>
+
+          <IconButton size="small">
+            <Add />
+          </IconButton>
+        </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: '75vh' }}>
           <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>

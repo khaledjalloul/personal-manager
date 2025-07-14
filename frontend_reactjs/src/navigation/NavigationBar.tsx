@@ -27,7 +27,7 @@ const toolbarButtons = [
   { label: "Notes", path: "/notes" },
   { label: "Hikes", path: "/hikes" },
   { label: "Recipes", path: "/recipes" },
-  { label: "Games", path: "/games" },
+  { label: "Video Games", path: "/games" },
   { label: "Create Group", path: "/create" },
   { label: "About", path: "/about" },
 ];
