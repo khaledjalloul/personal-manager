@@ -30,20 +30,20 @@ export const ExpensesWrapper = () => {
 
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/details" ? undefined : () => navigate("/expenses/details")}
-          color="secondary"
-          startIcon={<ViewList />}
-        >
-          Details
-        </Button>
-
-        <Button
-          variant="contained"
           onClick={location.pathname === "/expenses/monthly" ? undefined : () => navigate("/expenses/monthly")}
           color="secondary"
           startIcon={<Today />}
         >
           Monthly
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={location.pathname === "/expenses/details" ? undefined : () => navigate("/expenses/details")}
+          color="secondary"
+          startIcon={<ViewList />}
+        >
+          Details
         </Button>
 
         <Button
@@ -62,20 +62,22 @@ export const ExpensesWrapper = () => {
             opacity: location.pathname !== "/expenses" ? 1 : 0,
           }}
           disabled={location.pathname === "/expenses"}
-          label="Search expense"
+          label="Search expenses"
           placeholder="Category, description, vendor, tags, etc."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: searchText.length > 0 && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setSearchText("")}
-                >
-                  <Clear />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: searchText.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchText("")}
+                  >
+                    <Clear />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Header>

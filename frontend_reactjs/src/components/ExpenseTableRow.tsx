@@ -11,6 +11,9 @@ import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { useState } from "react";
 import { useExpenseCategories } from "../api";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
 export const ExpenseTableRow = ({ expense, index, editable = false }: {
@@ -21,7 +24,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
   const { data: expensesCategories } = useExpenseCategories();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [date, setDate] = useState(expense.date);
+  const [date, setDate] = useState(dayjs(expense.date));
   const [category, setCategory] = useState(expense.category);
   const [description, setDescription] = useState(expense.description);
   const [vendor, setVendor] = useState(expense.vendor);
@@ -35,15 +38,19 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
       }}
     >
       <TableCell>
-        {!isEditing ? date.toLocaleDateString() :
-          <TextField
-            variant="standard"
-            value={date.toLocaleDateString("en-US")}
-            onChange={(e) => {
-              const newDate = new Date(e.target.value);
-              setDate(isNaN(newDate.getTime()) ? date : newDate);
-            }}
-          />
+        {!isEditing ? date.format("DD.MM.YYYY") :
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={date}
+              onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
+              enableAccessibleFieldDOMStructure={false}
+              slots={{
+                textField: props => <TextField {...props} size="small"
+                  value={date.format('DD.MM.YYYY')}
+                />
+              }}
+            />
+          </LocalizationProvider>
         }
       </TableCell>
 
@@ -64,7 +71,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
         }
       </TableCell>
 
-      <TableCell width={"40%"}>
+      <TableCell width={"35%"}>
         {!isEditing ? description :
           <TextField
             variant="standard"
@@ -94,8 +101,10 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
               const newAmount = parseFloat(e.target.value);
               setAmount(isNaN(newAmount) ? amount : newAmount);
             }}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+              }
             }}
           />
         }
@@ -119,7 +128,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              setDate(expense.date);
+              setDate(dayjs(expense.date));
               setCategory(expense.category);
               setDescription(expense.description);
               setVendor(expense.vendor);

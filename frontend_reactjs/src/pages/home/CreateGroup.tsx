@@ -9,8 +9,8 @@ import {
 import styled from "styled-components";
 import { Person, Place, AccessTime } from "@mui/icons-material";
 import { useState } from "react";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+// import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
 const maxUsersOptions = ["Any", 2, 3, 4, 5];

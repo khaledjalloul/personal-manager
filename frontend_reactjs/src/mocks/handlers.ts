@@ -50,30 +50,20 @@ const expenseHandlers = [
       )
     }
 
-    const duplicatedExpenses = Array.from({ length: 25 }, () => expensesToReturn).flat();
-    return HttpResponse.json(duplicatedExpenses);
+    return HttpResponse.json(expensesToReturn);
   }),
-  http.get<PathParams, DefaultBodyType, Income[]>('/incomes', () => {
-    const duplicatedIncomes = Array.from({ length: 25 }, () => incomes).flat();
-    return HttpResponse.json(duplicatedIncomes);
-  }),
+  http.get<PathParams, DefaultBodyType, Income[]>('/incomes', () => HttpResponse.json(incomes)),
   http.get<PathParams, DefaultBodyType, ExpensesCategory[]>('/expenses/categories', () => {
     return HttpResponse.json(expensesCategories);
   }),
 ];
 
 const hikeHandlers = [
-  http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => {
-    const duplicatedHikes = Array.from({ length: 25 }, () => hikes).flat();
-    return HttpResponse.json(duplicatedHikes)
-  }),
+  http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => HttpResponse.json(hikes)),
 ];
 
 const pianoHandlers = [
-  http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => {
-    const duplicatedPianoPieces = Array.from({ length: 25 }, () => pianoPieces).flat();
-    return HttpResponse.json(duplicatedPianoPieces)
-  })
+  http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => HttpResponse.json(pianoPieces))
 ];
 
 const noteHandlers = [
@@ -95,17 +85,29 @@ const noteHandlers = [
 ];
 
 const diaryHandlers = [
-  http.get<PathParams, DefaultBodyType, DiaryEntry[]>('/diary', () => {
-    const duplicatedDiaryEntries = Array.from({ length: 25 }, () => diaryEntries).flat();
-    return HttpResponse.json(duplicatedDiaryEntries)
+  http.get<PathParams, DefaultBodyType, DiaryEntry[]>('/diary', ({ request }) => {
+    const url = new URL(request.url)
+    var year = url.searchParams.get('year') ?? new Date().getFullYear().toString();
+    var month = url.searchParams.get('month') ?? new Date().getMonth().toString();
+    var searchText = url.searchParams.get('searchText') ?? "";
+
+    var entriesToReturn = diaryEntries.filter(entry => (
+      entry.date.getFullYear() === parseInt(year) &&
+      entry.date.getMonth() === parseInt(month) &&
+      (
+        searchText ? (
+          entry.content.toLowerCase().includes(searchText.toLowerCase()) ||
+          entry.workContent.toLowerCase().includes(searchText.toLowerCase())
+        ) : true
+      )
+    ));
+
+    return HttpResponse.json(entriesToReturn)
   })
 ];
 
 const videoGameHandlers = [
-  http.get<PathParams, DefaultBodyType, VideoGame[]>('/video-games', () => {
-    const duplicateVideoGames = Array.from({ length: 25 }, () => videoGames).flat();
-    return HttpResponse.json(duplicateVideoGames);
-  })
+  http.get<PathParams, DefaultBodyType, VideoGame[]>('/video-games', () => HttpResponse.json(videoGames))
 ];
 
 export const handlers = [

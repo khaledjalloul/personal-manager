@@ -69,12 +69,12 @@ export const Navigator = () => {
               element: <ExpensesStatistics />,
             },
             {
-              path: "/expenses/details",
-              element: <ExpensesDetails />,
-            },
-            {
               path: "/expenses/monthly",
               element: <MonthlyExpenses />,
+            },
+            {
+              path: "/expenses/details",
+              element: <ExpensesDetails />,
             },
             {
               path: "/expenses/manage",

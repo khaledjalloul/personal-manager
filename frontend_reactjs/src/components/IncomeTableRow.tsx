@@ -8,6 +8,9 @@ import {
 import { Income } from "../types";
 import { useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
 export const IncomeTableRow = ({ income, index, editable = false }: {
@@ -17,7 +20,7 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 }) => {
 
 	const [isEditing, setIsEditing] = useState(false);
-	const [date, setDate] = useState(income.date);
+	const [date, setDate] = useState(dayjs(income.date));
 	const [source, setSource] = useState(income.source);
 	const [amount, setAmount] = useState(income.amount);
 
@@ -29,15 +32,19 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 			}}
 		>
 			<TableCell >
-				{!isEditing ? date.toLocaleDateString() :
-					<TextField
-						variant="standard"
-						value={date.toLocaleDateString("en-US")}
-						onChange={(e) => {
-							const newDate = new Date(e.target.value);
-							setDate(isNaN(newDate.getTime()) ? date : newDate);
-						}}
-					/>
+				{!isEditing ? date.format("DD.MM.YYYY") :
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DatePicker
+							value={date}
+							onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
+							enableAccessibleFieldDOMStructure={false}
+							slots={{
+								textField: props => <TextField {...props} size="small"
+									value={date.format('DD.MM.YYYY')}
+								/>
+							}}
+						/>
+					</LocalizationProvider>
 				}
 			</TableCell>
 
@@ -61,8 +68,10 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 							const newAmount = parseFloat(e.target.value);
 							setAmount(isNaN(newAmount) ? amount : newAmount);
 						}}
-						InputProps={{
-							endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+						slotProps={{
+							input: {
+								endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+							}
 						}}
 					/>
 				}
@@ -90,7 +99,7 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 						</IconButton>
 
 						<IconButton size="small" onClick={() => {
-							setDate(income.date);
+							setDate(dayjs(income.date));
 							setSource(income.source);
 							setAmount(income.amount);
 							setIsEditing(false)

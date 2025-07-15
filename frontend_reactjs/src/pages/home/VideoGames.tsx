@@ -28,24 +28,26 @@ export const VideoGames = () => {
           placeholder="Name, platform, type"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: searchText.length > 0 && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setSearchText("")}
-                >
-                  <Clear />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: searchText.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchText("")}
+                  >
+                    <Clear />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Header>
 
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3}>
-          {games?.map((game, index) => (
-            <Grid key={index} item xs={12} md={6} lg={4} xl={3} sx={{ display: 'flex' }}>
+          {games?.map((game) => (
+            <Grid key={game.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }} sx={{ display: 'flex' }}>
               <VideoGameCard game={game} />
             </Grid>
           ))}

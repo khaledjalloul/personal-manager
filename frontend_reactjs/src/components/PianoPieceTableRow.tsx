@@ -10,6 +10,9 @@ import {
 import { PianoPiece, PianoPieceStatus } from "../types";
 import { Clear, Delete, Edit, PictureAsPdf, Save, YouTube } from "@mui/icons-material";
 import { useState } from "react";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
 export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
@@ -23,7 +26,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
   const [origin, setOrigin] = useState(pianoPiece.origin);
   const [composer, setComposer] = useState(pianoPiece.composer);
   const [status, setStatus] = useState(pianoPiece.status);
-  const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned);
+  const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
   const [youtubeUrl, setYoutubeUrl] = useState(pianoPiece.youtubeUrl);
   const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
 
@@ -82,15 +85,22 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
       </TableCell>
 
       <TableCell>
-        {!isEditing ? (monthLearned ? monthLearned.toLocaleDateString() : "") :
-          <TextField
-            variant="standard"
-            value={monthLearned ? monthLearned.toLocaleDateString("en-US") : ""}
-            onChange={(e) => {
-              const newDate = new Date(e.target.value);
-              setMonthLearned(isNaN(newDate.getTime()) ? monthLearned : newDate);
-            }}
-          />
+        {!isEditing ? (monthLearned ? monthLearned.format("MMMM YYYY") : "") :
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Month"
+              views={["year", "month"]}
+              openTo="month"
+              value={monthLearned}
+              onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
+              enableAccessibleFieldDOMStructure={false}
+              slots={{
+                textField: props => <TextField {...props} size="small"
+                  value={monthLearned ? monthLearned.format('MMMM YYYY') : ''}
+                />
+              }}
+            />
+          </LocalizationProvider>
         }
       </TableCell>
 
@@ -149,7 +159,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
                 setOrigin(pianoPiece.origin);
                 setComposer(pianoPiece.composer);
                 setStatus(pianoPiece.status);
-                setMonthLearned(pianoPiece.monthLearned);
+                setMonthLearned(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
                 setYoutubeUrl(pianoPiece.youtubeUrl);
                 setSheetMusicUrl(pianoPiece.sheetMusicUrl);
                 setIsEditing(false)

@@ -14,7 +14,7 @@ export const NoteCategoryContainer = (
     setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
   }) => {
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const { data: notes } = useNotes({
     categoryId: category.id,
@@ -46,9 +46,9 @@ export const NoteCategoryContainer = (
 
       {isOpen && (
         <Box>
-          {notes?.map((note, index) => (
+          {notes?.map((note) => (
             <Box
-              key={index}
+              key={note.id}
               onClick={() => setSelectedNote(note)}
               sx={{
                 pl: 2,

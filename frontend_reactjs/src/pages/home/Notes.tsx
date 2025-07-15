@@ -73,16 +73,18 @@ export const Notes = () => {
           placeholder="Title, content, tags"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: searchText.length > 0 && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setSearchText("")}
-                >
-                  <Clear />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: searchText.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchText("")}
+                  >
+                    <Clear />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Header>
@@ -99,9 +101,9 @@ export const Notes = () => {
           </Box>
 
           <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
-            {noteCategories?.map((category, index) => (
+            {noteCategories?.map((category) => (
               <NoteCategoryContainer
-                key={index}
+                key={category.id}
                 category={category}
                 selectedNote={selectedNote}
                 setSelectedNote={setSelectedNote}

@@ -24,6 +24,9 @@ import {
   InsertLink
 } from "@mui/icons-material";
 import { useState } from "react";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export const VideoGameCard = ({ game }: { game: VideoGame }) => {
 
@@ -32,7 +35,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
   const [platform, setPlatform] = useState(game.platform);
   const [type, setType] = useState(game.type);
   const [completed, setCompleted] = useState(game.completed);
-  const [firstPlayed, setFirstPlayed] = useState(game.firstPlayed);
+  const [firstPlayed, setFirstPlayed] = useState(dayjs(game.firstPlayed));
   const [price, setPrice] = useState(game.price);
   const [extraPurchases, setExtraPurchases] = useState(game.extraPurchases);
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
@@ -82,7 +85,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
               setPlatform(game.platform);
               setType(game.type);
               setCompleted(game.completed);
-              setFirstPlayed(game.firstPlayed);
+              setFirstPlayed(dayjs(game.firstPlayed));
               setPrice(game.price);
               setExtraPurchases(game.extraPurchases);
               setStoreUrl(game.storeUrl);
@@ -101,7 +104,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
         </Box>
 
         <Grid container rowSpacing={1} columnSpacing={2}>
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SportsEsportsOutlined />
             {!isEditing ? (
               <Typography variant="body1">
@@ -116,7 +119,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <PeopleOutlineOutlined />
             {!isEditing ? (
               <Typography variant="body1">
@@ -135,25 +138,29 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Today />
             {!isEditing ? (
               <Typography variant="body1">
-                {firstPlayed.toLocaleDateString("en-US")}
+                {firstPlayed.format("DD.MM.YYYY")}
               </Typography>
             ) : (
-              <TextField
-                variant="standard"
-                value={firstPlayed.toLocaleDateString("en-US")}
-                onChange={(e) => {
-                  const newDate = new Date(e.target.value);
-                  setFirstPlayed(isNaN(newDate.getTime()) ? firstPlayed : newDate);
-                }}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={firstPlayed}
+                  onChange={(newValue) => setFirstPlayed(newValue ?? dayjs(new Date()))}
+                  enableAccessibleFieldDOMStructure={false}
+                  slots={{
+                    textField: props => <TextField {...props} size="small"
+                      value={firstPlayed.format('DD.MM.YYYY')}
+                    />
+                  }}
+                />
+              </LocalizationProvider>
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Check />
             {!isEditing ? (
               <Typography variant="body1">
@@ -171,7 +178,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SellOutlined />
             {!isEditing ? (
               <Typography variant="body1">
@@ -185,14 +192,16 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
                   const newPrice = parseFloat(e.target.value);
                   setPrice(isNaN(newPrice) ? price : newPrice);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CreditCard />
             {!isEditing ? (
               <Typography variant="body1">
@@ -206,22 +215,26 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
                   const newPrice = parseFloat(e.target.value);
                   setPrice(isNaN(newPrice) ? price : newPrice);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
           {isEditing && (
-            <Grid item xs={12} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
               <TextField
                 variant="standard"
                 value={storeUrl}
                 sx={{ flexGrow: 1 }}
                 onChange={(e) => setStoreUrl(e.target.value)}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><InsertLink /></InputAdornment>,
+                slotProps={{
+                  input: {
+                    startAdornment: <InputAdornment position="start"><InsertLink /></InputAdornment>,
+                  }
                 }}
               />
             </Grid>

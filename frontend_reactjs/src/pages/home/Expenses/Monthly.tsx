@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useMemo } from "react";
 import { useExpenseCategories, useExpenses } from "../../../api";
+import dayjs from "dayjs";
 
 type MonthlyEntry = {
   [month: string]: {
@@ -63,15 +64,15 @@ export const MonthlyExpenses = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(summary).map((month, index) => (
+          {Object.keys(summary).sort().reverse().map((month, index) => (
             <TableRow
-              key={index}
+              key={month}
               sx={{
                 backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
               }}
             >
               <TableCell sx={{ width: '10%' }}>
-                {month}
+                {dayjs(month).format("MMMM YYYY")}
               </TableCell>
               {expensesCategories?.map((category) => (
                 <TableCell key={category.id} sx={{ width: '10%' }}>

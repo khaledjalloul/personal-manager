@@ -16,20 +16,15 @@ import { UserContext } from "../utils";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
 const toolbarButtons = [
-  {
-    label: "Home",
-    path: "/",
-  },
+  { label: "Home", path: "/", },
   { label: "Expenses", path: "/expenses" },
-  { label: "Piano", path: "/piano" },
   { label: "Diary", path: "/diary" },
   { label: "Journal", path: "/journal" },
   { label: "Notes", path: "/notes" },
+  { label: "Piano Pieces", path: "/piano" },
   { label: "Hikes", path: "/hikes" },
-  { label: "Recipes", path: "/recipes" },
   { label: "Video Games", path: "/games" },
-  { label: "Create Group", path: "/create" },
-  { label: "About", path: "/about" },
+  { label: "Recipes", path: "/recipes" },
 ];
 
 export const NavigationBar = () => {

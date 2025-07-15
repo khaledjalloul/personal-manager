@@ -23,10 +23,12 @@ export const ManageExpenses = () => {
     tags: [],
     searchText: ""
   });
+  const sortedManualExpenses = manualExpenses?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const { data: incomes } = useIncomes({
     searchText: ""
   });
+  const sortedIncomes = incomes?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
     <Wrapper>
@@ -50,8 +52,8 @@ export const ManageExpenses = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {incomes?.map((income, index) => (
-                <IncomeTableRow key={index} income={income} index={index} editable />
+              {sortedIncomes?.map((income, index) => (
+                <IncomeTableRow key={income.id} income={income} index={index} editable />
               ))}
             </TableBody>
           </Table>
@@ -80,8 +82,8 @@ export const ManageExpenses = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {manualExpenses?.map((expense, index) => (
-                <ExpenseTableRow key={index} expense={expense} index={index} editable />
+              {sortedManualExpenses?.map((expense, index) => (
+                <ExpenseTableRow key={expense.id} expense={expense} index={index} editable />
               ))}
             </TableBody>
           </Table>
@@ -89,7 +91,7 @@ export const ManageExpenses = () => {
       </ManualExpenses>
 
       <CSVImporter>
-        <Typography variant="h6" sx={{ alignSelf: "center" }}>Import Bank Expenses CSV</Typography>
+        <Typography variant="h6" sx={{ alignSelf: "center" }} textAlign="center">Import Bank Expenses CSV</Typography>
 
         <CSVFileUploader>
           <input
@@ -116,6 +118,7 @@ export const ManageExpenses = () => {
 };
 
 const Wrapper = styled(Box)`
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

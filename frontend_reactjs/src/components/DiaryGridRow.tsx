@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { DiaryEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
+import dayjs from "dayjs";
 
 export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
@@ -13,7 +14,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
   return (
     <Fragment>
-      <Grid item xs={2} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 2 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
@@ -26,7 +27,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           justifyContent: 'space-between',
         }}>
           <Typography variant="body1" >
-            {entry.date.toLocaleDateString("en-US")}
+            {dayjs(entry.date).format("DD.MM.YYYY")}
           </Typography>
 
           {!isEditing ? (
@@ -57,7 +58,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
         </Box>
       </Grid>
 
-      <Grid item xs={7} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 7 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopLeftRadius: '8px',
@@ -65,6 +66,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           backgroundColor: 'secondary.main',
           p: !isEditing ? 1 : 0,
           pr: !isEditing ? 2 : 1,
+          borderRight: 'solid 1px #cecece92'
         }}>
           {!isEditing ? (
             <Typography variant="body1">
@@ -91,7 +93,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
         </Box>
       </Grid>
 
-      <Grid item xs={3} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 3 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopRightRadius: '8px',

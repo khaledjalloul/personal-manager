@@ -134,7 +134,7 @@ export const pianoPieces: PianoPiece[] = [
         composer: 'Debussy',
         origin: 'Impressionist',
         status: PianoPieceStatus.LEARNING,
-        monthLearned: new Date("2025-02-01"),
+        monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
     },
@@ -144,7 +144,7 @@ export const pianoPieces: PianoPiece[] = [
         composer: 'Bach',
         origin: 'Baroque',
         status: PianoPieceStatus.PLANNED,
-        monthLearned: new Date("2025-03-01"),
+        monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
     },
@@ -239,7 +239,7 @@ export const diaryEntries: DiaryEntry[] = [
     },
     {
         id: 3,
-        date: new Date("2025-07-03"),
+        date: new Date("2025-06-03"),
         content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
         workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.'
     }

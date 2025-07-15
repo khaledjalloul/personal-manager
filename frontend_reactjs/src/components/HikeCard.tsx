@@ -16,6 +16,9 @@ import {
   Clear
 } from "@mui/icons-material";
 import { useState } from "react";
+import dayjs from "dayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const GoogleMapsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -34,7 +37,7 @@ const GoogleMapsIcon = () => (
 export const HikeCard = ({ hike }: { hike: Hike }) => {
 
   const [isEditing, setIsEditing] = useState(false);
-  const [date, setDate] = useState(hike.date);
+  const [date, setDate] = useState(dayjs(hike.date));
   const [description, setDescription] = useState(hike.description);
   const [distance, setDistance] = useState(hike.distance);
   const [ascent, setAscent] = useState(hike.ascent);
@@ -88,7 +91,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
 
           {isEditing && (
             <IconButton onClick={() => {
-              setDate(hike.date);
+              setDate(dayjs(hike.date));
               setDescription(hike.description);
               setDistance(hike.distance);
               setAscent(hike.ascent);
@@ -116,25 +119,29 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
         </Box>
 
         <Grid container rowSpacing={1} columnSpacing={2}>
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Today />
             {!isEditing ? (
               <Typography variant="body1">
-                {date.toLocaleDateString("en-US")}
+                {date.format("DD.MM.YYYY")}
               </Typography>
             ) : (
-              <TextField
-                variant="standard"
-                value={date.toLocaleDateString("en-US")}
-                onChange={(e) => {
-                  const newDate = new Date(e.target.value);
-                  setDate(isNaN(newDate.getTime()) ? date : newDate);
-                }}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={date}
+                  onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
+                  enableAccessibleFieldDOMStructure={false}
+                  slots={{
+                    textField: props => <TextField {...props} size="small"
+                      value={date.format('DD.MM.YYYY')}
+                    />
+                  }}
+                />
+              </LocalizationProvider>
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Straighten />
             {!isEditing ? (
               <Typography variant="body1">
@@ -148,14 +155,16 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   const newDistance = parseFloat(e.target.value);
                   setDistance(isNaN(newDistance) ? distance : newDistance);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">km</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">km</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TrendingUp />
             {!isEditing ? (
               <Typography variant="body1">
@@ -169,14 +178,16 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   const newAscent = parseFloat(e.target.value);
                   setAscent(isNaN(newAscent) ? ascent : newAscent);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">m</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">m</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TrendingDown />
             {!isEditing ? (
               <Typography variant="body1">
@@ -190,14 +201,16 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   const newDescent = parseFloat(e.target.value);
                   setDescent(isNaN(newDescent) ? descent : newDescent);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">m</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">m</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <AccessTime />
             {!isEditing ? (
               <Typography variant="body1">
@@ -211,14 +224,16 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   const newDuration = parseFloat(e.target.value);
                   setDuration(isNaN(newDuration) ? duration : newDuration);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <MoreTime />
             {!isEditing ? (
               <Typography variant="body1">
@@ -232,22 +247,26 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   const newDurationWithBreaks = parseFloat(e.target.value);
                   setDurationWithBreaks(isNaN(newDurationWithBreaks) ? durationWithBreaks : newDurationWithBreaks);
                 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                  }
                 }}
               />
             )}
           </Grid>
 
           {isEditing && (
-            <Grid item xs={12} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
               <TextField
                 variant="standard"
                 value={googleMapsUrl}
                 sx={{ flexGrow: 1 }}
                 onChange={(e) => setGoogleMapsUrl(e.target.value)}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><GoogleMapsIcon /></InputAdornment>,
+                slotProps={{
+                  input: {
+                    startAdornment: <InputAdornment position="start"><GoogleMapsIcon /></InputAdornment>,
+                  }
                 }}
               />
             </Grid>

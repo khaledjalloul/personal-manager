@@ -27,24 +27,26 @@ export const Hikes = () => {
           label="Search hikes"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: searchText.length > 0 && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setSearchText("")}
-                >
-                  <Clear />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: searchText.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchText("")}
+                  >
+                    <Clear />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Header>
 
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3} >
-          {hikes?.map((hike, index) => (
-            <Grid key={index} item xs={12} md={6} lg={4} xl={3} sx={{ display: 'flex' }}>
+          {hikes?.map((hike) => (
+            <Grid key={hike.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }} sx={{ display: 'flex' }}>
               <HikeCard hike={hike} />
             </Grid>
           ))}

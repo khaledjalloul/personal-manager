@@ -17,6 +17,7 @@ export const ExpensesDetails = () => {
     tags: [],
     searchText: "", // TODO
   });
+  const sortedExpenses = expenses?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
     <TableContainer component={Paper}>
@@ -31,8 +32,8 @@ export const ExpensesDetails = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {expenses?.map((expense, index) => (
-            <ExpenseTableRow key={index} index={index} expense={expense} />
+          {sortedExpenses?.map((expense, index) => (
+            <ExpenseTableRow key={expense.id} index={index} expense={expense} />
           ))}
         </TableBody>
       </Table>

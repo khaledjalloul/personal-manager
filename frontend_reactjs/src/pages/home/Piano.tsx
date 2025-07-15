@@ -42,16 +42,18 @@ export const Piano = () => {
           placeholder="Name, origin, composer, status"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            endAdornment: searchText.length > 0 && (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setSearchText("")}
-                >
-                  <Clear />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: searchText.length > 0 && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchText("")}
+                  >
+                    <Clear />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Header>
@@ -71,7 +73,7 @@ export const Piano = () => {
           </TableHead>
           <TableBody>
             {pianoPieces?.map((piece, index) => (
-              <PianoPieceTableRow key={index} pianoPiece={piece} index={index} editable />
+              <PianoPieceTableRow key={piece.id} pianoPiece={piece} index={index} editable />
             ))}
           </TableBody>
         </Table>

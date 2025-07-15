@@ -136,7 +136,7 @@ export const ExpensesStatistics = () => {
     <Wrapper>
       <Grid container spacing={2} flexGrow={1}>
 
-        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
           <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
             <Typography variant="h6" color="white">
               Total Balance
@@ -147,7 +147,7 @@ export const ExpensesStatistics = () => {
           </StatisticsCard>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
           <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
             <Typography variant="h6" color="white">
               ZKB Balance
@@ -158,7 +158,7 @@ export const ExpensesStatistics = () => {
           </StatisticsCard>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4} sx={{ display: 'flex' }} >
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
           <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
             <Typography variant="h6" color="white">
               Cash Balance
@@ -169,7 +169,7 @@ export const ExpensesStatistics = () => {
           </StatisticsCard>
         </Grid>
 
-        <Grid item xs={12} md={6} sx={{ display: 'flex' }}  >
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}  >
           <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
             <Typography variant="h6" color="white">
               Total Spent This Month
@@ -180,7 +180,7 @@ export const ExpensesStatistics = () => {
           </StatisticsCard>
         </Grid>
 
-        <Grid item xs={12} md={6} sx={{ display: 'flex' }} >
+        <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }} >
           <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
             <Typography variant="h6" color="white">
               Average Expenses Per Month
@@ -194,7 +194,7 @@ export const ExpensesStatistics = () => {
 
       <Box sx={{ mt: 5, mb: 5 }}>
         <Grid container spacing={5}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{
               flex: 1,
               display: 'flex',
@@ -254,7 +254,7 @@ export const ExpensesStatistics = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{
               flex: 1,
               display: 'flex',

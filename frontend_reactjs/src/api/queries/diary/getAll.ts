@@ -5,6 +5,9 @@ import client from "../../client";
 const ENDPOINT = "diary";
 
 export type GetDiaryEntriesRequestParams = {
+  year: number;
+  month: number;
+  searchText: string;
 };
 
 const queryFn = (params: GetDiaryEntriesRequestParams) => async () => {
@@ -24,7 +27,7 @@ const queryFn = (params: GetDiaryEntriesRequestParams) => async () => {
 
 export const useDiaryEntries = (params: GetDiaryEntriesRequestParams) =>
   useQuery<DiaryEntry[]>({
-    queryKey: [ENDPOINT, params],
+    queryKey: [ENDPOINT, JSON.stringify(params)],
     queryFn: queryFn(params),
     select: (data) =>
       data.map((entry) => ({ ...entry, date: new Date(entry.date) })),
