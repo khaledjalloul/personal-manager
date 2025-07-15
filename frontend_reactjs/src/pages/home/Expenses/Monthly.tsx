@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useMemo } from "react";
-import { useExpenseCategories, useExpenses } from "../../../api";
+import { useExpensesCategories, useExpenses } from "../../../api";
 import dayjs from "dayjs";
 
 type MonthlyEntry = {
@@ -20,7 +20,7 @@ type MonthlyEntry = {
 
 export const MonthlyExpenses = () => {
 
-  const { data: expensesCategories } = useExpenseCategories();
+  const { data: expensesCategories } = useExpensesCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],

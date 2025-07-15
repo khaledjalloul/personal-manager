@@ -10,7 +10,7 @@ import {
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { useState } from "react";
-import { useExpenseCategories } from "../api";
+import { useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -21,7 +21,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
   index: number;
   editable?: boolean;
 }) => {
-  const { data: expensesCategories } = useExpenseCategories();
+  const { data: expensesCategories } = useExpensesCategories();
 
   const [isEditing, setIsEditing] = useState(false);
   const [date, setDate] = useState(dayjs(expense.date));

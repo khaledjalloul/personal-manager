@@ -15,7 +15,7 @@ const queryFn = () => async () => {
     });
 };
 
-export const useExpenseCategories = () =>
+export const useExpensesCategories = () =>
   useQuery<ExpensesCategory[]>({
     queryKey: [ENDPOINT],
     queryFn: queryFn(),

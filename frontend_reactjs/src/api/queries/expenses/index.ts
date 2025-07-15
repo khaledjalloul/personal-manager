@@ -1,3 +1,4 @@
 export * from "./getExpenses";
 export * from "./getIncomes";
-export * from "./getExpenseCategories";
+export * from "./getExpensesCategories";
+export * from "./getExpensesCategoryKeywords";

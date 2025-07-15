@@ -280,6 +280,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
 const Wrapper = styled(Box)`
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 `;
 
 const CoverImage = styled.img`

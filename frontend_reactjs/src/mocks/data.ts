@@ -10,7 +10,8 @@ import {
     DiaryEntry,
     Note,
     VideoGame,
-    VideoGameType
+    VideoGameType,
+    ExpensesCategoryKeyword
 } from '../types';
 
 
@@ -28,6 +29,17 @@ export const expensesCategories: ExpensesCategory[] = [
     { id: 4, name: 'Housing', color: 'orange' },
     { id: 5, name: 'One-time', color: 'blue' },
     { id: 6, name: 'Tuition', color: 'red' },
+];
+
+export const expensesCategoryKeywords: ExpensesCategoryKeyword[] = [
+    { id: 1, keyword: 'groceries', category: expensesCategories[0] },
+    { id: 2, keyword: 'tools', category: expensesCategories[1] },
+    { id: 3, keyword: 'services', category: expensesCategories[1] },
+    { id: 4, keyword: 'entertainment', category: expensesCategories[2] },
+    { id: 5, keyword: 'housing', category: expensesCategories[3] },
+    { id: 6, keyword: 'one-time', category: expensesCategories[4] },
+    { id: 7, keyword: 'tuition', category: expensesCategories[5] },
+    { id: 8, keyword: 'ETH', category: expensesCategories[5] }
 ];
 
 export const expenses: Expense[] = [

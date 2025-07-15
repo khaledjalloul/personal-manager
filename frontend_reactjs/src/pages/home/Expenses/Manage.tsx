@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Grid,
   IconButton,
   Paper,
   Table,
@@ -12,8 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useExpenses, useIncomes } from "../../../api";
-import { ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
+import { CategoryKeywordManager, ExpenseTableRow, IncomeTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 
 export const ManageExpenses = () => {
@@ -30,89 +31,100 @@ export const ManageExpenses = () => {
   });
   const sortedIncomes = incomes?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
+  const { data: categories } = useExpensesCategories()
+
   return (
     <Wrapper>
-      <Income>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h6">Income</Typography>
+      <Grid container spacing={2} sx={{ maxHeight: '60vh' }}>
+        <Income size={{ xs: 12, md: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+            <Typography variant="h6">Income</Typography>
 
-          <IconButton size="small">
-            <Add />
-          </IconButton>
-        </Box>
+            <IconButton size="small">
+              <Add />
+            </IconButton>
+          </Box>
 
-        <TableContainer component={Paper}>
-          <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
-            <TableHead>
-              <TableRow >
-                <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Source</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedIncomes?.map((income, index) => (
-                <IncomeTableRow key={income.id} income={income} index={index} editable />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Income>
+          <TableContainer component={Paper}>
+            <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
+              <TableHead>
+                <TableRow >
+                  <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Source</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedIncomes?.map((income, index) => (
+                  <IncomeTableRow key={income.id} income={income} index={index} editable />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Income>
 
-      <ManualExpenses>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h6">Manual Expenses</Typography>
+        <ManualExpenses size={{ xs: 12, md: 8 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+            <Typography variant="h6">Manual Expenses</Typography>
 
-          <IconButton size="small">
-            <Add />
-          </IconButton>
-        </Box>
+            <IconButton size="small">
+              <Add />
+            </IconButton>
+          </Box>
 
-        <TableContainer component={Paper}>
-          <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
-            <TableHead>
-              <TableRow >
-                <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedManualExpenses?.map((expense, index) => (
-                <ExpenseTableRow key={expense.id} expense={expense} index={index} editable />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </ManualExpenses>
+          <TableContainer component={Paper}>
+            <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
+              <TableHead>
+                <TableRow >
+                  <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', textWrap: "nowrap" }}>Amount (CHF)</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedManualExpenses?.map((expense, index) => (
+                  <ExpenseTableRow key={expense.id} expense={expense} index={index} editable />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </ManualExpenses>
+      </Grid>
 
-      <CSVImporter>
-        <Typography variant="h6" sx={{ alignSelf: "center" }} textAlign="center">Import Bank Expenses CSV</Typography>
+      <Typography variant="h6" mt={2}>Import Bank Expenses CSV</Typography>
 
-        <CSVFileUploader>
-          <input
-            type="file"
-            accept=".csv"
-            style={{ display: "none" }}
-            id="csv-upload"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                console.log("Selected file:", file.name);
-              }
-            }}
-          />
-          <label htmlFor="csv-upload">
-            <Button variant="contained" component="span">
-              Upload CSV
-            </Button>
-          </label>
-        </CSVFileUploader>
-      </CSVImporter>
+      <CSVFileUploadWrapper>
+        <input
+          type="file"
+          accept=".csv"
+          style={{ display: "none" }}
+          id="csv-upload"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              console.log("Selected file:", file.name);
+            }
+          }}
+        />
+        <label htmlFor="csv-upload">
+          <Button variant="contained" component="span">
+            Upload CSV
+          </Button>
+        </label>
+      </CSVFileUploadWrapper>
+
+      <Typography variant="h6" mt={2}>Manage Category Keywords</Typography>
+
+      <Grid container spacing={2}>
+        {categories?.map((category) => (
+          <CategoryKeywordManager key={category.id} category={category} />
+        ))}
+      </Grid>
+
     </Wrapper>
   );
 };
@@ -120,38 +132,28 @@ export const ManageExpenses = () => {
 const Wrapper = styled(Box)`
   height: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
   overflow-y: auto; // Idk why but needed to prevent extra scroll
   gap: 16px;
 `;
 
-const Income = styled(Box)`
-  flex-grow: 0.3;
+const Income = styled(Grid)`
   display: flex;
   flex-direction: column;
   gap: 16px;
 `;
 
-const ManualExpenses = styled(Box)`
-  flex-grow: 0.6;
+const ManualExpenses = styled(Grid)`
   display: flex;
   flex-direction: column;
   gap: 16px;
 `;
 
-const CSVImporter = styled(Box)`
-  flex-grow: 0.1;
+const CSVFileUploadWrapper = styled(Box)`
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const CSVFileUploader = styled(Box)`
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  border: solid 1px gray;
+  border-radius: 8px;
+  padding: 32px;
 `;

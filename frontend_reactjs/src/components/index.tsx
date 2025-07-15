@@ -8,3 +8,4 @@ export * from "./PianoPieceTableRow";
 export * from "./NoteCategoryContainer";
 export * from './DiaryGridRow';
 export * from './VideoGameCard';
+export * from './CategoryKeywordManager';

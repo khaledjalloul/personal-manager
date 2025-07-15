@@ -46,7 +46,7 @@ export const Hikes = () => {
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3} >
           {hikes?.map((hike) => (
-            <Grid key={hike.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }} sx={{ display: 'flex' }}>
+            <Grid key={hike.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ display: 'flex' }}>
               <HikeCard hike={hike} />
             </Grid>
           ))}

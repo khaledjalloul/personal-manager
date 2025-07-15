@@ -9,7 +9,8 @@ import {
   Note,
   NoteCategory,
   DiaryEntry,
-  VideoGame
+  VideoGame,
+  ExpensesCategoryKeyword
 } from '../types';
 import {
   user,
@@ -21,7 +22,8 @@ import {
   noteCategories,
   notes,
   diaryEntries,
-  videoGames
+  videoGames,
+  expensesCategoryKeywords
 } from './data';
 
 const authHandlers = [
@@ -55,6 +57,16 @@ const expenseHandlers = [
   http.get<PathParams, DefaultBodyType, Income[]>('/incomes', () => HttpResponse.json(incomes)),
   http.get<PathParams, DefaultBodyType, ExpensesCategory[]>('/expenses/categories', () => {
     return HttpResponse.json(expensesCategories);
+  }),
+  http.get<PathParams, DefaultBodyType, ExpensesCategoryKeyword[]>('/expenses/categories/keywords', ({ request }) => {
+    const url = new URL(request.url)
+    var categoryId = url.searchParams.get('categoryId') ?? "0";
+
+    var keywordsToReturn = expensesCategoryKeywords.filter(keyword => (
+      keyword.category.id === parseInt(categoryId)
+    ));
+
+    return HttpResponse.json(keywordsToReturn);
   }),
 ];
 

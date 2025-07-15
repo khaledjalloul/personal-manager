@@ -5,6 +5,12 @@ export type User = {
   token?: string;
 };
 
+export type ExpensesCategory = {
+  id: number;
+  name: string;
+  color: string;
+};
+
 export type Expense = {
   id: number;
   date: Date;
@@ -16,17 +22,17 @@ export type Expense = {
   type?: "manual" | "auto";
 };
 
+export type ExpensesCategoryKeyword = {
+  id: number;
+  keyword: string;
+  category: ExpensesCategory;
+}
+
 export type Income = {
   id: number;
   date: Date;
   source: string;
   amount: number;
-};
-
-export type ExpensesCategory = {
-  id: number;
-  name: string;
-  color: string;
 };
 
 export type Hike = {

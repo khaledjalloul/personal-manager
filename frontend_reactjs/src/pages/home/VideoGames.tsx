@@ -47,7 +47,7 @@ export const VideoGames = () => {
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3}>
           {games?.map((game) => (
-            <Grid key={game.id} size={{ xs: 12, md: 6, lg: 4, xl: 3 }} sx={{ display: 'flex' }}>
+            <Grid key={game.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ display: 'flex' }}>
               <VideoGameCard game={game} />
             </Grid>
           ))}

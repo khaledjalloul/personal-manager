@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useMemo, useState } from "react";
-import { useExpenseCategories, useExpenses, useIncomes } from "../../../api";
+import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
   CategoryScale,
@@ -63,7 +63,7 @@ export const ExpensesStatistics = () => {
 
   const [overTimeType, setOverTimeType] = useState("both");
 
-  const { data: expensesCategories } = useExpenseCategories();
+  const { data: expensesCategories } = useExpensesCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
@@ -131,7 +131,6 @@ export const ExpensesStatistics = () => {
 
   }, [JSON.stringify(expenses), JSON.stringify(incomes), JSON.stringify(expensesCategories)]);
 
-  console.log("Statistics:", statistics);
   return (
     <Wrapper>
       <Grid container spacing={2} flexGrow={1}>
