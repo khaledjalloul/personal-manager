@@ -9,19 +9,25 @@ import {
 } from "@mui/material";
 import { PianoPiece, PianoPieceStatus } from "../types";
 import { Clear, Delete, Edit, PictureAsPdf, Save, YouTube } from "@mui/icons-material";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
-export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
+export const PianoPieceTableRow = ({
+  pianoPiece,
+  index,
+  isAddingPiece,
+  setIsAddingPiece
+}: {
   pianoPiece: PianoPiece;
   index: number;
-  editable?: boolean;
+  isAddingPiece: boolean;
+  setIsAddingPiece: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isAddingPiece);
   const [name, setName] = useState(pianoPiece.name);
   const [origin, setOrigin] = useState(pianoPiece.origin);
   const [composer, setComposer] = useState(pianoPiece.composer);
@@ -34,13 +40,14 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
     <TableRow
       sx={{
         backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-        ":hover": editable ? { backgroundColor: "secondary.dark" } : {}
+        ":hover": { backgroundColor: "secondary.dark" }
       }}
     >
       <TableCell sx={{ fontWeight: 'bold' }}>
         {!isEditing ? name :
           <TextField
             variant="standard"
+            placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             sx={{ width: "100%" }}
@@ -52,6 +59,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         {!isEditing ? origin :
           <TextField
             variant="standard"
+            placeholder="Origin"
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
             sx={{ width: "100%" }}
@@ -63,6 +71,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         {!isEditing ? composer :
           <TextField
             variant="standard"
+            placeholder="Composer"
             value={composer}
             onChange={(e) => setComposer(e.target.value)}
           />
@@ -74,6 +83,7 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
           <Select
             variant="standard"
             value={status}
+            sx={{ width: '100%' }}
             onChange={(e) => setStatus(e.target.value as PianoPieceStatus)}
           >
             <MenuItem value={PianoPieceStatus.PLANNED}>Planned</MenuItem>
@@ -121,12 +131,14 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TextField
               variant="standard"
+              placeholder="YouTube URL"
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
             />
 
             <TextField
               variant="standard"
+              placeholder="Sheet Music URL"
               value={sheetMusicUrl}
               onChange={(e) => setSheetMusicUrl(e.target.value)}
             />
@@ -134,27 +146,27 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
         </TableCell>
       )}
 
-      {editable && (
-        !isEditing ? (
-          <TableCell>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size="small" onClick={() => setIsEditing(true)}>
-                <Edit />
-              </IconButton>
+      {!isEditing ? (
+        <TableCell>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton size="small" onClick={() => setIsEditing(true)}>
+              <Edit />
+            </IconButton>
 
-              <IconButton size="small">
-                <Delete color="error" />
-              </IconButton>
-            </Box>
-          </TableCell>
-        ) : (
-          <TableCell>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size="small">
-                <Save color="success" />
-              </IconButton>
+            <IconButton size="small">
+              <Delete color="error" />
+            </IconButton>
+          </Box>
+        </TableCell>
+      ) : (
+        <TableCell>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton size="small">
+              <Save color="success" />
+            </IconButton>
 
-              <IconButton size="small" onClick={() => {
+            <IconButton size="small" onClick={() => {
+              if (!isAddingPiece) {
                 setName(pianoPiece.name);
                 setOrigin(pianoPiece.origin);
                 setComposer(pianoPiece.composer);
@@ -162,13 +174,15 @@ export const PianoPieceTableRow = ({ pianoPiece, index, editable = false }: {
                 setMonthLearned(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
                 setYoutubeUrl(pianoPiece.youtubeUrl);
                 setSheetMusicUrl(pianoPiece.sheetMusicUrl);
-                setIsEditing(false)
-              }}>
-                <Clear />
-              </IconButton>
-            </Box>
-          </TableCell>
-        )
+                setIsEditing(false);
+              } else {
+                setIsAddingPiece(false);
+              }
+            }}>
+              <Clear />
+            </IconButton>
+          </Box>
+        </TableCell>
       )}
     </TableRow>
   )

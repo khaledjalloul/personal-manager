@@ -16,6 +16,26 @@ import styled from "styled-components";
 import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
 import { CategoryKeywordManager, ExpenseTableRow, IncomeTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
+import { useState } from "react";
+import { Expense, Income } from "../../../types";
+
+const emptyIncome: Income = {
+  id: -1,
+  date: new Date(),
+  source: "",
+  amount: 0,
+}
+
+const emptyExpense: Expense = {
+  id: -1,
+  date: new Date(),
+  category: { id: -1, name: "", color: "" },
+  description: "",
+  vendor: "",
+  type: "manual",
+  amount: 0,
+  tags: [],
+}
 
 export const ManageExpenses = () => {
 
@@ -33,14 +53,17 @@ export const ManageExpenses = () => {
 
   const { data: categories } = useExpensesCategories()
 
+  const [isAddingIncome, setIsAddingIncome] = useState(false);
+  const [isAddingExpense, setIsAddingExpense] = useState(false);
+
   return (
     <Wrapper>
       <Grid container spacing={2} sx={{ maxHeight: '60vh' }}>
-        <Income size={{ xs: 12, md: 4 }}>
+        <IncomeGridItem size={{ xs: 12, md: 5 }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Income</Typography>
 
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => setIsAddingIncome(true)}>
               <Add />
             </IconButton>
           </Box>
@@ -56,19 +79,32 @@ export const ManageExpenses = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {isAddingIncome && (
+                  <IncomeTableRow
+                    key={emptyIncome.id}
+                    income={emptyIncome}
+                    index={emptyIncome.id}
+                    isAddingIncome={isAddingIncome}
+                    setIsAddingIncome={setIsAddingIncome}
+                    editable />
+                )}
                 {sortedIncomes?.map((income, index) => (
-                  <IncomeTableRow key={income.id} income={income} index={index} editable />
+                  <IncomeTableRow
+                    key={income.id}
+                    income={income}
+                    index={index}
+                    editable />
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        </Income>
+        </IncomeGridItem>
 
-        <ManualExpenses size={{ xs: 12, md: 8 }}>
+        <ManualExpensesGridItem size={{ xs: 12, md: 7 }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Manual Expenses</Typography>
 
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => setIsAddingExpense(true)}>
               <Add />
             </IconButton>
           </Box>
@@ -86,13 +122,26 @@ export const ManageExpenses = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {isAddingExpense && (
+                  <ExpenseTableRow
+                    key={emptyExpense.id}
+                    expense={emptyExpense}
+                    index={emptyExpense.id}
+                    isAddingExpense={isAddingExpense}
+                    setIsAddingExpense={setIsAddingExpense}
+                    editable />
+                )}
                 {sortedManualExpenses?.map((expense, index) => (
-                  <ExpenseTableRow key={expense.id} expense={expense} index={index} editable />
+                  <ExpenseTableRow
+                    key={expense.id}
+                    expense={expense}
+                    index={index}
+                    editable />
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        </ManualExpenses>
+        </ManualExpensesGridItem>
       </Grid>
 
       <Typography variant="h6" mt={2}>Import Bank Expenses CSV</Typography>
@@ -137,13 +186,13 @@ const Wrapper = styled(Box)`
   gap: 16px;
 `;
 
-const Income = styled(Grid)`
+const IncomeGridItem = styled(Grid)`
   display: flex;
   flex-direction: column;
   gap: 16px;
 `;
 
-const ManualExpenses = styled(Grid)`
+const ManualExpensesGridItem = styled(Grid)`
   display: flex;
   flex-direction: column;
   gap: 16px;

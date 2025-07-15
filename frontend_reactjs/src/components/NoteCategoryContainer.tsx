@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Note, NoteCategory } from "../types";
 import { useNotes } from "../api";
-import { Box, Typography } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Box, IconButton, Typography } from "@mui/material";
+import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 export const NoteCategoryContainer = (
   { category,
@@ -33,13 +33,16 @@ export const NoteCategoryContainer = (
           borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           ":hover": { backgroundColor: "secondary.main" },
         }}
       >
         <Typography variant="body1" key={category.id}>
           {category.name}
         </Typography>
+
+        <IconButton size="small" sx={{ ml: 'auto' }} onClick={(e) => { e.stopPropagation(); }}>
+          <Add />
+        </IconButton>
 
         {isOpen ? <ExpandLess /> : <ExpandMore />}
       </Box>

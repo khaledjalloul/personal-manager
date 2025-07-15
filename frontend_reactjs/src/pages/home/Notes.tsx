@@ -1,5 +1,6 @@
 import {
   Box,
+  Grid,
   IconButton,
   InputAdornment,
   TextField,
@@ -11,16 +12,18 @@ import { useEffect, useState } from "react";
 import {
   Clear,
   CreateNewFolder,
+  Delete,
   Edit,
   EditOff,
-  NoteAdd,
+  Save,
   Visibility,
   VisibilityOff
 } from "@mui/icons-material";
 import { useNoteCategories } from "../../api";
-import { NoteCategoryContainer } from "../../components";
+import { ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import dayjs from "dayjs";
 
 
 export const Notes = () => {
@@ -30,6 +33,7 @@ export const Notes = () => {
   const { data: noteCategories } = useNoteCategories({});
 
   const [searchText, setSearchText] = useState("");
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | undefined>();
   const [editorEnabled, setEditorEnabled] = useState(true);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -49,9 +53,6 @@ export const Notes = () => {
         <Typography variant="h5">
           Notes
         </Typography>
-        <IconButton>
-          <NoteAdd />
-        </IconButton>
 
         <IconButton
           sx={{ ml: "auto" }}
@@ -89,13 +90,13 @@ export const Notes = () => {
         />
       </Header>
 
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', gap: 2 }}>
-        <Box sx={{ minWidth: '200px', display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+      <Grid container spacing={2} flexGrow={1}>
+        <Grid size={{ xs: 12, md: 2 }} sx={{ minWidth: '200px', display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
             </Typography>
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => setIsCategoriesModalOpen(true)}>
               <CreateNewFolder />
             </IconButton>
           </Box>
@@ -110,27 +111,69 @@ export const Notes = () => {
               />
             ))}
           </Box>
-        </Box>
+        </Grid>
 
         {editorEnabled && (
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" mb={1}>
-              Text Editor: {selectedNote?.title}
-            </Typography>
+          <Grid
+            size={{ xs: 12, md: previewEnabled ? 5 : 10 }}
+            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+              <Typography variant="h6">
+                Editor:
+              </Typography>
 
-            <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
-              <NoteEditor
-                value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
+              <TextField
+                value={selectedNote?.title || ""}
+                variant="standard"
+                size="small"
                 disabled={!selectedNote}
               />
+
+              <IconButton sx={{ ml: 'auto' }}>
+                <Save color="success" />
+              </IconButton>
+
+              <IconButton>
+                <Delete color="error" />
+              </IconButton>
             </Box>
-          </Box>
+
+            <Box sx={{
+              flexGrow: 1,
+              borderRadius: '8px',
+              border: `solid 1px ${palette.text.primary}`,
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+              {selectedNote && (
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, m: 2, mb: 0 }}>
+                  <Typography variant="body2" color="gray">
+                    Created: {dayjs(selectedNote.dateCreated).format('MMMM DD YYYY hh:mm:ss')}
+                  </Typography>
+                  <Typography variant="body2" color="gray">
+                    Last Modified: {dayjs(selectedNote.dateModified).format('MMMM DD YYYY hh:mm:ss')}
+                  </Typography>
+                </Box>
+              )}
+
+              <Box sx={{ flexGrow: 1 }}>
+                <NoteEditor
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  disabled={!selectedNote}
+                />
+              </Box>
+            </Box>
+          </Grid>
         )}
 
         {previewEnabled && (
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" mb={1}>
+          <Grid
+            size={{ xs: 12, md: editorEnabled ? 5 : 10 }}
+            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
+          >
+            <Typography variant="h6" mb={1.6}>
               Markdown Preview
             </Typography>
 
@@ -145,9 +188,14 @@ export const Notes = () => {
                 padding: '16px',
               }}
             />
-          </Box>
+          </Grid>
         )}
-      </Box>
+      </Grid>
+
+      <ManageNoteCategoriesModal
+        isOpen={isCategoriesModalOpen}
+        setIsOpen={setIsCategoriesModalOpen}
+      />
     </Wrapper>
   );
 };
@@ -159,6 +207,7 @@ const Wrapper = styled(Box)`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 `;
 
 const Header = styled(Box)`

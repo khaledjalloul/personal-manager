@@ -17,11 +17,23 @@ import { useState } from "react";
 import { Add, Clear } from "@mui/icons-material";
 import { usePianoPieces } from "../../api";
 import { PianoPieceTableRow } from "../../components";
+import { PianoPiece, PianoPieceStatus } from "../../types";
 
+
+const emptyPiece: PianoPiece = {
+  id: -1,
+  name: "",
+  origin: "",
+  composer: "",
+  status: PianoPieceStatus.PLANNED,
+  sheetMusicUrl: "",
+  youtubeUrl: ""
+}
 
 export const Piano = () => {
 
   const [searchText, setSearchText] = useState("");
+  const [isAddingPiece, setIsAddingPiece] = useState(false);
 
   const { data: pianoPieces } = usePianoPieces({});
 
@@ -31,7 +43,7 @@ export const Piano = () => {
         <Typography variant="h5">
           Piano Pieces
         </Typography>
-        <IconButton>
+        <IconButton onClick={() => setIsAddingPiece(true)}>
           <Add />
         </IconButton>
         <TextField
@@ -72,8 +84,23 @@ export const Piano = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {pianoPieces?.map((piece, index) => (
-              <PianoPieceTableRow key={piece.id} pianoPiece={piece} index={index} editable />
+            {isAddingPiece && (
+              <PianoPieceTableRow
+                key={emptyPiece.id}
+                pianoPiece={emptyPiece}
+                index={emptyPiece.id}
+                isAddingPiece={isAddingPiece}
+                setIsAddingPiece={setIsAddingPiece}
+              />
+            )}
+            {pianoPieces?.map((piece) => (
+              <PianoPieceTableRow
+                key={piece.id}
+                pianoPiece={piece}
+                index={piece.id}
+                isAddingPiece={isAddingPiece}
+                setIsAddingPiece={setIsAddingPiece}
+              />
             ))}
           </TableBody>
         </Table>

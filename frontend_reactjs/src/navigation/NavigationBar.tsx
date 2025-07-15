@@ -18,8 +18,8 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 const toolbarButtons = [
   { label: "Home", path: "/", },
   { label: "Expenses", path: "/expenses" },
-  { label: "Diary", path: "/diary" },
-  { label: "Journal", path: "/journal" },
+  // { label: "Diary", path: "/diary" },
+  // { label: "Journal", path: "/journal" },
   { label: "Notes", path: "/notes" },
   { label: "Piano Pieces", path: "/piano" },
   { label: "Hikes", path: "/hikes" },

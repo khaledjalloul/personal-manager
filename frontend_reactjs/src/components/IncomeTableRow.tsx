@@ -6,20 +6,27 @@ import {
 	TextField,
 } from "@mui/material";
 import { Income } from "../types";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
-export const IncomeTableRow = ({ income, index, editable = false }: {
+export const IncomeTableRow = ({ income,
+	index,
+	editable = false,
+	isAddingIncome,
+	setIsAddingIncome,
+}: {
 	income: Income;
 	index: number;
 	editable?: boolean;
+	isAddingIncome?: boolean;
+	setIsAddingIncome?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-	const [isEditing, setIsEditing] = useState(false);
+	const [isEditing, setIsEditing] = useState(isAddingIncome);
 	const [date, setDate] = useState(dayjs(income.date));
 	const [source, setSource] = useState(income.source);
 	const [amount, setAmount] = useState(income.amount);
@@ -99,10 +106,14 @@ export const IncomeTableRow = ({ income, index, editable = false }: {
 						</IconButton>
 
 						<IconButton size="small" onClick={() => {
-							setDate(dayjs(income.date));
-							setSource(income.source);
-							setAmount(income.amount);
-							setIsEditing(false)
+							if (!isAddingIncome) {
+								setDate(dayjs(income.date));
+								setSource(income.source);
+								setAmount(income.amount);
+								setIsEditing(false)
+							} else if (setIsAddingIncome) {
+								setIsAddingIncome(false);
+							}
 						}}>
 							<Clear />
 						</IconButton>

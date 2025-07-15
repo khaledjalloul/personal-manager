@@ -9,21 +9,29 @@ import {
 } from "@mui/material";
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
-export const ExpenseTableRow = ({ expense, index, editable = false }: {
+export const ExpenseTableRow = ({
+  expense,
+  index,
+  editable = false,
+  isAddingExpense,
+  setIsAddingExpense,
+}: {
   expense: Expense;
   index: number;
   editable?: boolean;
+  isAddingExpense?: boolean;
+  setIsAddingExpense?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { data: expensesCategories } = useExpensesCategories();
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isAddingExpense);
   const [date, setDate] = useState(dayjs(expense.date));
   const [category, setCategory] = useState(expense.category);
   const [description, setDescription] = useState(expense.description);
@@ -59,7 +67,7 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
           <Select
             variant="standard"
             value={category.id}
-
+            sx={{ width: "100%" }}
             onChange={(e) => setCategory(expensesCategories?.find(cat => cat.id === e.target.value) ?? category)}
           >
             {expensesCategories?.map((cat) => (
@@ -76,8 +84,8 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
           <TextField
             variant="standard"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
             sx={{ width: "100%" }}
+            onChange={(e) => setDescription(e.target.value)}
           />
         }
       </TableCell>
@@ -128,12 +136,16 @@ export const ExpenseTableRow = ({ expense, index, editable = false }: {
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              setDate(dayjs(expense.date));
-              setCategory(expense.category);
-              setDescription(expense.description);
-              setVendor(expense.vendor);
-              setAmount(expense.amount);
-              setIsEditing(false)
+              if (!isAddingExpense) {
+                setDate(dayjs(expense.date));
+                setCategory(expense.category);
+                setDescription(expense.description);
+                setVendor(expense.vendor);
+                setAmount(expense.amount);
+                setIsEditing(false);
+              } else if (setIsAddingExpense) {
+                setIsAddingExpense(false);
+              }
             }}>
               <Clear />
             </IconButton>
