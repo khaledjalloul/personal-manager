@@ -73,10 +73,11 @@ export const ExpensesStatistics = () => {
     searchText: "",
   })
 
+  expensesCategories?.push({ id: -1, name: "Uncategorized", color: "gray" });
+
   const statistics = useMemo(() => {
     const today = new Date();
     const thisMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-    const categoryNames = expensesCategories?.map(c => c.name) || [];
 
     const result: Statistics = {
       totalMonthlyAverage: 0,
@@ -86,13 +87,12 @@ export const ExpensesStatistics = () => {
       months: {}
     };
 
-    result.categories = categoryNames.reduce((acc, category) => {
-      acc[category] = { monthlyAverage: 0, total: 0 };
-      return acc;
-    }, {} as Statistics["categories"]);
-
-    for (const { date, category, amount } of expenses ?? []) {
+    for (var { date, category, amount } of expenses ?? []) {
       const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+      if (!category) {
+        category = expensesCategories?.find(cat => cat.id === -1)!;
+      }
 
       if (!result.categories[category.name]) {
         result.categories[category.name] = { monthlyAverage: 0, total: 0 };
@@ -268,12 +268,12 @@ export const ExpensesStatistics = () => {
 
               <Doughnut
                 data={{
-                  labels: expensesCategories?.map(c => c.name),
+                  labels: Object.keys(statistics.categories),
                   datasets: [
                     {
                       label: 'Amount (CHF)',
-                      data: expensesCategories?.map(c => statistics.categories[c.name]?.total),
-                      backgroundColor: expensesCategories?.map(c => c.color),
+                      data: Object.values(statistics.categories).map(c => c.total),
+                      backgroundColor: Object.keys(statistics.categories).map(c => expensesCategories?.find(cat => cat.name === c)?.color),
                     }
                   ],
                 }}
@@ -307,9 +307,9 @@ export const ExpensesStatistics = () => {
           <Table size="medium" >
             <TableHead>
               <TableRow sx={{ backgroundColor: "primary.light" }}>
-                {expensesCategories?.map((category) => (
-                  <TableCell key={category.id} sx={{ fontWeight: 'bold' }}>
-                    {category.name}
+                {Object.keys(statistics.categories).map((categoryName) => (
+                  <TableCell key={categoryName} sx={{ fontWeight: 'bold' }}>
+                    {categoryName}
                   </TableCell>
                 ))}
                 <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
@@ -317,9 +317,9 @@ export const ExpensesStatistics = () => {
             </TableHead>
             <TableBody>
               <TableRow>
-                {expensesCategories?.map((category) => (
-                  <TableCell key={category.id}>
-                    {statistics.categories[category.name].monthlyAverage.toFixed(2)} CHF
+                {Object.values(statistics.categories).map((category, index) => (
+                  <TableCell key={index}>
+                    {category.monthlyAverage.toFixed(2)} CHF
                   </TableCell>
                 ))}
                 <TableCell>{statistics.totalMonthlyAverage.toFixed(2)} CHF</TableCell>

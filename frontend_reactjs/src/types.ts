@@ -14,7 +14,7 @@ export type ExpensesCategory = {
 export type Expense = {
   id: number;
   date: Date;
-  category: ExpensesCategory;
+  category?: ExpensesCategory;
   description: string;
   vendor: string;
   amount: number;
@@ -76,7 +76,7 @@ export type Note = {
   id: number;
   dateCreated: Date;
   dateModified: Date;
-  category: NoteCategory;
+  category?: NoteCategory;
   title: string;
   content: string;
   tags: string[];

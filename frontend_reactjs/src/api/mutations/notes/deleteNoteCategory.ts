@@ -27,6 +27,9 @@ export const useDeleteNoteCategoy = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["notes"],
+      });
     },
   });
 };

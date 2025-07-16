@@ -7,7 +7,7 @@ const ENDPOINT = "expenses";
 
 export type CreateExpenseRequestBody = {
   date: Date;
-  categoryId: number;
+  categoryId?: number;
   description: string;
   vendor: string;
   amount: number;

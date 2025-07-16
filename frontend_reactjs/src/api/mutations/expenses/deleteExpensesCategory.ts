@@ -27,6 +27,9 @@ export const useDeleteExpensesCategory = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["expenses"],
+      });
     },
   });
 };

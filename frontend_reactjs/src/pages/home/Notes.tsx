@@ -3,6 +3,8 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
+  Select,
   TextField,
   Typography,
   useTheme,
@@ -21,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import { useDeleteNote, useEditNote, useNoteCategories } from "../../api";
 import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
-import { Note } from "../../types";
+import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
 
@@ -40,15 +42,18 @@ export const Notes = () => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [selectedNote, setSelectedNote] = useState<Note | undefined>();
   const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
+  const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory | undefined>();
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     if (selectedNote) {
       setSelectedNoteTitle(selectedNote.title);
+      setSelectedNoteCategory(selectedNote.category);
       setSelectedNoteContent(selectedNote.content);
     } else {
       setSelectedNoteTitle("");
+      setSelectedNoteCategory(undefined);
       setSelectedNoteContent("");
     }
   }, [JSON.stringify(selectedNote)]);
@@ -108,6 +113,15 @@ export const Notes = () => {
           </Box>
 
           <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
+            <NoteCategoryContainer
+              key={-1}
+              category={{
+                id: -1,
+                name: "Uncategorized",
+              }}
+              selectedNote={selectedNote}
+              setSelectedNote={setSelectedNote}
+            />
             {noteCategories?.map((category) => (
               <NoteCategoryContainer
                 key={category.id}
@@ -137,6 +151,24 @@ export const Notes = () => {
                 disabled={!selectedNote}
               />
 
+              <Select
+                variant="standard"
+                size="small"
+                sx={{ minWidth: 150 }}
+                value={selectedNoteCategory?.id ?? -1}
+                onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
+                disabled={!selectedNote}
+              >
+                <MenuItem value={-1} disabled>
+                  {selectedNote ? "Uncategorized" : ""}
+                </MenuItem>
+                {noteCategories?.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Select>
+
               <IconButton
                 sx={{ ml: 'auto' }}
                 color="success"
@@ -148,7 +180,7 @@ export const Notes = () => {
                       title: selectedNoteTitle,
                       content: selectedNoteContent,
                       dateModified: new Date(),
-                      categoryId: selectedNote.category.id, // TODO: Allow changing category
+                      categoryId: selectedNoteCategory?.id,
                     })
                   }
                 }}

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { useCreateExpense, useDeleteExpense, useEditExpense, useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -44,6 +44,11 @@ export const ExpenseTableRow = ({
   const [amount, setAmount] = useState(expense.amount);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  // Handle case where category is deleted to update the displayed state
+  useEffect(() => {
+    setCategory(expense.category);
+  }, [expense.category?.id]);
+
   return (
     <Fragment>
       <TableRow
@@ -74,10 +79,10 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? category.name :
+          {!isEditing ? category?.name :
             <Select
               variant="standard"
-              value={category.id}
+              value={category?.id}
               sx={{ width: "100%" }}
               onChange={(e) => setCategory(expensesCategories?.find(cat => cat.id === e.target.value) ?? category)}
             >
@@ -160,7 +165,7 @@ export const ExpenseTableRow = ({
                     editExpense({
                       id: expense.id,
                       date: date.toDate(),
-                      categoryId: category.id,
+                      categoryId: category?.id,
                       description,
                       vendor,
                       amount,
@@ -169,7 +174,7 @@ export const ExpenseTableRow = ({
                   } else if (setIsAddingExpense) {
                     createExpense({
                       date: date.toDate(),
-                      categoryId: category.id,
+                      categoryId: category?.id,
                       description,
                       vendor,
                       amount,

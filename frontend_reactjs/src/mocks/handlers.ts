@@ -79,8 +79,8 @@ const expenseHandlers = [
       expensesToReturn = expensesToReturn.filter(expense =>
         expense.description.toLowerCase().includes(searchText.toLowerCase()) ||
         expense.vendor.toLowerCase().includes(searchText.toLowerCase()) ||
-        expense.category.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        expense.tags.some(tag => tag.toLowerCase().includes(searchText.toLowerCase()))
+        expense.tags.some(tag => tag.toLowerCase().includes(searchText.toLowerCase())) ||
+        (expense.category && expense.category.name.toLowerCase().includes(searchText.toLowerCase()))
       )
     }
 
@@ -171,6 +171,11 @@ const expenseHandlers = [
     const categoryId = parseInt(params.id as string);
     const existingIndex = expensesCategories.findIndex(category => category.id === categoryId);
     if (existingIndex !== -1) {
+      expenses.forEach(expense => {
+        if (expense.category && expense.category.id === categoryId) {
+          expense.category = undefined;
+        }
+      });
       expensesCategories.splice(existingIndex, 1);
       return HttpResponse.json({ message: 'Category deleted successfully' });
     }
@@ -275,7 +280,10 @@ const noteHandlers = [
     var categoryId = url.searchParams.get('categoryId') ?? ""
     var notesToReturn = notes;
     if (categoryId) {
-      notesToReturn = notes.filter(note => note.category.id === parseInt(categoryId));
+      if (categoryId === "-1")
+        notesToReturn = notes.filter(note => !note.category);
+      else
+        notesToReturn = notes.filter(note => note.category?.id === parseInt(categoryId));
     }
     return HttpResponse.json(notesToReturn)
   }),
@@ -333,6 +341,11 @@ const noteHandlers = [
     const categoryId = parseInt(params.id as string);
     const existingIndex = noteCategories.findIndex(category => category.id === categoryId);
     if (existingIndex !== -1) {
+      notes.forEach(note => {
+        if (note.category && note.category.id === categoryId) {
+          note.category = undefined;
+        }
+      });
       noteCategories.splice(existingIndex, 1);
       return HttpResponse.json({ message: 'Category deleted successfully' });
     }

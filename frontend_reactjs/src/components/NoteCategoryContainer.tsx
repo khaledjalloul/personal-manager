@@ -22,7 +22,7 @@ export const NoteCategoryContainer = (
   const { mutate: createNote } = useCreateNote();
 
   return (
-    <Box>
+    <Box sx={{ display: category.id !== -1 || notes?.length ? 'block' : 'none' }}>
       <Box
         onClick={() => setIsOpen(!isOpen)}
         sx={{

@@ -35,19 +35,24 @@ export const MonthlyExpenses = () => {
 
       if (!acc[month]) {
         acc[month] = { total: 0 };
+        acc[month]["Uncategorized"] = 0;
         for (const category of categoryNames) {
           acc[month][category] = 0;
         }
       }
 
-      if (categoryNames.includes(expense.category.name)) {
+      if (expense.category)
         acc[month][expense.category.name] += expense.amount;
-        acc[month].total += expense.amount;
-      }
+      else
+        acc[month]["Uncategorized"] += expense.amount;
+
+      acc[month].total += expense.amount;
 
       return acc;
     }, {}) ?? {};
   }, [JSON.stringify(expenses), JSON.stringify(expensesCategories)]);
+
+  const hasUncategorized = Object.values(summary).some(month => month["Uncategorized"] > 0);
 
   return (
     <TableContainer component={Paper}>
@@ -55,6 +60,9 @@ export const MonthlyExpenses = () => {
         <TableHead>
           <TableRow sx={{ backgroundColor: "primary.light" }}>
             <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
+            {hasUncategorized && (
+              <TableCell sx={{ fontWeight: 'bold' }}>Uncategorized</TableCell>
+            )}
             {expensesCategories?.map((category) => (
               <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
                 {category.name}
@@ -71,15 +79,20 @@ export const MonthlyExpenses = () => {
                 backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
               }}
             >
-              <TableCell sx={{ width: '10%' }}>
+              <TableCell>
                 {dayjs(month).format("MMMM YYYY")}
               </TableCell>
+              {hasUncategorized && (
+                <TableCell>
+                  {summary[month]["Uncategorized"].toFixed(2)} CHF
+                </TableCell>
+              )}
               {expensesCategories?.map((category) => (
-                <TableCell key={category.id} sx={{ width: '10%' }}>
+                <TableCell key={category.id}>
                   {summary[month][category.name].toFixed(2)} CHF
                 </TableCell>
               ))}
-              <TableCell sx={{ width: '10%' }}>
+              <TableCell>
                 {summary[month].total.toFixed(2)} CHF
               </TableCell>
             </TableRow>

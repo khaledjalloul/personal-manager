@@ -1,9 +1,10 @@
 import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
 import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
 import { NoteCategory } from "../../types";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 
 const CategoryCard = ({
   category
@@ -15,42 +16,49 @@ const CategoryCard = ({
 
   const { mutate: editCategory } = useEditNoteCategory();
   const { mutate: deleteCategory } = useDeleteNoteCategoy();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   return (
-    <TextField
-      variant="standard"
-      value={name}
-      onChange={(e) => setName(e.target.value)}
-      slotProps={{
-        input: {
-          endAdornment: (
-            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <IconButton
-                size="small"
-                color="success"
-                onClick={() => {
-                  editCategory({
-                    id: category.id,
-                    name
-                  });
-                }}
-              >
-                <Save />
-              </IconButton>
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => {
-                  deleteCategory({ id: category.id });
-                }}
-              >
-                <Delete />
-              </IconButton>
-            </Box>
-          ),
-        },
-      }}
-    />
+    <Fragment>
+      <TextField
+        variant="standard"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <IconButton
+                  size="small"
+                  color="success"
+                  onClick={() => {
+                    editCategory({
+                      id: category.id,
+                      name
+                    });
+                  }}
+                >
+                  <Save />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => setConfirmDeleteOpen(true)}
+                >
+                  <Delete />
+                </IconButton>
+              </Box>
+            ),
+          },
+        }}
+      />
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={`category: ${category.name}`}
+        deleteFn={() => deleteCategory({ id: category.id })}
+      />
+    </Fragment>
   )
 }
 
@@ -89,6 +97,7 @@ export const ManageNoteCategoriesModal = ({
                     <IconButton
                       size="small"
                       color="success"
+                      disabled={!newCategoryName}
                       onClick={() => {
                         createCategory({
                           name: newCategoryName,
