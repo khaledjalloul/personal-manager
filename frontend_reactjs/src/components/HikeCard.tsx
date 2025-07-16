@@ -13,9 +13,10 @@ import {
   Place,
   Save,
   Delete,
-  Clear
+  Clear,
+  AddPhotoAlternate
 } from "@mui/icons-material";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -34,9 +35,17 @@ const GoogleMapsIcon = () => (
   </svg>
 )
 
-export const HikeCard = ({ hike }: { hike: Hike }) => {
+export const HikeCard = ({
+  hike,
+  isAddingHike,
+  setIsAddingHike
+}: {
+  hike: Hike,
+  isAddingHike: boolean,
+  setIsAddingHike: Dispatch<SetStateAction<boolean>>
+}) => {
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isAddingHike);
   const [date, setDate] = useState(dayjs(hike.date));
   const [description, setDescription] = useState(hike.description);
   const [distance, setDistance] = useState(hike.distance);
@@ -54,10 +63,23 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
   const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
 
   return (
-    <Wrapper>
-      <CoverImage src={coverImage} />
+    <Wrapper sx={{ backgroundColor: 'secondary.main' }}>
+      <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
+        {coverImage && (
+          <CoverImage src={coverImage} />
+        )}
+        {isEditing && (
+          <CoverImageEditor>
+            <Box sx={{ borderRadius: '100px', backgroundColor: 'secondary.main' }}>
+              <IconButton>
+                <AddPhotoAlternate />
+              </IconButton>
+            </Box>
+          </CoverImageEditor>
+        )}
+      </Box>
 
-      <ContentBox sx={{ backgroundColor: "secondary.main", display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <ContentBox sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
@@ -66,6 +88,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
           ) : (
             <TextField
               variant="standard"
+              placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -91,15 +114,19 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
 
           {isEditing && (
             <IconButton onClick={() => {
-              setDate(dayjs(hike.date));
-              setDescription(hike.description);
-              setDistance(hike.distance);
-              setAscent(hike.ascent);
-              setDescent(hike.descent);
-              setDuration(hike.duration);
-              setDurationWithBreaks(hike.durationWithBreaks);
-              setGoogleMapsUrl(hike.googleMapsUrl);
-              setIsEditing(false)
+              if (!isAddingHike || hike.id !== -1) {
+                setDate(dayjs(hike.date));
+                setDescription(hike.description);
+                setDistance(hike.distance);
+                setAscent(hike.ascent);
+                setDescent(hike.descent);
+                setDuration(hike.duration);
+                setDurationWithBreaks(hike.durationWithBreaks);
+                setGoogleMapsUrl(hike.googleMapsUrl);
+                setIsEditing(false);
+              } else {
+                setIsAddingHike(false);
+              }
             }}>
               <Clear />
             </IconButton>
@@ -132,7 +159,11 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
                   onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
                   enableAccessibleFieldDOMStructure={false}
                   slots={{
-                    textField: props => <TextField {...props} size="small"
+                    textField: props => <TextField
+                      {...props}
+                      size="small"
+                      variant="standard"
+                      placeholder="Date"
                       value={date.format('DD.MM.YYYY')}
                     />
                   }}
@@ -150,6 +181,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Distance"
                 value={distance.toFixed(2)}
                 onChange={(e) => {
                   const newDistance = parseFloat(e.target.value);
@@ -173,6 +205,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Ascent"
                 value={ascent.toFixed(2)}
                 onChange={(e) => {
                   const newAscent = parseFloat(e.target.value);
@@ -196,6 +229,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Descent"
                 value={descent.toFixed(2)}
                 onChange={(e) => {
                   const newDescent = parseFloat(e.target.value);
@@ -219,6 +253,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Duration (without breaks)"
                 value={duration.toFixed(2)}
                 onChange={(e) => {
                   const newDuration = parseFloat(e.target.value);
@@ -242,6 +277,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Duration (with breaks)"
                 value={durationWithBreaks.toFixed(2)}
                 onChange={(e) => {
                   const newDurationWithBreaks = parseFloat(e.target.value);
@@ -260,6 +296,7 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
             <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
               <TextField
                 variant="standard"
+                placeholder="Google Maps URL"
                 value={googleMapsUrl}
                 sx={{ flexGrow: 1 }}
                 onChange={(e) => setGoogleMapsUrl(e.target.value)}
@@ -278,24 +315,37 @@ export const HikeCard = ({ hike }: { hike: Hike }) => {
 }
 
 const Wrapper = styled(Box)`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  border-radius: 8px;
 `;
 
 const CoverImage = styled.img`
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    width: 100%;
-    aspect-ratio: 16/9;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  width: 100%;
+  aspect-ratio: 16/9;
+`;
+
+const CoverImageEditor = styled(Box)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #00000077;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ContentBox = styled(Box)`
-    padding: 24px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  padding: 24px;
+  padding-top: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;

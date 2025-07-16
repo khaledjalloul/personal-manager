@@ -98,14 +98,18 @@ export const PianoPieceTableRow = ({
         {!isEditing ? (monthLearned ? monthLearned.format("MMMM YYYY") : "") :
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Month"
+              // label="Month"
               views={["year", "month"]}
               openTo="month"
               value={monthLearned}
               onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
               enableAccessibleFieldDOMStructure={false}
               slots={{
-                textField: props => <TextField {...props} size="small"
+                textField: props => <TextField
+                  {...props}
+                  size="small"
+                  variant="standard"
+                  placeholder="Month Learned"
                   value={monthLearned ? monthLearned.format('MMMM YYYY') : ''}
                 />
               }}
@@ -166,7 +170,7 @@ export const PianoPieceTableRow = ({
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              if (!isAddingPiece) {
+              if (!isAddingPiece || pianoPiece.id !== -1) {
                 setName(pianoPiece.name);
                 setOrigin(pianoPiece.origin);
                 setComposer(pianoPiece.composer);

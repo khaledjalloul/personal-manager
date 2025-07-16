@@ -21,16 +21,24 @@ import {
   SellOutlined,
   SportsEsportsOutlined,
   PeopleOutlineOutlined,
-  InsertLink
+  InsertLink,
+  AddPhotoAlternate
 } from "@mui/icons-material";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-export const VideoGameCard = ({ game }: { game: VideoGame }) => {
-
-  const [isEditing, setIsEditing] = useState(false);
+export const VideoGameCard = ({
+  game,
+  isAddingGame,
+  setIsAddingGame
+}: {
+  game: VideoGame,
+  isAddingGame: boolean,
+  setIsAddingGame: Dispatch<SetStateAction<boolean>>
+}) => {
+  const [isEditing, setIsEditing] = useState(isAddingGame);
   const [name, setName] = useState(game.name);
   const [platform, setPlatform] = useState(game.platform);
   const [type, setType] = useState(game.type);
@@ -44,10 +52,23 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
   const sumExtraPurchases = extraPurchases.reduce((acc, purchase) => acc + purchase.price, 0);
 
   return (
-    <Wrapper>
-      <CoverImage src={coverImage} />
+    <Wrapper sx={{ backgroundColor: 'secondary.main' }}>
+      <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
+        {coverImage && (
+          <CoverImage src={coverImage} />
+        )}
+        {isEditing && (
+          <CoverImageEditor>
+            <Box sx={{ borderRadius: '100px', backgroundColor: 'secondary.main' }}>
+              <IconButton>
+                <AddPhotoAlternate />
+              </IconButton>
+            </Box>
+          </CoverImageEditor>
+        )}
+      </Box>
 
-      <ContentBox sx={{ backgroundColor: "secondary.main", display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <ContentBox sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
@@ -56,6 +77,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
           ) : (
             <TextField
               variant="standard"
+              placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -81,16 +103,20 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
 
           {isEditing && (
             <IconButton onClick={() => {
-              setName(game.name);
-              setPlatform(game.platform);
-              setType(game.type);
-              setCompleted(game.completed);
-              setFirstPlayed(dayjs(game.firstPlayed));
-              setPrice(game.price);
-              setExtraPurchases(game.extraPurchases);
-              setStoreUrl(game.storeUrl);
-              setCoverImage(game.coverImage);
-              setIsEditing(false)
+              if (!isAddingGame || game.id !== -1) {
+                setName(game.name);
+                setPlatform(game.platform);
+                setType(game.type);
+                setCompleted(game.completed);
+                setFirstPlayed(dayjs(game.firstPlayed));
+                setPrice(game.price);
+                setExtraPurchases(game.extraPurchases);
+                setStoreUrl(game.storeUrl);
+                setCoverImage(game.coverImage);
+                setIsEditing(false);
+              } else {
+                setIsAddingGame(false);
+              }
             }}>
               <Clear />
             </IconButton>
@@ -113,6 +139,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Platform"
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value)}
               />
@@ -128,6 +155,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             ) : (
               <Select
                 variant="standard"
+                sx={{ width: '100%', overflow: 'hidden' }}
                 value={type}
                 onChange={(e) => setType(e.target.value as VideoGameType)}
               >
@@ -151,7 +179,11 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
                   onChange={(newValue) => setFirstPlayed(newValue ?? dayjs(new Date()))}
                   enableAccessibleFieldDOMStructure={false}
                   slots={{
-                    textField: props => <TextField {...props} size="small"
+                    textField: props => <TextField
+                      {...props}
+                      size="small"
+                      variant="standard"
+                      placeholder="First Played"
                       value={firstPlayed.format('DD.MM.YYYY')}
                     />
                   }}
@@ -169,6 +201,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             ) : (
               <Select
                 variant="standard"
+                sx={{ width: '100%', overflow: 'hidden' }}
                 value={completed ? "true" : "false"}
                 onChange={(e) => setCompleted(e.target.value === "true")}
               >
@@ -187,6 +220,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             ) : (
               <TextField
                 variant="standard"
+                placeholder="Price"
                 value={price.toFixed(2)}
                 onChange={(e) => {
                   const newPrice = parseFloat(e.target.value);
@@ -210,10 +244,11 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             ) : (
               <TextField
                 variant="standard"
-                value={price.toFixed(2)}
+                placeholder="Extra Purchases"
+                value={sumExtraPurchases.toFixed(2)}
                 onChange={(e) => {
                   const newPrice = parseFloat(e.target.value);
-                  setPrice(isNaN(newPrice) ? price : newPrice);
+                  setPrice(isNaN(newPrice) ? sumExtraPurchases : newPrice);
                 }}
                 slotProps={{
                   input: {
@@ -228,6 +263,7 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
             <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
               <TextField
                 variant="standard"
+                placeholder="Store URL"
                 value={storeUrl}
                 sx={{ flexGrow: 1 }}
                 onChange={(e) => setStoreUrl(e.target.value)}
@@ -246,24 +282,37 @@ export const VideoGameCard = ({ game }: { game: VideoGame }) => {
 }
 
 const Wrapper = styled(Box)`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  border-radius: 8px;
 `;
 
 const CoverImage = styled.img`
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    width: 100%;
-    aspect-ratio: 16/9;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  width: 100%;
+  aspect-ratio: 16/9;
+`;
+
+const CoverImageEditor = styled(Box)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #00000077;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ContentBox = styled(Box)`
-    padding: 24px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  padding: 24px;
+  padding-top: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;

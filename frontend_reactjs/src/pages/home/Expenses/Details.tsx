@@ -28,7 +28,7 @@ export const ExpensesDetails = () => {
             <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Amount (CHF)</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

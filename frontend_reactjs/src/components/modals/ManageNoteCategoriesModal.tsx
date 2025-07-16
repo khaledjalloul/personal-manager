@@ -1,8 +1,7 @@
-import { Box, Button, IconButton, Modal, TextField, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
+import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
-import { AccessTime, Add, Clear, Flag, Person, Place, Save } from "@mui/icons-material";
-import { UserContext } from "../../utils";
+import { Add, Delete, Save } from "@mui/icons-material";
 import { useNoteCategories } from "../../api";
 
 export const ManageNoteCategoriesModal = ({
@@ -12,7 +11,6 @@ export const ManageNoteCategoriesModal = ({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  // const { userData } = useContext(UserContext);
 
   const { data: categories } = useNoteCategories({})
 
@@ -37,7 +35,7 @@ export const ManageNoteCategoriesModal = ({
                         <IconButton
                           size="small"
                           onClick={() => {
-                            // Handle delete category
+                            // Handle save category
                           }}
                         >
                           <Save color="success" />
@@ -48,7 +46,7 @@ export const ManageNoteCategoriesModal = ({
                             // Handle delete category
                           }}
                         >
-                          <Clear />
+                          <Delete color="error" />
                         </IconButton>
                       </Box>
                     ),
@@ -67,24 +65,14 @@ export const ManageNoteCategoriesModal = ({
               slotProps={{
                 input: {
                   endAdornment: (
-                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          // Handle delete category
-                        }}
-                      >
-                        <Add color="success" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          // Handle delete category
-                        }}
-                      >
-                        <Clear />
-                      </IconButton>
-                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        // Handle delete category
+                      }}
+                    >
+                      <Add color="success" />
+                    </IconButton>
                   ),
                 },
               }}
@@ -111,8 +99,4 @@ const Wrapper = styled(Box)`
   outline: none;
 `;
 
-const Column = styled(Box)`
-  display: flex;
-  flex-direction: column;
-`;
 

@@ -76,10 +76,12 @@ export const MonthlyExpenses = () => {
               </TableCell>
               {expensesCategories?.map((category) => (
                 <TableCell key={category.id} sx={{ width: '10%' }}>
-                  {summary[month][category.name].toFixed(2)}
+                  {summary[month][category.name].toFixed(2)} CHF
                 </TableCell>
               ))}
-              <TableCell sx={{ width: '10%' }}>{summary[month].total.toFixed(2)}</TableCell>
+              <TableCell sx={{ width: '10%' }}>
+                {summary[month].total.toFixed(2)} CHF
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

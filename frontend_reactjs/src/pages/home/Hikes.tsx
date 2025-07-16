@@ -4,12 +4,28 @@ import { useHikes } from "../../api";
 import { HikeCard } from "../../components";
 import { Add, Clear } from "@mui/icons-material";
 import { useState } from "react";
+import { Hike } from "../../types";
+
+const emptyHike: Hike = {
+  id: -1,
+  date: new Date(),
+  description: "",
+  ascent: 0,
+  descent: 0,
+  distance: 0,
+  duration: 0,
+  durationWithBreaks: 0,
+  coverImage: "",
+  googleMapsUrl: "",
+  images: []
+}
 
 export const Hikes = () => {
 
   const { data: hikes } = useHikes({});
 
   const [searchText, setSearchText] = useState("");
+  const [isAddingHike, setIsAddingHike] = useState(false);
 
   return (
     <Wrapper>
@@ -17,7 +33,7 @@ export const Hikes = () => {
         <Typography variant="h5">
           Hikes
         </Typography>
-        <IconButton>
+        <IconButton onClick={() => setIsAddingHike(true)}>
           <Add />
         </IconButton>
         <TextField
@@ -45,9 +61,28 @@ export const Hikes = () => {
 
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3} >
+          {isAddingHike && (
+            <Grid
+              key={emptyHike.id}
+              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              sx={{ display: 'flex' }}
+            >
+              <HikeCard hike={emptyHike}
+                isAddingHike={isAddingHike}
+                setIsAddingHike={setIsAddingHike}
+              />
+            </Grid>
+          )}
           {hikes?.map((hike) => (
-            <Grid key={hike.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ display: 'flex' }}>
-              <HikeCard hike={hike} />
+            <Grid
+              key={hike.id}
+              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              sx={{ display: 'flex' }}
+            >
+              <HikeCard hike={hike}
+                isAddingHike={isAddingHike}
+                setIsAddingHike={setIsAddingHike}
+              />
             </Grid>
           ))}
         </Grid>

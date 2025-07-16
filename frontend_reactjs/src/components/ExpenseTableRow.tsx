@@ -53,7 +53,11 @@ export const ExpenseTableRow = ({
               onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
               enableAccessibleFieldDOMStructure={false}
               slots={{
-                textField: props => <TextField {...props} size="small"
+                textField: props => <TextField
+                  {...props}
+                  size="small"
+                  variant="standard"
+                  placeholder="Date"
                   value={date.format('DD.MM.YYYY')}
                 />
               }}
@@ -83,6 +87,7 @@ export const ExpenseTableRow = ({
         {!isEditing ? description :
           <TextField
             variant="standard"
+            placeholder="Description"
             value={description}
             sx={{ width: "100%" }}
             onChange={(e) => setDescription(e.target.value)}
@@ -94,6 +99,7 @@ export const ExpenseTableRow = ({
         {!isEditing ? vendor :
           <TextField
             variant="standard"
+            placeholder="Vendor"
             value={vendor}
             onChange={(e) => setVendor(e.target.value)}
           />
@@ -104,6 +110,7 @@ export const ExpenseTableRow = ({
         {!isEditing ? amount.toFixed(2) :
           <TextField
             variant="standard"
+            placeholder="Amount"
             value={amount.toFixed(2)}
             onChange={(e) => {
               const newAmount = parseFloat(e.target.value);
@@ -136,7 +143,7 @@ export const ExpenseTableRow = ({
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              if (!isAddingExpense) {
+              if (!isAddingExpense || expense.id !== -1) {
                 setDate(dayjs(expense.date));
                 setCategory(expense.category);
                 setDescription(expense.description);

@@ -4,12 +4,27 @@ import { useVideoGames } from "../../api";
 import { VideoGameCard } from "../../components";
 import { Add, Clear } from "@mui/icons-material";
 import { useState } from "react";
+import { VideoGame, VideoGameType } from "../../types";
+
+const emptyGame: VideoGame = {
+  id: -1,
+  name: "",
+  platform: "",
+  type: VideoGameType.SINGLE_PLAYER,
+  firstPlayed: new Date(),
+  completed: false,
+  price: 0,
+  extraPurchases: [],
+  coverImage: "",
+  storeUrl: ""
+};
 
 export const VideoGames = () => {
 
   const { data: games } = useVideoGames({});
 
   const [searchText, setSearchText] = useState("");
+  const [isAddingGame, setIsAddingGame] = useState(false);
 
   return (
     <Wrapper>
@@ -17,7 +32,7 @@ export const VideoGames = () => {
         <Typography variant="h5">
           Video Games
         </Typography>
-        <IconButton>
+        <IconButton onClick={() => setIsAddingGame(true)}>
           <Add />
         </IconButton>
         <TextField
@@ -46,9 +61,30 @@ export const VideoGames = () => {
 
       <Box style={{ overflowY: 'auto' }}>
         <Grid container spacing={3}>
+          {isAddingGame && (
+            <Grid
+              key={emptyGame.id}
+              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              sx={{ display: 'flex' }}
+            >
+              <VideoGameCard
+                game={emptyGame}
+                isAddingGame={isAddingGame}
+                setIsAddingGame={setIsAddingGame}
+              />
+            </Grid>
+          )}
           {games?.map((game) => (
-            <Grid key={game.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ display: 'flex' }}>
-              <VideoGameCard game={game} />
+            <Grid
+              key={game.id}
+              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              sx={{ display: 'flex' }}
+            >
+              <VideoGameCard
+                game={game}
+                isAddingGame={isAddingGame}
+                setIsAddingGame={setIsAddingGame}
+              />
             </Grid>
           ))}
         </Grid>

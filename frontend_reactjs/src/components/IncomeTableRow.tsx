@@ -46,7 +46,11 @@ export const IncomeTableRow = ({ income,
 							onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
 							enableAccessibleFieldDOMStructure={false}
 							slots={{
-								textField: props => <TextField {...props} size="small"
+								textField: props => <TextField
+									{...props}
+									size="small"
+									variant="standard"
+									placeholder="Date"
 									value={date.format('DD.MM.YYYY')}
 								/>
 							}}
@@ -59,6 +63,7 @@ export const IncomeTableRow = ({ income,
 				{!isEditing ? source :
 					<TextField
 						variant="standard"
+						placeholder="Source"
 						value={source}
 						onChange={(e) => setSource(e.target.value)}
 						sx={{ width: "100%" }}
@@ -70,6 +75,7 @@ export const IncomeTableRow = ({ income,
 				{!isEditing ? amount.toFixed(2) :
 					<TextField
 						variant="standard"
+						placeholder="Amount"
 						value={amount.toFixed(2)}
 						onChange={(e) => {
 							const newAmount = parseFloat(e.target.value);
@@ -106,7 +112,7 @@ export const IncomeTableRow = ({ income,
 						</IconButton>
 
 						<IconButton size="small" onClick={() => {
-							if (!isAddingIncome) {
+							if (!isAddingIncome || income.id !== -1) {
 								setDate(dayjs(income.date));
 								setSource(income.source);
 								setAmount(income.amount);

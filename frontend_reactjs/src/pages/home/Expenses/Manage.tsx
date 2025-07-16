@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
-import { CategoryKeywordManager, ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { CategoryManagerCard, ExpenseTableRow, IncomeTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
-import { Expense, Income } from "../../../types";
+import { Expense, ExpensesCategory, Income } from "../../../types";
 
 const emptyIncome: Income = {
   id: -1,
@@ -26,10 +26,16 @@ const emptyIncome: Income = {
   amount: 0,
 }
 
+const emptyCategory: ExpensesCategory = {
+  id: -1,
+  name: "",
+  color: ""
+}
+
 const emptyExpense: Expense = {
   id: -1,
   date: new Date(),
-  category: { id: -1, name: "", color: "" },
+  category: emptyCategory,
   description: "",
   vendor: "",
   type: "manual",
@@ -55,6 +61,7 @@ export const ManageExpenses = () => {
 
   const [isAddingIncome, setIsAddingIncome] = useState(false);
   const [isAddingExpense, setIsAddingExpense] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
 
   return (
     <Wrapper>
@@ -125,7 +132,7 @@ export const ManageExpenses = () => {
                 {isAddingExpense && (
                   <ExpenseTableRow
                     key={emptyExpense.id}
-                    expense={emptyExpense}
+                    expense={{ ...emptyExpense, category: categories ? categories[0] : emptyCategory }}
                     index={emptyExpense.id}
                     isAddingExpense={isAddingExpense}
                     setIsAddingExpense={setIsAddingExpense}
@@ -166,11 +173,29 @@ export const ManageExpenses = () => {
         </label>
       </CSVFileUploadWrapper>
 
-      <Typography variant="h6" mt={2}>Manage Category Keywords</Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, mt: 2 }}>
+        <Typography variant="h6">Manage Categories</Typography>
+        <IconButton size="small" onClick={() => setIsAddingCategory(true)}>
+          <Add />
+        </IconButton>
+      </Box>
 
       <Grid container spacing={2}>
+        {isAddingCategory && (
+          <CategoryManagerCard
+            key={emptyCategory.id}
+            category={emptyCategory}
+            isAddingCategory={isAddingCategory}
+            setIsAddingCategory={setIsAddingCategory}
+          />
+        )}
         {categories?.map((category) => (
-          <CategoryKeywordManager key={category.id} category={category} />
+          <CategoryManagerCard
+            key={category.id}
+            category={category}
+            isAddingCategory={isAddingCategory}
+            setIsAddingCategory={setIsAddingCategory}
+          />
         ))}
       </Grid>
 
