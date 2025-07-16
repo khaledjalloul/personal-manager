@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateHike, useDeleteHike, useEditHike } from "../api";
+import { ConfirmDeleteDialog } from "./modals";
 
 const GoogleMapsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -60,6 +61,7 @@ export const HikeCard = ({
   const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
   const [coverImage, setCoverImage] = useState(hike.coverImage); // TODO: Add image upload
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const durationHours = Math.floor(hike.duration);
   const durationMinutes = Math.round((hike.duration - durationHours) * 60);
@@ -149,7 +151,7 @@ export const HikeCard = ({
           )}
 
           {isEditing && hike.id !== -1 && (
-            <IconButton color="error" onClick={() => deleteHike({ id: hike.id })}>
+            <IconButton color="error" onClick={() => setConfirmDeleteOpen(true)}>
               <Delete />
             </IconButton>
           )}
@@ -352,6 +354,12 @@ export const HikeCard = ({
           )}
         </Grid>
       </ContentBox>
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={`hike: ${description}`}
+        deleteFn={() => deleteHike({ id: hike.id })}
+      />
     </Wrapper>
   )
 }

@@ -29,6 +29,7 @@ import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateVideoGame, useDeleteVideoGame, useEditVideoGame } from "../api";
+import { ConfirmDeleteDialog } from "./modals";
 
 export const VideoGameCard = ({
   game,
@@ -54,6 +55,7 @@ export const VideoGameCard = ({
   const [extraPurchases, setExtraPurchases] = useState(game.extraPurchases);
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const sumExtraPurchases = extraPurchases.reduce((acc, purchase) => acc + purchase.price, 0);
 
@@ -135,7 +137,7 @@ export const VideoGameCard = ({
           )}
 
           {isEditing && game.id !== -1 && (
-            <IconButton color="error" onClick={() => deleteGame({ id: game.id })}>
+            <IconButton color="error" onClick={() => setConfirmDeleteOpen(true)}>
               <Delete />
             </IconButton>
           )}
@@ -316,6 +318,12 @@ export const VideoGameCard = ({
           )}
         </Grid>
       </ContentBox>
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={`video game: ${name}`}
+        deleteFn={() => deleteGame({ id: game.id })}
+      />
     </Wrapper>
   )
 }

@@ -20,7 +20,7 @@ import {
   VisibilityOff
 } from "@mui/icons-material";
 import { useDeleteNote, useEditNote, useNoteCategories } from "../../api";
-import { ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
+import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
@@ -41,6 +41,7 @@ export const Notes = () => {
   const [selectedNote, setSelectedNote] = useState<Note | undefined>();
   const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     if (selectedNote) {
@@ -160,7 +161,7 @@ export const Notes = () => {
                 disabled={!selectedNote}
                 onClick={() => {
                   if (selectedNote) {
-                    deleteNote({ id: selectedNote.id })
+                    setConfirmDeleteOpen(true);
                   }
                 }}
               >
@@ -224,6 +225,18 @@ export const Notes = () => {
       <ManageNoteCategoriesModal
         isOpen={isCategoriesModalOpen}
         setIsOpen={setIsCategoriesModalOpen}
+      />
+
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={`note: ${selectedNote?.title || "Untitled"}`}
+        deleteFn={() => {
+          if (selectedNote) {
+            deleteNote({ id: selectedNote.id });
+            setSelectedNote(undefined);
+          }
+        }}
       />
     </Wrapper>
   );
