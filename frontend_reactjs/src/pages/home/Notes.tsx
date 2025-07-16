@@ -19,7 +19,7 @@ import {
   Visibility,
   VisibilityOff
 } from "@mui/icons-material";
-import { useNoteCategories } from "../../api";
+import { useDeleteNote, useEditNote, useNoteCategories } from "../../api";
 import { ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -31,19 +31,24 @@ export const Notes = () => {
   const { palette } = useTheme();
 
   const { data: noteCategories } = useNoteCategories({});
+  const { mutate: editNote } = useEditNote();
+  const { mutate: deleteNote } = useDeleteNote();
 
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
-  const [selectedNote, setSelectedNote] = useState<Note | undefined>();
   const [editorEnabled, setEditorEnabled] = useState(true);
   const [previewEnabled, setPreviewEnabled] = useState(true);
-  const [noteContent, setNoteContent] = useState("");
+  const [selectedNote, setSelectedNote] = useState<Note | undefined>();
+  const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
+  const [selectedNoteContent, setSelectedNoteContent] = useState("");
 
   useEffect(() => {
     if (selectedNote) {
-      setNoteContent(selectedNote.content);
+      setSelectedNoteTitle(selectedNote.title);
+      setSelectedNoteContent(selectedNote.content);
     } else {
-      setNoteContent("");
+      setSelectedNoteTitle("");
+      setSelectedNoteContent("");
     }
   }, [JSON.stringify(selectedNote)]);
 
@@ -91,7 +96,7 @@ export const Notes = () => {
       </Header>
 
       <Grid container spacing={2} flexGrow={1}>
-        <Grid size={{ xs: 12, md: 2 }} sx={{ minWidth: '200px', display: 'flex', flexDirection: 'column' }}>
+        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -115,7 +120,7 @@ export const Notes = () => {
 
         {editorEnabled && (
           <Grid
-            size={{ xs: 12, md: previewEnabled ? 5 : 10 }}
+            size={{ xs: 12, lg: previewEnabled ? 5 : 10 }}
             sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
@@ -124,18 +129,42 @@ export const Notes = () => {
               </Typography>
 
               <TextField
-                value={selectedNote?.title || ""}
                 variant="standard"
                 size="small"
+                value={selectedNoteTitle}
+                onChange={(e) => setSelectedNoteTitle(e.target.value)}
                 disabled={!selectedNote}
               />
 
-              <IconButton sx={{ ml: 'auto' }}>
-                <Save color="success" />
+              <IconButton
+                sx={{ ml: 'auto' }}
+                color="success"
+                disabled={!selectedNote}
+                onClick={() => {
+                  if (selectedNote) {
+                    editNote({
+                      id: selectedNote.id,
+                      title: selectedNoteTitle,
+                      content: selectedNoteContent,
+                      dateModified: new Date(),
+                      categoryId: selectedNote.category.id, // TODO: Allow changing category
+                    })
+                  }
+                }}
+              >
+                <Save />
               </IconButton>
 
-              <IconButton>
-                <Delete color="error" />
+              <IconButton
+                color="error"
+                disabled={!selectedNote}
+                onClick={() => {
+                  if (selectedNote) {
+                    deleteNote({ id: selectedNote.id })
+                  }
+                }}
+              >
+                <Delete />
               </IconButton>
             </Box>
 
@@ -159,8 +188,8 @@ export const Notes = () => {
 
               <Box sx={{ flexGrow: 1 }}>
                 <NoteEditor
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
+                  value={selectedNoteContent}
+                  onChange={(e) => setSelectedNoteContent(e.target.value)}
                   disabled={!selectedNote}
                 />
               </Box>
@@ -170,7 +199,7 @@ export const Notes = () => {
 
         {previewEnabled && (
           <Grid
-            size={{ xs: 12, md: editorEnabled ? 5 : 10 }}
+            size={{ xs: 12, lg: editorEnabled ? 5 : 10 }}
             sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
           >
             <Typography variant="h6" mb={1.6}>
@@ -178,7 +207,7 @@ export const Notes = () => {
             </Typography>
 
             <MarkdownPreview
-              source={noteContent}
+              source={selectedNoteContent}
               style={{
                 flexGrow: 1,
                 borderRadius: '8px',

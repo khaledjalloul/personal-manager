@@ -132,41 +132,51 @@ export const ExpenseTableRow = ({
       {editable && (
         !isEditing ? (
           <TableCell sx={{ display: 'flex', gap: 1 }}>
-            <IconButton size="small" onClick={() => setIsEditing(true)}>
+            <IconButton
+              size="small"
+              onClick={() => setIsEditing(true)}
+            >
               <Edit />
             </IconButton>
 
-            <IconButton size="small" onClick={() => deleteExpense({ id: expense.id })}>
-              <Delete color="error" />
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => deleteExpense({ id: expense.id })}
+            >
+              <Delete />
             </IconButton>
           </TableCell>
         ) : (
           <TableCell sx={{ display: 'flex', gap: 1 }}>
-            <IconButton size="small" onClick={() => {
-              if (expense.id !== -1) {
-                editExpense({
-                  id: expense.id,
-                  date: date.toDate(),
-                  categoryId: category.id,
-                  description,
-                  vendor,
-                  amount,
-                });
-                setIsEditing(false);
-              } else if (setIsAddingExpense) {
-                createExpense({
-                  date: date.toDate(),
-                  categoryId: category.id,
-                  description,
-                  vendor,
-                  amount,
-                  tags: [],
-                  type: 'manual'
-                });
-                setIsAddingExpense(false);
-              }
-            }}>
-              <Save color="success" />
+            <IconButton
+              size="small"
+              color="success"
+              onClick={() => {
+                if (expense.id !== -1) {
+                  editExpense({
+                    id: expense.id,
+                    date: date.toDate(),
+                    categoryId: category.id,
+                    description,
+                    vendor,
+                    amount,
+                  });
+                  setIsEditing(false);
+                } else if (setIsAddingExpense) {
+                  createExpense({
+                    date: date.toDate(),
+                    categoryId: category.id,
+                    description,
+                    vendor,
+                    amount,
+                    tags: [],
+                    type: 'manual'
+                  });
+                  setIsAddingExpense(false);
+                }
+              }}>
+              <Save />
             </IconButton>
 
             <IconButton size="small" onClick={() => {

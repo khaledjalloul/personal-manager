@@ -113,31 +113,38 @@ export const IncomeTableRow = ({
 							<Edit />
 						</IconButton>
 
-						<IconButton size="small" onClick={() => deleteIncome({ id: income.id })}>
-							<Delete color="error" />
+						<IconButton
+							size="small"
+							color="error"
+							onClick={() => deleteIncome({ id: income.id })}
+						>
+							<Delete />
 						</IconButton>
 					</TableCell>
 				) : (
 					<TableCell sx={{ display: 'flex', gap: 1 }}>
-						<IconButton size="small" onClick={() => {
-							if (income.id !== -1) {
-								editIncome({
-									id: income.id,
-									date: date.toDate(),
-									source,
-									amount,
-								});
-								setIsEditing(false);
-							} else if (setIsAddingIncome) {
-								createIncome({
-									date: date.toDate(),
-									source,
-									amount,
-								});
-								setIsAddingIncome(false);
-							}
-						}}>
-							<Save color="success" />
+						<IconButton
+							size="small"
+							color="success"
+							onClick={() => {
+								if (income.id !== -1) {
+									editIncome({
+										id: income.id,
+										date: date.toDate(),
+										source,
+										amount,
+									});
+									setIsEditing(false);
+								} else if (setIsAddingIncome) {
+									createIncome({
+										date: date.toDate(),
+										source,
+										amount,
+									});
+									setIsAddingIncome(false);
+								}
+							}}>
+							<Save />
 						</IconButton>
 
 						<IconButton size="small" onClick={() => {

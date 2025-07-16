@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Note, NoteCategory } from "../types";
-import { useNotes } from "../api";
+import { useCreateNote, useNotes } from "../api";
 import { Box, IconButton, Typography } from "@mui/material";
 import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -19,6 +19,7 @@ export const NoteCategoryContainer = (
   const { data: notes } = useNotes({
     categoryId: category.id,
   });
+  const { mutate: createNote } = useCreateNote();
 
   return (
     <Box>
@@ -40,7 +41,21 @@ export const NoteCategoryContainer = (
           {category.name}
         </Typography>
 
-        <IconButton size="small" sx={{ ml: 'auto' }} onClick={(e) => { e.stopPropagation(); }}>
+        <IconButton
+          size="small"
+          sx={{ ml: 'auto' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            const newDate = new Date();
+            createNote({
+              categoryId: category.id,
+              dateCreated: newDate,
+              dateModified: newDate,
+              title: "New Note",
+              content: "",
+              tags: []
+            })
+          }}>
           <Add />
         </IconButton>
 
@@ -69,7 +84,6 @@ export const NoteCategoryContainer = (
           ))}
         </Box>
       )}
-
     </Box>
   )
 }

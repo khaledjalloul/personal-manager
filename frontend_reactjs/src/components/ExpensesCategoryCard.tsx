@@ -51,34 +51,46 @@ export const ExpensesCategoryCard = ({
         )}
 
         {!isEditing && (
-          <IconButton size="small" sx={{ ml: 'auto' }} onClick={() => setIsEditing(true)}>
+          <IconButton
+            size="small"
+            sx={{ ml: 'auto' }}
+            onClick={() => setIsEditing(true)}
+          >
             <Edit />
           </IconButton>
         )}
 
         {!isEditing && (
-          <IconButton size="small" onClick={() => deleteCategory({ id: category.id })}>
-            <Delete color="error" />
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => deleteCategory({ id: category.id })}
+          >
+            <Delete />
           </IconButton>
         )}
 
         {isEditing && (
-          <IconButton size="small" sx={{ ml: 'auto' }} onClick={() => {
-            if (category.id !== -1) {
-              editCategory({
-                id: category.id,
-                name,
-              })
-              setIsEditing(false);
-            } else {
-              createCategory({
-                name,
-                color: "blue" // TODO: remove
-              })
-              setIsAddingCategory(false);
-            }
-          }}>
-            <Save color="success" />
+          <IconButton
+            size="small"
+            sx={{ ml: 'auto' }}
+            color="success"
+            onClick={() => {
+              if (category.id !== -1) {
+                editCategory({
+                  id: category.id,
+                  name,
+                })
+                setIsEditing(false);
+              } else {
+                createCategory({
+                  name,
+                  color: "blue" // TODO: remove
+                })
+                setIsAddingCategory(false);
+              }
+            }}>
+            <Save />
           </IconButton>
         )}
 

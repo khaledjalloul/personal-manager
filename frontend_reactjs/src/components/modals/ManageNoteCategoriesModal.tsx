@@ -1,8 +1,58 @@
 import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
-import { useNoteCategories } from "../../api";
+import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
+import { NoteCategory } from "../../types";
+
+const CategoryCard = ({
+  category
+}: {
+  category: NoteCategory
+}) => {
+
+  const [name, setName] = useState(category.name);
+
+  const { mutate: editCategory } = useEditNoteCategory();
+  const { mutate: deleteCategory } = useDeleteNoteCategoy();
+
+  return (
+    <TextField
+      variant="standard"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      slotProps={{
+        input: {
+          endAdornment: (
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton
+                size="small"
+                color="success"
+                onClick={() => {
+                  editCategory({
+                    id: category.id,
+                    name
+                  });
+                }}
+              >
+                <Save />
+              </IconButton>
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => {
+                  deleteCategory({ id: category.id });
+                }}
+              >
+                <Delete />
+              </IconButton>
+            </Box>
+          ),
+        },
+      }}
+    />
+  )
+}
 
 export const ManageNoteCategoriesModal = ({
   isOpen,
@@ -12,7 +62,10 @@ export const ManageNoteCategoriesModal = ({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-  const { data: categories } = useNoteCategories({})
+  const { data: categories } = useNoteCategories({});
+  const { mutate: createCategory } = useCreateNoteCategory();
+
+  const [newCategoryName, setNewCategoryName] = useState("")
 
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
@@ -22,62 +75,33 @@ export const ManageNoteCategoriesModal = ({
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {categories?.map((category) => (
-              <TextField
-                variant="standard"
-                value={category.name}
-                onChange={(e) => {
-                  // Handle category name change
-                }}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                        <IconButton
-                          size="small"
-                          onClick={() => {
-                            // Handle save category
-                          }}
-                        >
-                          <Save color="success" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => {
-                            // Handle delete category
-                          }}
-                        >
-                          <Delete color="error" />
-                        </IconButton>
-                      </Box>
-                    ),
-                  },
-                }}
-              />
+              <CategoryCard key={category.id} category={category} />
             ))}
 
             <TextField
               variant="standard"
-              // value={category.name}
+              value={newCategoryName}
               placeholder="Add new category"
-              onChange={(e) => {
-                // Handle category name change
-              }}
+              onChange={(e) => setNewCategoryName(e.target.value)}
               slotProps={{
                 input: {
                   endAdornment: (
                     <IconButton
                       size="small"
+                      color="success"
                       onClick={() => {
-                        // Handle delete category
+                        createCategory({
+                          name: newCategoryName,
+                        });
+                        setNewCategoryName("");
                       }}
                     >
-                      <Add color="success" />
+                      <Add />
                     </IconButton>
                   ),
                 },
               }}
             />
-
           </Box>
         </Box>
       </Wrapper>

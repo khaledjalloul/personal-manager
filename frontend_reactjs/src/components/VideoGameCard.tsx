@@ -28,6 +28,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useCreateVideoGame, useDeleteVideoGame, useEditVideoGame } from "../api";
 
 export const VideoGameCard = ({
   game,
@@ -38,6 +39,11 @@ export const VideoGameCard = ({
   isAddingGame: boolean,
   setIsAddingGame: Dispatch<SetStateAction<boolean>>
 }) => {
+
+  const { mutate: createGame } = useCreateVideoGame();
+  const { mutate: editGame } = useEditVideoGame();
+  const { mutate: deleteGame } = useDeleteVideoGame();
+
   const [isEditing, setIsEditing] = useState(isAddingGame);
   const [name, setName] = useState(game.name);
   const [platform, setPlatform] = useState(game.platform);
@@ -90,14 +96,47 @@ export const VideoGameCard = ({
           )}
 
           {isEditing && (
-            <IconButton sx={{ ml: 'auto', }}>
-              <Save color="success" />
+            <IconButton
+              color="success"
+              sx={{ ml: 'auto' }}
+              onClick={() => {
+                if (game.id !== -1) {
+                  editGame({
+                    id: game.id,
+                    name,
+                    platform,
+                    type,
+                    completed,
+                    firstPlayed: firstPlayed.toDate(),
+                    price,
+                    extraPurchases,
+                    storeUrl,
+                    coverImage
+                  });
+                  setIsEditing(false);
+                } else {
+                  createGame({
+                    name,
+                    platform,
+                    type,
+                    completed,
+                    firstPlayed: firstPlayed.toDate(),
+                    price,
+                    extraPurchases,
+                    storeUrl,
+                    coverImage
+                  });
+                }
+                setIsAddingGame(false);
+              }}
+            >
+              <Save />
             </IconButton>
           )}
 
-          {isEditing && (
-            <IconButton>
-              <Delete color="error" />
+          {isEditing && game.id !== -1 && (
+            <IconButton color="error" onClick={() => deleteGame({ id: game.id })}>
+              <Delete />
             </IconButton>
           )}
 

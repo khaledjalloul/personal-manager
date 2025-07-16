@@ -3,10 +3,14 @@ import { DiaryEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
+import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 
 export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
   const { palette } = useTheme();
+
+  const { mutate: createEntry } = useCreateDiaryEntry();
+  const { mutate: editEntry } = useEditDiaryEntry();
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
@@ -40,8 +44,25 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
             <Box>
               <IconButton
                 size="small"
+                color="success"
+                onClick={() => {
+                  if (entry.id < 0)
+                    createEntry({
+                      date: entry.date,
+                      content,
+                      workContent,
+                    })
+                  else
+                    editEntry({
+                      id: entry.id,
+                      date: entry.date,
+                      content,
+                      workContent
+                    })
+                  setIsEditing(false);
+                }}
               >
-                <Save color="success" />
+                <Save />
               </IconButton>
 
               <IconButton

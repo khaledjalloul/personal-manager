@@ -13,6 +13,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useCreatePianoPiece, useDeletePianoPiece, useEditPianoPiece } from "../api";
 
 
 export const PianoPieceTableRow = ({
@@ -35,6 +36,10 @@ export const PianoPieceTableRow = ({
   const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
   const [youtubeUrl, setYoutubeUrl] = useState(pianoPiece.youtubeUrl);
   const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
+
+  const { mutate: createPiece } = useCreatePianoPiece();
+  const { mutate: editPiece } = useEditPianoPiece();
+  const { mutate: deletePiece } = useDeletePianoPiece();
 
   return (
     <TableRow
@@ -96,36 +101,50 @@ export const PianoPieceTableRow = ({
 
       <TableCell>
         {!isEditing ? (monthLearned ? monthLearned.format("MMMM YYYY") : "") :
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              // label="Month"
-              views={["year", "month"]}
-              openTo="month"
-              value={monthLearned}
-              onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
-              enableAccessibleFieldDOMStructure={false}
-              slots={{
-                textField: props => <TextField
-                  {...props}
-                  size="small"
-                  variant="standard"
-                  placeholder="Month Learned"
-                  value={monthLearned ? monthLearned.format('MMMM YYYY') : ''}
-                />
-              }}
-            />
-          </LocalizationProvider>
+          <Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                views={["year", "month"]}
+                openTo="month"
+                value={monthLearned}
+                onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
+                enableAccessibleFieldDOMStructure={false}
+                slots={{
+                  textField: props => <TextField
+                    {...props}
+                    size="small"
+                    variant="standard"
+                    placeholder="Month Learned"
+                    value={monthLearned ? monthLearned.format('MMMM YYYY') : ''}
+                  />
+                }}
+              />
+            </LocalizationProvider>
+            <IconButton size="small" onClick={() => setMonthLearned(undefined)}>
+              <Clear />
+            </IconButton>
+          </Box>
         }
       </TableCell>
 
       {!isEditing ? (
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => {
+              if (pianoPiece.youtubeUrl) {
+                window.open(pianoPiece.youtubeUrl, "_blank");
+              }
+            }}
+            >
               <YouTube sx={{ color: "#F00" }} />
             </IconButton>
 
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => {
+              if (pianoPiece.sheetMusicUrl) {
+                window.open(pianoPiece.sheetMusicUrl, "_blank");
+              }
+            }
+            }>
               <PictureAsPdf />
             </IconButton>
           </Box>
@@ -157,16 +176,49 @@ export const PianoPieceTableRow = ({
               <Edit />
             </IconButton>
 
-            <IconButton size="small">
-              <Delete color="error" />
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => deletePiece({ id: pianoPiece.id })}
+            >
+              <Delete />
             </IconButton>
           </Box>
         </TableCell>
       ) : (
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton size="small">
-              <Save color="success" />
+            <IconButton
+              color="success"
+              size="small"
+              onClick={() => {
+                if (pianoPiece.id !== -1) {
+                  editPiece({
+                    id: pianoPiece.id,
+                    name,
+                    origin,
+                    composer,
+                    status,
+                    monthLearned: monthLearned ? monthLearned.toDate() : undefined,
+                    youtubeUrl,
+                    sheetMusicUrl
+                  });
+                  setIsEditing(false);
+                } else {
+                  createPiece({
+                    name,
+                    origin,
+                    composer,
+                    status,
+                    monthLearned: monthLearned ? monthLearned.toDate() : undefined,
+                    youtubeUrl,
+                    sheetMusicUrl
+                  });
+                  setIsAddingPiece(false);
+                }
+              }}
+            >
+              <Save />
             </IconButton>
 
             <IconButton size="small" onClick={() => {

@@ -20,6 +20,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useCreateHike, useDeleteHike, useEditHike } from "../api";
 
 const GoogleMapsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -45,6 +46,10 @@ export const HikeCard = ({
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
 
+  const { mutate: createHike } = useCreateHike();
+  const { mutate: editHike } = useEditHike();
+  const { mutate: deleteHike } = useDeleteHike();
+
   const [isEditing, setIsEditing] = useState(isAddingHike);
   const [date, setDate] = useState(dayjs(hike.date));
   const [description, setDescription] = useState(hike.description);
@@ -54,7 +59,7 @@ export const HikeCard = ({
   const [duration, setDuration] = useState(hike.duration);
   const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
-  const [coverImage, setCoverImage] = useState(hike.coverImage);
+  const [coverImage, setCoverImage] = useState(hike.coverImage); // TODO: Add image upload
 
   const durationHours = Math.floor(hike.duration);
   const durationMinutes = Math.round((hike.duration - durationHours) * 60);
@@ -95,20 +100,57 @@ export const HikeCard = ({
           )}
 
           {!isEditing && (
-            <IconButton sx={{ ml: 'auto' }} onClick={() => setIsEditing(true)}>
+            <IconButton
+              sx={{ ml: 'auto' }}
+              onClick={() => setIsEditing(true)}
+            >
               <Edit />
             </IconButton>
           )}
 
           {isEditing && (
-            <IconButton sx={{ ml: 'auto', }}>
-              <Save color="success" />
+            <IconButton
+              color="success"
+              sx={{ ml: 'auto', }}
+              onClick={() => {
+                if (hike.id !== -1) {
+                  editHike({
+                    id: hike.id,
+                    date: date.toDate(),
+                    description,
+                    distance,
+                    ascent,
+                    descent,
+                    duration,
+                    durationWithBreaks,
+                    googleMapsUrl,
+                    coverImage
+                  });
+                  setIsEditing(false);
+                } else {
+                  createHike({
+                    date: date.toDate(),
+                    description,
+                    distance,
+                    ascent,
+                    descent,
+                    duration,
+                    durationWithBreaks,
+                    googleMapsUrl,
+                    coverImage,
+                    images: []
+                  });
+                }
+                setIsAddingHike(false);
+              }}
+            >
+              <Save />
             </IconButton>
           )}
 
-          {isEditing && (
-            <IconButton>
-              <Delete color="error" />
+          {isEditing && hike.id !== -1 && (
+            <IconButton color="error" onClick={() => deleteHike({ id: hike.id })}>
+              <Delete />
             </IconButton>
           )}
 

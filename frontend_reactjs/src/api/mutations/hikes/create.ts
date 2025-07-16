@@ -1,21 +1,24 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { PianoPiece, PianoPieceStatus } from "../../../types";
+import { Hike } from "../../../types";
 
-const ENDPOINT = "piano";
+const ENDPOINT = "hikes";
 
-export type CreatePianoPieceRequestBody = {
-  name: string;
-  origin: string;
-  composer: string;
-  status: PianoPieceStatus;
-  monthLearned?: Date;
-  sheetMusicUrl: string;
-  youtubeUrl: string;
+export type CreateHikeRequestBody = {
+  date: Date;
+  description: string;
+  distance: number;
+  ascent: number;
+  descent: number;
+  duration: number;
+  durationWithBreaks: number;
+  coverImage: string;
+  images: string[];
+  googleMapsUrl: string;
 };
 
-const mutationFn = async (data: CreatePianoPieceRequestBody) => {
+const mutationFn = async (data: CreateHikeRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -25,10 +28,10 @@ const mutationFn = async (data: CreatePianoPieceRequestBody) => {
     });
 };
 
-export const useCreatePianoPiece = () => {
+export const useCreateHike = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<PianoPiece, AxiosError<{ message: string }>, CreatePianoPieceRequestBody>({
+  return useMutation<Hike, AxiosError<{ message: string }>, CreateHikeRequestBody>({
     mutationFn: mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

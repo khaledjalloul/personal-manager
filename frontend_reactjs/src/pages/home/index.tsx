@@ -1,5 +1,4 @@
 export * from "./Home";
-export * from "./CreateGroup";
 export * from "./About";
 export * from "./Expenses"
 export * from "./Diary";

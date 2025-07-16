@@ -5,30 +5,31 @@ import { PianoPiece, PianoPieceStatus } from "../../../types";
 
 const ENDPOINT = "piano";
 
-export type CreatePianoPieceRequestBody = {
-  name: string;
-  origin: string;
-  composer: string;
-  status: PianoPieceStatus;
+export type EditPianoPieceRequestBody = {
+  id: number;
+  name?: string;
+  origin?: string;
+  composer?: string;
+  status?: PianoPieceStatus;
   monthLearned?: Date;
-  sheetMusicUrl: string;
-  youtubeUrl: string;
+  sheetMusicUrl?: string;
+  youtubeUrl?: string;
 };
 
-const mutationFn = async (data: CreatePianoPieceRequestBody) => {
+const mutationFn = async (data: EditPianoPieceRequestBody) => {
   return await client
-    .post(`/${ENDPOINT}`, data)
+    .post(`/${ENDPOINT}/${data.id}`, data)
     .then((res) => res.data)
     .catch((err) => {
-      console.error(`create-${ENDPOINT}-error`, err?.response?.data);
+      console.error(`edit-${ENDPOINT}-error`, err?.response?.data);
       throw err?.response?.data;
     });
 };
 
-export const useCreatePianoPiece = () => {
+export const useEditPianoPiece = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<PianoPiece, AxiosError<{ message: string }>, CreatePianoPieceRequestBody>({
+  return useMutation<PianoPiece, AxiosError<{ message: string }>, EditPianoPieceRequestBody>({
     mutationFn: mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

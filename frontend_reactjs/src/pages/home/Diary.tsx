@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useMemo, useState } from "react";
-import { Clear } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, Clear } from "@mui/icons-material";
 import { useDiaryEntries } from "../../api";
 import { DiaryGridRow } from "../../components";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -55,6 +55,10 @@ export const Diary = () => {
   return (
     <Wrapper>
       <Header>
+        <IconButton onClick={() => setSelectedDate(selectedDate.subtract(1, 'month'))}>
+          <ArrowLeft />
+        </IconButton>
+
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="Month"
@@ -73,9 +77,14 @@ export const Diary = () => {
           />
         </LocalizationProvider>
 
+        <IconButton onClick={() => setSelectedDate(selectedDate.add(1, 'month'))}>
+          <ArrowRight />
+        </IconButton>
+
         <Button
           variant="contained"
           color="secondary"
+          sx={{ ml: 1 }}
           onClick={() => setSelectedDate(dayjs(new Date()))}
           disabled={dayjs(new Date()).isSame(selectedDate, 'month')}
         >
@@ -130,5 +139,5 @@ const Wrapper = styled(Box)`
 const Header = styled(Box)`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 `;

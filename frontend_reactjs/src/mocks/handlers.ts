@@ -26,17 +26,34 @@ import {
   expensesCategoryKeywords
 } from './data';
 import {
+  CreateDiaryEntryRequestBody,
   CreateExpenseRequestBody,
   CreateExpensesCategoryKeywordRequestBody,
   CreateExpensesCategoryRequestBody,
+  CreateHikeRequestBody,
   CreateIncomeRequestBody,
+  CreateNoteCategoryRequestBody,
+  CreateNoteRequestBody,
+  CreatePianoPieceRequestBody,
+  CreateVideoGameRequestBody,
   DeleteExpenseRequestBody,
   DeleteExpensesCategoryKeywordRequestBody,
   DeleteExpensesCategoryRequestBody,
+  DeleteHikeRequestBody,
   DeleteIncomeRequestBody,
+  DeleteNoteCategoyRequestBody,
+  DeleteNoteRequestBody,
+  DeletePianoPieceRequestBody,
+  DeleteVideoGameRequestBody,
+  EditDiaryEntryRequestBody,
   EditExpenseRequestBody,
   EditExpensesCategoryRequestBody,
-  EditIncomeRequestBody
+  EditHikeRequestBody,
+  EditIncomeRequestBody,
+  EditNoteCategoryRequestBody,
+  EditNoteRequestBody,
+  EditPianoPieceRequestBody,
+  EditVideoGameRequestBody
 } from '../api';
 
 
@@ -70,7 +87,7 @@ const expenseHandlers = [
     return HttpResponse.json(expensesToReturn);
   }),
   http.post<PathParams, CreateExpenseRequestBody, Expense>('/expenses', async ({ request }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as CreateExpenseRequestBody;
     const category = expensesCategories.find(cat => cat.id === requestBody.categoryId);
     if (category) {
       const newExpense: Expense = {
@@ -83,7 +100,7 @@ const expenseHandlers = [
     }
   }),
   http.post<PathParams, EditExpenseRequestBody, Expense>('/expenses/:id', async ({ request, params }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as EditExpenseRequestBody;
     const expenseId = parseInt(params.id as string);
     const existingIndex = expenses.findIndex(expense => expense.id === expenseId);
     if (existingIndex !== -1) {
@@ -103,7 +120,7 @@ const expenseHandlers = [
   // Incomes
   http.get<PathParams, DefaultBodyType, Income[]>('/expenses/incomes', () => HttpResponse.json(incomes)),
   http.post<PathParams, CreateIncomeRequestBody, Income>('/expenses/incomes', async ({ request }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as CreateIncomeRequestBody;
     const newIncome: Income = {
       id: incomes.length > 0 ? Math.max(...incomes.map(income => income.id)) + 1 : 0,
       ...requestBody
@@ -112,7 +129,7 @@ const expenseHandlers = [
     return HttpResponse.json(newIncome);
   }),
   http.post<PathParams, EditIncomeRequestBody, Income>('/expenses/incomes/:id', async ({ request, params }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as EditIncomeRequestBody;
     const incomeId = parseInt(params.id as string);
     const existingIndex = incomes.findIndex(income => income.id === incomeId);
     if (existingIndex !== -1) {
@@ -133,7 +150,7 @@ const expenseHandlers = [
     return HttpResponse.json(expensesCategories);
   }),
   http.post<PathParams, CreateExpensesCategoryRequestBody, ExpensesCategory>('/expenses/categories', async ({ request }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as CreateExpensesCategoryRequestBody;
     const newCategory: ExpensesCategory = {
       id: expensesCategories.length > 0 ? Math.max(...expensesCategories.map(category => category.id)) + 1 : 0,
       ...requestBody
@@ -142,7 +159,7 @@ const expenseHandlers = [
     return HttpResponse.json(newCategory);
   }),
   http.post<PathParams, EditExpensesCategoryRequestBody, ExpensesCategory>('/expenses/categories/:id', async ({ request, params }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as EditExpensesCategoryRequestBody;
     const categoryId = parseInt(params.id as string);
     const existingIndex = expensesCategories.findIndex(category => category.id === categoryId);
     if (existingIndex !== -1) {
@@ -170,7 +187,7 @@ const expenseHandlers = [
     return HttpResponse.json(keywordsToReturn);
   }),
   http.post<PathParams, CreateExpensesCategoryKeywordRequestBody, ExpensesCategoryKeyword>('/expenses/categories/keywords', async ({ request }) => {
-    const requestBody = await request.clone().json();
+    const requestBody = await request.clone().json() as CreateExpensesCategoryKeywordRequestBody;
     const category = expensesCategories.find(cat => cat.id === requestBody.categoryId);
     if (category) {
       const newKeyword: ExpensesCategoryKeyword = {
@@ -194,27 +211,131 @@ const expenseHandlers = [
 
 const hikeHandlers = [
   http.get<PathParams, DefaultBodyType, Hike[]>('/hikes', () => HttpResponse.json(hikes)),
+  http.post<PathParams, CreateHikeRequestBody, Hike>('/hikes', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateHikeRequestBody;
+    const newHike: Hike = {
+      id: hikes.length > 0 ? Math.max(...hikes.map(hike => hike.id)) + 1 : 0,
+      ...requestBody
+    }
+    hikes.push(newHike);
+    return HttpResponse.json(newHike);
+  }),
+  http.post<PathParams, EditHikeRequestBody, Hike>('/hikes/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditHikeRequestBody;
+    const hikeId = parseInt(params.id as string);
+    const existingIndex = hikes.findIndex(hike => hike.id === hikeId);
+    if (existingIndex !== -1) {
+      hikes[existingIndex] = { ...hikes[existingIndex], ...requestBody };
+      return HttpResponse.json(hikes[existingIndex]);
+    }
+  }),
+  http.delete<PathParams, DeleteHikeRequestBody>('/hikes/:id', ({ params }) => {
+    const hikeId = parseInt(params.id as string);
+    const existingIndex = hikes.findIndex(hike => hike.id === hikeId);
+    if (existingIndex !== -1) {
+      hikes.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Hike deleted successfully' });
+    }
+  })
 ];
 
 const pianoHandlers = [
-  http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => HttpResponse.json(pianoPieces))
+  http.get<PathParams, DefaultBodyType, PianoPiece[]>('/piano', () => HttpResponse.json(pianoPieces)),
+  http.post<PathParams, CreatePianoPieceRequestBody, PianoPiece>('/piano', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreatePianoPieceRequestBody;
+    const newPianoPiece: PianoPiece = {
+      id: pianoPieces.length > 0 ? Math.max(...pianoPieces.map(piece => piece.id)) + 1 : 0,
+      ...requestBody
+    }
+    pianoPieces.push(newPianoPiece);
+    return HttpResponse.json(newPianoPiece);
+  }),
+  http.post<PathParams, EditPianoPieceRequestBody, PianoPiece>('/piano/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditPianoPieceRequestBody;
+    const pieceId = parseInt(params.id as string);
+    const existingIndex = pianoPieces.findIndex(piece => piece.id === pieceId);
+    if (existingIndex !== -1) {
+      pianoPieces[existingIndex] = { ...pianoPieces[existingIndex], ...requestBody };
+      return HttpResponse.json(pianoPieces[existingIndex]);
+    }
+  }),
+  http.delete<PathParams, DeletePianoPieceRequestBody>('/piano/:id', ({ params }) => {
+    const pieceId = parseInt(params.id as string);
+    const existingIndex = pianoPieces.findIndex(piece => piece.id === pieceId);
+    if (existingIndex !== -1) {
+      pianoPieces.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Piano piece deleted successfully' });
+    }
+  })
 ];
 
 const noteHandlers = [
-  http.get<PathParams, DefaultBodyType, NoteCategory[]>('/notes/categories', () => (
-    HttpResponse.json(noteCategories)
-  )),
   http.get<PathParams, DefaultBodyType, Note[]>('/notes', ({ request }) => {
     const url = new URL(request.url)
     var categoryId = url.searchParams.get('categoryId') ?? ""
-
     var notesToReturn = notes;
-
     if (categoryId) {
       notesToReturn = notes.filter(note => note.category.id === parseInt(categoryId));
     }
-
     return HttpResponse.json(notesToReturn)
+  }),
+  http.post<PathParams, CreateNoteRequestBody, Note>('/notes', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateNoteRequestBody;
+    const category = noteCategories.find(cat => cat.id === requestBody.categoryId);
+    if (category) {
+      const newNote: Note = {
+        id: notes.length > 0 ? Math.max(...notes.map(category => category.id)) + 1 : 0,
+        ...requestBody,
+        category
+      };
+      notes.push(newNote);
+      return HttpResponse.json(newNote);
+    }
+  }),
+  http.post<PathParams, EditNoteRequestBody, Note>('/notes/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditNoteRequestBody;
+    const noteId = parseInt(params.id as string);
+    const existingIndex = notes.findIndex(note => note.id === noteId);
+    if (existingIndex !== -1) {
+      const category = noteCategories.find(cat => cat.id === requestBody.categoryId) ?? notes[existingIndex].category;
+      notes[existingIndex] = { ...notes[existingIndex], ...requestBody, category };
+      return HttpResponse.json(notes[existingIndex]);
+    }
+  }),
+  http.delete<PathParams, DeleteNoteRequestBody>('/notes/:id', ({ params }) => {
+    const noteId = parseInt(params.id as string);
+    const existingIndex = notes.findIndex(note => note.id === noteId);
+    if (existingIndex !== -1) {
+      notes.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Note deleted successfully' });
+    }
+  }),
+  http.get<PathParams, DefaultBodyType, NoteCategory[]>('/notes/categories', () => HttpResponse.json(noteCategories)),
+  http.post<PathParams, CreateNoteCategoryRequestBody, NoteCategory>('/notes/categories', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateNoteCategoryRequestBody;
+    const newCategory: NoteCategory = {
+      id: noteCategories.length > 0 ? Math.max(...noteCategories.map(category => category.id)) + 1 : 0,
+      ...requestBody
+    };
+    noteCategories.push(newCategory);
+    return HttpResponse.json(newCategory);
+  }),
+  http.post<PathParams, EditNoteCategoryRequestBody, NoteCategory>('/notes/categories/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditNoteCategoryRequestBody;
+    const categoryId = parseInt(params.id as string);
+    const existingIndex = noteCategories.findIndex(category => category.id === categoryId);
+    if (existingIndex !== -1) {
+      noteCategories[existingIndex] = { ...noteCategories[existingIndex], ...requestBody };
+      return HttpResponse.json(noteCategories[existingIndex]);
+    }
+  }),
+  http.delete<PathParams, DeleteNoteCategoyRequestBody>('/notes/categories/:id', ({ params }) => {
+    const categoryId = parseInt(params.id as string);
+    const existingIndex = noteCategories.findIndex(category => category.id === categoryId);
+    if (existingIndex !== -1) {
+      noteCategories.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Category deleted successfully' });
+    }
   })
 ];
 
@@ -226,8 +347,8 @@ const diaryHandlers = [
     var searchText = url.searchParams.get('searchText') ?? "";
 
     var entriesToReturn = diaryEntries.filter(entry => (
-      entry.date.getFullYear() === parseInt(year) &&
-      entry.date.getMonth() === parseInt(month) &&
+      new Date(entry.date).getFullYear() === parseInt(year) &&
+      new Date(entry.date).getMonth() === parseInt(month) &&
       (
         searchText ? (
           entry.content.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -237,11 +358,55 @@ const diaryHandlers = [
     ));
 
     return HttpResponse.json(entriesToReturn)
+  }),
+  http.post<PathParams, CreateDiaryEntryRequestBody, DiaryEntry>('/diary', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateDiaryEntryRequestBody;
+    const newEntry: DiaryEntry = {
+      id: diaryEntries.length > 0 ? Math.max(...diaryEntries.map(entry => entry.id)) + 1 : 0,
+      ...requestBody
+    }
+    diaryEntries.push(newEntry);
+    return HttpResponse.json(newEntry);
+  }),
+  http.post<PathParams, EditDiaryEntryRequestBody, DiaryEntry>('/diary/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditDiaryEntryRequestBody;
+    const entryId = parseInt(params.id as string);
+    const existingIndex = diaryEntries.findIndex(entry => entry.id === entryId);
+    if (existingIndex !== -1) {
+      diaryEntries[existingIndex] = { ...diaryEntries[existingIndex], ...requestBody };
+      return HttpResponse.json(diaryEntries[existingIndex]);
+    }
   })
 ];
 
 const videoGameHandlers = [
-  http.get<PathParams, DefaultBodyType, VideoGame[]>('/video-games', () => HttpResponse.json(videoGames))
+  http.get<PathParams, DefaultBodyType, VideoGame[]>('/video-games', () => HttpResponse.json(videoGames)),
+  http.post<PathParams, CreateVideoGameRequestBody, VideoGame>('/video-games', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateVideoGameRequestBody;
+    const newVideoGame: VideoGame = {
+      id: videoGames.length > 0 ? Math.max(...videoGames.map(game => game.id)) + 1 : 0,
+      ...requestBody
+    }
+    videoGames.push(newVideoGame);
+    return HttpResponse.json(newVideoGame);
+  }),
+  http.post<PathParams, EditVideoGameRequestBody, VideoGame>('/video-games/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditVideoGameRequestBody;
+    const gameId = parseInt(params.id as string);
+    const existingIndex = videoGames.findIndex(game => game.id === gameId);
+    if (existingIndex !== -1) {
+      videoGames[existingIndex] = { ...videoGames[existingIndex], ...requestBody };
+      return HttpResponse.json(videoGames[existingIndex]);
+    }
+  }),
+  http.delete<PathParams, DeleteVideoGameRequestBody>('/video-games/:id', ({ params }) => {
+    const gameId = parseInt(params.id as string);
+    const existingIndex = videoGames.findIndex(game => game.id === gameId);
+    if (existingIndex !== -1) {
+      videoGames.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Video game deleted successfully' });
+    }
+  })
 ];
 
 export const handlers = [

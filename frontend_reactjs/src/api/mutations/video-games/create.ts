@@ -1,21 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { PianoPiece, PianoPieceStatus } from "../../../types";
+import { VideoGame, VideoGameType } from "../../../types";
 
-const ENDPOINT = "piano";
+const ENDPOINT = "video-games";
 
-export type CreatePianoPieceRequestBody = {
+export type CreateVideoGameRequestBody = {
   name: string;
-  origin: string;
-  composer: string;
-  status: PianoPieceStatus;
-  monthLearned?: Date;
-  sheetMusicUrl: string;
-  youtubeUrl: string;
+  platform: string;
+  type: VideoGameType;
+  completed: boolean;
+  firstPlayed: Date;
+  price: number;
+  extraPurchases: {
+    name: string;
+    price: number;
+  }[];
+  storeUrl: string;
+  coverImage: string;
 };
 
-const mutationFn = async (data: CreatePianoPieceRequestBody) => {
+const mutationFn = async (data: CreateVideoGameRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -25,10 +30,10 @@ const mutationFn = async (data: CreatePianoPieceRequestBody) => {
     });
 };
 
-export const useCreatePianoPiece = () => {
+export const useCreateVideoGame = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<PianoPiece, AxiosError<{ message: string }>, CreatePianoPieceRequestBody>({
+  return useMutation<VideoGame, AxiosError<{ message: string }>, CreateVideoGameRequestBody>({
     mutationFn: mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
