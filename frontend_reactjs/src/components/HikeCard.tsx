@@ -114,7 +114,7 @@ export const HikeCard = ({
 
           {isEditing && (
             <IconButton onClick={() => {
-              if (!isAddingHike || hike.id !== -1) {
+              if (hike.id !== -1) {
                 setDate(dayjs(hike.date));
                 setDescription(hike.description);
                 setDistance(hike.distance);

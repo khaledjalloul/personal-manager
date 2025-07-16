@@ -170,7 +170,7 @@ export const PianoPieceTableRow = ({
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              if (!isAddingPiece || pianoPiece.id !== -1) {
+              if (pianoPiece.id !== -1) {
                 setName(pianoPiece.name);
                 setOrigin(pianoPiece.origin);
                 setComposer(pianoPiece.composer);

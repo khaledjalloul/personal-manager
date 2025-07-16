@@ -1,10 +1,10 @@
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material"
 import { ExpensesCategory } from "../types"
 import { Clear, Delete, Edit, Save, Send } from "@mui/icons-material"
-import { useExpensesCategoryKeywords } from "../api"
+import { useCreateExpensesCategory, useCreateExpensesCategoryKeyword, useDeleteExpensesCategory, useDeleteExpensesCategoryKeyword, useEditExpensesCategory, useExpensesCategoryKeywords } from "../api"
 import { Dispatch, SetStateAction, useState } from "react"
 
-export const CategoryManagerCard = ({
+export const ExpensesCategoryCard = ({
   category,
   isAddingCategory,
   setIsAddingCategory
@@ -19,8 +19,15 @@ export const CategoryManagerCard = ({
     categoryId: category.id
   })
 
+  const { mutate: createCategory } = useCreateExpensesCategory();
+  const { mutate: editCategory } = useEditExpensesCategory();
+  const { mutate: deleteCategory } = useDeleteExpensesCategory();
+  const { mutate: createKeyword } = useCreateExpensesCategoryKeyword();
+  const { mutate: deleteKeyword } = useDeleteExpensesCategoryKeyword();
+
   const [isEditing, setIsEditing] = useState(isAddingCategory);
-  const [name, setName] = useState(category.name)
+  const [name, setName] = useState(category.name);
+  const [keyword, setKeyword] = useState("");
 
   return (
     <Grid
@@ -50,20 +57,34 @@ export const CategoryManagerCard = ({
         )}
 
         {!isEditing && (
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => deleteCategory({ id: category.id })}>
             <Delete color="error" />
           </IconButton>
         )}
 
         {isEditing && (
-          <IconButton size="small" sx={{ ml: 'auto' }}>
+          <IconButton size="small" sx={{ ml: 'auto' }} onClick={() => {
+            if (category.id !== -1) {
+              editCategory({
+                id: category.id,
+                name,
+              })
+              setIsEditing(false);
+            } else {
+              createCategory({
+                name,
+                color: "blue" // TODO: remove
+              })
+              setIsAddingCategory(false);
+            }
+          }}>
             <Save color="success" />
           </IconButton>
         )}
 
         {isEditing && (
           <IconButton size="small" onClick={() => {
-            if (!isAddingCategory || category.id !== -1) {
+            if (category.id !== -1) {
               setName(category.name);
               setIsEditing(false);
             } else {
@@ -88,6 +109,7 @@ export const CategoryManagerCard = ({
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'start',
+          flexWrap: 'wrap',
           gap: 1
         }}>
           {keywords?.map((keyword) => (
@@ -104,7 +126,7 @@ export const CategoryManagerCard = ({
               gap: 0.5
             }}>
               <Typography variant="body2">{keyword.keyword}</Typography>
-              <IconButton size="small">
+              <IconButton size="small" onClick={() => deleteKeyword({ id: keyword.id })}>
                 <Clear />
               </IconButton>
             </Box>
@@ -115,10 +137,23 @@ export const CategoryManagerCard = ({
           variant="standard"
           placeholder="Add keyword"
           sx={{ mt: 'auto' }}
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          disabled={category.id === -1}
           slotProps={{
             input: {
               endAdornment: (
-                <IconButton size="small">
+                <IconButton
+                  size="small"
+                  color="success"
+                  disabled={keyword.length === 0 || category.id === -1}
+                  onClick={() => {
+                    createKeyword({
+                      categoryId: category.id,
+                      keyword
+                    })
+                    setKeyword("")
+                  }}>
                   <Send />
                 </IconButton>
               )

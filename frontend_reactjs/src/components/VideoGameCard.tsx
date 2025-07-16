@@ -103,7 +103,7 @@ export const VideoGameCard = ({
 
           {isEditing && (
             <IconButton onClick={() => {
-              if (!isAddingGame || game.id !== -1) {
+              if (game.id !== -1) {
                 setName(game.name);
                 setPlatform(game.platform);
                 setType(game.type);

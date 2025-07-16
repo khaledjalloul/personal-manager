@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Income } from "../../../types";
 import client from "../../client";
 
-const ENDPOINT = "incomes";
+const ENDPOINT = "expenses/incomes";
 
 export type GetIncomesRequestParams = {
   searchText: string;

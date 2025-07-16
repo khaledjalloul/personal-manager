@@ -11,9 +11,11 @@ import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useCreateIncome, useDeleteIncome, useEditIncome } from "../api";
 
 
-export const IncomeTableRow = ({ income,
+export const IncomeTableRow = ({
+	income,
 	index,
 	editable = false,
 	isAddingIncome,
@@ -26,10 +28,20 @@ export const IncomeTableRow = ({ income,
 	setIsAddingIncome?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
+	const { mutate: createIncome } = useCreateIncome();
+	const { mutate: editIncome } = useEditIncome();
+	const { mutate: deleteIncome } = useDeleteIncome();
+
 	const [isEditing, setIsEditing] = useState(isAddingIncome);
 	const [date, setDate] = useState(dayjs(income.date));
 	const [source, setSource] = useState(income.source);
 	const [amount, setAmount] = useState(income.amount);
+
+	const resetFields = () => {
+		setDate(dayjs(income.date));
+		setSource(income.source);
+		setAmount(income.amount);
+	}
 
 	return (
 		<TableRow
@@ -101,21 +113,36 @@ export const IncomeTableRow = ({ income,
 							<Edit />
 						</IconButton>
 
-						<IconButton size="small">
+						<IconButton size="small" onClick={() => deleteIncome({ id: income.id })}>
 							<Delete color="error" />
 						</IconButton>
 					</TableCell>
 				) : (
 					<TableCell sx={{ display: 'flex', gap: 1 }}>
-						<IconButton size="small">
+						<IconButton size="small" onClick={() => {
+							if (income.id !== -1) {
+								editIncome({
+									id: income.id,
+									date: date.toDate(),
+									source,
+									amount,
+								});
+								setIsEditing(false);
+							} else if (setIsAddingIncome) {
+								createIncome({
+									date: date.toDate(),
+									source,
+									amount,
+								});
+								setIsAddingIncome(false);
+							}
+						}}>
 							<Save color="success" />
 						</IconButton>
 
 						<IconButton size="small" onClick={() => {
-							if (!isAddingIncome || income.id !== -1) {
-								setDate(dayjs(income.date));
-								setSource(income.source);
-								setAmount(income.amount);
+							if (income.id !== -1) {
+								resetFields();
 								setIsEditing(false)
 							} else if (setIsAddingIncome) {
 								setIsAddingIncome(false);

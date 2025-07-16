@@ -1,21 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { PianoPiece } from "../../../types";
+import { Expense } from "../../../types";
 
-const ENDPOINT = "piano";
+const ENDPOINT = "expenses";
 
-export type CreatePianoPieceRequestBody = {
-  name: string;
-  origin: string;
-  composer: string;
-  statusId: number;
-  monthLearned?: Date;
-  sheetMusicUrl: string;
-  youtubeUrl: string;
+export type CreateExpenseRequestBody = {
+  date: Date;
+  categoryId: number;
+  description: string;
+  vendor: string;
+  amount: number;
+  tags: string[];
+  type: "manual" | "auto";
 };
 
-const mutationFn = async (data: CreatePianoPieceRequestBody) => {
+const mutationFn = async (data: CreateExpenseRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -25,10 +25,10 @@ const mutationFn = async (data: CreatePianoPieceRequestBody) => {
     });
 };
 
-export const useCreatePianoPiece = () => {
+export const useCreateExpense = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<PianoPiece, AxiosError<{ message: string }>, CreatePianoPieceRequestBody>({
+  return useMutation<Expense, AxiosError<{ message: string }>, CreateExpenseRequestBody>({
     mutationFn: mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
-import { CategoryManagerCard, ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { ExpensesCategoryCard, ExpenseTableRow, IncomeTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { Expense, ExpensesCategory, Income } from "../../../types";
@@ -89,7 +89,7 @@ export const ManageExpenses = () => {
                 {isAddingIncome && (
                   <IncomeTableRow
                     key={emptyIncome.id}
-                    income={emptyIncome}
+                    income={{ ...emptyIncome, date: new Date() }}
                     index={emptyIncome.id}
                     isAddingIncome={isAddingIncome}
                     setIsAddingIncome={setIsAddingIncome}
@@ -132,7 +132,11 @@ export const ManageExpenses = () => {
                 {isAddingExpense && (
                   <ExpenseTableRow
                     key={emptyExpense.id}
-                    expense={{ ...emptyExpense, category: categories ? categories[0] : emptyCategory }}
+                    expense={{
+                      ...emptyExpense,
+                      category: categories ? categories[0] : emptyCategory,
+                      date: new Date()
+                    }}
                     index={emptyExpense.id}
                     isAddingExpense={isAddingExpense}
                     setIsAddingExpense={setIsAddingExpense}
@@ -182,7 +186,7 @@ export const ManageExpenses = () => {
 
       <Grid container spacing={2}>
         {isAddingCategory && (
-          <CategoryManagerCard
+          <ExpensesCategoryCard
             key={emptyCategory.id}
             category={emptyCategory}
             isAddingCategory={isAddingCategory}
@@ -190,7 +194,7 @@ export const ManageExpenses = () => {
           />
         )}
         {categories?.map((category) => (
-          <CategoryManagerCard
+          <ExpensesCategoryCard
             key={category.id}
             category={category}
             isAddingCategory={isAddingCategory}

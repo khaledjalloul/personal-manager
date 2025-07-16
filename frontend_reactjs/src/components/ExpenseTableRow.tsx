@@ -10,7 +10,7 @@ import {
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useExpensesCategories } from "../api";
+import { useCreateExpense, useDeleteExpense, useEditExpense, useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,6 +30,10 @@ export const ExpenseTableRow = ({
   setIsAddingExpense?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { data: expensesCategories } = useExpensesCategories();
+
+  const { mutate: createExpense } = useCreateExpense();
+  const { mutate: editExpense } = useEditExpense();
+  const { mutate: deleteExpense } = useDeleteExpense();
 
   const [isEditing, setIsEditing] = useState(isAddingExpense);
   const [date, setDate] = useState(dayjs(expense.date));
@@ -132,18 +136,41 @@ export const ExpenseTableRow = ({
               <Edit />
             </IconButton>
 
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => deleteExpense({ id: expense.id })}>
               <Delete color="error" />
             </IconButton>
           </TableCell>
         ) : (
           <TableCell sx={{ display: 'flex', gap: 1 }}>
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => {
+              if (expense.id !== -1) {
+                editExpense({
+                  id: expense.id,
+                  date: date.toDate(),
+                  categoryId: category.id,
+                  description,
+                  vendor,
+                  amount,
+                });
+                setIsEditing(false);
+              } else if (setIsAddingExpense) {
+                createExpense({
+                  date: date.toDate(),
+                  categoryId: category.id,
+                  description,
+                  vendor,
+                  amount,
+                  tags: [],
+                  type: 'manual'
+                });
+                setIsAddingExpense(false);
+              }
+            }}>
               <Save color="success" />
             </IconButton>
 
             <IconButton size="small" onClick={() => {
-              if (!isAddingExpense || expense.id !== -1) {
+              if (expense.id !== -1) {
                 setDate(dayjs(expense.date));
                 setCategory(expense.category);
                 setDescription(expense.description);

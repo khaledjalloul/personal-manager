@@ -19,7 +19,7 @@ export type Expense = {
   vendor: string;
   amount: number;
   tags: string[];
-  type?: "manual" | "auto";
+  type: "manual" | "auto";
 };
 
 export type ExpensesCategoryKeyword = {
