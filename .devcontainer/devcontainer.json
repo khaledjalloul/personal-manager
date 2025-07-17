@@ -16,6 +16,8 @@
                 "xaver.clang-format",
                 // ReactJS
                 "styled-components.vscode-styled-components",
+                // ExpressJS
+                "prisma.prisma",
                 // Docker
                 "ms-azuretools.vscode-docker",
                 // GitLens

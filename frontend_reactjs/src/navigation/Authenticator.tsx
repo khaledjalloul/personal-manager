@@ -13,7 +13,7 @@ export const Authenticator = () => {
     else setUserData(JSON.parse(localData));
   }, []);
 
-  if (userData === undefined) return <div />;
-  else if (!userData) return <Auth />;
-  else return <NavigationBar />;
+  // if (userData === undefined) return <div />;
+  // else if (!userData) return <Auth />;
+  return <NavigationBar />;
 };
