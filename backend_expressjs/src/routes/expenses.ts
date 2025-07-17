@@ -1,159 +1,209 @@
 import { Router } from 'express';
+import { ExpenseType, PrismaClient } from '@prisma/client';
+import { Request, Response } from 'express';
 
 const router = Router();
+const prisma = new PrismaClient();
 
-router.get('/', async (req, res) => {
-  res.json({ message: `Hello ${req.user?.email}, here are your expenses.` });
+// Expenses
+
+router.get('/', async (req: Request, res: Response) => {
+  const { type, searchText } = req.query;
+  const search = searchText ? (searchText as string).toLowerCase() : '';
+
+  const expenses = await prisma.expense.findMany({
+    where: {
+      userId: req.user?.id,
+      type: type === 'all' ? undefined : type as ExpenseType,
+      OR: [
+        { description: { contains: search, mode: 'insensitive' } },
+        { vendor: { contains: search, mode: 'insensitive' } },
+        { tags: { hasSome: [search] } },
+        { category: { name: { contains: search, mode: 'insensitive' } } },
+      ],
+    },
+    orderBy: { date: 'desc' },
+    include: { category: true },
+  });
+
+  res.json(expenses);
+});
+
+router.post('/', async (req: Request, res: Response) => {
+  const { categoryId, ...data } = req.body;
+  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
+  if (!category) return res.status(400).json({ error: 'Category not found' });
+
+  const newExpense = await prisma.expense.create({
+    data: {
+      userId: req.user!.id,
+      date: new Date(data.date),
+      category: { connect: { id: categoryId } },
+      description: data.description,
+      vendor: data.vendor,
+      amount: data.amount,
+      type: data.type,
+    },
+    include: { category: true },
+  });
+
+  res.json(newExpense);
+});
+
+router.post('/:id', async (req: Request, res: Response) => {
+  const expenseId = Number(req.params.id);
+  const { categoryId, ...data } = req.body;
+
+  let categoryConnect = {};
+  if (categoryId) {
+    const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
+    if (!category) return res.status(400).json({ error: 'Category not found' });
+    categoryConnect = { category: { connect: { id: categoryId } } };
+  }
+
+  const updatedExpense = await prisma.expense.update({
+    where: { id: expenseId },
+    data: {
+      date: new Date(data.date),
+      ...categoryConnect,
+      description: data.description,
+      vendor: data.vendor,
+      amount: data.amount,
+    },
+    include: { category: true },
+  });
+
+  res.json(updatedExpense);
+});
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  const expenseId = Number(req.params.id);
+  await prisma.expense.delete({ where: { id: expenseId } });
+  res.json({ message: 'Expense deleted successfully' });
+});
+
+// Incomes
+
+router.get('/incomes', async (_req: Request, res: Response) => {
+  const incomes = await prisma.income.findMany({
+    where: { userId: _req.user?.id },
+    orderBy: { date: 'desc' },
+  });
+  res.json(incomes);
+});
+
+router.post('/incomes', async (req: Request, res: Response) => {
+  const { date, source, amount } = req.body;
+  const newIncome = await prisma.income.create({
+    data: {
+      userId: req.user!.id,
+      date: new Date(date),
+      source,
+      amount
+    }
+  });
+  res.json(newIncome);
+});
+
+router.post('/incomes/:id', async (req: Request, res: Response) => {
+  const incomeId = Number(req.params.id);
+  const { date, source, amount } = req.body;
+  const updatedIncome = await prisma.income.update({
+    where: { id: incomeId },
+    data: {
+      date: new Date(date),
+      source,
+      amount
+    }
+  });
+  res.json(updatedIncome);
+});
+
+router.delete('/incomes/:id', async (req: Request, res: Response) => {
+  const incomeId = Number(req.params.id);
+  await prisma.income.delete({ where: { id: incomeId } });
+  res.json({ message: 'Income deleted successfully' });
+});
+
+// Categories
+
+router.get('/categories', async (_req: Request, res: Response) => {
+  const categories = await prisma.expensesCategory.findMany({
+    where: { userId: _req.user?.id },
+    orderBy: { name: 'asc' },
+  });
+  res.json(categories);
+});
+
+router.post('/categories', async (req: Request, res: Response) => {
+  const { name, color } = req.body;
+  const newCategory = await prisma.expensesCategory.create({
+    data: {
+      userId: req.user!.id,
+      name,
+      color
+    }
+  });
+  res.json(newCategory);
+});
+
+router.post('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = Number(req.params.id);
+  const { name, color } = req.body;
+  const updatedCategory = await prisma.expensesCategory.update({
+    where: { id: categoryId },
+    data: {
+      name,
+      color
+    }
+  });
+  res.json(updatedCategory);
+});
+
+router.delete('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = Number(req.params.id);
+
+  await prisma.expense.updateMany({
+    where: { categoryId },
+    data: { categoryId: null },
+  });
+
+  await prisma.expensesCategory.delete({ where: { id: categoryId } });
+  res.json({ message: 'Category deleted successfully' });
+});
+
+// Category Keywords
+
+router.get('/categories/keywords', async (req: Request, res: Response) => {
+  const categoryId = Number(req.query.categoryId ?? 0);
+  const keywords = await prisma.expensesCategoryKeyword.findMany({
+    where: { categoryId },
+    include: { category: true },
+    orderBy: { keyword: 'asc' },
+  });
+  res.json(keywords);
+});
+
+router.post('/categories/keywords', async (req: Request, res: Response) => {
+  const { categoryId, keyword } = req.body;
+  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
+  if (!category) return res.status(400).json({ error: 'Category not found' });
+
+  const newKeyword = await prisma.expensesCategoryKeyword.create({
+    data: {
+      category: { connect: { id: categoryId } },
+      keyword
+    },
+    include: { category: true },
+  });
+
+  res.json(newKeyword);
+});
+
+router.delete('/categories/keywords/:id', async (req: Request, res: Response) => {
+  const keywordId = Number(req.params.id);
+  await prisma.expensesCategoryKeyword.delete({ where: { id: keywordId } });
+  res.json({ message: 'Keyword deleted successfully' });
 });
 
 export default router;
-
-
-//  // Expenses
-//   http.get<PathParams, DefaultBodyType, Expense[]>('/expenses', ({ request }) => {
-//     const url = new URL(request.url)
-//     var type = url.searchParams.get('type')
-//     var searchText = url.searchParams.get('searchText') ?? "";
-
-//     var expensesToReturn = expenses;
-
-//     if (type && type !== "all")
-//       expensesToReturn = expenses.filter(expense => expense.type === type);
-
-//     if (searchText) {
-//       expensesToReturn = expensesToReturn.filter(expense =>
-//         expense.description.toLowerCase().includes(searchText.toLowerCase()) ||
-//         expense.vendor.toLowerCase().includes(searchText.toLowerCase()) ||
-//         expense.tags.some(tag => tag.toLowerCase().includes(searchText.toLowerCase())) ||
-//         (expense.category && expense.category.name.toLowerCase().includes(searchText.toLowerCase()))
-//       )
-//     }
-
-//     return HttpResponse.json(expensesToReturn);
-//   }),
-//   http.post<PathParams, CreateExpenseRequestBody, Expense>('/expenses', async ({ request }) => {
-//     const requestBody = await request.clone().json() as CreateExpenseRequestBody;
-//     const category = expensesCategories.find(cat => cat.id === requestBody.categoryId);
-//     if (category) {
-//       const newExpense: Expense = {
-//         id: expenses.length > 0 ? Math.max(...expenses.map(expense => expense.id)) + 1 : 0,
-//         ...requestBody,
-//         category
-//       }
-//       expenses.push(newExpense);
-//       return HttpResponse.json(newExpense);
-//     }
-//   }),
-//   http.post<PathParams, EditExpenseRequestBody, Expense>('/expenses/:id', async ({ request, params }) => {
-//     const requestBody = await request.clone().json() as EditExpenseRequestBody;
-//     const expenseId = parseInt(params.id as string);
-//     const existingIndex = expenses.findIndex(expense => expense.id === expenseId);
-//     if (existingIndex !== -1) {
-//       const category = expensesCategories.find(cat => cat.id === requestBody.categoryId) ?? expenses[existingIndex].category
-//       expenses[existingIndex] = { ...expenses[existingIndex], ...requestBody, category };
-//       return HttpResponse.json(expenses[existingIndex]);
-//     }
-//   }),
-//   http.delete<PathParams, DeleteExpenseRequestBody>('/expenses/:id', ({ params }) => {
-//     const expenseId = parseInt(params.id as string);
-//     const existingIndex = expenses.findIndex(expense => expense.id === expenseId);
-//     if (existingIndex !== -1) {
-//       expenses.splice(existingIndex, 1);
-//       return HttpResponse.json({ message: 'Expense deleted successfully' });
-//     }
-//   }),
-//   // Incomes
-//   http.get<PathParams, DefaultBodyType, Income[]>('/expenses/incomes', () => HttpResponse.json(incomes)),
-//   http.post<PathParams, CreateIncomeRequestBody, Income>('/expenses/incomes', async ({ request }) => {
-//     const requestBody = await request.clone().json() as CreateIncomeRequestBody;
-//     const newIncome: Income = {
-//       id: incomes.length > 0 ? Math.max(...incomes.map(income => income.id)) + 1 : 0,
-//       ...requestBody
-//     }
-//     incomes.push(newIncome);
-//     return HttpResponse.json(newIncome);
-//   }),
-//   http.post<PathParams, EditIncomeRequestBody, Income>('/expenses/incomes/:id', async ({ request, params }) => {
-//     const requestBody = await request.clone().json() as EditIncomeRequestBody;
-//     const incomeId = parseInt(params.id as string);
-//     const existingIndex = incomes.findIndex(income => income.id === incomeId);
-//     if (existingIndex !== -1) {
-//       incomes[existingIndex] = { ...incomes[existingIndex], ...requestBody };
-//       return HttpResponse.json(incomes[existingIndex]);
-//     }
-//   }),
-//   http.delete<PathParams, DeleteIncomeRequestBody>('/expenses/incomes/:id', ({ params }) => {
-//     const incomeId = parseInt(params.id as string);
-//     const existingIndex = incomes.findIndex(income => income.id === incomeId);
-//     if (existingIndex !== -1) {
-//       incomes.splice(existingIndex, 1);
-//       return HttpResponse.json({ message: 'Income deleted successfully' });
-//     }
-//   }),
-//   // Categories
-//   http.get<PathParams, DefaultBodyType, ExpensesCategory[]>('/expenses/categories', () => {
-//     return HttpResponse.json(expensesCategories);
-//   }),
-//   http.post<PathParams, CreateExpensesCategoryRequestBody, ExpensesCategory>('/expenses/categories', async ({ request }) => {
-//     const requestBody = await request.clone().json() as CreateExpensesCategoryRequestBody;
-//     const newCategory: ExpensesCategory = {
-//       id: expensesCategories.length > 0 ? Math.max(...expensesCategories.map(category => category.id)) + 1 : 0,
-//       ...requestBody
-//     };
-//     expensesCategories.push(newCategory);
-//     return HttpResponse.json(newCategory);
-//   }),
-//   http.post<PathParams, EditExpensesCategoryRequestBody, ExpensesCategory>('/expenses/categories/:id', async ({ request, params }) => {
-//     const requestBody = await request.clone().json() as EditExpensesCategoryRequestBody;
-//     const categoryId = parseInt(params.id as string);
-//     const existingIndex = expensesCategories.findIndex(category => category.id === categoryId);
-//     if (existingIndex !== -1) {
-//       expensesCategories[existingIndex] = { ...expensesCategories[existingIndex], ...requestBody };
-//       return HttpResponse.json(expensesCategories[existingIndex]);
-//     }
-//   }),
-//   http.delete<PathParams, DeleteExpensesCategoryRequestBody>('/expenses/categories/:id', ({ params }) => {
-//     const categoryId = parseInt(params.id as string);
-//     const existingIndex = expensesCategories.findIndex(category => category.id === categoryId);
-//     if (existingIndex !== -1) {
-//       expenses.forEach(expense => {
-//         if (expense.category && expense.category.id === categoryId) {
-//           expense.category = undefined;
-//         }
-//       });
-//       expensesCategories.splice(existingIndex, 1);
-//       return HttpResponse.json({ message: 'Category deleted successfully' });
-//     }
-//   }),
-//   // Category Keywords
-//   http.get<PathParams, DefaultBodyType, ExpensesCategoryKeyword[]>('/expenses/categories/keywords', ({ request }) => {
-//     const url = new URL(request.url)
-//     var categoryId = url.searchParams.get('categoryId') ?? "0";
-
-//     var keywordsToReturn = expensesCategoryKeywords.filter(keyword => (
-//       keyword.category.id === parseInt(categoryId)
-//     ));
-
-//     return HttpResponse.json(keywordsToReturn);
-//   }),
-//   http.post<PathParams, CreateExpensesCategoryKeywordRequestBody, ExpensesCategoryKeyword>('/expenses/categories/keywords', async ({ request }) => {
-//     const requestBody = await request.clone().json() as CreateExpensesCategoryKeywordRequestBody;
-//     const category = expensesCategories.find(cat => cat.id === requestBody.categoryId);
-//     if (category) {
-//       const newKeyword: ExpensesCategoryKeyword = {
-//         id: expensesCategoryKeywords.length > 0 ? Math.max(...expensesCategoryKeywords.map(keyword => keyword.id)) + 1 : 0,
-//         ...requestBody,
-//         category
-//       }
-//       expensesCategoryKeywords.push(newKeyword);
-//       return HttpResponse.json(newKeyword);
-//     }
-//   }),
-//   http.delete<PathParams, DeleteExpensesCategoryKeywordRequestBody>('/expenses/categories/keywords/:id', ({ params }) => {
-//     const keywordId = parseInt(params.id as string);
-//     const existingIndex = expensesCategoryKeywords.findIndex(keyword => keyword.id === keywordId);
-//     if (existingIndex !== -1) {
-//       expensesCategoryKeywords.splice(existingIndex, 1);
-//       return HttpResponse.json({ message: 'Keyword deleted successfully' });
-//     }
-//   }),

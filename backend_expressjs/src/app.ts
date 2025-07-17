@@ -6,7 +6,7 @@ import diaryRoutes from './routes/diary';
 import pianoRoutes from './routes/piano';
 import notesRoutes from './routes/notes';
 import hikesRoutes from './routes/hikes';
-import videoGamesRoutes from './routes/videoGames';
+import videoGamesRoutes from './routes/video-games';
 import authMiddleware from './middleware/authMiddleware';
 
 dotenv.config({ path: '.env.local' });

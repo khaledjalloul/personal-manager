@@ -13,3 +13,134 @@ model User {
   email String @unique
   hash  String
 }
+
+model ExpensesCategory {
+  id       Int                       @id @default(autoincrement())
+  userId   Int
+  name     String
+  color    String
+  expenses Expense[]
+  keywords ExpensesCategoryKeyword[]
+}
+
+enum ExpenseType {
+  manual
+  auto
+}
+
+model Expense {
+  id          Int               @id @default(autoincrement())
+  userId      Int
+  date        DateTime
+  categoryId  Int?
+  category    ExpensesCategory? @relation(fields: [categoryId], references: [id])
+  description String
+  vendor      String
+  amount      Float
+  tags        String[]
+  type        ExpenseType
+}
+
+model ExpensesCategoryKeyword {
+  id         Int              @id @default(autoincrement())
+  keyword    String
+  categoryId Int
+  category   ExpensesCategory @relation(fields: [categoryId], references: [id])
+}
+
+model Income {
+  id     Int      @id @default(autoincrement())
+  userId Int
+  date   DateTime
+  source String
+  amount Float
+}
+
+model Hike {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  date               DateTime
+  description        String
+  distance           Float
+  ascent             Float
+  descent            Float
+  duration           Int
+  durationWithBreaks Int
+  coverImage         String
+  images             String[]
+  googleMapsUrl      String
+}
+
+enum PianoPieceStatus {
+  Planned
+  Learning
+  Learned
+  Learned_Forgotten
+}
+
+model PianoPiece {
+  id            Int              @id @default(autoincrement())
+  userId        Int
+  name          String
+  origin        String
+  composer      String
+  status        PianoPieceStatus
+  sheetMusicUrl String
+  youtubeUrl    String
+  monthLearned  DateTime?
+}
+
+model NoteCategory {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  name   String
+  notes  Note[]
+}
+
+model Note {
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  dateCreated  DateTime
+  dateModified DateTime
+  categoryId   Int?
+  category     NoteCategory? @relation(fields: [categoryId], references: [id])
+  title        String
+  content      String
+  tags         String[]
+}
+
+model DiaryEntry {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  date        DateTime
+  content     String
+  workContent String
+}
+
+enum VideoGameType {
+  Online
+  Single_Player
+  Both
+}
+
+model VideoGameExtraPurchase {
+  id          Int       @id @default(autoincrement())
+  name        String
+  price       Float
+  videoGame   VideoGame @relation(fields: [videoGameId], references: [id])
+  videoGameId Int
+}
+
+model VideoGame {
+  id             Int                      @id @default(autoincrement())
+  userId         Int
+  name           String
+  platform       String
+  type           VideoGameType
+  completed      Boolean
+  firstPlayed    DateTime
+  price          Float
+  extraPurchases VideoGameExtraPurchase[]
+  storeUrl       String
+  coverImage     String
+}
