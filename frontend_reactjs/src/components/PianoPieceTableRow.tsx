@@ -34,7 +34,7 @@ export const PianoPieceTableRow = ({
   const [origin, setOrigin] = useState(pianoPiece.origin);
   const [composer, setComposer] = useState(pianoPiece.composer);
   const [status, setStatus] = useState(pianoPiece.status);
-  const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
+  const [monthLearned, setMonthLearned] = useState(pianoPiece.monthLearned && dayjs(pianoPiece.monthLearned));
   const [youtubeUrl, setYoutubeUrl] = useState(pianoPiece.youtubeUrl);
   const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -113,14 +113,13 @@ export const PianoPieceTableRow = ({
                   value={monthLearned}
                   onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
                   enableAccessibleFieldDOMStructure={false}
-                  slots={{
-                    textField: props => <TextField
-                      {...props}
-                      size="small"
-                      variant="standard"
-                      placeholder="Month Learned"
-                      value={monthLearned ? monthLearned.format('MMMM YYYY') : ''}
-                    />
+                  format="MMMM YYYY"
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      variant: "standard",
+                      placeholder: "Month Learned",
+                    }
                   }}
                 />
               </LocalizationProvider>
@@ -203,7 +202,7 @@ export const PianoPieceTableRow = ({
                       origin,
                       composer,
                       status,
-                      monthLearned: monthLearned ? monthLearned.toDate() : undefined,
+                      monthLearned: monthLearned && monthLearned.toDate(),
                       youtubeUrl,
                       sheetMusicUrl
                     });
@@ -214,7 +213,7 @@ export const PianoPieceTableRow = ({
                       origin,
                       composer,
                       status,
-                      monthLearned: monthLearned ? monthLearned.toDate() : undefined,
+                      monthLearned: monthLearned && monthLearned.toDate(),
                       youtubeUrl,
                       sheetMusicUrl
                     });
@@ -231,7 +230,7 @@ export const PianoPieceTableRow = ({
                   setOrigin(pianoPiece.origin);
                   setComposer(pianoPiece.composer);
                   setStatus(pianoPiece.status);
-                  setMonthLearned(pianoPiece.monthLearned ? dayjs(pianoPiece.monthLearned) : undefined);
+                  setMonthLearned(pianoPiece.monthLearned && dayjs(pianoPiece.monthLearned));
                   setYoutubeUrl(pianoPiece.youtubeUrl);
                   setSheetMusicUrl(pianoPiece.sheetMusicUrl);
                   setIsEditing(false);

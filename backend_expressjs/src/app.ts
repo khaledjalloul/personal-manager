@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import authRoutes from './routes/auth';
 import expensesRoutes from './routes/expenses';
 import diaryRoutes from './routes/diary';
@@ -9,10 +10,12 @@ import hikesRoutes from './routes/hikes';
 import videoGamesRoutes from './routes/video-games';
 import authMiddleware from './middleware/authMiddleware';
 
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Public
 app.use('/auth', authRoutes);
@@ -25,4 +28,6 @@ app.use('/notes', authMiddleware, notesRoutes);
 app.use('/hikes', authMiddleware, hikesRoutes);
 app.use('/video-games', authMiddleware, videoGamesRoutes);
 
-export default app;
+app.listen(PORT, () => {
+  console.log(`Server ready at http://localhost:${PORT}`);
+});

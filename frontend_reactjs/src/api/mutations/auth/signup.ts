@@ -18,6 +18,7 @@ type Response = {
 };
 
 const signUp = async (data: Request) => {
+  console.log("signUp", data);
   return await client
     .post("/auth/signup", data)
     .then((res) => res.data)

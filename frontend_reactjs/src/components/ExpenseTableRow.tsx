@@ -64,14 +64,13 @@ export const ExpenseTableRow = ({
                 value={date}
                 onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
                 enableAccessibleFieldDOMStructure={false}
-                slots={{
-                  textField: props => <TextField
-                    {...props}
-                    size="small"
-                    variant="standard"
-                    placeholder="Date"
-                    value={date.format('DD.MM.YYYY')}
-                  />
+                format="DD.MM.YYYY"
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    variant: "standard",
+                    placeholder: "Date",
+                  }
                 }}
               />
             </LocalizationProvider>
@@ -79,13 +78,18 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? category?.name :
+          {!isEditing ? category?.name ?? (<em>Uncategorized</em>) :
             <Select
               variant="standard"
-              value={category?.id}
+              value={category?.id ?? "uncategorized"}
               sx={{ width: "100%" }}
               onChange={(e) => setCategory(expensesCategories?.find(cat => cat.id === e.target.value) ?? category)}
             >
+              {!category && (
+                <MenuItem value="uncategorized" disabled>
+                  <em>Uncategorized</em>
+                </MenuItem>
+              )}
               {expensesCategories?.map((cat) => (
                 <MenuItem key={cat.id} value={cat.id}>
                   {cat.name}

@@ -50,5 +50,6 @@
     "containerEnv": {
         // Enable GUI
         "DISPLAY": "${env:DISPLAY}"
-    }
+    },
+    "runArgs": ["--network=host"]
 }

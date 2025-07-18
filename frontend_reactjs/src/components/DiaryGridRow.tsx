@@ -114,7 +114,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 3 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 3 }} sx={{ display: 'flex', overflow: 'hidden' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopRightRadius: '8px',

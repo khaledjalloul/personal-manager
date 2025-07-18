@@ -12,7 +12,7 @@ RUN apt install -y \
     cmake \
     clang-format \
     gdb \
-    # Javascript
+    # NodeJS
     nodejs \
     npm \
     # GUI support

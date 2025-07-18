@@ -50,12 +50,10 @@ export const ManageExpenses = () => {
     tags: [],
     searchText: ""
   });
-  const sortedManualExpenses = manualExpenses?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const { data: incomes } = useIncomes({
     searchText: ""
   });
-  const sortedIncomes = incomes?.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const { data: categories } = useExpensesCategories()
 
@@ -95,7 +93,7 @@ export const ManageExpenses = () => {
                     setIsAddingIncome={setIsAddingIncome}
                     editable />
                 )}
-                {sortedIncomes?.map((income, index) => (
+                {incomes?.map((income, index) => (
                   <IncomeTableRow
                     key={income.id}
                     income={income}
@@ -142,7 +140,7 @@ export const ManageExpenses = () => {
                     setIsAddingExpense={setIsAddingExpense}
                     editable />
                 )}
-                {sortedManualExpenses?.map((expense, index) => (
+                {manualExpenses?.map((expense, index) => (
                   <ExpenseTableRow
                     key={expense.id}
                     expense={expense}

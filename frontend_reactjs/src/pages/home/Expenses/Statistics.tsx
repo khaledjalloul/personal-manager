@@ -63,7 +63,7 @@ export const ExpensesStatistics = () => {
 
   const [overTimeType, setOverTimeType] = useState("both");
 
-  const { data: expensesCategories } = useExpensesCategories();
+  const { data: expensesCategoriesOriginal } = useExpensesCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
@@ -73,6 +73,7 @@ export const ExpensesStatistics = () => {
     searchText: "",
   })
 
+  const expensesCategories = expensesCategoriesOriginal && [...expensesCategoriesOriginal]
   expensesCategories?.push({ id: -1, name: "Uncategorized", color: "gray" });
 
   const statistics = useMemo(() => {

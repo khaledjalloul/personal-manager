@@ -51,15 +51,6 @@ export const Theme = ({ children }: { children: JSX.Element }) => {
     },
   });
 
-  const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-  }
-  p {
-    margin: 0;
-  }
-`;
-
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -71,3 +62,12 @@ export const Theme = ({ children }: { children: JSX.Element }) => {
     </StyledEngineProvider>
   );
 };
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+`;

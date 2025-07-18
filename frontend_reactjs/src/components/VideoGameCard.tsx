@@ -219,14 +219,13 @@ export const VideoGameCard = ({
                   value={firstPlayed}
                   onChange={(newValue) => setFirstPlayed(newValue ?? dayjs(new Date()))}
                   enableAccessibleFieldDOMStructure={false}
-                  slots={{
-                    textField: props => <TextField
-                      {...props}
-                      size="small"
-                      variant="standard"
-                      placeholder="First Played"
-                      value={firstPlayed.format('DD.MM.YYYY')}
-                    />
+                  format="DD.MM.YYYY"
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      variant: "standard",
+                      placeholder: "First Played",
+                    }
                   }}
                 />
               </LocalizationProvider>

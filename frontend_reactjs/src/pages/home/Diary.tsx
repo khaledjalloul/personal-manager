@@ -67,12 +67,12 @@ export const Diary = () => {
             value={selectedDate}
             onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
             enableAccessibleFieldDOMStructure={false}
-            slots={{
-              textField: props => <TextField
-                {...props}
-                size="small"
-                value={selectedDate ? selectedDate.format('MMMM YYYY') : ''}
-              />
+            format="MMMM YYYY"
+            slotProps={{
+              textField: {
+                size: "small",
+                placeholder: "Date",
+              }
             }}
           />
         </LocalizationProvider>

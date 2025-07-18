@@ -5,6 +5,134 @@ import { Request, Response } from 'express';
 const router = Router();
 const prisma = new PrismaClient();
 
+// Incomes
+
+router.get('/incomes', async (_req: Request, res: Response) => {
+  const incomes = await prisma.income.findMany({
+    where: { userId: _req.user?.id },
+    orderBy: { date: 'desc' },
+  });
+  res.json(incomes);
+});
+
+router.post('/incomes', async (req: Request, res: Response) => {
+  const { date, source, amount } = req.body;
+  const newIncome = await prisma.income.create({
+    data: {
+      userId: req.user!.id,
+      date: new Date(date),
+      source,
+      amount
+    }
+  });
+  res.json(newIncome);
+});
+
+router.post('/incomes/:id', async (req: Request, res: Response) => {
+  const incomeId = Number(req.params.id);
+  const { date, source, amount } = req.body;
+  const updatedIncome = await prisma.income.update({
+    where: { id: incomeId },
+    data: {
+      date: new Date(date),
+      source,
+      amount
+    }
+  });
+  res.json(updatedIncome);
+});
+
+router.delete('/incomes/:id', async (req: Request, res: Response) => {
+  const incomeId = Number(req.params.id);
+  await prisma.income.delete({ where: { id: incomeId } });
+  res.json({ message: 'Income deleted successfully' });
+});
+
+// Category Keywords
+
+router.get('/categories/keywords', async (req: Request, res: Response) => {
+  const categoryId = Number(req.query.categoryId ?? 0);
+  const keywords = await prisma.expensesCategoryKeyword.findMany({
+    where: { categoryId },
+    include: { category: true },
+    orderBy: { keyword: 'asc' },
+  });
+  res.json(keywords);
+});
+
+router.post('/categories/keywords', async (req: Request, res: Response) => {
+  const { categoryId, keyword } = req.body;
+  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
+  if (!category) return res.status(400).json({ error: 'Category not found' });
+
+  const newKeyword = await prisma.expensesCategoryKeyword.create({
+    data: {
+      category: { connect: { id: categoryId } },
+      keyword
+    },
+    include: { category: true },
+  });
+
+  res.json(newKeyword);
+});
+
+router.delete('/categories/keywords/:id', async (req: Request, res: Response) => {
+  const keywordId = Number(req.params.id);
+  await prisma.expensesCategoryKeyword.delete({ where: { id: keywordId } });
+  res.json({ message: 'Keyword deleted successfully' });
+});
+
+// Categories
+
+router.get('/categories', async (_req: Request, res: Response) => {
+  const categories = await prisma.expensesCategory.findMany({
+    where: { userId: _req.user?.id },
+    orderBy: { name: 'asc' },
+  });
+  res.json(categories);
+});
+
+router.post('/categories', async (req: Request, res: Response) => {
+  const { name, color } = req.body;
+  const newCategory = await prisma.expensesCategory.create({
+    data: {
+      userId: req.user!.id,
+      name,
+      color
+    }
+  });
+  res.json(newCategory);
+});
+
+router.post('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = Number(req.params.id);
+  const { name, color } = req.body;
+  const updatedCategory = await prisma.expensesCategory.update({
+    where: { id: categoryId },
+    data: {
+      name,
+      color
+    }
+  });
+  res.json(updatedCategory);
+});
+
+router.delete('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = Number(req.params.id);
+
+  await prisma.expense.updateMany({
+    where: { categoryId },
+    data: { categoryId: null },
+  });
+
+  await prisma.expensesCategoryKeyword.deleteMany({
+    where: { categoryId }
+  });
+
+  await prisma.expensesCategory.delete({ where: { id: categoryId } });
+  res.json({ message: 'Category deleted successfully' });
+});
+
 // Expenses
 
 router.get('/', async (req: Request, res: Response) => {
@@ -80,130 +208,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
   const expenseId = Number(req.params.id);
   await prisma.expense.delete({ where: { id: expenseId } });
   res.json({ message: 'Expense deleted successfully' });
-});
-
-// Incomes
-
-router.get('/incomes', async (_req: Request, res: Response) => {
-  const incomes = await prisma.income.findMany({
-    where: { userId: _req.user?.id },
-    orderBy: { date: 'desc' },
-  });
-  res.json(incomes);
-});
-
-router.post('/incomes', async (req: Request, res: Response) => {
-  const { date, source, amount } = req.body;
-  const newIncome = await prisma.income.create({
-    data: {
-      userId: req.user!.id,
-      date: new Date(date),
-      source,
-      amount
-    }
-  });
-  res.json(newIncome);
-});
-
-router.post('/incomes/:id', async (req: Request, res: Response) => {
-  const incomeId = Number(req.params.id);
-  const { date, source, amount } = req.body;
-  const updatedIncome = await prisma.income.update({
-    where: { id: incomeId },
-    data: {
-      date: new Date(date),
-      source,
-      amount
-    }
-  });
-  res.json(updatedIncome);
-});
-
-router.delete('/incomes/:id', async (req: Request, res: Response) => {
-  const incomeId = Number(req.params.id);
-  await prisma.income.delete({ where: { id: incomeId } });
-  res.json({ message: 'Income deleted successfully' });
-});
-
-// Categories
-
-router.get('/categories', async (_req: Request, res: Response) => {
-  const categories = await prisma.expensesCategory.findMany({
-    where: { userId: _req.user?.id },
-    orderBy: { name: 'asc' },
-  });
-  res.json(categories);
-});
-
-router.post('/categories', async (req: Request, res: Response) => {
-  const { name, color } = req.body;
-  const newCategory = await prisma.expensesCategory.create({
-    data: {
-      userId: req.user!.id,
-      name,
-      color
-    }
-  });
-  res.json(newCategory);
-});
-
-router.post('/categories/:id', async (req: Request, res: Response) => {
-  const categoryId = Number(req.params.id);
-  const { name, color } = req.body;
-  const updatedCategory = await prisma.expensesCategory.update({
-    where: { id: categoryId },
-    data: {
-      name,
-      color
-    }
-  });
-  res.json(updatedCategory);
-});
-
-router.delete('/categories/:id', async (req: Request, res: Response) => {
-  const categoryId = Number(req.params.id);
-
-  await prisma.expense.updateMany({
-    where: { categoryId },
-    data: { categoryId: null },
-  });
-
-  await prisma.expensesCategory.delete({ where: { id: categoryId } });
-  res.json({ message: 'Category deleted successfully' });
-});
-
-// Category Keywords
-
-router.get('/categories/keywords', async (req: Request, res: Response) => {
-  const categoryId = Number(req.query.categoryId ?? 0);
-  const keywords = await prisma.expensesCategoryKeyword.findMany({
-    where: { categoryId },
-    include: { category: true },
-    orderBy: { keyword: 'asc' },
-  });
-  res.json(keywords);
-});
-
-router.post('/categories/keywords', async (req: Request, res: Response) => {
-  const { categoryId, keyword } = req.body;
-  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
-  if (!category) return res.status(400).json({ error: 'Category not found' });
-
-  const newKeyword = await prisma.expensesCategoryKeyword.create({
-    data: {
-      category: { connect: { id: categoryId } },
-      keyword
-    },
-    include: { category: true },
-  });
-
-  res.json(newKeyword);
-});
-
-router.delete('/categories/keywords/:id', async (req: Request, res: Response) => {
-  const keywordId = Number(req.params.id);
-  await prisma.expensesCategoryKeyword.delete({ where: { id: keywordId } });
-  res.json({ message: 'Keyword deleted successfully' });
 });
 
 export default router;

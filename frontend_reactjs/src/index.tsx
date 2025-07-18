@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Theme, UserContext, UserData } from "./utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigator } from "./navigation";
 import client from "./api/client";
 import { worker } from './mocks/browser'
@@ -10,6 +10,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [userData, setUserData] = useState<UserData>();
+  const [mockReady, setMockReady] = useState(false);
 
   const contextData = {
     userData,
@@ -34,25 +35,26 @@ const App = () => {
     },
   };
 
+  useEffect(() => {
+    const waitForMock = async () => {
+      if (process.env.REACT_APP_MOCK_API === "true")
+        return worker.start()
+    }
+    waitForMock().then(() => {
+      setMockReady(true);
+    });
+  }, []);
+
   return (
     <UserContext.Provider value={contextData}>
       <QueryClientProvider client={queryClient}>
         <Theme>
-          <Navigator />
+          {mockReady ? <Navigator /> : <div />}
         </Theme>
       </QueryClientProvider>
     </UserContext.Provider>
   );
 };
 
-async function enableMocking() {
-  if (process.env.REACT_APP_MOCK_API !== "true")
-    return
-  return worker.start()
-}
-
-enableMocking().then(() => {
-  ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
-  ).render(<App />);
-})
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+root.render(<App />);

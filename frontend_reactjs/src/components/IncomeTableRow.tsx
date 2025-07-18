@@ -61,14 +61,13 @@ export const IncomeTableRow = ({
 								value={date}
 								onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
 								enableAccessibleFieldDOMStructure={false}
-								slots={{
-									textField: props => <TextField
-										{...props}
-										size="small"
-										variant="standard"
-										placeholder="Date"
-										value={date.format('DD.MM.YYYY')}
-									/>
+								format="DD.MM.YYYY"
+								slotProps={{
+									textField: {
+										size: "small",
+										variant: "standard",
+										placeholder: "Date",
+									}
 								}}
 							/>
 						</LocalizationProvider>

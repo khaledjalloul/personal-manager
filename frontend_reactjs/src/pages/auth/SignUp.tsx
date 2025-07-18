@@ -48,49 +48,49 @@ export const SignUp = ({
 
   return (
     <Wrapper
-      // component={"form"} TODO: Fix
-      onSubmit={handleSubmit}
       sx={{
         width: { xs: "80vw", md: "40vw", lg: "30vw" },
         mt: { xs: "10vw", md: 0 },
         mb: { xs: "10vw", md: 0 },
       }}
     >
-      <AuthTextField required name="name" label="Name" />
-      <AuthTextField
-        required
-        name="email"
-        label="Email Address"
-        error={Boolean(emailError)}
-        helperText={emailError}
-        onChange={() => setEmailError("")}
-      />
-      <AuthTextField
-        required
-        name="password"
-        label="Password"
-        error={Boolean(passwordError)}
-        helperText={passwordError}
-        onChange={() => setPasswordError("")}
-      />
+      <Form onSubmit={handleSubmit}>
+        <AuthTextField required name="name" label="Name" />
+        <AuthTextField
+          required
+          name="email"
+          label="Email Address"
+          error={Boolean(emailError)}
+          helperText={emailError}
+          onChange={() => setEmailError("")}
+        />
+        <AuthTextField
+          required
+          name="password"
+          label="Password"
+          error={Boolean(passwordError)}
+          helperText={passwordError}
+          onChange={() => setPasswordError("")}
+        />
 
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        disabled={signUpLoading}
-        startIcon={signUpLoading && <CircularProgress size={18} />}
-      >
-        Sign Up
-      </Button>
-      <Box display={"flex"} flexDirection={"row"}>
-        <Typography sx={{ color: "white" }}>
-          Already have an account?
-        </Typography>
-        <Link sx={{ ml: 0.5 }} onClick={() => setAuthSection("signin")}>
-          Sign In
-        </Link>
-      </Box>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          disabled={signUpLoading}
+          startIcon={signUpLoading && <CircularProgress size={18} />}
+        >
+          Sign Up
+        </Button>
+        <Box display={"flex"} flexDirection={"row"}>
+          <Typography sx={{ color: "white" }}>
+            Already have an account?
+          </Typography>
+          <Link sx={{ ml: 0.5 }} onClick={() => setAuthSection("signin")}>
+            Sign In
+          </Link>
+        </Box>
+      </Form>
     </Wrapper>
   );
 };
@@ -99,6 +99,11 @@ const Wrapper = styled(Box)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
   margin-right: 10vw;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 `;

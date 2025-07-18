@@ -27,6 +27,6 @@ export const usePianoPieces = (params: GetPianoPiecesRequestParams) =>
     queryKey: [ENDPOINT, params],
     queryFn: queryFn(params),
     select: (data) =>
-      data.map((piece) => ({ ...piece, monthLearned: piece.monthLearned ? new Date(piece.monthLearned) : undefined })),
+      data.map((piece) => ({ ...piece, monthLearned: piece.monthLearned && new Date(piece.monthLearned) })),
     placeholderData: keepPreviousData,
   });
