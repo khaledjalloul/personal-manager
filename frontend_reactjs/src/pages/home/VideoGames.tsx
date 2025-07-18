@@ -21,10 +21,12 @@ const emptyGame: VideoGame = {
 
 export const VideoGames = () => {
 
-  const { data: games } = useVideoGames({});
-
   const [searchText, setSearchText] = useState("");
   const [isAddingGame, setIsAddingGame] = useState(false);
+
+  const { data: games } = useVideoGames({
+    searchText: searchText.trim(),
+  });
 
   return (
     <Wrapper>
@@ -40,7 +42,7 @@ export const VideoGames = () => {
             minWidth: "35vw", ml: "auto",
           }}
           label="Search video games"
-          placeholder="Name, platform, type"
+          placeholder="Name, platform"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -60,6 +62,9 @@ export const VideoGames = () => {
       </Header>
 
       <Box style={{ overflowY: 'auto' }}>
+        {!isAddingGame && games?.length === 0 && (
+          <Typography align="center" mt={7}>No video games.</Typography>
+        )}
         <Grid container spacing={3}>
           {isAddingGame && (
             <Grid

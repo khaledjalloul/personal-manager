@@ -5,6 +5,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useMemo, useState } from "react";
@@ -55,7 +56,10 @@ export const Diary = () => {
   return (
     <Wrapper>
       <Header>
-        <IconButton onClick={() => setSelectedDate(selectedDate.subtract(1, 'month'))}>
+        <IconButton
+          disabled={Boolean(searchText.trim())}
+          onClick={() => setSelectedDate(selectedDate.subtract(1, 'month'))}
+        >
           <ArrowLeft />
         </IconButton>
 
@@ -68,6 +72,7 @@ export const Diary = () => {
             onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
             enableAccessibleFieldDOMStructure={false}
             format="MMMM YYYY"
+            disabled={Boolean(searchText.trim())}
             slotProps={{
               textField: {
                 size: "small",
@@ -77,7 +82,10 @@ export const Diary = () => {
           />
         </LocalizationProvider>
 
-        <IconButton onClick={() => setSelectedDate(selectedDate.add(1, 'month'))}>
+        <IconButton
+          disabled={Boolean(searchText.trim())}
+          onClick={() => setSelectedDate(selectedDate.add(1, 'month'))}
+        >
           <ArrowRight />
         </IconButton>
 
@@ -86,7 +94,7 @@ export const Diary = () => {
           color="secondary"
           sx={{ ml: 1 }}
           onClick={() => setSelectedDate(dayjs(new Date()))}
-          disabled={dayjs(new Date()).isSame(selectedDate, 'month')}
+          disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
         >
           This Month
         </Button>
@@ -97,6 +105,7 @@ export const Diary = () => {
             minWidth: "35vw",
           }}
           label="Search diary entries"
+          placeholder="Content, work content"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -116,6 +125,9 @@ export const Diary = () => {
       </Header>
 
       <Box sx={{ overflowY: 'auto' }}>
+        {displayedEntries?.length === 0 && (
+          <Typography align="center" mt={7}>No diary entries.</Typography>
+        )}
         <Grid container rowSpacing={1} flexGrow={1}>
           {displayedEntries?.map((entry) => (
             <DiaryGridRow key={entry.id} entry={entry} />

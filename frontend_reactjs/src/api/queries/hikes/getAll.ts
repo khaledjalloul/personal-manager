@@ -5,6 +5,7 @@ import client from "../../client";
 const ENDPOINT = "hikes";
 
 export type GetHikesRequestParams = {
+  searchText: string;
 };
 
 const queryFn = (params: GetHikesRequestParams) => async () => {

@@ -43,16 +43,20 @@ const emptyExpense: Expense = {
   tags: [],
 }
 
-export const ManageExpenses = () => {
+export const ManageExpenses = ({
+  searchText
+}: {
+  searchText: string;
+}) => {
 
   const { data: manualExpenses } = useExpenses({
     type: "manual",
     tags: [],
-    searchText: ""
+    searchText: searchText.trim()
   });
 
   const { data: incomes } = useIncomes({
-    searchText: ""
+    searchText: searchText.trim()
   });
 
   const { data: categories } = useExpensesCategories()

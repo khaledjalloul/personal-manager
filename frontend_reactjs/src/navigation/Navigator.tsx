@@ -62,25 +62,7 @@ export const Navigator = () => {
         },
         {
           path: "/expenses",
-          element: <ExpensesWrapper />,
-          children: [
-            {
-              path: "/expenses",
-              element: <ExpensesStatistics />,
-            },
-            {
-              path: "/expenses/monthly",
-              element: <MonthlyExpenses />,
-            },
-            {
-              path: "/expenses/details",
-              element: <ExpensesDetails />,
-            },
-            {
-              path: "/expenses/manage",
-              element: <ManageExpenses />,
-            },
-          ]
+          element: <ExpensesWrapper />
         }
       ],
     },

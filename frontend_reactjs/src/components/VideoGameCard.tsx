@@ -239,7 +239,7 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Check />
+            {game.completed ? <Check /> : <Clear />}
             {!isEditing ? (
               <Typography variant="body1">
                 {completed ? "Completed" : "Not Completed"}

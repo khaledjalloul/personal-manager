@@ -5,6 +5,7 @@ import client from "../../client";
 const ENDPOINT = "piano";
 
 export type GetPianoPiecesRequestParams = {
+  searchText: string;
 };
 
 const queryFn = (params: GetPianoPiecesRequestParams) => async () => {

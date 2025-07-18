@@ -4,6 +4,7 @@ import {
 	TableCell,
 	TableRow,
 	TextField,
+	Typography,
 } from "@mui/material";
 import { Income } from "../types";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
@@ -18,7 +19,7 @@ import { ConfirmDeleteDialog } from "./modals";
 export const IncomeTableRow = ({
 	income,
 	index,
-	editable = false,
+	editable = false, // Non-editable also means the component is used in the Details page, so it includes extra table cells
 	isAddingIncome,
 	setIsAddingIncome,
 }: {
@@ -47,7 +48,6 @@ export const IncomeTableRow = ({
 
 	return (
 		<Fragment>
-
 			<TableRow
 				sx={{
 					backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
@@ -74,6 +74,12 @@ export const IncomeTableRow = ({
 					}
 				</TableCell>
 
+				{!editable && (
+					<TableCell>
+						<Typography color="success" variant="body2">Income</Typography>
+					</TableCell>
+				)}
+
 				<TableCell width={"40%"}>
 					{!isEditing ? source :
 						<TextField
@@ -85,6 +91,8 @@ export const IncomeTableRow = ({
 						/>
 					}
 				</TableCell>
+
+				{!editable && <TableCell />}
 
 				<TableCell>
 					{!isEditing ? amount.toFixed(2) :

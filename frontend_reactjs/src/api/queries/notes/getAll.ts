@@ -6,6 +6,7 @@ const ENDPOINT = "notes";
 
 export type GetNotesRequestParams = {
   categoryId?: number;
+  searchText: string;
 };
 
 const queryFn = (params: GetNotesRequestParams) => async () => {

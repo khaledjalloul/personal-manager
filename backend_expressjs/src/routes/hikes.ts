@@ -6,8 +6,13 @@ const router = Router();
 const prisma = new PrismaClient();
 
 router.get('/', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string) ?? "";
+
   const hikes = await prisma.hike.findMany({
-    where: { userId: req.user?.id },
+    where: {
+      userId: req.user?.id,
+      description: { contains: searchText.trim(), mode: 'insensitive' }
+    },
     orderBy: { date: 'asc' },
   });
   res.json(hikes);

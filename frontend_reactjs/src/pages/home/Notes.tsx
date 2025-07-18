@@ -32,7 +32,7 @@ export const Notes = () => {
 
   const { palette } = useTheme();
 
-  const { data: noteCategories } = useNoteCategories({});
+  const { data: noteCategories } = useNoteCategories();
   const { mutate: editNote } = useEditNote();
   const { mutate: deleteNote } = useDeleteNote();
 
@@ -82,9 +82,14 @@ export const Notes = () => {
             minWidth: "35vw",
           }}
           label="Search notes"
-          placeholder="Title, content, tags"
+          placeholder="Title, content"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            if (selectedNote) {
+              setSelectedNote(undefined);
+            }
+          }}
           slotProps={{
             input: {
               endAdornment: searchText.length > 0 && (
@@ -119,6 +124,7 @@ export const Notes = () => {
                 id: -1,
                 name: "Uncategorized",
               }}
+              searchText={searchText}
               selectedNote={selectedNote}
               setSelectedNote={setSelectedNote}
             />
@@ -126,6 +132,7 @@ export const Notes = () => {
               <NoteCategoryContainer
                 key={category.id}
                 category={category}
+                searchText={searchText}
                 selectedNote={selectedNote}
                 setSelectedNote={setSelectedNote}
               />

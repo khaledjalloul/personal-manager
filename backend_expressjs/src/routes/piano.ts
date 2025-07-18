@@ -6,8 +6,17 @@ const router = Router();
 const prisma = new PrismaClient();
 
 router.get('/', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string) ?? "";
+
   const pianoPieces = await prisma.pianoPiece.findMany({
-    where: { userId: req.user?.id },
+    where: {
+      userId: req.user?.id,
+      OR: [
+        { name: { contains: searchText.trim(), mode: 'insensitive' } },
+        { origin: { contains: searchText.trim(), mode: 'insensitive' } },
+        { composer: { contains: searchText.trim(), mode: 'insensitive' } },
+      ]
+    },
     orderBy: { name: 'asc' },
   });
   res.json(pianoPieces);

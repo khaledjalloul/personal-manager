@@ -7,9 +7,14 @@ const prisma = new PrismaClient();
 
 // Incomes
 
-router.get('/incomes', async (_req: Request, res: Response) => {
+router.get('/incomes', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string) ?? "";
+
   const incomes = await prisma.income.findMany({
-    where: { userId: _req.user?.id },
+    where: {
+      userId: req.user?.id,
+      source: { contains: searchText.trim(), mode: 'insensitive' }
+    },
     orderBy: { date: 'desc' },
   });
   res.json(incomes);
@@ -136,18 +141,18 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
 // Expenses
 
 router.get('/', async (req: Request, res: Response) => {
-  const { type, searchText } = req.query;
-  const search = searchText ? (searchText as string).toLowerCase() : '';
+  const { type } = req.query;
+  const searchText = (req.query.searchText as string || '').trim();
 
   const expenses = await prisma.expense.findMany({
     where: {
       userId: req.user?.id,
       type: type === 'all' ? undefined : type as ExpenseType,
       OR: [
-        { description: { contains: search, mode: 'insensitive' } },
-        { vendor: { contains: search, mode: 'insensitive' } },
-        { tags: { hasSome: [search] } },
-        { category: { name: { contains: search, mode: 'insensitive' } } },
+        { description: { contains: searchText.trim(), mode: 'insensitive' } },
+        { vendor: { contains: searchText.trim(), mode: 'insensitive' } },
+        { tags: { hasSome: [searchText.trim()] } },
+        { category: { name: { contains: searchText.trim(), mode: 'insensitive' } } },
       ],
     },
     orderBy: { date: 'desc' },
@@ -159,14 +164,12 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   const { categoryId, ...data } = req.body;
-  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
-  if (!category) return res.status(400).json({ error: 'Category not found' });
 
   const newExpense = await prisma.expense.create({
     data: {
       userId: req.user!.id,
       date: new Date(data.date),
-      category: { connect: { id: categoryId } },
+      category: categoryId ? { connect: { id: categoryId } } : undefined,
       description: data.description,
       vendor: data.vendor,
       amount: data.amount,
@@ -182,18 +185,11 @@ router.post('/:id', async (req: Request, res: Response) => {
   const expenseId = Number(req.params.id);
   const { categoryId, ...data } = req.body;
 
-  let categoryConnect = {};
-  if (categoryId) {
-    const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
-    if (!category) return res.status(400).json({ error: 'Category not found' });
-    categoryConnect = { category: { connect: { id: categoryId } } };
-  }
-
   const updatedExpense = await prisma.expense.update({
     where: { id: expenseId },
     data: {
       date: new Date(data.date),
-      ...categoryConnect,
+      category: categoryId ? { connect: { id: categoryId } } : undefined,
       description: data.description,
       vendor: data.vendor,
       amount: data.amount,

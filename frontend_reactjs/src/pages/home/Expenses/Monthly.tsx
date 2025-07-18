@@ -18,13 +18,17 @@ type MonthlyEntry = {
   };
 }
 
-export const MonthlyExpenses = () => {
+export const MonthlyExpenses = ({
+  searchText
+}: {
+  searchText: string;
+}) => {
 
   const { data: expensesCategories } = useExpensesCategories();
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
-    searchText: "", // TODO
+    searchText: searchText.trim(),
   });
 
   const summary = useMemo(() => {

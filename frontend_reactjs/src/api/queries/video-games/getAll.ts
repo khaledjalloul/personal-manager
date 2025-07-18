@@ -5,6 +5,7 @@ import client from "../../client";
 const ENDPOINT = "video-games";
 
 export type GetVideoGamesRequestParams = {
+  searchText: string;
 };
 
 const queryFn = (params: GetVideoGamesRequestParams) => async () => {

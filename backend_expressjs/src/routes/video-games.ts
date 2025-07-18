@@ -6,8 +6,16 @@ const router = Router();
 const prisma = new PrismaClient();
 
 router.get('/', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string) ?? "";
+
   const videoGames = await prisma.videoGame.findMany({
-    where: { userId: req.user?.id },
+    where: {
+      userId: req.user?.id,
+      OR: [
+        { name: { contains: searchText.trim(), mode: 'insensitive' } },
+        { platform: { contains: searchText.trim(), mode: 'insensitive' } },
+      ]
+    },
     orderBy: { name: 'asc' },
     include: {
       extraPurchases: true,

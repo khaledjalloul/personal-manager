@@ -6,6 +6,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Expense } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
@@ -78,7 +79,11 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? category?.name ?? (<em>Uncategorized</em>) :
+          {!isEditing ? (
+            <Typography color={!editable ? 'error' : 'text.primary'} variant="body2">
+              {category?.name ?? (<em>Uncategorized</em>)}
+            </Typography>
+          ) :
             <Select
               variant="standard"
               value={category?.id ?? "uncategorized"}

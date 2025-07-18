@@ -52,30 +52,32 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
 
 router.get('/', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
+  const searchText = (req.query.searchText as string) ?? "";
+
   let notes;
   if (categoryId) {
-    if (categoryId === '-1') {
-      notes = await prisma.note.findMany({
-        where: {
-          userId: req.user?.id,
-          categoryId: null
-        },
-        include: { category: true },
-        orderBy: { title: 'asc' }
-      });
-    } else {
-      notes = await prisma.note.findMany({
-        where: {
-          userId: req.user?.id,
-          categoryId: parseInt(categoryId)
-        },
-        include: { category: true },
-        orderBy: { title: 'asc' }
-      });
-    }
+    const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)
+    notes = await prisma.note.findMany({
+      where: {
+        userId: req.user?.id,
+        categoryId: categoryIdSearch,
+        OR: [
+          { title: { contains: searchText.trim(), mode: "insensitive" } },
+          { content: { contains: searchText.trim(), mode: "insensitive" } },
+        ]
+      },
+      include: { category: true },
+      orderBy: { title: 'asc' }
+    });
   } else {
     notes = await prisma.note.findMany({
-      where: { userId: req.user?.id },
+      where: {
+        userId: req.user?.id,
+        OR: [
+          { title: { contains: searchText.trim(), mode: "insensitive" } },
+          { content: { contains: searchText.trim(), mode: "insensitive" } },
+        ]
+      },
       include: { category: true },
       orderBy: { title: 'asc' }
     });

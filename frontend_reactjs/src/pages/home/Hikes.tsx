@@ -22,10 +22,12 @@ const emptyHike: Hike = {
 
 export const Hikes = () => {
 
-  const { data: hikes } = useHikes({});
-
   const [searchText, setSearchText] = useState("");
   const [isAddingHike, setIsAddingHike] = useState(false);
+
+  const { data: hikes } = useHikes({
+    searchText: searchText.trim(),
+  });
 
   return (
     <Wrapper>
@@ -41,6 +43,7 @@ export const Hikes = () => {
             minWidth: "35vw", ml: "auto",
           }}
           label="Search hikes"
+          placeholder="Description"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -60,7 +63,10 @@ export const Hikes = () => {
       </Header>
 
       <Box style={{ overflowY: 'auto' }}>
-        <Grid container spacing={3} >
+        {!isAddingHike && hikes?.length === 0 && (
+          <Typography align="center" mt={7}>No hikes.</Typography>
+        )}
+        <Grid container spacing={3}>
           {isAddingHike && (
             <Grid
               key={emptyHike.id}

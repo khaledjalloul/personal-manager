@@ -9,19 +9,31 @@ import styled from "styled-components";
 import { useState } from "react";
 import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { ExpensesStatistics } from "./Statistics";
+import { MonthlyExpenses } from "./Monthly";
+import { ExpensesDetails } from "./Details";
+import { ManageExpenses } from "./Manage";
+
+const enum ExpensesPage {
+  Statistics,
+  Monthly,
+  Details,
+  Manage
+};
 
 export const ExpensesWrapper = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState<ExpensesPage>(ExpensesPage.Statistics);
 
   return (
     <Wrapper>
       <Header>
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses" ? undefined : () => navigate("/expenses")}
+          onClick={page === ExpensesPage.Statistics ? undefined : () => setPage(ExpensesPage.Statistics)}
           color="secondary"
           startIcon={<Insights />}
         >
@@ -30,7 +42,7 @@ export const ExpensesWrapper = () => {
 
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/monthly" ? undefined : () => navigate("/expenses/monthly")}
+          onClick={page === ExpensesPage.Monthly ? undefined : () => setPage(ExpensesPage.Monthly)}
           color="secondary"
           startIcon={<Today />}
         >
@@ -39,7 +51,7 @@ export const ExpensesWrapper = () => {
 
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/details" ? undefined : () => navigate("/expenses/details")}
+          onClick={page === ExpensesPage.Details ? undefined : () => setPage(ExpensesPage.Details)}
           color="secondary"
           startIcon={<ViewList />}
         >
@@ -48,7 +60,7 @@ export const ExpensesWrapper = () => {
 
         <Button
           variant="contained"
-          onClick={location.pathname === "/expenses/manage" ? undefined : () => navigate("/expenses/manage")}
+          onClick={page === ExpensesPage.Manage ? undefined : () => setPage(ExpensesPage.Manage)}
           color="secondary"
           startIcon={<Settings />}
         >
@@ -58,12 +70,16 @@ export const ExpensesWrapper = () => {
         <TextField
           sx={{
             ml: "auto",
-            minWidth: location.pathname !== "/expenses" ? "35vw" : 0,
-            opacity: location.pathname !== "/expenses" ? 1 : 0,
+            minWidth: page !== ExpensesPage.Statistics ? "35vw" : 0,
+            opacity: page !== ExpensesPage.Statistics ? 1 : 0,
           }}
-          disabled={location.pathname === "/expenses"}
+          disabled={page === ExpensesPage.Statistics}
           label="Search expenses"
-          placeholder="Category, description, vendor, tags, etc."
+          placeholder={
+            page === ExpensesPage.Monthly ?
+              "Month" :
+              "Category, description, source, vendor"
+          }
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -82,7 +98,18 @@ export const ExpensesWrapper = () => {
         />
       </Header>
 
-      <Outlet />
+      {page === ExpensesPage.Statistics && (
+        <ExpensesStatistics />
+      )}
+      {page === ExpensesPage.Monthly && (
+        <MonthlyExpenses searchText={searchText} />
+      )}
+      {page === ExpensesPage.Details && (
+        <ExpensesDetails searchText={searchText} />
+      )}
+      {page === ExpensesPage.Manage && (
+        <ManageExpenses searchText={searchText} />
+      )}
 
     </Wrapper>
   );

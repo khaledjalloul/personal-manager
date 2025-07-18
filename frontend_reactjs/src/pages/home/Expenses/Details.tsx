@@ -7,15 +7,32 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useExpenses } from "../../../api";
-import { ExpenseTableRow } from "../../../components";
+import { useExpenses, useIncomes } from "../../../api";
+import { ExpenseTableRow, IncomeTableRow } from "../../../components";
 
-export const ExpensesDetails = () => {
+export const ExpensesDetails = ({
+  searchText
+}: {
+  searchText: string;
+}) => {
 
   const { data: expenses } = useExpenses({
     type: "all",
     tags: [],
-    searchText: "", // TODO
+    searchText: searchText.trim(),
+  });
+  const { data: incomes } = useIncomes({
+    searchText: searchText.trim(),
+  });
+
+  const combinedData = [...expenses ?? [], ...incomes ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const tableRows = combinedData.map((item, index) => {
+    if ('source' in item) {
+      return <IncomeTableRow key={item.id} index={index} income={item} />;
+    } else {
+      return <ExpenseTableRow key={item.id} index={index} expense={item} />;
+    }
   });
 
   return (
@@ -25,15 +42,13 @@ export const ExpensesDetails = () => {
           <TableRow>
             <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', textWrap: 'nowrap' }}>Description / Source</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {expenses?.map((expense, index) => (
-            <ExpenseTableRow key={expense.id} index={index} expense={expense} />
-          ))}
+          {tableRows}
         </TableBody>
       </Table>
     </TableContainer>

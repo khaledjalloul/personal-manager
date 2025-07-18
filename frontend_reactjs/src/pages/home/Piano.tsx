@@ -35,7 +35,9 @@ export const Piano = () => {
   const [searchText, setSearchText] = useState("");
   const [isAddingPiece, setIsAddingPiece] = useState(false);
 
-  const { data: pianoPieces } = usePianoPieces({});
+  const { data: pianoPieces } = usePianoPieces({
+    searchText: searchText.trim(),
+  });
 
   return (
     <Wrapper>
@@ -51,7 +53,7 @@ export const Piano = () => {
             minWidth: "35vw", ml: "auto",
           }}
           label="Search piano pieces"
-          placeholder="Name, origin, composer, status"
+          placeholder="Name, origin, composer"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{

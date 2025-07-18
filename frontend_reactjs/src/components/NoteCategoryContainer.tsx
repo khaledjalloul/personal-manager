@@ -6,10 +6,12 @@ import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 export const NoteCategoryContainer = (
   { category,
+    searchText,
     selectedNote,
     setSelectedNote
   }: {
     category: NoteCategory,
+    searchText: string,
     selectedNote: Note | undefined,
     setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
   }) => {
@@ -18,18 +20,22 @@ export const NoteCategoryContainer = (
 
   const { data: notes } = useNotes({
     categoryId: category.id,
+    searchText: searchText.trim(),
   });
   const { mutate: createNote } = useCreateNote();
 
+  const hidden = category.id === -1 &&
+    !searchText.trim() && notes?.length === 0;
+
   return (
-    <Box sx={{ display: category.id !== -1 || notes?.length ? 'block' : 'none' }}>
+    <Box display={hidden ? "none" : "block"}>
       <Box
         onClick={() => setIsOpen(!isOpen)}
         sx={{
           pl: 1,
           pr: 1,
-          pt: 0.5,
-          pb: 0.5,
+          pt: category.id !== -1 ? 0.5 : 1.2,
+          pb: category.id !== -1 ? 0.5 : 1.2,
           cursor: 'pointer',
           borderRadius: '8px',
           display: 'flex',
@@ -41,25 +47,29 @@ export const NoteCategoryContainer = (
           {category.name}
         </Typography>
 
-        <IconButton
-          size="small"
-          sx={{ ml: 'auto' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            const newDate = new Date();
-            createNote({
-              categoryId: category.id,
-              dateCreated: newDate,
-              dateModified: newDate,
-              title: "New Note",
-              content: "",
-              tags: []
-            })
-          }}>
-          <Add />
-        </IconButton>
 
-        {isOpen ? <ExpandLess /> : <ExpandMore />}
+        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+          {category.id !== -1 && (
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                const newDate = new Date();
+                createNote({
+                  categoryId: category.id,
+                  dateCreated: newDate,
+                  dateModified: newDate,
+                  title: "New Note",
+                  content: "",
+                  tags: []
+                })
+              }}>
+              <Add />
+            </IconButton>
+          )}
+
+          {isOpen ? <ExpandLess /> : <ExpandMore />}
+        </Box>
       </Box>
 
       {isOpen && (

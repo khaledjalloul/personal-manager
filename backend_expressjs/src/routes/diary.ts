@@ -13,14 +13,19 @@ router.get('/', async (req: Request, res: Response) => {
   const entries = await prisma.diaryEntry.findMany({
     where: {
       userId: req.user?.id,
-      date: {
-        gte: new Date(year, month, 1),
-        lt: new Date(year, month + 1, 1),
-      },
-      OR: [
-        { content: { contains: searchText, mode: 'insensitive' } },
-        { workContent: { contains: searchText, mode: 'insensitive' } },
-      ],
+      ...(
+        searchText.trim() ? {
+          OR: [
+            { content: { contains: searchText.trim(), mode: 'insensitive' } },
+            { workContent: { contains: searchText.trim(), mode: 'insensitive' } },
+          ],
+        } : {
+          date: {
+            gte: new Date(year, month, 1),
+            lt: new Date(year, month + 1, 1),
+          }
+        }
+      )
     },
     orderBy: { date: 'asc' },
   });
