@@ -3,8 +3,6 @@ import {
   About,
   Home,
   Diary,
-  ManageExpenses,
-  ExpensesStatistics,
   Journal,
   Notes,
   Hikes,
@@ -12,8 +10,7 @@ import {
   Recipes,
   Piano,
   ExpensesWrapper,
-  ExpensesDetails,
-  MonthlyExpenses
+  Account
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
@@ -63,6 +60,10 @@ export const Navigator = () => {
         {
           path: "/expenses",
           element: <ExpensesWrapper />
+        },
+        {
+          path: "/account",
+          element: <Account />
         }
       ],
     },

@@ -24,7 +24,7 @@ export const useEditNoteCategory = () => {
   const queryClient = useQueryClient();
 
   return useMutation<NoteCategory, AxiosError<{ message: string }>, EditNoteCategoryRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

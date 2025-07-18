@@ -22,7 +22,7 @@ export const useDeleteIncome = () => {
   const queryClient = useQueryClient();
 
   return useMutation<null, AxiosError<{ message: string }>, DeleteIncomeRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

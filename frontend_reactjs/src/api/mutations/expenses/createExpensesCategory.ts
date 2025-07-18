@@ -24,7 +24,7 @@ export const useCreateExpensesCategory = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ExpensesCategory, AxiosError<{ message: string }>, CreateExpensesCategoryRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

@@ -32,7 +32,7 @@ export const useCreateHike = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Hike, AxiosError<{ message: string }>, CreateHikeRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

@@ -26,7 +26,7 @@ export const useEditDiaryEntry = () => {
   const queryClient = useQueryClient();
 
   return useMutation<DiaryEntry, AxiosError<{ message: string }>, EditDiaryEntryRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

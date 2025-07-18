@@ -58,7 +58,7 @@ router.post('/:id', async (req: Request, res: Response) => {
 });
 
 router.delete('/:id', async (req: Request, res: Response) => {
-  const hikeId = parseInt(req.params.id, 10);
+  const hikeId = parseInt(req.params.id);
   await prisma.hike.delete({
     where: { id: hikeId },
   });

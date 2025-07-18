@@ -22,7 +22,7 @@ export const useDeleteVideoGame = () => {
   const queryClient = useQueryClient();
 
   return useMutation<null, AxiosError<{ message: string }>, DeleteVideoGameRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

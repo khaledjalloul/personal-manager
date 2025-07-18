@@ -22,7 +22,7 @@ export const useDeleteHike = () => {
   const queryClient = useQueryClient();
 
   return useMutation<null, AxiosError<{ message: string }>, DeleteHikeRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

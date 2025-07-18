@@ -22,7 +22,7 @@ export const useDeleteExpensesCategoryKeyword = () => {
   const queryClient = useQueryClient();
 
   return useMutation<null, AxiosError<{ message: string }>, DeleteExpensesCategoryKeywordRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

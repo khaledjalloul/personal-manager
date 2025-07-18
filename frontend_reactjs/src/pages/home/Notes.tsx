@@ -186,7 +186,7 @@ export const Notes = () => {
                   if (selectedNote) {
                     editNote({
                       id: selectedNote.id,
-                      title: selectedNoteTitle,
+                      title: selectedNoteTitle.trim(),
                       content: selectedNoteContent,
                       dateModified: new Date(),
                       categoryId: selectedNoteCategory?.id,

@@ -142,14 +142,14 @@ export const IncomeTableRow = ({
 										editIncome({
 											id: income.id,
 											date: date.toDate(),
-											source,
+											source: source.trim(),
 											amount,
 										});
 										setIsEditing(false);
 									} else if (setIsAddingIncome) {
 										createIncome({
 											date: date.toDate(),
-											source,
+											source: source.trim(),
 											amount,
 										});
 										setIsAddingIncome(false);

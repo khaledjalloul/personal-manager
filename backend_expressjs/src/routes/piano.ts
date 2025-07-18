@@ -40,7 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 router.post('/:id', async (req: Request, res: Response) => {
-  const pieceId = parseInt(req.params.id, 10);
+  const pieceId = parseInt(req.params.id);
   const data = req.body;
   const updatedPiece = await prisma.pianoPiece.update({
     where: { id: pieceId },
@@ -58,7 +58,7 @@ router.post('/:id', async (req: Request, res: Response) => {
 });
 
 router.delete('/:id', async (req: Request, res: Response) => {
-  const pieceId = parseInt(req.params.id, 10);
+  const pieceId = parseInt(req.params.id);
   await prisma.pianoPiece.delete({
     where: { id: pieceId },
   });

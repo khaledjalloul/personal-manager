@@ -34,7 +34,7 @@ export const useCreateVideoGame = () => {
   const queryClient = useQueryClient();
 
   return useMutation<VideoGame, AxiosError<{ message: string }>, CreateVideoGameRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

@@ -111,28 +111,28 @@ export const VideoGameCard = ({
                 if (game.id !== -1) {
                   editGame({
                     id: game.id,
-                    name,
-                    platform,
+                    name: name.trim(),
+                    platform: platform.trim(),
                     type,
                     completed,
                     firstPlayed: firstPlayed.toDate(),
                     price,
                     extraPurchases,
-                    storeUrl,
-                    coverImage
+                    storeUrl: storeUrl.trim(),
+                    coverImage: coverImage?.trim()
                   });
                   setIsEditing(false);
                 } else {
                   createGame({
-                    name,
-                    platform,
+                    name: name.trim(),
+                    platform: platform.trim(),
                     type,
                     completed,
                     firstPlayed: firstPlayed.toDate(),
                     price,
                     extraPurchases,
-                    storeUrl,
-                    coverImage
+                    storeUrl: storeUrl.trim(),
+                    coverImage: coverImage?.trim()
                   });
                 }
                 setIsAddingGame(false);

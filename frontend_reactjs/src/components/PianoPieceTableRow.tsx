@@ -204,24 +204,24 @@ export const PianoPieceTableRow = ({
                   if (pianoPiece.id !== -1) {
                     editPiece({
                       id: pianoPiece.id,
-                      name,
-                      origin,
-                      composer,
+                      name: name.trim(),
+                      origin: origin.trim(),
+                      composer: composer.trim(),
                       status,
                       monthLearned: monthLearned && monthLearned.toDate(),
-                      youtubeUrl,
-                      sheetMusicUrl
+                      youtubeUrl: youtubeUrl.trim(),
+                      sheetMusicUrl: sheetMusicUrl.trim()
                     });
                     setIsEditing(false);
                   } else {
                     createPiece({
-                      name,
-                      origin,
-                      composer,
+                      name: name.trim(),
+                      origin: origin.trim(),
+                      composer: composer.trim(),
                       status,
                       monthLearned: monthLearned && monthLearned.toDate(),
-                      youtubeUrl,
-                      sheetMusicUrl
+                      youtubeUrl: youtubeUrl.trim(),
+                      sheetMusicUrl: sheetMusicUrl.trim()
                     });
                     setIsAddingPiece(false);
                   }

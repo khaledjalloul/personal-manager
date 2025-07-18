@@ -26,7 +26,7 @@ export const useEditIncome = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Income, AxiosError<{ message: string }>, EditIncomeRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

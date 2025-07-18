@@ -1,25 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { Hike } from "../../../types";
+import { User } from "../../../types";
 
-const ENDPOINT = "hikes";
+const ENDPOINT = "users";
 
-export type EditHikeRequestBody = {
+export type EditUserRequestBody = {
   id: number;
-  date?: Date;
-  description?: string;
-  distance?: number;
-  ascent?: number;
-  descent?: number;
-  duration?: number;
-  durationWithBreaks?: number;
-  coverImage?: string;
-  images?: string[];
-  googleMapsUrl?: string;
+  name?: string;
+  email?: string;
 };
 
-const mutationFn = async (data: EditHikeRequestBody) => {
+const mutationFn = async (data: EditUserRequestBody) => {
   return await client
     .post(`/${ENDPOINT}/${data.id}`, data)
     .then((res) => res.data)
@@ -29,14 +21,14 @@ const mutationFn = async (data: EditHikeRequestBody) => {
     });
 };
 
-export const useEditHike = () => {
+export const useEditUser = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Hike, AxiosError<{ message: string }>, EditHikeRequestBody>({
+  return useMutation<User, AxiosError<{ message: string }>, EditUserRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
-        queryKey: [ENDPOINT],
+        queryKey: ["/users/me"],
       });
     },
   });

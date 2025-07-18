@@ -177,8 +177,8 @@ export const ExpenseTableRow = ({
                       id: expense.id,
                       date: date.toDate(),
                       categoryId: category?.id,
-                      description,
-                      vendor,
+                      description: description.trim(),
+                      vendor: vendor.trim(),
                       amount,
                     });
                     setIsEditing(false);
@@ -186,8 +186,8 @@ export const ExpenseTableRow = ({
                     createExpense({
                       date: date.toDate(),
                       categoryId: category?.id,
-                      description,
-                      vendor,
+                      description: description.trim(),
+                      vendor: vendor.trim(),
                       amount,
                       tags: [],
                       type: 'manual'

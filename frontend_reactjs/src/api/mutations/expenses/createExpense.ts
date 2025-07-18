@@ -29,7 +29,7 @@ export const useCreateExpense = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Expense, AxiosError<{ message: string }>, CreateExpenseRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

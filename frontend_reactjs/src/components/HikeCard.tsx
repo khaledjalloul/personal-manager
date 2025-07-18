@@ -119,27 +119,27 @@ export const HikeCard = ({
                   editHike({
                     id: hike.id,
                     date: date.toDate(),
-                    description,
+                    description: description.trim(),
                     distance,
                     ascent,
                     descent,
                     duration,
                     durationWithBreaks,
-                    googleMapsUrl,
-                    coverImage
+                    googleMapsUrl: googleMapsUrl.trim(),
+                    coverImage: coverImage?.trim()
                   });
                   setIsEditing(false);
                 } else {
                   createHike({
                     date: date.toDate(),
-                    description,
+                    description: description.trim(),
                     distance,
                     ascent,
                     descent,
                     duration,
                     durationWithBreaks,
-                    googleMapsUrl,
-                    coverImage,
+                    googleMapsUrl: googleMapsUrl.trim(),
+                    coverImage: coverImage?.trim(),
                     images: []
                   });
                 }

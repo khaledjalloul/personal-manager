@@ -8,3 +8,4 @@ export * from "./Journal";
 export * from "./Notes";
 export * from "./Piano";
 export * from "./Recipes";
+export * from "./Account";

@@ -47,7 +47,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 router.post('/:id', async (req: Request, res: Response) => {
-  const gameId = parseInt(req.params.id, 10);
+  const gameId = parseInt(req.params.id);
   const data = req.body;
   const updatedGame = await prisma.videoGame.update({
     where: { id: gameId },
@@ -70,7 +70,7 @@ router.post('/:id', async (req: Request, res: Response) => {
 });
 
 router.delete('/:id', async (req: Request, res: Response) => {
-  const gameId = parseInt(req.params.id, 10);
+  const gameId = parseInt(req.params.id);
   await prisma.videoGame.delete({ where: { id: gameId } });
   res.json({ message: 'Video game deleted successfully' });
 });

@@ -36,7 +36,7 @@ const CategoryCard = ({
                   onClick={() => {
                     editCategory({
                       id: category.id,
-                      name
+                      name: name.trim()
                     });
                   }}
                 >
@@ -111,7 +111,7 @@ export const ManageNoteCategoriesModal = ({
                       disabled={!newCategoryName}
                       onClick={() => {
                         createCategory({
-                          name: newCategoryName,
+                          name: newCategoryName.trim(),
                         });
                         setNewCategoryName("");
                       }}

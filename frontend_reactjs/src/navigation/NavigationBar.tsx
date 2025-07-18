@@ -88,9 +88,9 @@ export const NavigationBar = () => {
               open={Boolean(accountMenuAnchor)}
               onClose={() => setAccountMenuAnchor(null)}
             >
-              {/* <MenuItem>
+              <MenuItem onClick={() => navigate("/account")}>
                 <Typography variant="body2">Account</Typography>
-              </MenuItem> */}
+              </MenuItem>
               <MenuItem onClick={() => setUserData(null)}>
                 <Typography variant="body2">Sign Out</Typography>
               </MenuItem>
@@ -131,9 +131,12 @@ export const NavigationBar = () => {
                   <Typography variant="body2">{link.label}</Typography>
                 </MenuItem>
               ))}
-              {/* <MenuItem>
+              <MenuItem onClick={() => {
+                navigate("/account");
+                setMobileMenuAnchor(null);
+              }}>
                 <Typography variant="body2">Account</Typography>
-              </MenuItem> */}
+              </MenuItem>
               <MenuItem onClick={() => setUserData(null)}>
                 <Typography variant="body2">Sign Out</Typography>
               </MenuItem>

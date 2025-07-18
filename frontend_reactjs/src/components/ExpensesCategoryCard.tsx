@@ -82,12 +82,12 @@ export const ExpensesCategoryCard = ({
                 if (category.id !== -1) {
                   editCategory({
                     id: category.id,
-                    name,
+                    name: name.trim()
                   })
                   setIsEditing(false);
                 } else {
                   createCategory({
-                    name,
+                    name: name.trim(),
                     color: "blue" // TODO: remove
                   })
                   setIsAddingCategory(false);

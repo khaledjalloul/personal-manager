@@ -23,7 +23,7 @@ export const useCreateNoteCategory = () => {
   const queryClient = useQueryClient();
 
   return useMutation<NoteCategory, AxiosError<{ message: string }>, CreateNoteCategoryRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

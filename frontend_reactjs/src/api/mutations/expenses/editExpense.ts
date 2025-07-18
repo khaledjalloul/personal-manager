@@ -30,7 +30,7 @@ export const useEditExpense = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Expense, AxiosError<{ message: string }>, EditExpenseRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],

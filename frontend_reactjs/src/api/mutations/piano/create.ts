@@ -29,7 +29,7 @@ export const useCreatePianoPiece = () => {
   const queryClient = useQueryClient();
 
   return useMutation<PianoPiece, AxiosError<{ message: string }>, CreatePianoPieceRequestBody>({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
