@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ExpenseType, PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
+import dayjs from 'dayjs';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -137,6 +138,142 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
   await prisma.expensesCategory.delete({ where: { id: categoryId } });
   res.json({ message: 'Category deleted successfully' });
 });
+
+// Statistics
+
+router.get('/monthly', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string || '').trim();
+
+  const monthlyExpenses: {
+    [month: string]: {
+      [category: string]: number;
+      total: number;
+    };
+  } = {};
+
+  const categoryNames = (await prisma.expensesCategory.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { name: 'asc' },
+    select: { name: true },
+  })).map(c => c.name);
+
+  const expenses = await prisma.expense.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { date: 'desc' },
+    include: { category: true },
+  });
+
+  expenses.forEach(expense => {
+    const dayjsDate = dayjs(expense.date);
+    if (!dayjsDate.format("MMMM YYYY").toLowerCase().includes(searchText.trim().toLowerCase()))
+      return;
+
+    const monthStr = `${expense.date.getFullYear()}-${String(expense.date.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!monthlyExpenses[monthStr]) {
+      monthlyExpenses[monthStr] = { total: 0 };
+      monthlyExpenses[monthStr]["Uncategorized"] = 0;
+      for (const category of categoryNames) {
+        monthlyExpenses[monthStr][category] = 0;
+      }
+    }
+    if (expense.category)
+      monthlyExpenses[monthStr][expense.category.name] += expense.amount;
+    else
+      monthlyExpenses[monthStr]["Uncategorized"] += expense.amount;
+    monthlyExpenses[monthStr].total += expense.amount;
+  });
+
+  res.json(monthlyExpenses);
+});
+
+router.get('/statistics', async (req: Request, res: Response) => {
+  const statistics: {
+    totalMonthlyAverage: number;
+    totalExpenses: number;
+    totalExpensesThisMonth: number;
+    categories: {
+      [category: string]: {
+        monthlyAverage: number;
+        total: number;
+      };
+    }
+    months: {
+      [month: string]: {
+        expenses: number;
+        incomes: number;
+      }
+    }
+  } = {
+    totalMonthlyAverage: 0,
+    totalExpenses: 0,
+    totalExpensesThisMonth: 0,
+    categories: {},
+    months: {}
+  };
+
+  const categories = (await prisma.expensesCategory.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { name: 'asc' },
+  }));
+  categories.push({ id: -1, name: "Uncategorized", color: "gray", userId: -1 });
+
+  const expenses = await prisma.expense.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { date: 'desc' },
+    include: { category: true },
+  });
+
+  const incomes = await prisma.income.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { date: 'desc' },
+  });
+
+  const today = new Date();
+  const thisMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  for (var { date, category, amount } of expenses ?? []) {
+    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!category) {
+      category = categories?.find(cat => cat.id === -1)!;
+    }
+
+    if (!statistics.categories[category.name]) {
+      statistics.categories[category.name] = { monthlyAverage: 0, total: 0 };
+    }
+
+    if (!statistics.months[month]) {
+      statistics.months[month] = { expenses: 0, incomes: 0 };
+    }
+
+    statistics.categories[category.name].total += amount;
+    statistics.months[month].expenses += amount;
+    statistics.totalExpenses += amount;
+
+    if (month === thisMonth) {
+      statistics.totalExpensesThisMonth += amount;
+    }
+  }
+
+  for (const { date, amount } of incomes ?? []) {
+    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!statistics.months[month]) {
+      statistics.months[month] = { expenses: 0, incomes: 0 };
+    }
+
+    statistics.months[month].incomes += amount;
+  }
+
+  const numMonths = Object.keys(statistics.months).length;
+  for (const category in statistics.categories) {
+    statistics.categories[category].monthlyAverage = statistics.categories[category].total / numMonths;
+    statistics.totalMonthlyAverage += statistics.categories[category].monthlyAverage;
+  }
+
+  res.json(statistics);
+})
 
 // Expenses
 

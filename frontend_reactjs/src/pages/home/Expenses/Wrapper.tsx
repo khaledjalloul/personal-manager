@@ -8,7 +8,7 @@ import {
 import styled from "styled-components";
 import { useState } from "react";
 import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ExpensesStatistics } from "./Statistics";
 import { MonthlyExpenses } from "./Monthly";
 import { ExpensesDetails } from "./Details";

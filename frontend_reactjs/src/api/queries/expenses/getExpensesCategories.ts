@@ -5,7 +5,7 @@ import client from "../../client";
 const ENDPOINT = "expenses/categories";
 
 
-const queryFn = () => async () => {
+const queryFn = async () => {
   return await client
     .get(`/${ENDPOINT}`)
     .then((res) => res.data)
@@ -18,6 +18,6 @@ const queryFn = () => async () => {
 export const useExpensesCategories = () =>
   useQuery<ExpensesCategory[]>({
     queryKey: [ENDPOINT],
-    queryFn: queryFn(),
+    queryFn,
     placeholderData: keepPreviousData,
   });

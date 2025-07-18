@@ -80,9 +80,11 @@ export const ExpenseTableRow = ({
 
         <TableCell>
           {!isEditing ? (
-            <Typography color={!editable ? 'error' : 'text.primary'} variant="body2">
-              {category?.name ?? (<em>Uncategorized</em>)}
-            </Typography>
+            category?.name ?
+              <Typography color={!editable ? 'error' : 'text.primary'} variant="body2">
+                {category.name}
+              </Typography> :
+              (<em>Uncategorized</em>)
           ) :
             <Select
               variant="standard"
