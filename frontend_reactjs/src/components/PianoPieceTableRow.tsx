@@ -16,6 +16,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreatePianoPiece, useDeletePianoPiece, useEditPianoPiece } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 
+const pianoPieceStatusOptions = {
+  [PianoPieceStatus.Planned]: "Planned",
+  [PianoPieceStatus.Learning]: "Learning",
+  [PianoPieceStatus.Learned]: "Learned",
+  [PianoPieceStatus.Learned_Forgotten]: "Learned (Forgotten)",
+}
 
 export const PianoPieceTableRow = ({
   pianoPiece,
@@ -88,29 +94,29 @@ export const PianoPieceTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? status :
+          {!isEditing ? pianoPieceStatusOptions[status] :
             <Select
               variant="standard"
               value={status}
               sx={{ width: '100%' }}
               onChange={(e) => setStatus(e.target.value as PianoPieceStatus)}
             >
-              <MenuItem value={PianoPieceStatus.PLANNED}>Planned</MenuItem>
-              <MenuItem value={PianoPieceStatus.LEARNING}>Learning</MenuItem>
-              <MenuItem value={PianoPieceStatus.LEARNED}>Learned</MenuItem>
-              <MenuItem value={PianoPieceStatus.LEARNED_FORGOTTEN}>Learned (Forgotten)</MenuItem>
+              <MenuItem value={PianoPieceStatus.Planned}>{pianoPieceStatusOptions[PianoPieceStatus.Planned]}</MenuItem>
+              <MenuItem value={PianoPieceStatus.Learning}>{pianoPieceStatusOptions[PianoPieceStatus.Learning]}</MenuItem>
+              <MenuItem value={PianoPieceStatus.Learned}>{pianoPieceStatusOptions[PianoPieceStatus.Learned]}</MenuItem>
+              <MenuItem value={PianoPieceStatus.Learned_Forgotten}>{pianoPieceStatusOptions[PianoPieceStatus.Learned_Forgotten]}</MenuItem>
             </Select>
           }
         </TableCell>
 
         <TableCell>
           {!isEditing ? (monthLearned ? monthLearned.format("MMMM YYYY") : "") :
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   views={["year", "month"]}
                   openTo="month"
-                  value={monthLearned}
+                  value={monthLearned ?? null}
                   onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
                   enableAccessibleFieldDOMStructure={false}
                   format="MMMM YYYY"

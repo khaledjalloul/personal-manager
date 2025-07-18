@@ -4,6 +4,7 @@ import { AuthSection } from "./Auth";
 import { AuthTextField } from "../../components";
 import styled from "styled-components";
 import { useSignUp } from "../../api";
+import { HttpStatusCode } from "axios";
 
 export const SignUp = ({
   setAuthSection,
@@ -12,7 +13,6 @@ export const SignUp = ({
 }) => {
   const { mutate: signUp, isPending: signUpLoading, error } = useSignUp();
 
-  const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
 
   const handleSubmit = (event: any) => {
@@ -20,14 +20,9 @@ export const SignUp = ({
 
     const data = new FormData(event.currentTarget);
 
-    const emailReg = new RegExp(/^\S{3,}@(student\.)?ethz\.ch$/);
     const passwordReg = new RegExp(/^\S{8,}$/);
 
     var valid = true;
-    if (!emailReg.test(data.get("email") as string)) {
-      setEmailError("Email must end with ethz.ch or student.ethz.ch");
-      valid = false;
-    }
     if (!passwordReg.test(data.get("password") as string)) {
       setPasswordError("Password must be at least 8 characters");
       valid = false;
@@ -41,10 +36,7 @@ export const SignUp = ({
       });
   };
 
-  useEffect(() => {
-    if (error && error.message === "CREDENTIALS_TAKEN")
-      setEmailError("Email is already in use");
-  }, [error]);
+  const emailError = error?.response?.status === HttpStatusCode.Conflict ? "Email is already in use" : "";
 
   return (
     <Wrapper
@@ -62,7 +54,6 @@ export const SignUp = ({
           label="Email Address"
           error={Boolean(emailError)}
           helperText={emailError}
-          onChange={() => setEmailError("")}
         />
         <AuthTextField
           required

@@ -64,8 +64,8 @@ model Hike {
   distance           Float
   ascent             Float
   descent            Float
-  duration           Int
-  durationWithBreaks Int
+  duration           Float
+  durationWithBreaks Float
   coverImage         String
   images             String[]
   googleMapsUrl      String

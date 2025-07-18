@@ -3,13 +3,15 @@ import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
 import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
-import { NoteCategory } from "../../types";
+import { Note, NoteCategory } from "../../types";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 
 const CategoryCard = ({
-  category
+  category,
+  setSelectedNote
 }: {
   category: NoteCategory
+  setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
 }) => {
 
   const [name, setName] = useState(category.name);
@@ -56,7 +58,10 @@ const CategoryCard = ({
         isOpen={confirmDeleteOpen}
         setIsOpen={setConfirmDeleteOpen}
         itemName={`category: ${category.name}`}
-        deleteFn={() => deleteCategory({ id: category.id })}
+        deleteFn={() => {
+          deleteCategory({ id: category.id });
+          setSelectedNote(undefined);
+        }}
       />
     </Fragment>
   )
@@ -65,9 +70,11 @@ const CategoryCard = ({
 export const ManageNoteCategoriesModal = ({
   isOpen,
   setIsOpen,
+  setSelectedNote
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
 }) => {
 
   const { data: categories } = useNoteCategories({});
@@ -83,7 +90,11 @@ export const ManageNoteCategoriesModal = ({
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {categories?.map((category) => (
-              <CategoryCard key={category.id} category={category} />
+              <CategoryCard
+                key={category.id}
+                category={category}
+                setSelectedNote={setSelectedNote}
+              />
             ))}
 
             <TextField

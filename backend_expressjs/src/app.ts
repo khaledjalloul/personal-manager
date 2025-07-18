@@ -29,5 +29,5 @@ app.use('/hikes', authMiddleware, hikesRoutes);
 app.use('/video-games', authMiddleware, videoGamesRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server ready at http://localhost:${PORT}`);
+  console.info(`Server ready at http://localhost:${PORT}`);
 });

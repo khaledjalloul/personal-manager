@@ -31,6 +31,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateVideoGame, useDeleteVideoGame, useEditVideoGame } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 
+const videoGameTypeOptions = {
+  [VideoGameType.Single_Player]: "Single Player",
+  [VideoGameType.Online]: "Online",
+  [VideoGameType.Both]: "Online & Single Player"
+}
+
 export const VideoGameCard = ({
   game,
   isAddingGame,
@@ -191,7 +197,7 @@ export const VideoGameCard = ({
             <PeopleOutlineOutlined />
             {!isEditing ? (
               <Typography variant="body1">
-                {type}
+                {videoGameTypeOptions[type]}
               </Typography>
             ) : (
               <Select
@@ -200,9 +206,9 @@ export const VideoGameCard = ({
                 value={type}
                 onChange={(e) => setType(e.target.value as VideoGameType)}
               >
-                <MenuItem value={VideoGameType.ONLINE}>Online</MenuItem>
-                <MenuItem value={VideoGameType.SINGLE_PLAYER}>Single Player</MenuItem>
-                <MenuItem value={VideoGameType.BOTH}>Online & Single Player</MenuItem>
+                <MenuItem value={VideoGameType.Online}>{videoGameTypeOptions[VideoGameType.Online]}</MenuItem>
+                <MenuItem value={VideoGameType.Single_Player}>{videoGameTypeOptions[VideoGameType.Single_Player]}</MenuItem>
+                <MenuItem value={VideoGameType.Both}>{videoGameTypeOptions[VideoGameType.Both]}</MenuItem>
               </Select>
             )}
           </Grid>

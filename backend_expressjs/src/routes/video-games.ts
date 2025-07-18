@@ -9,6 +9,9 @@ router.get('/', async (req: Request, res: Response) => {
   const videoGames = await prisma.videoGame.findMany({
     where: { userId: req.user?.id },
     orderBy: { name: 'asc' },
+    include: {
+      extraPurchases: true,
+    },
   });
   res.json(videoGames);
 });
@@ -24,7 +27,10 @@ router.post('/', async (req: Request, res: Response) => {
       firstPlayed: new Date(data.firstPlayed),
       completed: data.completed,
       price: data.price,
-      extraPurchases: data.extraPurchases,
+      // TODO: Implement extra purchases
+      // extraPurchases: {
+      //   connect: 
+      // },
       coverImage: data.coverImage,
       storeUrl: data.storeUrl
     },
@@ -44,7 +50,10 @@ router.post('/:id', async (req: Request, res: Response) => {
       firstPlayed: new Date(data.firstPlayed),
       completed: data.completed,
       price: data.price,
-      extraPurchases: data.extraPurchases,
+      // TODO: Implement extra purchases
+      // extraPurchases: {
+      //   connect: 
+      // },
       coverImage: data.coverImage,
       storeUrl: data.storeUrl
     }

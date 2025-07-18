@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 router.post('/signup', async (req, res) => {
   const { email, password } = req.body;
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) return res.status(400).json({ message: 'Email already registered' });
+  if (existing) return res.status(409).json({ message: 'Email already registered' });
 
   const hash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({

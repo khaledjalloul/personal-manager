@@ -25,7 +25,7 @@ const emptyPiece: PianoPiece = {
   name: "",
   origin: "",
   composer: "",
-  status: PianoPieceStatus.PLANNED,
+  status: PianoPieceStatus.Planned,
   sheetMusicUrl: "",
   youtubeUrl: ""
 }

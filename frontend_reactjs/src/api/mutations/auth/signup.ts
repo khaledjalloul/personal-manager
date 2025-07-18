@@ -18,13 +18,12 @@ type Response = {
 };
 
 const signUp = async (data: Request) => {
-  console.log("signUp", data);
   return await client
     .post("/auth/signup", data)
     .then((res) => res.data)
     .catch((err) => {
       console.error("signUp-error", err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

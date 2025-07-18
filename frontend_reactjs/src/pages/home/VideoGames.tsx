@@ -10,7 +10,7 @@ const emptyGame: VideoGame = {
   id: -1,
   name: "",
   platform: "",
-  type: VideoGameType.SINGLE_PLAYER,
+  type: VideoGameType.Single_Player,
   firstPlayed: new Date(),
   completed: false,
   price: 0,

@@ -22,7 +22,7 @@ const signIn = async (data: Request) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error("signIn-error", err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

@@ -50,11 +50,11 @@ export type Hike = {
 }
 
 export enum PianoPieceStatus {
-  PLANNED = "Planned",
-  LEARNING = "Learning",
-  LEARNED = "Learned",
-  LEARNED_FORGOTTEN = "Learned (Forgotten)",
-}
+  Planned = "Planned",
+  Learning = "Learning",
+  Learned = "Learned",
+  Learned_Forgotten = "Learned_Forgotten",
+};
 
 export type PianoPiece = {
   id: number;
@@ -90,9 +90,9 @@ export type DiaryEntry = {
 };
 
 export enum VideoGameType {
-  ONLINE = "Online",
-  SINGLE_PLAYER = "Single Player",
-  BOTH = "Online & Single Player",
+  Online = "Online",
+  Single_Player = "Single_Player",
+  Both = "Both"
 }
 
 export type VideoGame = {

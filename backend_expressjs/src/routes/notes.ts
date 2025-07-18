@@ -5,6 +5,51 @@ import { Request, Response } from 'express';
 const router = Router();
 const prisma = new PrismaClient();
 
+// Note Categories
+
+router.get('/categories', async (req: Request, res: Response) => {
+  const categories = await prisma.noteCategory.findMany({
+    where: { userId: req.user?.id },
+    orderBy: { name: 'asc' },
+  });
+  res.json(categories);
+});
+
+router.post('/categories', async (req: Request, res: Response) => {
+  const { name } = req.body;
+  const category = await prisma.noteCategory.create({
+    data: {
+      userId: req.user!.id,
+      name
+    }
+  });
+  res.json(category);
+});
+
+router.post('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = parseInt(req.params.id);
+  const { name } = req.body;
+  const category = await prisma.noteCategory.update({
+    where: { id: categoryId },
+    data: { name }
+  });
+  res.json(category);
+});
+
+router.delete('/categories/:id', async (req: Request, res: Response) => {
+  const categoryId = parseInt(req.params.id);
+
+  await prisma.note.updateMany({
+    where: { categoryId },
+    data: { categoryId: null }
+  });
+
+  await prisma.noteCategory.delete({ where: { id: categoryId } });
+  res.json({ message: 'Category deleted successfully' });
+});
+
+// Notes
+
 router.get('/', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
   let notes;
@@ -78,47 +123,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
   const noteId = parseInt(req.params.id);
   await prisma.note.delete({ where: { id: noteId } });
   res.json({ message: 'Note deleted successfully' });
-});
-
-router.get('/categories', async (req: Request, res: Response) => {
-  const categories = await prisma.noteCategory.findMany({
-    where: { userId: req.user?.id },
-    orderBy: { name: 'asc' },
-  });
-  res.json(categories);
-});
-
-router.post('/categories', async (req: Request, res: Response) => {
-  const { name } = req.body;
-  const category = await prisma.noteCategory.create({
-    data: {
-      userId: req.user!.id,
-      name
-    }
-  });
-  res.json(category);
-});
-
-router.post('/categories/:id', async (req: Request, res: Response) => {
-  const categoryId = parseInt(req.params.id);
-  const { name } = req.body;
-  const category = await prisma.noteCategory.update({
-    where: { id: categoryId },
-    data: { name }
-  });
-  res.json(category);
-});
-
-router.delete('/categories/:id', async (req: Request, res: Response) => {
-  const categoryId = parseInt(req.params.id);
-
-  await prisma.note.updateMany({
-    where: { categoryId },
-    data: { categoryId: null }
-  });
-
-  await prisma.noteCategory.delete({ where: { id: categoryId } });
-  res.json({ message: 'Category deleted successfully' });
 });
 
 export default router;

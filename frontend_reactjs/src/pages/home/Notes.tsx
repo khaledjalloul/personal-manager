@@ -159,9 +159,11 @@ export const Notes = () => {
                 onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
                 disabled={!selectedNote}
               >
-                <MenuItem value={-1} disabled>
-                  {selectedNote ? "Uncategorized" : ""}
-                </MenuItem>
+                {!selectedNoteCategory && (
+                  <MenuItem value={-1} disabled>
+                    {selectedNote ? <em>Uncategorized</em> : ""}
+                  </MenuItem>
+                )}
                 {noteCategories?.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
                     {category.name}
@@ -257,6 +259,7 @@ export const Notes = () => {
       <ManageNoteCategoriesModal
         isOpen={isCategoriesModalOpen}
         setIsOpen={setIsCategoriesModalOpen}
+        setSelectedNote={setSelectedNote}
       />
 
       <ConfirmDeleteDialog

@@ -135,7 +135,7 @@ export const pianoPieces: PianoPiece[] = [
         name: 'Fur Elise',
         composer: 'Beethoven',
         origin: 'Classical',
-        status: PianoPieceStatus.LEARNED,
+        status: PianoPieceStatus.Learned,
         monthLearned: new Date("2025-01-01"),
         sheetMusicUrl: 'https://example.com/fur-elise-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
@@ -145,7 +145,7 @@ export const pianoPieces: PianoPiece[] = [
         name: 'Clair de Lune',
         composer: 'Debussy',
         origin: 'Impressionist',
-        status: PianoPieceStatus.LEARNING,
+        status: PianoPieceStatus.Learning,
         monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
@@ -155,7 +155,7 @@ export const pianoPieces: PianoPiece[] = [
         name: 'Prelude in C Major',
         composer: 'Bach',
         origin: 'Baroque',
-        status: PianoPieceStatus.PLANNED,
+        status: PianoPieceStatus.Planned,
         monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
@@ -165,7 +165,7 @@ export const pianoPieces: PianoPiece[] = [
         name: 'Moonlight Sonata',
         composer: 'Beethoven',
         origin: 'Classical',
-        status: PianoPieceStatus.LEARNED_FORGOTTEN,
+        status: PianoPieceStatus.Learned_Forgotten,
         monthLearned: new Date("2025-04-01"),
         sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
         youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
@@ -262,7 +262,7 @@ export const videoGames: VideoGame[] = [
         id: 1,
         name: 'The Legend of Zelda: Breath of the Wild',
         platform: 'Nintendo Switch',
-        type: VideoGameType.BOTH,
+        type: VideoGameType.Both,
         completed: true,
         firstPlayed: new Date("2025-01-01"),
         price: 59.99,
@@ -277,7 +277,7 @@ export const videoGames: VideoGame[] = [
         id: 2,
         name: 'Stardew Valley',
         platform: 'PC',
-        type: VideoGameType.SINGLE_PLAYER,
+        type: VideoGameType.Single_Player,
         completed: false,
         firstPlayed: new Date("2025-02-01"),
         price: 14.99,
@@ -289,10 +289,10 @@ export const videoGames: VideoGame[] = [
         id: 3,
         name: 'Call of Duty: Warzone',
         platform: 'PC',
-        type: VideoGameType.ONLINE,
+        type: VideoGameType.Online,
         completed: false,
         firstPlayed: new Date("2025-03-01"),
-        price: 0.00, // Free to play
+        price: 0.00,
         extraPurchases: [
             { name: 'Battle Pass', price: 9.99 }
         ],
