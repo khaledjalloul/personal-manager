@@ -233,6 +233,8 @@ const Wrapper = styled(Box)`
   flex-direction: column;
   overflow-y: auto; // Idk why but needed to prevent extra scroll
   gap: 16px;
+  padding: 32px;
+  padding-top: 0;
 `;
 
 const IncomeGridItem = styled(Grid)`

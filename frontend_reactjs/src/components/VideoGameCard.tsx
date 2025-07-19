@@ -252,19 +252,18 @@ export const VideoGameCard = ({
             {type !== VideoGameType.Online && (
               !isEditing ? (
                 <Typography variant="body1">
-                  {completionCount ? "CompletionCount" : "Not CompletionCount"}
+                  {completionCount}
                 </Typography>
               ) : (
-                // <Select
-                //   variant="standard"
-                //   sx={{ width: '100%', overflow: 'hidden' }}
-                //   value={completionCount ? "true" : "false"}
-                //   onChange={(e) => setCompletionCount(e.target.value === "true")}
-                // >
-                //   <MenuItem value="true">CompletionCount</MenuItem>
-                //   <MenuItem value="false">Not CompletionCount</MenuItem>
-                // </Select>
-                <Box />
+                <TextField
+                  variant="standard"
+                  placeholder="Completion Count"
+                  value={completionCount}
+                  onChange={(e) => {
+                    const newCount = e.target.value === "" ? 0 : parseInt(e.target.value);
+                    setCompletionCount(isNaN(newCount) ? completionCount : newCount);
+                  }}
+                />
               ))}
           </Grid>
 

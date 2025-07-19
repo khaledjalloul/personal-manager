@@ -111,7 +111,7 @@ export const ExpensesWrapper = () => {
 const Wrapper = styled(Box)`
   height: 100%;
   box-sizing: border-box;
-  padding: 32px;
+  padding-top: 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -121,4 +121,5 @@ const Header = styled(Box)`
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 32px 0 32px;
 `;

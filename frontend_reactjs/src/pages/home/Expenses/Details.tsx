@@ -1,4 +1,5 @@
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -36,31 +37,33 @@ export const ExpensesDetails = ({
   });
 
   return (
-    <TableContainer component={Paper}>
-      <Table
-        size="small"
-        stickyHeader
-        sx={{
-          '& th': {
-            backgroundColor: "primary.main",
-            color: "primary.contrastText"
-          }
-        }}
-      >
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', textWrap: 'nowrap' }}>Description / Source</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tableRows}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ p: '32px', pt: 0, display: 'flex', overflowY: 'hidden' }}>
+      <TableContainer component={Paper}>
+        <Table
+          size="small"
+          stickyHeader
+          sx={{
+            '& th': {
+              backgroundColor: "primary.main",
+              color: "primary.contrastText"
+            }
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', textWrap: 'nowrap' }}>Description / Source</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableRows}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

@@ -275,6 +275,8 @@ const Wrapper = styled(Box)`
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
+  padding: 32px;
+  padding-top: 0;
 `;
 
 const StatisticsCard = styled(Box)`

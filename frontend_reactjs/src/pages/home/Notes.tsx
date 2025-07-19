@@ -107,7 +107,16 @@ export const Notes = () => {
         />
       </Header>
 
-      <Grid container spacing={2} flexGrow={1}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          p: '32px',
+          pt: 0
+        }}
+      >
         <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
@@ -294,7 +303,7 @@ export const Notes = () => {
 const Wrapper = styled(Box)`
   height: 100%;
   box-sizing: border-box;
-  padding: 32px;
+  padding-top: 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -305,6 +314,7 @@ const Header = styled(Box)`
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 32px 0 32px;
 `;
 
 const NoteEditor = styled.textarea`
