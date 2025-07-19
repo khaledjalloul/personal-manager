@@ -22,7 +22,8 @@ import {
   SportsEsportsOutlined,
   PeopleOutlineOutlined,
   InsertLink,
-  AddPhotoAlternate
+  AddPhotoAlternate,
+  DoneAll
 } from "@mui/icons-material";
 import { Dispatch, SetStateAction, useState } from "react";
 import dayjs from "dayjs";
@@ -55,15 +56,13 @@ export const VideoGameCard = ({
   const [name, setName] = useState(game.name);
   const [platform, setPlatform] = useState(game.platform);
   const [type, setType] = useState(game.type);
-  const [completed, setCompleted] = useState(game.completed);
+  const [completionCount, setCompletionCount] = useState(game.completionCount);
   const [firstPlayed, setFirstPlayed] = useState(dayjs(game.firstPlayed));
   const [price, setPrice] = useState(game.price);
   const [extraPurchases, setExtraPurchases] = useState(game.extraPurchases);
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-
-  const sumExtraPurchases = extraPurchases.reduce((acc, purchase) => acc + purchase.price, 0);
 
   return (
     <Wrapper sx={{ backgroundColor: 'secondary.main' }}>
@@ -114,7 +113,7 @@ export const VideoGameCard = ({
                     name: name.trim(),
                     platform: platform.trim(),
                     type,
-                    completed,
+                    completionCount,
                     firstPlayed: firstPlayed.toDate(),
                     price,
                     extraPurchases,
@@ -127,7 +126,7 @@ export const VideoGameCard = ({
                     name: name.trim(),
                     platform: platform.trim(),
                     type,
-                    completed,
+                    completionCount,
                     firstPlayed: firstPlayed.toDate(),
                     price,
                     extraPurchases,
@@ -154,7 +153,7 @@ export const VideoGameCard = ({
                 setName(game.name);
                 setPlatform(game.platform);
                 setType(game.type);
-                setCompleted(game.completed);
+                setCompletionCount(game.completionCount);
                 setFirstPlayed(dayjs(game.firstPlayed));
                 setPrice(game.price);
                 setExtraPurchases(game.extraPurchases);
@@ -239,44 +238,42 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {game.completed ? <Check /> : <Clear />}
-            {!isEditing ? (
-              <Typography variant="body1">
-                {completed ? "Completed" : "Not Completed"}
-              </Typography>
-            ) : (
-              <Select
-                variant="standard"
-                sx={{ width: '100%', overflow: 'hidden' }}
-                value={completed ? "true" : "false"}
-                onChange={(e) => setCompleted(e.target.value === "true")}
-              >
-                <MenuItem value="true">Completed</MenuItem>
-                <MenuItem value="false">Not Completed</MenuItem>
-              </Select>
+            {type !== VideoGameType.Online && (
+              completionCount > 1 ? <DoneAll /> :
+                completionCount === 1 ? <Check /> :
+                  <Clear />
             )}
+            {type !== VideoGameType.Online && (
+              !isEditing ? (
+                <Typography variant="body1">
+                  {completionCount ? "CompletionCount" : "Not CompletionCount"}
+                </Typography>
+              ) : (
+                // <Select
+                //   variant="standard"
+                //   sx={{ width: '100%', overflow: 'hidden' }}
+                //   value={completionCount ? "true" : "false"}
+                //   onChange={(e) => setCompletionCount(e.target.value === "true")}
+                // >
+                //   <MenuItem value="true">CompletionCount</MenuItem>
+                //   <MenuItem value="false">Not CompletionCount</MenuItem>
+                // </Select>
+                <Box/>
+              ))}
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SellOutlined />
             {!isEditing ? (
               <Typography variant="body1">
-                {price} $
+                {price}
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Price"
-                value={price.toFixed(2)}
-                onChange={(e) => {
-                  const newPrice = parseFloat(e.target.value);
-                  setPrice(isNaN(newPrice) ? price : newPrice);
-                }}
-                slotProps={{
-                  input: {
-                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
-                  }
-                }}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             )}
           </Grid>
@@ -285,22 +282,14 @@ export const VideoGameCard = ({
             <CreditCard />
             {!isEditing ? (
               <Typography variant="body1">
-                {sumExtraPurchases} $
+                {extraPurchases}
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Extra Purchases"
-                value={sumExtraPurchases.toFixed(2)}
-                onChange={(e) => {
-                  const newPrice = parseFloat(e.target.value);
-                  setPrice(isNaN(newPrice) ? sumExtraPurchases : newPrice);
-                }}
-                slotProps={{
-                  input: {
-                    endAdornment: <InputAdornment position="end">$</InputAdornment>,
-                  }
-                }}
+                value={extraPurchases}
+                onChange={(e) => setExtraPurchases(e.target.value)}
               />
             )}
           </Grid>

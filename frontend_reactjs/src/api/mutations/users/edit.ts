@@ -3,17 +3,16 @@ import client from "../../client";
 import { AxiosError } from "axios";
 import { User } from "../../../types";
 
-const ENDPOINT = "users";
+const ENDPOINT = "users/me";
 
 export type EditUserRequestBody = {
-  id: number;
   name?: string;
   email?: string;
 };
 
 const mutationFn = async (data: EditUserRequestBody) => {
   return await client
-    .post(`/${ENDPOINT}/${data.id}`, data)
+    .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
     .catch((err) => {
       console.error(`edit-${ENDPOINT}-error`, err?.response?.data);
@@ -28,7 +27,7 @@ export const useEditUser = () => {
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
-        queryKey: ["/users/me"],
+        queryKey: [ENDPOINT],
       });
     },
   });

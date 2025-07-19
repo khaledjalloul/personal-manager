@@ -71,8 +71,8 @@ CREATE TABLE "Hike" (
     "distance" DOUBLE PRECISION NOT NULL,
     "ascent" DOUBLE PRECISION NOT NULL,
     "descent" DOUBLE PRECISION NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "durationWithBreaks" INTEGER NOT NULL,
+    "duration" DOUBLE PRECISION NOT NULL,
+    "durationWithBreaks" DOUBLE PRECISION NOT NULL,
     "coverImage" TEXT NOT NULL,
     "images" TEXT[],
     "googleMapsUrl" TEXT NOT NULL,
@@ -130,25 +130,16 @@ CREATE TABLE "DiaryEntry" (
 );
 
 -- CreateTable
-CREATE TABLE "VideoGameExtraPurchase" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
-    "videoGameId" INTEGER NOT NULL,
-
-    CONSTRAINT "VideoGameExtraPurchase_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "VideoGame" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "platform" TEXT NOT NULL,
     "type" "VideoGameType" NOT NULL,
-    "completed" BOOLEAN NOT NULL,
+    "completionCount" INTEGER NOT NULL,
     "firstPlayed" TIMESTAMP(3) NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
+    "price" TEXT NOT NULL,
+    "extraPurchases" TEXT NOT NULL,
     "storeUrl" TEXT NOT NULL,
     "coverImage" TEXT NOT NULL,
 
@@ -166,6 +157,3 @@ ALTER TABLE "ExpensesCategoryKeyword" ADD CONSTRAINT "ExpensesCategoryKeyword_ca
 
 -- AddForeignKey
 ALTER TABLE "Note" ADD CONSTRAINT "Note_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "NoteCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "VideoGameExtraPurchase" ADD CONSTRAINT "VideoGameExtraPurchase_videoGameId_fkey" FOREIGN KEY ("videoGameId") REFERENCES "VideoGame"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

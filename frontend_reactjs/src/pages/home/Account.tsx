@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { Backup, Bolt } from "@mui/icons-material";
-import { Box, Button, Grid, Typography } from "@mui/material";
-import { useBackupData, useRestoreData } from "../../api";
+import { Backup, Bolt, Check, Download, Upload } from "@mui/icons-material";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { useBackupData, useCurrentUser, useEditUser, useRestoreData } from "../../api";
 import { Fragment } from "react/jsx-runtime";
+import { useEffect, useState } from "react";
+import { ConfirmRestoreDialog } from "../../components";
 
 const dataTypes: {
   [key: string]: string;
@@ -26,8 +28,10 @@ const BackupButton = ({
 
   return (
     <Button
-      variant="contained"
+      variant="outlined"
       loading={isPending}
+      sx={{ flexGrow: 1 }}
+      startIcon={<Download />}
       onClick={() => backupData({ dataType })}
     >
       Back Up {text}
@@ -42,79 +46,148 @@ const RestoreButton = ({
 }) => {
   const { mutate: restoreData, isPending, isSuccess } = useRestoreData();
 
-  const text = dataType === 'all' ? 'All Data' : "";
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
-  if (isSuccess) return (
-    <Typography variant="body1" color="sucess">
-      Restored!
-    </Typography>
-  );
+  const text = dataType === 'all' ? 'All Data' : "";
+  const formData = new FormData()
+
   return (
     <Fragment>
-      <input
-        type="file"
-        accept=".json"
-        disabled={isPending}
-        style={{ display: "none" }}
-        id={`restore-${dataType}-upload`}
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            const formData = new FormData()
-            formData.append('file', file)
-            restoreData({
-              dataType,
-              formData,
-            })
-          }
+      {isSuccess && (
+        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0.5 }}>
+          <Check color="success" />
+          <Typography
+            variant="body2"
+            color="success"
+          >
+            Restored!
+          </Typography>
+        </Box>
+      )}
+      {!isSuccess && (
+        <input
+          type="file"
+          accept=".json"
+          disabled={isPending}
+          style={{ display: "none" }}
+          id={`restore-${dataType}-upload`}
+          onChange={(e) => setConfirmDialogOpen(true)}
+        />
+      )}
+      {!isSuccess && (
+        <label htmlFor={`restore-${dataType}-upload`} style={{ flexGrow: 1 }}>
+          <Button
+            variant="contained"
+            component="span"
+            startIcon={<Upload />}
+            loading={isPending}
+            sx={{ width: '100%' }}
+          >
+            Restore {text}
+          </Button>
+        </label>
+      )}
+      <ConfirmRestoreDialog
+        dataType={dataType}
+        restoreFn={() => {
+          const input = document.getElementById(`restore-${dataType}-upload`) as HTMLInputElement;
+          const file = input?.files?.[0];
+          if (!file) return;
+          const formData = new FormData();
+          formData.append('file', file);
+          restoreData({ dataType, formData });
         }}
+        isOpen={confirmDialogOpen}
+        setIsOpen={setConfirmDialogOpen}
       />
-      <label htmlFor={`restore-${dataType}-upload`}>
-        <Button
-          variant="contained"
-          component="span"
-          loading={isPending}
-        >
-          Restore {text}
-        </Button>
-      </label>
     </Fragment>
   )
 }
 
 export const Account = () => {
 
+  const { data: user } = useCurrentUser()
+  const { mutate: editUser, isPending: editUserLoading } = useEditUser();
+
+  const [name, setName] = useState(user?.name ?? "")
+  const [email, setEmail] = useState(user?.email ?? "");
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+    }
+  }, [JSON.stringify(user)]);
+
   return (
     <Wrapper>
-      <Grid container spacing={2} flexGrow={1}>
+      <Grid container spacing={4} flexGrow={1}>
 
-        <Grid size={{ xs: 12, md: 4 }}>
-
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="h5">
+              Account
+            </Typography>
+            <TextField
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              onClick={() => editUser({ name, email })}
+              loading={editUserLoading}
+            >
+              Save Changes
+            </Button>
+          </Box>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Typography variant="h4" color="text.primary">
-            Back Up Data
-          </Typography>
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <Typography variant="h5">Back Up & Restore Data</Typography>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-            <BackupButton dataType="all" />
-            <RestoreButton dataType="all" />
-          </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+              <BackupButton dataType="all" />
+              <RestoreButton dataType="all" />
+            </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
-            {Object.entries(dataTypes).map(([dataType, displayedValue]) => (
-              <Box
-                key={dataType}
-                sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
-              >
-                <Typography variant="h6">
-                  {displayedValue}
-                </Typography>
-                <BackupButton dataType={dataType} />
-                <RestoreButton dataType={dataType} />
-              </Box>
-            ))}
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
+              {Object.entries(dataTypes).map(([dataType, displayedValue]) => (
+                <Box
+                  key={dataType}
+                  component={"fieldset"}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    borderRadius: 2,
+                    flex: 1,
+                    padding: 2
+                  }}
+                >
+                  <legend style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                    <Typography variant="body1" sx={{ pl: 0.5, pr: 0.5, }}>
+                      {displayedValue}
+                    </Typography>
+                  </legend>
+
+                  <BackupButton dataType={dataType} />
+                  <RestoreButton dataType={dataType} />
+                </Box>
+              ))}
+            </Box>
           </Box>
         </Grid>
       </Grid>
@@ -125,4 +198,5 @@ export const Account = () => {
 const Wrapper = styled(Box)`
   display: flex;
   flex-direction: column;
+  padding: 32px;
 `;

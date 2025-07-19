@@ -123,24 +123,16 @@ enum VideoGameType {
   Both
 }
 
-model VideoGameExtraPurchase {
-  id          Int       @id @default(autoincrement())
-  name        String
-  price       Float
-  videoGame   VideoGame @relation(fields: [videoGameId], references: [id])
-  videoGameId Int
-}
-
 model VideoGame {
-  id             Int                      @id @default(autoincrement())
-  userId         Int
-  name           String
-  platform       String
-  type           VideoGameType
-  completed      Boolean
-  firstPlayed    DateTime
-  price          Float
-  extraPurchases VideoGameExtraPurchase[]
-  storeUrl       String
-  coverImage     String
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  name            String
+  platform        String
+  type            VideoGameType
+  completionCount Int
+  firstPlayed     DateTime
+  price           String
+  extraPurchases  String
+  storeUrl        String
+  coverImage      String
 }

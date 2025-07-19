@@ -263,13 +263,10 @@ export const videoGames: VideoGame[] = [
         name: 'The Legend of Zelda: Breath of the Wild',
         platform: 'Nintendo Switch',
         type: VideoGameType.Both,
-        completed: true,
+        completionCount: 2,
         firstPlayed: new Date("2025-01-01"),
-        price: 59.99,
-        extraPurchases: [
-            { name: 'DLC Pack 1', price: 19.99 },
-            { name: 'DLC Pack 2', price: 19.99 }
-        ],
+        price: "59.99 $",
+        extraPurchases: "DLC Pack - 19.99 $",
         coverImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT8XEMG4EYPrDFtsYlOqoIWqLw14e7eNwVpA&s',
         storeUrl: 'https://www.zelda.com/breath-of-the-wild/'
     },
@@ -278,10 +275,10 @@ export const videoGames: VideoGame[] = [
         name: 'Stardew Valley',
         platform: 'PC',
         type: VideoGameType.Single_Player,
-        completed: false,
+        completionCount: 0,
         firstPlayed: new Date("2025-02-01"),
-        price: 14.99,
-        extraPurchases: [],
+        price: "14.99 CHF",
+        extraPurchases: "",
         coverImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkeLlFQDTHsYjSHtbBsInAYl2aIF54Qz_8zQ&s',
         storeUrl: 'https://www.stardewvalley.net/'
     },
@@ -290,12 +287,10 @@ export const videoGames: VideoGame[] = [
         name: 'Call of Duty: Warzone',
         platform: 'PC',
         type: VideoGameType.Online,
-        completed: false,
+        completionCount: 0,
         firstPlayed: new Date("2025-03-01"),
-        price: 0.00,
-        extraPurchases: [
-            { name: 'Battle Pass', price: 9.99 }
-        ],
+        price: "Free",
+        extraPurchases: 'Battle Pass - 9.99 $',
         coverImage: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/311210/header.jpg?t=1748022663',
         storeUrl: 'https://www.callofduty.com/warzone'
     }

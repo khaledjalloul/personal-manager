@@ -15,7 +15,7 @@ const queryFn = async () => {
 };
 
 export const useCurrentUser = () =>
-  useQuery<User[]>({
+  useQuery<User>({
     queryKey: [ENDPOINT],
     queryFn,
     placeholderData: keepPreviousData,

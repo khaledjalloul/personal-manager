@@ -43,7 +43,7 @@ export const Piano = () => {
     <Wrapper>
       <Header>
         <Typography variant="h5">
-          Piano Pieces
+          Piano Pieces ({pianoPieces?.length || 0})
         </Typography>
         <IconButton onClick={() => setIsAddingPiece(true)}>
           <Add />
@@ -95,11 +95,11 @@ export const Piano = () => {
                 setIsAddingPiece={setIsAddingPiece}
               />
             )}
-            {pianoPieces?.map((piece) => (
+            {pianoPieces?.map((piece, index) => (
               <PianoPieceTableRow
                 key={piece.id}
                 pianoPiece={piece}
-                index={piece.id}
+                index={index}
                 isAddingPiece={isAddingPiece}
                 setIsAddingPiece={setIsAddingPiece}
               />

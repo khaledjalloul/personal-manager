@@ -21,7 +21,7 @@ import {
   Visibility,
   VisibilityOff
 } from "@mui/icons-material";
-import { useDeleteNote, useEditNote, useNoteCategories } from "../../api";
+import { useDeleteNote, useEditNote, useNoteCategories, useNotes } from "../../api";
 import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -32,10 +32,6 @@ export const Notes = () => {
 
   const { palette } = useTheme();
 
-  const { data: noteCategories } = useNoteCategories();
-  const { mutate: editNote } = useEditNote();
-  const { mutate: deleteNote } = useDeleteNote();
-
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [editorEnabled, setEditorEnabled] = useState(true);
@@ -45,6 +41,11 @@ export const Notes = () => {
   const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory | undefined>();
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { data: notes } = useNotes({ searchText: searchText.trim() })
+  const { data: noteCategories } = useNoteCategories();
+  const { mutate: editNote } = useEditNote();
+  const { mutate: deleteNote } = useDeleteNote();
 
   useEffect(() => {
     if (selectedNote) {
@@ -62,7 +63,7 @@ export const Notes = () => {
     <Wrapper>
       <Header>
         <Typography variant="h5">
-          Notes
+          Notes ({notes?.length || 0})
         </Typography>
 
         <IconButton

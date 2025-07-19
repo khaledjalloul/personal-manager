@@ -17,7 +17,7 @@ router.get('/', async (req: Request, res: Response) => {
         { composer: { contains: searchText.trim(), mode: 'insensitive' } },
       ]
     },
-    orderBy: { name: 'asc' },
+    orderBy: { monthLearned: 'asc' },
   });
   res.json(pianoPieces);
 });

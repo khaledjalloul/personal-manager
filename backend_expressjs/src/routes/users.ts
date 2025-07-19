@@ -32,50 +32,66 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
       case 'expenses':
         data.expenses = await prisma.expense.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
         });
         data.incomes = await prisma.income.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
         });
         data.expensesCategories = await prisma.expensesCategory.findMany({
           where: { userId },
-          omit: { id: true },
-          include: { keywords: true }
+          omit: { id: true, userId: true },
+          include: {
+            keywords: {
+              omit: { id: true },
+              orderBy: { keyword: 'asc' }
+            }
+          },
+          orderBy: {
+            name: 'asc'
+          }
         });
         break;
       case 'diary':
         data.diary = await prisma.diaryEntry.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
         });
         break;
       case 'notes':
         data.noteCategories = await prisma.noteCategory.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { name: 'asc' }
         });
         data.notes = await prisma.note.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { title: 'asc' }
         });
         break;
       case 'piano':
         data.pianoPieces = await prisma.pianoPiece.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { monthLearned: 'asc' }
         });
         break;
       case 'hikes':
         data.hikes = await prisma.hike.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
         });
         break;
       case 'video-games':
         data.videoGames = await prisma.videoGame.findMany({
           where: { userId },
-          omit: { id: true }
+          omit: { id: true, userId: true },
+          orderBy: { name: 'asc' }
         });
         break;
       default:
@@ -111,6 +127,39 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   const dataTypes = dataType === 'all'
     ? ['expenses', 'diary', 'notes', 'piano', 'hikes', 'video-games']
     : [dataType];
+
+
+  // Validate all input data before starting with the delete and restore operations 
+  for (const type of dataTypes) {
+    switch (type) {
+      case 'expenses':
+        if (!inputData.expenses || !inputData.expensesCategories || !inputData.incomes)
+          return res.status(400).json({ error: "Invalid expenses data" });
+        break;
+      case 'diary':
+        if (!inputData.diary)
+          return res.status(400).json({ error: "Invalid diary data" });
+        break;
+      case 'notes':
+        if (!inputData.noteCategories || !inputData.notes)
+          return res.status(400).json({ error: "Invalid notes data" });
+        break;
+      case 'piano':
+        if (!inputData.pianoPieces)
+          return res.status(400).json({ error: "Invalid piano pieces data" });
+        break;
+      case 'hikes':
+        if (!inputData.hikes)
+          return res.status(400).json({ error: "Invalid hikes data" });
+        break;
+      case 'video-games':
+        if (!inputData.videoGames)
+          return res.status(400).json({ error: "Invalid video games data" });
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid data type" });
+    }
+  }
 
   for (const type of dataTypes) {
     switch (type) {
@@ -188,6 +237,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         return res.status(400).json({ error: "Invalid data type" });
     }
   }
+
   res.json({ status: "Restore completed" });
 });
 
@@ -203,8 +253,8 @@ router.get('/me', async (req: Request, res: Response) => {
   res.json(user);
 });
 
-router.post('/:id', async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.id);
+router.post('/me', async (req: Request, res: Response) => {
+  const userId = req.user?.id;
   const { name, email } = req.body;
 
   const updatedUser = await prisma.user.update({

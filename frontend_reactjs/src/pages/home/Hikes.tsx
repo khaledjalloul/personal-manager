@@ -33,7 +33,7 @@ export const Hikes = () => {
     <Wrapper>
       <Header>
         <Typography variant="h5">
-          Hikes
+          Hikes ({hikes?.length || 0})
         </Typography>
         <IconButton onClick={() => setIsAddingHike(true)}>
           <Add />

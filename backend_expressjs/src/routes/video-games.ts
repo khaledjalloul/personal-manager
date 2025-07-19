@@ -17,9 +17,6 @@ router.get('/', async (req: Request, res: Response) => {
       ]
     },
     orderBy: { name: 'asc' },
-    include: {
-      extraPurchases: true,
-    },
   });
   res.json(videoGames);
 });
@@ -33,12 +30,9 @@ router.post('/', async (req: Request, res: Response) => {
       platform: data.platform,
       type: data.type,
       firstPlayed: new Date(data.firstPlayed),
-      completed: data.completed,
+      completionCount: data.completionCount,
       price: data.price,
-      // TODO: Implement extra purchases
-      // extraPurchases: {
-      //   connect: 
-      // },
+      extraPurchases: data.extraPurchases,
       coverImage: data.coverImage,
       storeUrl: data.storeUrl
     },
@@ -56,12 +50,9 @@ router.post('/:id', async (req: Request, res: Response) => {
       platform: data.platform,
       type: data.type,
       firstPlayed: new Date(data.firstPlayed),
-      completed: data.completed,
+      completionCount: data.completionCount,
       price: data.price,
-      // TODO: Implement extra purchases
-      // extraPurchases: {
-      //   connect: 
-      // },
+      extraPurchases: data.extraPurchases,
       coverImage: data.coverImage,
       storeUrl: data.storeUrl
     }

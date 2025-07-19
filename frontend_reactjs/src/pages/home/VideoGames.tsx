@@ -12,9 +12,9 @@ const emptyGame: VideoGame = {
   platform: "",
   type: VideoGameType.Single_Player,
   firstPlayed: new Date(),
-  completed: false,
-  price: 0,
-  extraPurchases: [],
+  completionCount: 0,
+  price: "",
+  extraPurchases: "",
   coverImage: "",
   storeUrl: ""
 };
@@ -32,7 +32,7 @@ export const VideoGames = () => {
     <Wrapper>
       <Header>
         <Typography variant="h5">
-          Video Games
+          Video Games ({games?.length || 0})
         </Typography>
         <IconButton onClick={() => setIsAddingGame(true)}>
           <Add />

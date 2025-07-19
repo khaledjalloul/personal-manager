@@ -10,13 +10,10 @@ export type EditVideoGameRequestBody = {
   name?: string;
   platform?: string;
   type?: VideoGameType;
-  completed?: boolean;
+  completionCount?: number;
   firstPlayed?: Date;
-  price?: number;
-  extraPurchases?: {
-    name: string;
-    price: number;
-  }[];
+  price?: string;
+  extraPurchases?: string;
   storeUrl?: string;
   coverImage?: string;
 };

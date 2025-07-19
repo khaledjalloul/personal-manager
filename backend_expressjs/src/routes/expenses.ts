@@ -220,13 +220,13 @@ router.get('/statistics', async (req: Request, res: Response) => {
 
   const expenses = await prisma.expense.findMany({
     where: { userId: req.user?.id },
-    orderBy: { date: 'desc' },
+    orderBy: { date: 'asc' },
     include: { category: true },
   });
 
   const incomes = await prisma.income.findMany({
     where: { userId: req.user?.id },
-    orderBy: { date: 'desc' },
+    orderBy: { date: 'asc' },
   });
 
   const today = new Date();

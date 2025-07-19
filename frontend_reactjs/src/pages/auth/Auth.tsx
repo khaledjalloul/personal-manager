@@ -138,7 +138,7 @@ const ParallaxImage = styled(Box)`
   right: 0;
   top: 0;
   bottom: 0;
-  background-image: url("assets/images/eth-background2.jpg");
+  /* background-image: url("assets/images/eth-background2.jpg"); */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

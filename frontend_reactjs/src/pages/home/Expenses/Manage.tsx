@@ -67,8 +67,8 @@ export const ManageExpenses = ({
 
   return (
     <Wrapper>
-      <Grid container spacing={2} sx={{ maxHeight: '60vh' }}>
-        <IncomeGridItem size={{ xs: 12, md: 5 }}>
+      <Grid container spacing={2}>
+        <IncomeGridItem size={{ xs: 12, lg: 5 }} sx={{ maxHeight: '60vh' }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Income</Typography>
 
@@ -109,7 +109,7 @@ export const ManageExpenses = ({
           </TableContainer>
         </IncomeGridItem>
 
-        <ManualExpensesGridItem size={{ xs: 12, md: 7 }}>
+        <ManualExpensesGridItem size={{ xs: 12, lg: 7 }} sx={{ maxHeight: '60vh' }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Manual Expenses</Typography>
 
