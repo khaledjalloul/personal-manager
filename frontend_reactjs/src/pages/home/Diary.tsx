@@ -91,7 +91,6 @@ export const Diary = () => {
 
         <Button
           variant="contained"
-          color="secondary"
           sx={{ ml: 1 }}
           onClick={() => setSelectedDate(dayjs(new Date()))}
           disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}

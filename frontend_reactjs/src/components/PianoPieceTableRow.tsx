@@ -54,8 +54,8 @@ export const PianoPieceTableRow = ({
 
       <TableRow
         sx={{
-          backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-          ":hover": { backgroundColor: "secondary.dark" }
+          backgroundColor: index % 2 === 0 ? "white" : "primary.light",
+          ":hover": { backgroundColor: "action.hover" }
         }}
       >
         <TableCell sx={{ fontWeight: 'bold' }}>

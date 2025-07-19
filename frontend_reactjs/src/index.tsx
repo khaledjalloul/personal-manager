@@ -1,15 +1,17 @@
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Theme, UserContext, UserData } from "./utils";
+import { Theme, ThemeContext, ThemeData, UserContext, UserData } from "./utils";
 import { useEffect, useState } from "react";
 import { Navigator } from "./navigation";
 import client from "./api/client";
 import { worker } from './mocks/browser'
+import { HttpStatusCode } from "axios";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [userData, setUserData] = useState<UserData>();
+  const [themeData, setThemeData] = useState<ThemeData>({ darkMode: false })
   const [mockReady, setMockReady] = useState(false);
 
   const contextData = {
@@ -24,7 +26,7 @@ const App = () => {
         client.interceptors.response.use(
           (res) => res,
           (err) => {
-            if (err?.response?.status === 401) {
+            if (err?.response?.status === HttpStatusCode.Unauthorized) {
               localStorage.removeItem("userData");
               setUserData(null);
             } else throw err;
@@ -47,11 +49,13 @@ const App = () => {
 
   return (
     <UserContext.Provider value={contextData}>
-      <QueryClientProvider client={queryClient}>
-        <Theme>
-          {mockReady ? <Navigator /> : <div />}
-        </Theme>
-      </QueryClientProvider>
+      <ThemeContext.Provider value={{ themeData, setThemeData }}>
+        <QueryClientProvider client={queryClient}>
+          <Theme themeData={themeData}>
+            {mockReady ? <Navigator /> : <div />}
+          </Theme>
+        </QueryClientProvider>
+      </ThemeContext.Provider>
     </UserContext.Provider>
   );
 };

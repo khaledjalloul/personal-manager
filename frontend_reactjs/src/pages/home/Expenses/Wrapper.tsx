@@ -8,7 +8,6 @@ import {
 import styled from "styled-components";
 import { useState } from "react";
 import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
 import { ExpensesStatistics } from "./Statistics";
 import { MonthlyExpenses } from "./Monthly";
 import { ExpensesDetails } from "./Details";
@@ -22,8 +21,6 @@ const enum ExpensesPage {
 };
 
 export const ExpensesWrapper = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState<ExpensesPage>(ExpensesPage.Statistics);
@@ -32,36 +29,32 @@ export const ExpensesWrapper = () => {
     <Wrapper>
       <Header>
         <Button
-          variant="contained"
+          variant={page === ExpensesPage.Statistics ? "contained" : "outlined"}
           onClick={page === ExpensesPage.Statistics ? undefined : () => setPage(ExpensesPage.Statistics)}
-          color="secondary"
           startIcon={<Insights />}
         >
           Statistics
         </Button>
 
         <Button
-          variant="contained"
+          variant={page === ExpensesPage.Monthly ? "contained" : "outlined"}
           onClick={page === ExpensesPage.Monthly ? undefined : () => setPage(ExpensesPage.Monthly)}
-          color="secondary"
           startIcon={<Today />}
         >
           Monthly
         </Button>
 
         <Button
-          variant="contained"
+          variant={page === ExpensesPage.Details ? "contained" : "outlined"}
           onClick={page === ExpensesPage.Details ? undefined : () => setPage(ExpensesPage.Details)}
-          color="secondary"
           startIcon={<ViewList />}
         >
           Details
         </Button>
 
         <Button
-          variant="contained"
+          variant={page === ExpensesPage.Manage ? "contained" : "outlined"}
           onClick={page === ExpensesPage.Manage ? undefined : () => setPage(ExpensesPage.Manage)}
-          color="secondary"
           startIcon={<Settings />}
         >
           Manage

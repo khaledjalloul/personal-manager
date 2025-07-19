@@ -6,13 +6,14 @@ import {
   Link,
   Menu,
   MenuItem,
+  Switch,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { MouseEvent, useContext, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { UserContext } from "../utils";
+import { ThemeContext, UserContext } from "../utils";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
 const toolbarButtons = [
@@ -32,11 +33,10 @@ export const NavigationBar = () => {
   const location = useLocation();
 
   const { setUserData } = useContext(UserContext);
-  const [accountMenuAnchor, setAccountMenuAnchor] =
-    useState<null | HTMLElement>(null);
-  const [mobileMenuAnchor, setMobileMenuAnchor] = useState<null | HTMLElement>(
-    null
-  );
+  const { themeData, setThemeData } = useContext(ThemeContext);
+
+  const [accountMenuAnchor, setAccountMenuAnchor] = useState<null | HTMLElement>(null);
+  const [mobileMenuAnchor, setMobileMenuAnchor] = useState<null | HTMLElement>(null);
 
   return (
     <Box display={"flex"} minHeight={"100vh"} bgcolor={"background.default"}>
@@ -47,9 +47,15 @@ export const NavigationBar = () => {
               <ArrowBack sx={{ color: "text.primary" }} />
             </IconButton>
           )}
+
           {/* <Typography variant="h5" color="text.primary" noWrap>
             Personal Manager
           </Typography> */}
+
+          <Switch
+            checked={themeData.darkMode}
+            onChange={e => setThemeData({ darkMode: e.target.checked })}
+          />
 
           <Box
             sx={{
@@ -170,9 +176,10 @@ const StyledLink = styled(Link) <{ $path: string; $currentPath: string }>`
     $path === "/"
       ? $currentPath === "/"
         ? theme.palette.primary.main
-        : theme.palette.primary.dark
+        : theme.palette.primary.main // TODO: Fix
       : $currentPath.includes($path)
         ? theme.palette.primary.main
-        : theme.palette.primary.dark};
+        : theme.palette.primary.main // TODO: Fix
+  };
   }
 `;

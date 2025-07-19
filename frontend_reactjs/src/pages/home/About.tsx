@@ -22,7 +22,7 @@ const InfoBox = () => (
         md: 4,
         lg: 5,
       },
-      backgroundColor: "secondary.main",
+      backgroundColor: "primary.light",
       borderRadius: 3,
     }}
   >

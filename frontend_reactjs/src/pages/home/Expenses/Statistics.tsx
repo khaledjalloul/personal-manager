@@ -57,7 +57,7 @@ export const ExpensesStatistics = () => {
       <Grid container spacing={2} flexGrow={1}>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
             <Typography variant="h6" color="white">
               Total Balance
             </Typography>
@@ -68,7 +68,7 @@ export const ExpensesStatistics = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
             <Typography variant="h6" color="white">
               ZKB Balance
             </Typography>
@@ -79,7 +79,7 @@ export const ExpensesStatistics = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "#0d660d" }}>
+          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
             <Typography variant="h6" color="white">
               Cash Balance
             </Typography>
@@ -90,7 +90,7 @@ export const ExpensesStatistics = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}  >
-          <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
+          <StatisticsCard sx={{ backgroundColor: "primary.main" }}>
             <Typography variant="h6" color="white">
               Total Spent This Month
             </Typography>
@@ -101,7 +101,7 @@ export const ExpensesStatistics = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "#994a00" }}>
+          <StatisticsCard sx={{ backgroundColor: "warning.dark" }}>
             <Typography variant="h6" color="white">
               Average Expenses Per Month
             </Typography>
@@ -225,9 +225,17 @@ export const ExpensesStatistics = () => {
 
       <Box>
         <TableContainer component={Paper} sx={{ maxWidth: 'calc(100vw - 64px - 16px)' }}>
-          <Table size="medium" >
+          <Table
+            size="medium"
+            sx={{
+              '& th': {
+                backgroundColor: "primary.main",
+                color: "primary.contrastText"
+              }
+            }}
+          >
             <TableHead>
-              <TableRow sx={{ backgroundColor: "primary.light" }}>
+              <TableRow>
                 {Object.keys(statistics.categories).map((categoryName) => (
                   <TableCell key={categoryName} sx={{ fontWeight: 'bold' }}>
                     {categoryName}

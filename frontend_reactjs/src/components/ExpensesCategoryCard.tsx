@@ -136,7 +136,7 @@ export const ExpensesCategoryCard = ({
                 pt: 0.5,
                 pb: 0.5,
                 borderRadius: 1,
-                backgroundColor: 'secondary.light',
+                backgroundColor: 'primary.light',
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',

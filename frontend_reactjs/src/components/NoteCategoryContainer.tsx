@@ -4,17 +4,17 @@ import { useCreateNote, useNotes } from "../api";
 import { Box, IconButton, Typography } from "@mui/material";
 import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
 
-export const NoteCategoryContainer = (
-  { category,
-    searchText,
-    selectedNote,
-    setSelectedNote
-  }: {
-    category: NoteCategory,
-    searchText: string,
-    selectedNote: Note | undefined,
-    setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
-  }) => {
+export const NoteCategoryContainer = ({
+  category,
+  searchText,
+  selectedNote,
+  setSelectedNote
+}: {
+  category: NoteCategory,
+  searchText: string,
+  selectedNote: Note | undefined,
+  setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
+}) => {
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -37,16 +37,16 @@ export const NoteCategoryContainer = (
           pt: category.id !== -1 ? 0.5 : 1.2,
           pb: category.id !== -1 ? 0.5 : 1.2,
           cursor: 'pointer',
-          borderRadius: '8px',
+          borderTopLeftRadius: '8px',
+          borderTopRightRadius: '8px',
           display: 'flex',
           alignItems: 'center',
-          ":hover": { backgroundColor: "secondary.main" },
+          ":hover": { backgroundColor: "action.hover" },
         }}
       >
         <Typography variant="body1" key={category.id}>
           {category.name}
         </Typography>
-
 
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
           {category.id !== -1 && (
@@ -85,9 +85,8 @@ export const NoteCategoryContainer = (
                 pt: 0.5,
                 pb: 0.5,
                 cursor: 'pointer',
-                borderRadius: '8px',
-                backgroundColor: selectedNote?.id === note.id ? "secondary.dark" : "background.main",
-                ":hover": selectedNote?.id !== note.id ? { backgroundColor: "secondary.main" } : {},
+                backgroundColor: selectedNote?.id === note.id ? "primary.light" : "background.main",
+                ":hover": selectedNote?.id !== note.id ? { backgroundColor: "action.hover" } : {},
               }}
             >
               <Typography variant="body1">{note.title}</Typography>

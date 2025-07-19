@@ -22,7 +22,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
-          backgroundColor: 'secondary.main',
+          backgroundColor: 'primary.light',
           p: 1,
           pl: 2,
           mr: 1,
@@ -85,7 +85,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           flexGrow: 1,
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
-          backgroundColor: 'secondary.main',
+          backgroundColor: 'primary.light',
           p: !isEditing ? 1 : 0,
           pr: !isEditing ? 2 : 1,
           borderRight: 'solid 1px #cecece92'
@@ -105,7 +105,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                 padding: '8px',
                 outline: 'none',
                 border: 'none',
-                backgroundColor: palette.secondary.main,
+                backgroundColor: palette.primary.light,
                 borderTopLeftRadius: '8px',
                 borderBottomLeftRadius: '8px',
               }}
@@ -120,7 +120,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           flexGrow: 1,
           borderTopRightRadius: '8px',
           borderBottomRightRadius: '8px',
-          backgroundColor: 'secondary.main',
+          backgroundColor: 'primary.light',
           p: !isEditing ? 1 : 0,
           pl: !isEditing ? 2 : 1,
         }}>
@@ -138,7 +138,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                 padding: '8px',
                 outline: 'none',
                 border: 'none',
-                backgroundColor: palette.secondary.main,
+                backgroundColor: palette.primary.light,
                 borderTopRightRadius: '8px',
                 borderBottomRightRadius: '8px'
               }}

@@ -70,14 +70,14 @@ export const HikeCard = ({
   const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
 
   return (
-    <Wrapper sx={{ backgroundColor: 'secondary.main' }}>
+    <Wrapper sx={{ backgroundColor: 'primary.light' }}>
       <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
         {coverImage && (
           <CoverImage src={coverImage} />
         )}
         {isEditing && (
           <CoverImageEditor>
-            <Box sx={{ borderRadius: '100px', backgroundColor: 'secondary.main' }}>
+            <Box sx={{ borderRadius: '100px', backgroundColor: 'primary.light' }}>
               <IconButton>
                 <AddPhotoAlternate />
               </IconButton>

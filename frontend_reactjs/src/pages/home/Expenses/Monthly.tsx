@@ -27,7 +27,15 @@ export const MonthlyExpenses = ({
 
   return (
     <TableContainer component={Paper}>
-      <Table size="small" >
+      <Table
+        size="small"
+        sx={{
+          '& th': {
+            backgroundColor: "primary.main",
+            color: "primary.contrastText"
+          }
+        }}
+      >
         <TableHead>
           <TableRow sx={{ backgroundColor: "primary.light" }}>
             <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
@@ -47,7 +55,7 @@ export const MonthlyExpenses = ({
             <TableRow
               key={month}
               sx={{
-                backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
+                backgroundColor: index % 2 === 0 ? "background.main" : "primary.light",
               }}
             >
               <TableCell>

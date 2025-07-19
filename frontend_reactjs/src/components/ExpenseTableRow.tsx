@@ -54,8 +54,8 @@ export const ExpenseTableRow = ({
     <Fragment>
       <TableRow
         sx={{
-          backgroundColor: index % 2 === 0 ? "white" : "secondary.main",
-          ":hover": editable ? { backgroundColor: "secondary.dark" } : {}
+          backgroundColor: index % 2 === 0 ? "white" : "primary.light",
+          ":hover": editable ? { backgroundColor: "action.hover" } : {}
         }}
       >
         <TableCell>

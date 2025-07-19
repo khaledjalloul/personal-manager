@@ -78,7 +78,16 @@ export const ManageExpenses = ({
           </Box>
 
           <TableContainer component={Paper}>
-            <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
+            <Table
+              size="small"
+              stickyHeader
+              sx={{
+                '& th': {
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText"
+                }
+              }}
+            >
               <TableHead>
                 <TableRow >
                   <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
@@ -119,7 +128,16 @@ export const ManageExpenses = ({
           </Box>
 
           <TableContainer component={Paper}>
-            <Table size="small" stickyHeader sx={{ '& th': { backgroundColor: "primary.light" } }}>
+            <Table
+              size="small"
+              stickyHeader
+              sx={{
+                '& th': {
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText"
+                }
+              }}
+            >
               <TableHead>
                 <TableRow >
                   <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
