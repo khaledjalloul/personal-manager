@@ -45,9 +45,9 @@ export const PianoPieceTableRow = ({
   const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { mutate: createPiece } = useCreatePianoPiece();
-  const { mutate: editPiece } = useEditPianoPiece();
-  const { mutate: deletePiece } = useDeletePianoPiece();
+  const { mutate: createPiece, isPending: createLoading } = useCreatePianoPiece();
+  const { mutate: editPiece, isPending: editLoading } = useEditPianoPiece();
+  const { mutate: deletePiece, isPending: deleteLoading } = useDeletePianoPiece();
 
   return (
     <Fragment>
@@ -188,6 +188,7 @@ export const PianoPieceTableRow = ({
               <IconButton
                 size="small"
                 color="error"
+                loading={deleteLoading}
                 onClick={() => setConfirmDeleteOpen(true)}
               >
                 <Delete />
@@ -200,6 +201,8 @@ export const PianoPieceTableRow = ({
               <IconButton
                 color="success"
                 size="small"
+                loading={createLoading || editLoading}
+                disabled={!name.trim()}
                 onClick={() => {
                   if (pianoPiece.id !== -1) {
                     editPiece({

@@ -48,9 +48,9 @@ export const VideoGameCard = ({
   setIsAddingGame: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createGame } = useCreateVideoGame();
-  const { mutate: editGame } = useEditVideoGame();
-  const { mutate: deleteGame } = useDeleteVideoGame();
+  const { mutate: createGame, isPending: createLoading } = useCreateVideoGame();
+  const { mutate: editGame, isPending: editLoading } = useEditVideoGame();
+  const { mutate: deleteGame, isPending: deleteLoading } = useDeleteVideoGame();
 
   const [isEditing, setIsEditing] = useState(isAddingGame);
   const [name, setName] = useState(game.name);
@@ -106,6 +106,8 @@ export const VideoGameCard = ({
             <IconButton
               color="success"
               sx={{ ml: 'auto' }}
+              loading={createLoading || editLoading}
+              disabled={!name.trim()}
               onClick={() => {
                 if (game.id !== -1) {
                   editGame({
@@ -142,7 +144,11 @@ export const VideoGameCard = ({
           )}
 
           {isEditing && game.id !== -1 && (
-            <IconButton color="error" onClick={() => setConfirmDeleteOpen(true)}>
+            <IconButton
+              color="error"
+              loading={deleteLoading}
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
               <Delete />
             </IconButton>
           )}
@@ -258,7 +264,7 @@ export const VideoGameCard = ({
                 //   <MenuItem value="true">CompletionCount</MenuItem>
                 //   <MenuItem value="false">Not CompletionCount</MenuItem>
                 // </Select>
-                <Box/>
+                <Box />
               ))}
           </Grid>
 

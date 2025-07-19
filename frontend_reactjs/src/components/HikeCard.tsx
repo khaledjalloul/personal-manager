@@ -47,9 +47,9 @@ export const HikeCard = ({
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createHike } = useCreateHike();
-  const { mutate: editHike } = useEditHike();
-  const { mutate: deleteHike } = useDeleteHike();
+  const { mutate: createHike, isPending: createLoading } = useCreateHike();
+  const { mutate: editHike, isPending: editLoading } = useEditHike();
+  const { mutate: deleteHike, isPending: deleteLoading } = useDeleteHike();
 
   const [isEditing, setIsEditing] = useState(isAddingHike);
   const [date, setDate] = useState(dayjs(hike.date));
@@ -114,6 +114,8 @@ export const HikeCard = ({
             <IconButton
               color="success"
               sx={{ ml: 'auto', }}
+              loading={createLoading || editLoading}
+              disabled={!description.trim()}
               onClick={() => {
                 if (hike.id !== -1) {
                   editHike({
@@ -151,7 +153,11 @@ export const HikeCard = ({
           )}
 
           {isEditing && hike.id !== -1 && (
-            <IconButton color="error" onClick={() => setConfirmDeleteOpen(true)}>
+            <IconButton
+              color="error"
+              loading={deleteLoading}
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
               <Delete />
             </IconButton>
           )}

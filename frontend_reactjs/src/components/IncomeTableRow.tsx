@@ -30,9 +30,9 @@ export const IncomeTableRow = ({
 	setIsAddingIncome?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-	const { mutate: createIncome } = useCreateIncome();
-	const { mutate: editIncome } = useEditIncome();
-	const { mutate: deleteIncome } = useDeleteIncome();
+	const { mutate: createIncome, isPending: createLoading } = useCreateIncome();
+	const { mutate: editIncome, isPending: editLoading } = useEditIncome();
+	const { mutate: deleteIncome, isPending: deleteLoading } = useDeleteIncome();
 
 	const [isEditing, setIsEditing] = useState(isAddingIncome);
 	const [date, setDate] = useState(dayjs(income.date));
@@ -127,6 +127,7 @@ export const IncomeTableRow = ({
 							<IconButton
 								size="small"
 								color="error"
+								loading={deleteLoading}
 								onClick={() => setConfirmDeleteOpen(true)}
 							>
 								<Delete />
@@ -137,6 +138,8 @@ export const IncomeTableRow = ({
 							<IconButton
 								size="small"
 								color="success"
+								loading={createLoading || editLoading}
+								disabled={!source.trim()}
 								onClick={() => {
 									if (income.id !== -1) {
 										editIncome({

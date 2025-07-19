@@ -20,11 +20,11 @@ export const ExpensesCategoryCard = ({
     categoryId: category.id
   })
 
-  const { mutate: createCategory } = useCreateExpensesCategory();
-  const { mutate: editCategory } = useEditExpensesCategory();
-  const { mutate: deleteCategory } = useDeleteExpensesCategory();
-  const { mutate: createKeyword } = useCreateExpensesCategoryKeyword();
-  const { mutate: deleteKeyword } = useDeleteExpensesCategoryKeyword();
+  const { mutate: createCategory, isPending: createCategoryLoading } = useCreateExpensesCategory();
+  const { mutate: editCategory, isPending: editCategoryLoading } = useEditExpensesCategory();
+  const { mutate: deleteCategory, isPending: deleteCategoryLoading } = useDeleteExpensesCategory();
+  const { mutate: createKeyword, isPending: createKeywordLoading } = useCreateExpensesCategoryKeyword();
+  const { mutate: deleteKeyword, isPending: deleteKeywordLoading } = useDeleteExpensesCategoryKeyword();
 
   const [isEditing, setIsEditing] = useState(isAddingCategory);
   const [name, setName] = useState(category.name);
@@ -67,6 +67,7 @@ export const ExpensesCategoryCard = ({
             <IconButton
               size="small"
               color="error"
+              loading={deleteCategoryLoading}
               onClick={() => setConfirmDeleteOpen(true)}
             >
               <Delete />
@@ -78,6 +79,7 @@ export const ExpensesCategoryCard = ({
               size="small"
               sx={{ ml: 'auto' }}
               color="success"
+              loading={createCategoryLoading || editCategoryLoading}
               onClick={() => {
                 if (category.id !== -1) {
                   editCategory({
@@ -141,7 +143,11 @@ export const ExpensesCategoryCard = ({
                 gap: 0.5
               }}>
                 <Typography variant="body2">{keyword.keyword}</Typography>
-                <IconButton size="small" onClick={() => deleteKeyword({ id: keyword.id })}>
+                <IconButton
+                  size="small"
+                  loading={deleteKeywordLoading}
+                  onClick={() => deleteKeyword({ id: keyword.id })}
+                >
                   <Clear />
                 </IconButton>
               </Box>
@@ -161,7 +167,8 @@ export const ExpensesCategoryCard = ({
                   <IconButton
                     size="small"
                     color="success"
-                    disabled={keyword.length === 0 || category.id === -1}
+                    disabled={!keyword || category.id === -1}
+                    loading={createKeywordLoading}
                     onClick={() => {
                       createKeyword({
                         categoryId: category.id,

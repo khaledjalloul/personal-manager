@@ -68,8 +68,7 @@ export const SignUp = ({
           type="submit"
           fullWidth
           variant="contained"
-          disabled={signUpLoading}
-          startIcon={signUpLoading && <CircularProgress size={18} />}
+          loading={signUpLoading}
         >
           Sign Up
         </Button>

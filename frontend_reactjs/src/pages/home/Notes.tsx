@@ -44,8 +44,8 @@ export const Notes = () => {
 
   const { data: notes } = useNotes({ searchText: searchText.trim() })
   const { data: noteCategories } = useNoteCategories();
-  const { mutate: editNote } = useEditNote();
-  const { mutate: deleteNote } = useDeleteNote();
+  const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
+  const { mutate: deleteNote, isPending: deleteNoteLoading } = useDeleteNote();
 
   useEffect(() => {
     if (selectedNote) {
@@ -183,6 +183,7 @@ export const Notes = () => {
                 sx={{ ml: 'auto' }}
                 color="success"
                 disabled={!selectedNote}
+                loading={editNoteLoading}
                 onClick={() => {
                   if (selectedNote) {
                     editNote({
@@ -201,6 +202,7 @@ export const Notes = () => {
               <IconButton
                 color="error"
                 disabled={!selectedNote}
+                loading={deleteNoteLoading}
                 onClick={() => {
                   if (selectedNote) {
                     setConfirmDeleteOpen(true);

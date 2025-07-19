@@ -22,7 +22,7 @@ export const NoteCategoryContainer = (
     categoryId: category.id,
     searchText: searchText.trim(),
   });
-  const { mutate: createNote } = useCreateNote();
+  const { mutate: createNote, isPending: createNoteLoading } = useCreateNote();
 
   const hidden = category.id === -1 &&
     !searchText.trim() && notes?.length === 0;
@@ -52,6 +52,7 @@ export const NoteCategoryContainer = (
           {category.id !== -1 && (
             <IconButton
               size="small"
+              loading={createNoteLoading}
               onClick={(e) => {
                 e.stopPropagation();
                 const newDate = new Date();

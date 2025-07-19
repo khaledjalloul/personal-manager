@@ -9,8 +9,8 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
   const { palette } = useTheme();
 
-  const { mutate: createEntry } = useCreateDiaryEntry();
-  const { mutate: editEntry } = useEditDiaryEntry();
+  const { mutate: createEntry, isPending: createLoading } = useCreateDiaryEntry();
+  const { mutate: editEntry, isPending: editLoading } = useEditDiaryEntry();
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
@@ -45,6 +45,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
               <IconButton
                 size="small"
                 color="success"
+                loading={createLoading || editLoading}
                 onClick={() => {
                   if (entry.id < 0)
                     createEntry({

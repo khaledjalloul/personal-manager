@@ -33,9 +33,9 @@ export const ExpenseTableRow = ({
 }) => {
   const { data: expensesCategories } = useExpensesCategories();
 
-  const { mutate: createExpense } = useCreateExpense();
-  const { mutate: editExpense } = useEditExpense();
-  const { mutate: deleteExpense } = useDeleteExpense();
+  const { mutate: createExpense, isPending: createLoading } = useCreateExpense();
+  const { mutate: editExpense, isPending: editLoading } = useEditExpense();
+  const { mutate: deleteExpense, isPending: deleteLoading } = useDeleteExpense();
 
   const [isEditing, setIsEditing] = useState(isAddingExpense);
   const [date, setDate] = useState(dayjs(expense.date));
@@ -161,6 +161,7 @@ export const ExpenseTableRow = ({
               <IconButton
                 size="small"
                 color="error"
+                loading={deleteLoading}
                 onClick={() => setConfirmDeleteOpen(true)}
               >
                 <Delete />
@@ -171,6 +172,8 @@ export const ExpenseTableRow = ({
               <IconButton
                 size="small"
                 color="success"
+                loading={createLoading || editLoading}
+                disabled={!description.trim()}
                 onClick={() => {
                   if (expense.id !== -1) {
                     editExpense({

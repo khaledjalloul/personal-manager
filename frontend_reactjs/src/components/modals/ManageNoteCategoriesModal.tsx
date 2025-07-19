@@ -14,10 +14,10 @@ const CategoryCard = ({
   setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
 }) => {
 
-  const [name, setName] = useState(category.name);
+  const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
+  const { mutate: deleteCategory, isPending: deletePending } = useDeleteNoteCategoy();
 
-  const { mutate: editCategory } = useEditNoteCategory();
-  const { mutate: deleteCategory } = useDeleteNoteCategoy();
+  const [name, setName] = useState(category.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   return (
@@ -33,6 +33,7 @@ const CategoryCard = ({
                 <IconButton
                   size="small"
                   color="success"
+                  loading={editLoading}
                   onClick={() => {
                     editCategory({
                       id: category.id,
@@ -45,6 +46,7 @@ const CategoryCard = ({
                 <IconButton
                   size="small"
                   color="error"
+                  loading={deletePending}
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
                   <Delete />
@@ -78,7 +80,7 @@ export const ManageNoteCategoriesModal = ({
 }) => {
 
   const { data: categories } = useNoteCategories();
-  const { mutate: createCategory } = useCreateNoteCategory();
+  const { mutate: createCategory, isPending: createLoading } = useCreateNoteCategory();
 
   const [newCategoryName, setNewCategoryName] = useState("")
 
@@ -109,6 +111,7 @@ export const ManageNoteCategoriesModal = ({
                       size="small"
                       color="success"
                       disabled={!newCategoryName}
+                      loading={createLoading}
                       onClick={() => {
                         createCategory({
                           name: newCategoryName.trim(),
