@@ -85,7 +85,7 @@ export const NoteCategoryContainer = ({
                 pt: 0.5,
                 pb: 0.5,
                 cursor: 'pointer',
-                backgroundColor: selectedNote?.id === note.id ? "primary.light" : "background.main",
+                backgroundColor: selectedNote?.id === note.id ? "primary.light" : "background.default",
                 ":hover": selectedNote?.id !== note.id ? { backgroundColor: "action.hover" } : {},
               }}
             >

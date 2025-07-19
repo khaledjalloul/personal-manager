@@ -197,7 +197,7 @@ export const HikeCard = ({
 
         <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Today />
+            <Today sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {date.format("DD.MM.YYYY")}
@@ -222,7 +222,7 @@ export const HikeCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Straighten />
+            <Straighten sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {distance} km
@@ -246,7 +246,7 @@ export const HikeCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <TrendingUp />
+            <TrendingUp sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {ascent} m
@@ -270,7 +270,7 @@ export const HikeCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <TrendingDown />
+            <TrendingDown sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {descent} m
@@ -294,7 +294,7 @@ export const HikeCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AccessTime />
+            <AccessTime sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {durationHours} h {durationMinutes} m
@@ -318,7 +318,7 @@ export const HikeCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <MoreTime />
+            <MoreTime sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {durationWithBreaksHours} h {durationWithBreaksMinutes} m

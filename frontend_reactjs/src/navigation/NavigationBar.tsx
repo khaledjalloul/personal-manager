@@ -2,6 +2,7 @@ import { AccountCircle, ArrowBack } from "@mui/icons-material";
 import {
   AppBar,
   Box,
+  FormControlLabel,
   IconButton,
   Link,
   Menu,
@@ -52,11 +53,6 @@ export const NavigationBar = () => {
             Personal Manager
           </Typography> */}
 
-          <Switch
-            checked={themeData.darkMode}
-            onChange={e => setThemeData({ darkMode: e.target.checked })}
-          />
-
           <Box
             sx={{
               display: {
@@ -94,8 +90,17 @@ export const NavigationBar = () => {
               open={Boolean(accountMenuAnchor)}
               onClose={() => setAccountMenuAnchor(null)}
             >
-              <MenuItem onClick={() => navigate("/account")}>
+              <MenuItem onClick={() => { navigate("/account"); setAccountMenuAnchor(null); }}>
                 <Typography variant="body2">Account</Typography>
+              </MenuItem>
+              <MenuItem onClick={e => setThemeData({ darkMode: !themeData.darkMode })}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2">Dark Mode</Typography>
+                  <Switch
+                    size="small"
+                    checked={themeData.darkMode}
+                  />
+                </Box>
               </MenuItem>
               <MenuItem onClick={() => setUserData(null)}>
                 <Typography variant="body2">Sign Out</Typography>
@@ -143,6 +148,15 @@ export const NavigationBar = () => {
               }}>
                 <Typography variant="body2">Account</Typography>
               </MenuItem>
+              <MenuItem onClick={e => setThemeData({ darkMode: !themeData.darkMode })}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2">Dark Mode</Typography>
+                  <Switch
+                    size="small"
+                    checked={themeData.darkMode}
+                  />
+                </Box>
+              </MenuItem>
               <MenuItem onClick={() => setUserData(null)}>
                 <Typography variant="body2">Sign Out</Typography>
               </MenuItem>
@@ -161,14 +175,18 @@ export const NavigationBar = () => {
 
 const StyledLink = styled(Link) <{ $path: string; $currentPath: string }>`
   text-decoration: none;
-  color: ${({ $path, $currentPath }) =>
-    $path === "/"
-      ? $currentPath === "/"
-        ? "primary.main"
-        : "black"
-      : $currentPath.includes($path)
-        ? "primary.main"
-        : "black"};
+  color: ${({ theme, $path, $currentPath }) => {
+    return (
+      $path === "/"
+        ? $currentPath === "/"
+          ? theme.palette.primary.main
+          : theme.palette.text.primary
+        : $currentPath.includes($path)
+          ? theme.palette.primary.main
+          : theme.palette.text.primary
+    )
+  }
+  };
   transition-duration: 0.3s;
 
   &:hover {

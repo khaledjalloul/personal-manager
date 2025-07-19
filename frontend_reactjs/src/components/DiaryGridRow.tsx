@@ -88,7 +88,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           backgroundColor: 'primary.light',
           p: !isEditing ? 1 : 0,
           pr: !isEditing ? 2 : 1,
-          borderRight: 'solid 1px #cecece92'
+          borderRight: `solid 1px ${palette.action.hover}`
         }}>
           {!isEditing ? (
             <Typography variant="body1">
@@ -106,6 +106,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                 outline: 'none',
                 border: 'none',
                 backgroundColor: palette.primary.light,
+                color: palette.text.primary,
                 borderTopLeftRadius: '8px',
                 borderBottomLeftRadius: '8px',
               }}
@@ -139,6 +140,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                 outline: 'none',
                 border: 'none',
                 backgroundColor: palette.primary.light,
+                color: palette.text.primary,
                 borderTopRightRadius: '8px',
                 borderBottomRightRadius: '8px'
               }}

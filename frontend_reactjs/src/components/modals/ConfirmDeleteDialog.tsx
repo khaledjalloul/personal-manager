@@ -1,6 +1,7 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import styled from "styled-components";
+import { ThemeContext } from "../../utils";
 
 export const ConfirmDeleteDialog = ({
   itemName,
@@ -13,6 +14,9 @@ export const ConfirmDeleteDialog = ({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+
+  const { themeData } = useContext(ThemeContext);
+
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
       <Wrapper>
@@ -23,7 +27,7 @@ export const ConfirmDeleteDialog = ({
             Cancel
           </Button>
           <Button
-            variant="contained"
+            variant={themeData.darkMode ? "outlined" : "contained"}
             color="error"
             onClick={() => { deleteFn(); setIsOpen(false); }}
           >

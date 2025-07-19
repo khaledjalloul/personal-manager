@@ -11,13 +11,16 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [userData, setUserData] = useState<UserData>();
-  const [themeData, setThemeData] = useState<ThemeData>({ darkMode: false })
+  const [themeData, setThemeData] = useState<ThemeData>({ darkMode: true })
   const [mockReady, setMockReady] = useState(false);
 
   const contextData = {
     userData,
     setUserData: (userData?: UserData) => {
-      if (!userData) localStorage.removeItem("userData");
+      if (!userData) {
+        localStorage.removeItem("userData");
+        setThemeData({ darkMode: false });
+      }
       else {
         client.defaults.headers.common[
           "Authorization"

@@ -55,7 +55,7 @@ export const MonthlyExpenses = ({
             <TableRow
               key={month}
               sx={{
-                backgroundColor: index % 2 === 0 ? "background.main" : "primary.light",
+                backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
               }}
             >
               <TableCell>

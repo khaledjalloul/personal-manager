@@ -236,6 +236,10 @@ export const Notes = () => {
                   value={selectedNoteContent}
                   onChange={(e) => setSelectedNoteContent(e.target.value)}
                   disabled={!selectedNote}
+                  style={{
+                    backgroundColor: palette.background.default,
+                    color: palette.text.primary,
+                  }}
                 />
               </Box>
             </Box>

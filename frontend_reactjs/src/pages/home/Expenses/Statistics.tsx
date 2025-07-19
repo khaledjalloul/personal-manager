@@ -16,7 +16,7 @@ import {
   useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useExpensesCategories, useExpensesStatistics } from "../../../api";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
@@ -27,6 +27,7 @@ import {
   Title,
 } from 'chart.js';
 import { Doughnut, Line } from 'react-chartjs-2';
+import { ThemeContext } from "../../../utils";
 
 ChartJS.register(
   CategoryScale,
@@ -41,6 +42,7 @@ ChartJS.register(
 
 export const ExpensesStatistics = () => {
   const { palette } = useTheme();
+  const { themeData } = useContext(ThemeContext);
 
   const [overTimeType, setOverTimeType] = useState("both");
 
@@ -161,14 +163,20 @@ export const ExpensesStatistics = () => {
                   scales: {
                     y: {
                       ticks: {
-                        callback: (value) => `${value} CHF`
+                        callback: (value) => `${value} CHF`,
+                        color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                      }
+                    },
+                    x: {
+                      ticks: {
+                        color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
                       }
                     }
                   },
                   plugins: {
                     legend: {
                       display: false
-                    }
+                    },
                   }
                 }} />
             </Box>
@@ -205,6 +213,7 @@ export const ExpensesStatistics = () => {
                       align: "start",
                       labels:
                       {
+                        color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
                         font:
                         {
                           family: "Poppins, Inter, Segoe UI, sans-serif",

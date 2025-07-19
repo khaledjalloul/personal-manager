@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Backup, Bolt, Check, Download, Upload } from "@mui/icons-material";
+import { Check, Download, Upload } from "@mui/icons-material";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { useBackupData, useCurrentUser, useEditUser, useRestoreData } from "../../api";
 import { Fragment } from "react/jsx-runtime";
@@ -122,10 +122,9 @@ export const Account = () => {
   return (
     <Wrapper>
       <Grid container spacing={4} flexGrow={1}>
-
         <Grid size={{ xs: 12, md: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="h5">
+            <Typography variant="h5" gutterBottom>
               Account
             </Typography>
             <TextField
@@ -156,38 +155,39 @@ export const Account = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h5">Back Up & Restore Data</Typography>
+            <Typography variant="h5" gutterBottom>Back Up & Restore Data</Typography>
 
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
               <BackupButton dataType="all" />
               <RestoreButton dataType="all" />
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
+            <Grid container spacing={2}>
               {Object.entries(dataTypes).map(([dataType, displayedValue]) => (
-                <Box
-                  key={dataType}
-                  component={"fieldset"}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1,
-                    borderRadius: 2,
-                    flex: 1,
-                    padding: 2
-                  }}
-                >
-                  <legend style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-                    <Typography variant="body1" sx={{ pl: 0.5, pr: 0.5, }}>
-                      {displayedValue}
-                    </Typography>
-                  </legend>
+                <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }} key={dataType}>
+                  <Box
+                    component={"fieldset"}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      borderRadius: 2,
+                      flex: 1,
+                      padding: 2
+                    }}
+                  >
+                    <legend style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                      <Typography variant="body1" sx={{ pl: 0.5, pr: 0.5, }}>
+                        {displayedValue}
+                      </Typography>
+                    </legend>
 
-                  <BackupButton dataType={dataType} />
-                  <RestoreButton dataType={dataType} />
-                </Box>
+                    <BackupButton dataType={dataType} />
+                    <RestoreButton dataType={dataType} />
+                  </Box>
+                </Grid>
               ))}
-            </Box>
+            </Grid>
           </Box>
         </Grid>
       </Grid>
@@ -196,6 +196,9 @@ export const Account = () => {
 };
 
 const Wrapper = styled(Box)`
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 32px;

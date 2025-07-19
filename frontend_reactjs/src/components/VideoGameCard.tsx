@@ -183,7 +183,7 @@ export const VideoGameCard = ({
 
         <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SportsEsportsOutlined />
+            <SportsEsportsOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {platform}
@@ -199,7 +199,7 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <PeopleOutlineOutlined />
+            <PeopleOutlineOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {videoGameTypeOptions[type]}
@@ -219,7 +219,7 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Today />
+            <Today sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {firstPlayed.format("DD.MM.YYYY")}
@@ -245,9 +245,9 @@ export const VideoGameCard = ({
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {type !== VideoGameType.Online && (
-              completionCount > 1 ? <DoneAll /> :
-                completionCount === 1 ? <Check /> :
-                  <Clear />
+              completionCount > 1 ? <DoneAll sx={{ color: "text.primary" }} /> :
+                completionCount === 1 ? <Check sx={{ color: "text.primary" }} /> :
+                  <Clear sx={{ color: "text.primary" }} />
             )}
             {type !== VideoGameType.Online && (
               !isEditing ? (
@@ -269,7 +269,7 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SellOutlined />
+            <SellOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {price}
@@ -285,7 +285,7 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CreditCard />
+            <CreditCard sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
                 {extraPurchases}
