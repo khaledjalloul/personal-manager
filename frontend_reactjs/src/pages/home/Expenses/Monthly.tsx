@@ -21,9 +21,6 @@ export const MonthlyExpenses = () => {
   });
 
   if (!monthlyExpenses) return <div />;
-
-  const hasUncategorized = Object.values(monthlyExpenses).some(month => month["Uncategorized"] > 0);
-
   return (
     <Box sx={{ p: '32px', pt: 0 }}>
       <TableContainer component={Paper} >
@@ -39,9 +36,6 @@ export const MonthlyExpenses = () => {
           <TableHead>
             <TableRow sx={{ backgroundColor: "primary.light" }}>
               <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
-              {hasUncategorized && (
-                <TableCell sx={{ fontWeight: 'bold' }}>Uncategorized</TableCell>
-              )}
               {expensesCategories?.map((category) => (
                 <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
                   {category.name}
@@ -61,11 +55,6 @@ export const MonthlyExpenses = () => {
                 <TableCell>
                   {dayjs(month).format("MMMM YYYY")}
                 </TableCell>
-                {hasUncategorized && (
-                  <TableCell>
-                    {monthlyExpenses[month]["Uncategorized"].toFixed(2)} CHF
-                  </TableCell>
-                )}
                 {expensesCategories?.map((category) => (
                   <TableCell key={category.id}>
                     {monthlyExpenses[month][category.name].toFixed(2)} CHF

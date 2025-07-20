@@ -18,6 +18,7 @@ export const user: User = {
     id: 1,
     name: 'John Doe',
     email: 'jdoe@hotmail.com',
+    wallet: 1000.00,
     fundKeywords: ["salary"],
     token: 'fake-jwt-token'
 };

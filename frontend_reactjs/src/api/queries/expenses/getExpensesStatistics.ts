@@ -7,6 +7,7 @@ export type GetExpensesStatisticsResponse = {
   totalMonthlyAverage: number;
   totalExpenses: number;
   totalExpensesThisMonth: number;
+  totalFunds: number;
   categories: {
     [category: string]: {
       monthlyAverage: number;

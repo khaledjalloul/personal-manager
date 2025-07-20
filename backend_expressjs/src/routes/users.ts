@@ -52,10 +52,12 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true },
           orderBy: { date: 'asc' }
         });
-        data.fundKeywords = (await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { id: req.user?.id },
-          select: { fundKeywords: true }
-        }))?.fundKeywords.sort();
+          select: { fundKeywords: true, wallet: true }
+        })
+        data.fundKeywords = user?.fundKeywords.sort();
+        data.wallet = user?.wallet;
         break;
       case 'diary':
         data.diary = await prisma.diaryEntry.findMany({
@@ -140,7 +142,11 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        if (!inputData.expensesCategories || !inputData.uncategorizedExpenses || !inputData.funds || !inputData.fundKeywords)
+        if (!inputData.expensesCategories ||
+          !inputData.uncategorizedExpenses ||
+          !inputData.funds ||
+          !inputData.fundKeywords ||
+          !inputData.wallet)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
       case 'diary':
@@ -198,7 +204,10 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         });
         await prisma.user.update({
           where: { id: req.user?.id },
-          data: { fundKeywords: inputData.fundKeywords }
+          data: {
+            wallet: inputData.wallet,
+            fundKeywords: inputData.fundKeywords
+          }
         })
         break;
 

@@ -16,6 +16,7 @@ router.post('/signup', async (req, res) => {
     data: {
       name,
       email,
+      wallet: 0,
       hash
     }
   });

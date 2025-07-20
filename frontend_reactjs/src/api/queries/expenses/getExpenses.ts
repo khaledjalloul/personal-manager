@@ -5,7 +5,6 @@ import client from "../../client";
 const ENDPOINT = "expenses";
 
 export type GetExpensesRequestParams = {
-  tags: string[];
   type: "manual" | "auto" | "all";
   searchText: string;
 };

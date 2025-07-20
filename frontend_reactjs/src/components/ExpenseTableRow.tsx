@@ -81,7 +81,7 @@ export const ExpenseTableRow = ({
         <TableCell>
           {!isEditing ? (
             category?.name ?? (
-              <Typography color={!editable ? 'error' : 'text.primary'} variant="body2">
+              <Typography color={!editable ? 'gray' : 'text.primary'} variant="body2">
                 <em>Uncategorized</em>
               </Typography>
             )
@@ -130,7 +130,11 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? amount.toFixed(2) :
+          {!isEditing ? (
+            !editable ?
+              (amount >= 0 ? `-${Math.abs(amount).toFixed(2)}` : `+${Math.abs(amount).toFixed(2)}`) :
+              amount.toFixed(2)
+          ) :
             <TextField
               variant="standard"
               placeholder="Amount"

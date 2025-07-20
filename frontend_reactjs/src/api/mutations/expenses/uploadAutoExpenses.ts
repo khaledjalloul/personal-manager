@@ -31,6 +31,9 @@ export const useUploadAutoExpenses = () => {
       queryClient.refetchQueries({
         queryKey: ["expenses"],
       });
+      queryClient.refetchQueries({
+        queryKey: ["expenses/funds"],
+      });
     },
   });
 }

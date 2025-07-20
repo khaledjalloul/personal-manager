@@ -23,6 +23,9 @@ export const useDeleteAutoExpenses = () => {
       queryClient.refetchQueries({
         queryKey: ["expenses"],
       });
+      queryClient.refetchQueries({
+        queryKey: ["expenses/funds"],
+      });
     },
   });
 };

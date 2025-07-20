@@ -148,15 +148,14 @@ router.get('/monthly', async (req: Request, res: Response) => {
 
     if (!monthlyExpenses[monthStr]) {
       monthlyExpenses[monthStr] = { total: 0 };
-      monthlyExpenses[monthStr]["Uncategorized"] = 0;
       for (const category of categoryNames) {
         monthlyExpenses[monthStr][category] = 0;
       }
     }
+
     if (expense.category)
       monthlyExpenses[monthStr][expense.category.name] += expense.amount;
-    else
-      monthlyExpenses[monthStr]["Uncategorized"] += expense.amount;
+
     monthlyExpenses[monthStr].total += expense.amount;
   });
 
@@ -168,6 +167,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     totalMonthlyAverage: number;
     totalExpenses: number;
     totalExpensesThisMonth: number;
+    totalFunds: number;
     categories: {
       [category: string]: {
         monthlyAverage: number;
@@ -184,15 +184,10 @@ router.get('/statistics', async (req: Request, res: Response) => {
     totalMonthlyAverage: 0,
     totalExpenses: 0,
     totalExpensesThisMonth: 0,
+    totalFunds: 0,
     categories: {},
     months: {}
   };
-
-  const categories = (await prisma.expensesCategory.findMany({
-    where: { userId: req.user?.id },
-    orderBy: { name: 'asc' },
-  }));
-  categories.push({ id: -1, name: "Uncategorized", color: "gray", userId: -1, keywords: [] });
 
   const expenses = await prisma.expense.findMany({
     where: { userId: req.user?.id },
@@ -208,12 +203,11 @@ router.get('/statistics', async (req: Request, res: Response) => {
   const today = new Date();
   const thisMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 
-  for (var { date, category, amount } of expenses ?? []) {
+  for (var { date, category, amount } of expenses) {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
-    if (!category) {
-      category = categories?.find(cat => cat.id === -1)!;
-    }
+    if (!category)
+      continue;
 
     if (!statistics.categories[category.name]) {
       statistics.categories[category.name] = { monthlyAverage: 0, total: 0 };
@@ -232,7 +226,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
   }
 
-  for (const { date, amount } of funds ?? []) {
+  for (const { date, amount } of funds) {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!statistics.months[month]) {
@@ -240,6 +234,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
 
     statistics.months[month].funds += amount;
+    statistics.totalFunds += amount;
   }
 
   const numMonths = Object.keys(statistics.months).length;
@@ -330,12 +325,13 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
       const expenses: ExpenseWithoutId[] = [];
 
       results.forEach(entry => {
-        const amount = entry.debitCHF || -entry.creditCHF || 0;
+        const hasAmount = entry.debitCHF || entry.creditCHF;
         const isFund = fundKeywords.some(keyword =>
           entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
         );
 
-        if (isFund && amount) {
+        if (isFund && hasAmount) {
+          const amount = entry.creditCHF || -entry.debitCHF;
           funds.push({
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
             source: entry.bookingText,
@@ -349,6 +345,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
               entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
             )
           );
+          const amount = entry.debitCHF || -entry.creditCHF || 0;
           expenses.push({
             userId: req.user!.id,
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,

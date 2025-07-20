@@ -76,7 +76,7 @@ export const FundTableRow = ({
 
 				{!editable && (
 					<TableCell>
-						<Typography color="success" variant="body2">Fund</Typography>
+						<Typography variant="body2">Funds</Typography>
 					</TableCell>
 				)}
 
@@ -95,7 +95,17 @@ export const FundTableRow = ({
 				{!editable && <TableCell />}
 
 				<TableCell>
-					{!isEditing ? amount.toFixed(2) :
+					{!isEditing ?
+						<Typography variant="body2" sx={{
+							color: editable ? "text.primary" : (
+								amount >= 0 ? "success.main" : "error.main"
+							)
+						}}>
+							{!editable ?
+								(amount >= 0 ? `+${Math.abs(amount).toFixed(2)}` : `-${Math.abs(amount).toFixed(2)}`) :
+								amount.toFixed(2)
+							}
+						</Typography> :
 						<TextField
 							variant="standard"
 							placeholder="Amount"

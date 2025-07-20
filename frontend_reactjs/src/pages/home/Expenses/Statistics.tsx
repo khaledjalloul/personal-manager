@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useContext, useState } from "react";
-import { useExpensesCategories, useExpensesStatistics } from "../../../api";
+import { useCurrentUser, useExpensesCategories, useExpensesStatistics } from "../../../api";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
   CategoryScale,
@@ -46,14 +46,11 @@ export const ExpensesStatistics = () => {
 
   const [overTimeType, setOverTimeType] = useState("both");
 
-  const { data: expensesCategoriesOriginal } = useExpensesCategories();
-
-  const expensesCategories = expensesCategoriesOriginal && [...expensesCategoriesOriginal]
-  expensesCategories?.push({ id: -1, name: "Uncategorized", color: "gray", keywords: [] });
-
+  const { data: user } = useCurrentUser();
+  const { data: expensesCategories } = useExpensesCategories();
   const { data: statistics } = useExpensesStatistics();
 
-  if (!statistics) return <div />
+  if (!statistics || !user) return <div />
   return (
     <Wrapper>
       <Grid container spacing={2} flexGrow={1}>
@@ -64,7 +61,7 @@ export const ExpensesStatistics = () => {
               Total Balance
             </Typography>
             <Typography variant="h3" color="white">
-              1300.00 CHF
+              {(statistics.totalFunds - statistics.totalExpenses).toFixed(2)} CHF
             </Typography>
           </StatisticsCard>
         </Grid>
@@ -75,7 +72,7 @@ export const ExpensesStatistics = () => {
               Bank Balance
             </Typography>
             <Typography variant="h3" color="white">
-              3,732.00 CHF
+              {(statistics.totalFunds - statistics.totalExpenses - user.wallet).toFixed(2)} CHF
             </Typography>
           </StatisticsCard>
         </Grid>
@@ -86,7 +83,7 @@ export const ExpensesStatistics = () => {
               Cash Balance
             </Typography>
             <Typography variant="h3" color="white">
-              300.00 CHF
+              {user.wallet.toFixed(2)} CHF
             </Typography>
           </StatisticsCard>
         </Grid>

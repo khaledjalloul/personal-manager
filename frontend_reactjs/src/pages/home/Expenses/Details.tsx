@@ -17,7 +17,6 @@ export const ExpensesDetails = () => {
 
   const { data: expenses } = useExpenses({
     type: "all",
-    tags: [],
     searchText: searchText.trim(),
   });
   const { data: funds } = useFunds({

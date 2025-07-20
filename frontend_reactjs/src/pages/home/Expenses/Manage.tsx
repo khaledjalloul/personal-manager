@@ -13,8 +13,15 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useExpensesCategories, useExpenses, useFunds, useUploadAutoExpenses, useDeleteAutoExpenses, useCurrentUser } from "../../../api";
-import { ExpensesCategoryCard, ExpenseTableRow, FundTableRow } from "../../../components";
+import {
+  useExpensesCategories,
+  useExpenses,
+  useFunds,
+  useUploadAutoExpenses,
+  useDeleteAutoExpenses,
+  useCurrentUser
+} from "../../../api";
+import { ConfirmDeleteDialog, ExpensesCategoryCard, ExpenseTableRow, FundTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { Expense, ExpensesCategory, Fund } from "../../../types";
@@ -58,11 +65,12 @@ export const ManageExpenses = () => {
 
   const { data: user } = useCurrentUser();
   const fundKeywords = user?.fundKeywords || [];
+  const { data: autoExpenses } = useExpenses({ type: "auto", searchText: "" });
   const { data: manualExpenses } = useExpenses({
     type: "manual",
-    tags: [],
     searchText: searchText.trim()
   });
+  const { data: autoFunds } = useFunds({ type: "auto", searchText: "" });
   const { data: manualFunds } = useFunds({
     type: "manual",
     searchText: searchText.trim()
@@ -74,6 +82,7 @@ export const ManageExpenses = () => {
   const [isAddingFund, setIsAddingFund] = useState(false);
   const [isAddingExpense, setIsAddingExpense] = useState(false);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   return (
     <Wrapper>
@@ -185,12 +194,20 @@ export const ManageExpenses = () => {
         </ManualExpensesGridItem>
       </Grid>
 
-      <Typography variant="h6" mt={2}>Import Bank Expenses</Typography>
+      <Typography variant="h6" mt={2}>Import Bank Data</Typography>
 
       <CSVFileUploadWrapper>
 
-        <Typography variant="body1">
-          Counter / Description
+        <Typography>
+          Imported Funds: {autoFunds?.length}
+        </Typography>
+
+        <Typography>
+          Imported Expenses: {autoExpenses?.length}
+        </Typography>
+
+        <Typography >
+          Imported & Uncategorized Expenses: {autoExpenses?.filter(exp => !exp.category).length}
         </Typography>
 
         <input
@@ -211,6 +228,7 @@ export const ManageExpenses = () => {
             variant="contained"
             component="span"
             loading={uploadAutoExpensesLoading}
+            sx={{ mt: '16px' }}
           >
             Upload CSV
           </Button>
@@ -220,7 +238,8 @@ export const ManageExpenses = () => {
           variant="outlined"
           color="error"
           loading={deleteAutoExpensesLoading}
-          onClick={() => deleteAutoExpenses()}
+          onClick={() => setConfirmDeleteOpen(true)}
+          sx={{ mt: '16px' }}
         >
           Delete Automated Expenses & Funds
         </Button>
@@ -258,6 +277,13 @@ export const ManageExpenses = () => {
         ))}
       </Grid>
 
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={"all imported expenses and funds"}
+        deleteFn={() => deleteAutoExpenses()}
+      />
+
     </Wrapper>
   );
 };
@@ -286,9 +312,9 @@ const ManualExpensesGridItem = styled(Grid)`
 
 const CSVFileUploadWrapper = styled(Box)`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
   border: solid 1px gray;
   border-radius: 8px;
   padding: 32px;

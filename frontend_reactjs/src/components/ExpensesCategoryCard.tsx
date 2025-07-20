@@ -43,7 +43,7 @@ export const ExpensesCategoryCard = ({
                 mt: category.id === -999 ? 1 : 0
               }}
             >
-              {category.name}
+              {category.name} ({category.keywords.length})
             </Typography>
           ) : (
             <TextField
@@ -180,17 +180,17 @@ export const ExpensesCategoryCard = ({
                   <IconButton
                     size="small"
                     color="success"
-                    disabled={!keyword || category.id === -1}
+                    disabled={!keyword.trim() || category.id === -1}
                     loading={editLoading || editFundKeywordsLoading}
                     onClick={() => {
                       if (category.id !== -999)
                         editCategory({
                           id: category.id,
-                          keywords: [...category.keywords, keyword]
+                          keywords: [...category.keywords, keyword.trim()]
                         })
                       else
                         editFundKeywords({
-                          fundKeywords: [...category.keywords, keyword]
+                          fundKeywords: [...category.keywords, keyword.trim()]
                         })
                       setKeyword("")
                     }}>
