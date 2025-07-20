@@ -34,7 +34,7 @@ export const ExpensesCategoryCard = ({
   return (
     <Fragment>
       <Grid
-        size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
+        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
         sx={{
           display: 'flex',
           flexDirection: 'column',

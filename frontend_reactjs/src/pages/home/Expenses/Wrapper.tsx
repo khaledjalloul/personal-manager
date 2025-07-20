@@ -8,68 +8,58 @@ import {
 import styled from "styled-components";
 import { useState } from "react";
 import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
-import { ExpensesStatistics } from "./Statistics";
-import { MonthlyExpenses } from "./Monthly";
-import { ExpensesDetails } from "./Details";
-import { ManageExpenses } from "./Manage";
-
-const enum ExpensesPage {
-  Statistics,
-  Monthly,
-  Details,
-  Manage
-};
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 export const ExpensesWrapper = () => {
+  const location = useLocation();
 
   const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState<ExpensesPage>(ExpensesPage.Statistics);
 
   return (
     <Wrapper>
       <Header>
-        <Button
-          variant={page === ExpensesPage.Statistics ? "contained" : "outlined"}
-          onClick={page === ExpensesPage.Statistics ? undefined : () => setPage(ExpensesPage.Statistics)}
-          startIcon={<Insights />}
-        >
-          Statistics
-        </Button>
+        <NavLink to="/expenses">
+          {({ }) => (
+            <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"}>
+              Statistics
+            </Button>
+          )}
+        </NavLink>
 
-        <Button
-          variant={page === ExpensesPage.Monthly ? "contained" : "outlined"}
-          onClick={page === ExpensesPage.Monthly ? undefined : () => setPage(ExpensesPage.Monthly)}
-          startIcon={<Today />}
-        >
-          Monthly
-        </Button>
+        <NavLink to="/expenses/monthly">
+          {({ isActive }) => (
+            <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"}>
+              Monthly
+            </Button>
+          )}
+        </NavLink>
 
-        <Button
-          variant={page === ExpensesPage.Details ? "contained" : "outlined"}
-          onClick={page === ExpensesPage.Details ? undefined : () => setPage(ExpensesPage.Details)}
-          startIcon={<ViewList />}
-        >
-          Details
-        </Button>
+        <NavLink to="/expenses/details">
+          {({ isActive }) => (
+            <Button startIcon={<ViewList />} variant={isActive ? "contained" : "outlined"}>
+              Details
+            </Button>
+          )}
+        </NavLink>
 
-        <Button
-          variant={page === ExpensesPage.Manage ? "contained" : "outlined"}
-          onClick={page === ExpensesPage.Manage ? undefined : () => setPage(ExpensesPage.Manage)}
-          startIcon={<Settings />}
-        >
-          Manage
-        </Button>
+        <NavLink to="/expenses/manage">
+          {({ isActive }) => (
+            <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"}>
+              Manage
+            </Button>
+          )}
+        </NavLink>
 
         <TextField
           sx={{
             ml: "auto",
-            minWidth: page !== ExpensesPage.Statistics ? "35vw" : 0,
-            opacity: page !== ExpensesPage.Statistics ? 1 : 0,
+            minWidth: location.pathname !== "/expenses" ? "35vw" : 0,
+            opacity: location.pathname !== "/expenses" ? 1 : 0,
           }}
-          disabled={page === ExpensesPage.Statistics}
+          disabled={location.pathname === "/expenses"}
           label="Search expenses"
           placeholder={
-            page === ExpensesPage.Monthly ?
+            location.pathname === "/expenses/monthly" ?
               "Month" :
               "Category, description, source, vendor"
           }
@@ -91,18 +81,7 @@ export const ExpensesWrapper = () => {
         />
       </Header>
 
-      {page === ExpensesPage.Statistics && (
-        <ExpensesStatistics />
-      )}
-      {page === ExpensesPage.Monthly && (
-        <MonthlyExpenses searchText={searchText} />
-      )}
-      {page === ExpensesPage.Details && (
-        <ExpensesDetails searchText={searchText} />
-      )}
-      {page === ExpensesPage.Manage && (
-        <ManageExpenses searchText={searchText} />
-      )}
+      <Outlet context={{ searchText }} />
 
     </Wrapper>
   );

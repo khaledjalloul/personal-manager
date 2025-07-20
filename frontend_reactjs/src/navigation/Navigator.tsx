@@ -10,7 +10,11 @@ import {
   Recipes,
   Piano,
   ExpensesWrapper,
-  Account
+  Account,
+  ExpensesStatistics,
+  MonthlyExpenses,
+  ExpensesDetails,
+  ManageExpenses
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
@@ -59,7 +63,25 @@ export const Navigator = () => {
         },
         {
           path: "/expenses",
-          element: <ExpensesWrapper />
+          element: <ExpensesWrapper />,
+          children: [
+            {
+              path: "/expenses",
+              element: <ExpensesStatistics />
+            },
+            {
+              path: "/expenses/monthly",
+              element: <MonthlyExpenses />
+            },
+            {
+              path: "/expenses/details",
+              element: <ExpensesDetails />
+            },
+            {
+              path: "/expenses/manage",
+              element: <ManageExpenses />
+            }
+          ]
         },
         {
           path: "/account",

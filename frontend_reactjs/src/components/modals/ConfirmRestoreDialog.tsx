@@ -20,7 +20,7 @@ export const ConfirmRestoreDialog = ({
         <Typography variant="h6">Confirm Restore</Typography>
         <Typography>Are you sure you want to restore {dataType} data?</Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <InfoOutlined />
+          <InfoOutlined sx={{ color: 'text.primary' }} />
           <Typography>This will delete all {dataType === "all" ? "" : dataType} data on the account and replace it with the uploaded data.</Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>

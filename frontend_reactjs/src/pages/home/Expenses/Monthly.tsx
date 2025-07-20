@@ -10,12 +10,10 @@ import {
 } from "@mui/material";
 import { useExpensesCategories, useMonthlyExpenses } from "../../../api";
 import dayjs from "dayjs";
+import { useOutletContext } from "react-router-dom";
 
-export const MonthlyExpenses = ({
-  searchText
-}: {
-  searchText: string;
-}) => {
+export const MonthlyExpenses = () => {
+  const { searchText } = useOutletContext<{ searchText: string }>();
 
   const { data: expensesCategories } = useExpensesCategories();
   const { data: monthlyExpenses } = useMonthlyExpenses({

@@ -10,12 +10,10 @@ import {
 } from "@mui/material";
 import { useExpenses, useIncomes } from "../../../api";
 import { ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { useOutletContext } from "react-router-dom";
 
-export const ExpensesDetails = ({
-  searchText
-}: {
-  searchText: string;
-}) => {
+export const ExpensesDetails = () => {
+  const { searchText } = useOutletContext<{ searchText: string }>();
 
   const { data: expenses } = useExpenses({
     type: "all",

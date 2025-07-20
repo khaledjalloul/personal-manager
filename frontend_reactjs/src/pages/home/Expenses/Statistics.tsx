@@ -72,7 +72,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
           <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
             <Typography variant="h6" color="white">
-              ZKB Balance
+              Bank Balance
             </Typography>
             <Typography variant="h3" color="white">
               3,732.00 CHF
@@ -92,7 +92,7 @@ export const ExpensesStatistics = () => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}  >
-          <StatisticsCard sx={{ backgroundColor: "primary.main" }}>
+          <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
             <Typography variant="h6" color="white">
               Total Spent This Month
             </Typography>
@@ -139,15 +139,17 @@ export const ExpensesStatistics = () => {
 
               <Line
                 data={{
-                  labels: Object.keys(statistics.months),
+                  labels: Object.keys(statistics.months).sort(),
                   datasets: [
                     {
                       label: 'Amount (CHF)',
-                      data: Object.values(statistics.months).map(m => (
-                        overTimeType === "expenses" ? m.expenses :
-                          overTimeType === "incomes" ? m.incomes :
-                            m.incomes - m.expenses
-                      )),
+                      data: Object.entries(statistics.months)
+                        .sort((a, b) => a[0].localeCompare(b[0]))
+                        .map((m) => (
+                          overTimeType === "expenses" ? m[1].expenses :
+                            overTimeType === "incomes" ? m[1].incomes :
+                              m[1].incomes - m[1].expenses
+                        )),
                       backgroundColor:
                         overTimeType === "expenses" ? palette.warning.main :
                           overTimeType === "incomes" ? palette.success.main :

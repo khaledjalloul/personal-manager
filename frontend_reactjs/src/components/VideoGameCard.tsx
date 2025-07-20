@@ -339,6 +339,7 @@ const CoverImage = styled.img`
   border-top-right-radius: 8px;
   width: 100%;
   aspect-ratio: 16/9;
+  object-fit: cover;
 `;
 
 const CoverImageEditor = styled(Box)`

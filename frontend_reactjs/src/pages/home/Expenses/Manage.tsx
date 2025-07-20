@@ -13,11 +13,12 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useExpensesCategories, useExpenses, useIncomes } from "../../../api";
+import { useExpensesCategories, useExpenses, useIncomes, useUploadAutoExpenses, useDeleteAutoExpenses } from "../../../api";
 import { ExpensesCategoryCard, ExpenseTableRow, IncomeTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { Expense, ExpensesCategory, Income } from "../../../types";
+import { useOutletContext } from "react-router-dom";
 
 const emptyIncome: Income = {
   id: -1,
@@ -43,23 +44,20 @@ const emptyExpense: Expense = {
   tags: [],
 }
 
-export const ManageExpenses = ({
-  searchText
-}: {
-  searchText: string;
-}) => {
+export const ManageExpenses = () => {
+  const { searchText } = useOutletContext<{ searchText: string }>();
 
   const { data: manualExpenses } = useExpenses({
     type: "manual",
     tags: [],
     searchText: searchText.trim()
   });
-
   const { data: incomes } = useIncomes({
     searchText: searchText.trim()
   });
-
-  const { data: categories } = useExpensesCategories()
+  const { data: categories } = useExpensesCategories();
+  const { mutate: uploadAutoExpenses, isPending: uploadAutoExpensesLoading } = useUploadAutoExpenses();
+  const { mutate: deleteAutoExpenses, isPending: deleteAutoExpensesLoading } = useDeleteAutoExpenses();
 
   const [isAddingIncome, setIsAddingIncome] = useState(false);
   const [isAddingExpense, setIsAddingExpense] = useState(false);
@@ -67,7 +65,7 @@ export const ManageExpenses = ({
 
   return (
     <Wrapper>
-      <Grid container spacing={2}>
+      {/* <Grid container spacing={2}>
         <IncomeGridItem size={{ xs: 12, lg: 5 }} sx={{ maxHeight: '60vh' }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Income</Typography>
@@ -173,11 +171,16 @@ export const ManageExpenses = ({
             </Table>
           </TableContainer>
         </ManualExpensesGridItem>
-      </Grid>
+      </Grid> */}
 
-      <Typography variant="h6" mt={2}>Import Bank Expenses CSV</Typography>
+      <Typography variant="h6" mt={2}>Import Bank Expenses</Typography>
 
       <CSVFileUploadWrapper>
+
+        <Typography variant="body1">
+          Counter / Description
+        </Typography>
+
         <input
           type="file"
           accept=".csv"
@@ -185,16 +188,30 @@ export const ManageExpenses = ({
           id="csv-upload"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) {
-              console.log("Selected file:", file.name);
-            }
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            uploadAutoExpenses({ formData });
           }}
         />
         <label htmlFor="csv-upload">
-          <Button variant="contained" component="span">
+          <Button
+            variant="contained"
+            component="span"
+            loading={uploadAutoExpensesLoading}
+          >
             Upload CSV
           </Button>
         </label>
+
+        <Button
+          variant="outlined"
+          color="error"
+          loading={deleteAutoExpensesLoading}
+          onClick={() => deleteAutoExpenses()}
+        >
+          Delete Automated Expenses
+        </Button>
       </CSVFileUploadWrapper>
 
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, mt: 2 }}>
@@ -253,6 +270,7 @@ const CSVFileUploadWrapper = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 16px;
   border: solid 1px gray;
   border-radius: 8px;
   padding: 32px;

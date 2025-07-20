@@ -12,6 +12,7 @@ const lightPalette: ThemeOptions["palette"] = {
   primary: {
     light: "#ddeeff",
     main: "#0077dd",
+    dark: "#0077dd",
     contrastText: "#fff",
   },
   action: {
@@ -31,6 +32,7 @@ const darkPalette: ThemeOptions["palette"] = {
   primary: {
     light: "#151922",
     main: "#0088ff",
+    dark: "#00549e",
     contrastText: "#fff",
   },
   background: {
@@ -42,9 +44,13 @@ const darkPalette: ThemeOptions["palette"] = {
   text: {
     primary: "#fff",
   },
+  success: {
+    main: "#66bb6a",
+    dark: "#215324"
+  },
   warning: {
     main: "#ed6c02",
-    dark: "#994a00"
+    dark: "#683200"
   }
 }
 

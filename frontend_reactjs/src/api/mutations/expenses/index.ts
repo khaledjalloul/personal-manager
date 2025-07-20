@@ -12,3 +12,6 @@ export * from './deleteExpensesCategory'
 
 export * from './createExpensesCategoryKeyword'
 export * from './deleteExpensesCategoryKeyword'
+
+export * from './uploadAutoExpenses'
+export * from './deleteAutoExpenses'

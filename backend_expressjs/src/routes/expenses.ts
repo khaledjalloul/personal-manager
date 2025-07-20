@@ -1,10 +1,17 @@
 import { Router } from 'express';
 import { ExpenseType, PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import csv from 'csv-parser';
+import { Readable } from 'stream';
+import multer from 'multer';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const router = Router();
 const prisma = new PrismaClient();
+const upload = multer({ storage: multer.memoryStorage() });
+
+dayjs.extend(customParseFormat);
 
 // Incomes
 
@@ -274,6 +281,110 @@ router.get('/statistics', async (req: Request, res: Response) => {
 
   res.json(statistics);
 })
+
+// Automated Expenses
+
+const csvKeys = {
+  date: "Date",
+  bookingText: "Booking text",
+  curr: "Curr",
+  amountDetails: "Amount details",
+  zkbReference: "ZKB reference",
+  referenceNumber: "Reference number",
+  debitCHF: "Debit CHF",
+  creditCHF: "Credit CHF",
+  valueDate: "Value date",
+  balanceCHF: "Balance CHF",
+  paymentPurpose: "Payment purpose",
+  details: "Details"
+}
+
+type AutoExpense = {
+  date: Date;
+  bookingText: string;
+  curr: string;
+  amountDetails: string;
+  zkbReference: string;
+  referenceNumber: string;
+  debitCHF: number;
+  creditCHF: number;
+  valueDate: Date;
+  balanceCHF: number;
+  paymentPurpose: string;
+  details: string;
+}
+
+router.post("/auto", upload.single('file'), async (req: Request, res: Response) => {
+  if (!req.file)
+    return res.status(400).send('No file uploaded.');
+
+  const results: AutoExpense[] = [];
+  const stream = Readable.from(req.file.buffer);
+
+  stream
+    .pipe(csv({
+      separator: ";",
+      mapHeaders: ({ header }) => header.includes("Date") ? "Date" : header
+    }))
+    .on('data', (data) => {
+      results.push({
+        date: dayjs(data[csvKeys.date], 'DD.MM.YYYY').toDate(),
+        bookingText: data[csvKeys.bookingText],
+        curr: data[csvKeys.curr],
+        amountDetails: data[csvKeys.amountDetails],
+        zkbReference: data[csvKeys.zkbReference],
+        referenceNumber: data[csvKeys.referenceNumber],
+        debitCHF: parseFloat(data[csvKeys.debitCHF]),
+        creditCHF: parseFloat(data[csvKeys.creditCHF]),
+        valueDate: dayjs(data[csvKeys.valueDate], 'DD.MM.YYYY').toDate(),
+        balanceCHF: parseFloat(data[csvKeys.balanceCHF]),
+        paymentPurpose: data[csvKeys.paymentPurpose],
+        details: data[csvKeys.details]
+      });
+    })
+    .on('end', async () => {
+      const categories = await prisma.expensesCategory.findMany({
+        where: { userId: req.user?.id },
+        select: { id: true, keywords: true },
+      });
+
+      await prisma.expense.createMany({
+        data: results.map(expense => {
+          const amount = expense.debitCHF || -expense.creditCHF || 0;
+          const category = categories.find(cat =>
+            cat.keywords.some(keyword =>
+              expense.bookingText.toLowerCase().includes(keyword.keyword.toLowerCase())
+            )
+          );
+          return {
+            userId: req.user!.id,
+            date: isNaN(expense.valueDate.getTime()) ? new Date() : expense.valueDate,
+            categoryId: amount !== 0 ? category?.id : undefined,
+            description: expense.bookingText,
+            vendor: expense.paymentPurpose,
+            amount,
+            type: "auto",
+          }
+        })
+      });
+
+      res.json({ message: 'CSV processed successfully', data: results });
+    })
+    .on('error', (err) => {
+      console.error('Error parsing CSV:', err);
+      res.status(500).send('Error parsing CSV.');
+    });
+});
+
+router.delete("/auto", async (req: Request, res: Response) => {
+  await prisma.expense.deleteMany({
+    where: {
+      userId: req.user?.id,
+      type: "auto"
+    }
+  });
+  res.json({ message: 'Automated expenses deleted successfully' });
+});
 
 // Expenses
 

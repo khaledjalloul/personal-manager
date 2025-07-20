@@ -5,7 +5,6 @@ import {
   Hike,
   Income,
   Note,
-  NoteCategory,
   PianoPiece,
   PrismaClient,
   VideoGame
@@ -15,6 +14,7 @@ import multer from "multer";
 
 const router = Router();
 const prisma = new PrismaClient();
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Backup
 
@@ -30,28 +30,32 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        data.expenses = await prisma.expense.findMany({
-          where: { userId },
-          omit: { id: true, userId: true },
-          orderBy: { date: 'asc' }
-        });
-        data.incomes = await prisma.income.findMany({
-          where: { userId },
-          omit: { id: true, userId: true },
-          orderBy: { date: 'asc' }
-        });
         data.expensesCategories = await prisma.expensesCategory.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           include: {
+            expenses: {
+              omit: { id: true, userId: true, categoryId: true },
+              orderBy: { date: 'asc' }
+            },
             keywords: {
-              omit: { id: true },
+              omit: { id: true, categoryId: true },
               orderBy: { keyword: 'asc' }
             }
           },
           orderBy: {
             name: 'asc'
           }
+        });
+        data.uncategorizedExpenses = await prisma.expense.findMany({
+          where: { userId, category: null },
+          omit: { id: true, userId: true, categoryId: true },
+          orderBy: { date: 'asc' }
+        });
+        data.incomes = await prisma.income.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
         });
         break;
       case 'diary':
@@ -65,11 +69,17 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         data.noteCategories = await prisma.noteCategory.findMany({
           where: { userId },
           omit: { id: true, userId: true },
+          include: {
+            notes: {
+              omit: { id: true, userId: true, categoryId: true },
+              orderBy: { title: 'asc' }
+            }
+          },
           orderBy: { name: 'asc' }
         });
-        data.notes = await prisma.note.findMany({
-          where: { userId },
-          omit: { id: true, userId: true },
+        data.uncategorizedNotes = await prisma.note.findMany({
+          where: { userId, categoryId: null },
+          omit: { id: true, userId: true, categoryId: true },
           orderBy: { title: 'asc' }
         });
         break;
@@ -108,8 +118,6 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
 
 // Restore
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 router.post('/restore/:dataType', upload.single('file'), async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const { dataType } = req.params;
@@ -133,7 +141,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        if (!inputData.expenses || !inputData.expensesCategories || !inputData.incomes)
+        if (!inputData.expensesCategories || !inputData.uncategorizedExpenses || !inputData.incomes)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
       case 'diary':
@@ -141,7 +149,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           return res.status(400).json({ error: "Invalid diary data" });
         break;
       case 'notes':
-        if (!inputData.noteCategories || !inputData.notes)
+        if (!inputData.noteCategories || !inputData.uncategorizedNotes)
           return res.status(400).json({ error: "Invalid notes data" });
         break;
       case 'piano':
@@ -172,21 +180,30 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.expensesCategory.deleteMany({ where: { userId } });
 
         for (const cat of inputData.expensesCategories) {
-          const { keywords, ...catData } = cat;
+          const { expenses, keywords, ...catData } = cat;
           const createdCat = await prisma.expensesCategory.create({
             data: { ...catData, userId },
           });
+          if (expenses && expenses.length) {
+            await prisma.expense.createMany({
+              data: expenses.map((e: Expense) => ({
+                ...e,
+                userId,
+                categoryId: createdCat.id
+              })),
+            });
+          }
           if (keywords && keywords.length) {
             await prisma.expensesCategoryKeyword.createMany({
               data: keywords.map((k: ExpensesCategoryKeyword) => ({
                 ...k,
-                expensesCategoryId: createdCat.id,
+                categoryId: createdCat.id,
               })),
             });
           }
         }
         await prisma.expense.createMany({
-          data: inputData.expenses.map((e: Expense) => ({ ...e, userId })),
+          data: inputData.uncategorizedExpenses.map((e: Expense) => ({ ...e, userId })),
         });
         await prisma.income.createMany({
           data: inputData.incomes.map((i: Income) => ({ ...i, userId })),
@@ -204,11 +221,23 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.note.deleteMany({ where: { userId } });
         await prisma.noteCategory.deleteMany({ where: { userId } });
 
-        await prisma.noteCategory.createMany({
-          data: inputData.noteCategories.map((c: NoteCategory) => ({ ...c, userId })),
-        });
+        for (const cat of inputData.noteCategories) {
+          const { notes, ...catData } = cat;
+          const createdCat = await prisma.noteCategory.create({
+            data: { ...catData, userId },
+          });
+          if (notes && notes.length) {
+            await prisma.note.createMany({
+              data: notes.map((n: Note) => ({
+                ...n,
+                userId,
+                categoryId: createdCat.id
+              })),
+            });
+          }
+        }
         await prisma.note.createMany({
-          data: inputData.notes.map((n: Note) => ({ ...n, userId })),
+          data: inputData.uncategorizedNotes.map((n: Note) => ({ ...n, userId })),
         });
         break;
 
