@@ -1,16 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { ExpensesCategoryKeyword } from "../../../types";
+import { Fund } from "../../../types";
 
-const ENDPOINT = "expenses/categories/keywords";
+const ENDPOINT = "expenses/funds";
 
-export type CreateExpensesCategoryKeywordRequestBody = {
-  categoryId: number;
-  keyword: string;
+export type CreateFundRequestBody = {
+  date: Date;
+  source: string;
+  amount: number;
+  type: "auto" | "manual";
 };
 
-const mutationFn = async (data: CreateExpensesCategoryKeywordRequestBody) => {
+const mutationFn = async (data: CreateFundRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -20,10 +22,10 @@ const mutationFn = async (data: CreateExpensesCategoryKeywordRequestBody) => {
     });
 };
 
-export const useCreateExpensesCategoryKeyword = () => {
+export const useCreateFund = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<ExpensesCategoryKeyword, AxiosError<{ message: string }>, CreateExpensesCategoryKeywordRequestBody>({
+  return useMutation<Fund, AxiosError<{ message: string }>, CreateFundRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

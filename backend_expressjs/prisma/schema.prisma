@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
-  hash  String
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  hash         String
+  fundKeywords String[]
 }
 
 model ExpensesCategory {
-  id       Int                       @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   userId   Int
   name     String
   color    String
+  keywords String[]
   expenses Expense[]
-  keywords ExpensesCategoryKeyword[]
 }
 
 enum ExpenseType {
@@ -41,19 +42,13 @@ model Expense {
   type        ExpenseType
 }
 
-model ExpensesCategoryKeyword {
-  id         Int              @id @default(autoincrement())
-  keyword    String
-  categoryId Int
-  category   ExpensesCategory @relation(fields: [categoryId], references: [id])
-}
-
-model Income {
-  id     Int      @id @default(autoincrement())
+model Fund {
+  id     Int         @id @default(autoincrement())
   userId Int
   date   DateTime
   source String
   amount Float
+  type   ExpenseType
 }
 
 model Hike {

@@ -49,7 +49,7 @@ export const ExpensesStatistics = () => {
   const { data: expensesCategoriesOriginal } = useExpensesCategories();
 
   const expensesCategories = expensesCategoriesOriginal && [...expensesCategoriesOriginal]
-  expensesCategories?.push({ id: -1, name: "Uncategorized", color: "gray" });
+  expensesCategories?.push({ id: -1, name: "Uncategorized", color: "gray", keywords: [] });
 
   const { data: statistics } = useExpensesStatistics();
 
@@ -132,7 +132,7 @@ export const ExpensesStatistics = () => {
               <FormControl>
                 <RadioGroup row value={overTimeType} onChange={(e) => setOverTimeType(e.target.value)}>
                   <FormControlLabel value="expenses" control={<Radio />} label="Expenses" />
-                  <FormControlLabel value="incomes" control={<Radio />} label="Incomes" />
+                  <FormControlLabel value="funds" control={<Radio />} label="Funds" />
                   <FormControlLabel value="both" control={<Radio />} label="Both" />
                 </RadioGroup>
               </FormControl>
@@ -147,16 +147,16 @@ export const ExpensesStatistics = () => {
                         .sort((a, b) => a[0].localeCompare(b[0]))
                         .map((m) => (
                           overTimeType === "expenses" ? m[1].expenses :
-                            overTimeType === "incomes" ? m[1].incomes :
-                              m[1].incomes - m[1].expenses
+                            overTimeType === "funds" ? m[1].funds :
+                              m[1].funds - m[1].expenses
                         )),
                       backgroundColor:
                         overTimeType === "expenses" ? palette.warning.main :
-                          overTimeType === "incomes" ? palette.success.main :
+                          overTimeType === "funds" ? palette.success.main :
                             palette.primary.main,
                       borderColor:
                         overTimeType === "expenses" ? palette.warning.main :
-                          overTimeType === "incomes" ? palette.success.main :
+                          overTimeType === "funds" ? palette.success.main :
                             palette.primary.main,
                     }
                   ],

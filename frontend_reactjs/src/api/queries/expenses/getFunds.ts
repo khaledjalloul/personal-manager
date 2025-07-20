@@ -1,17 +1,18 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Income } from "../../../types";
+import { Fund } from "../../../types";
 import client from "../../client";
 
-const ENDPOINT = "expenses/incomes";
+const ENDPOINT = "expenses/funds";
 
-export type GetIncomesRequestParams = {
+export type GetFundsRequestParams = {
+  type: "manual" | "auto" | "all";
   searchText: string;
 };
 
-const queryFn = (params: GetIncomesRequestParams) => async () => {
+const queryFn = (params: GetFundsRequestParams) => async () => {
   const queryParams = Object.keys(params)
-    .filter((key) => params[key as keyof GetIncomesRequestParams] !== undefined)
-    .map((key) => `${key}=${params[key as keyof GetIncomesRequestParams]}`)
+    .filter((key) => params[key as keyof GetFundsRequestParams] !== undefined)
+    .map((key) => `${key}=${params[key as keyof GetFundsRequestParams]}`)
     .join("&");
 
   return await client
@@ -23,11 +24,11 @@ const queryFn = (params: GetIncomesRequestParams) => async () => {
     });
 };
 
-export const useIncomes = (params: GetIncomesRequestParams) =>
-  useQuery<Income[]>({
+export const useFunds = (params: GetFundsRequestParams) =>
+  useQuery<Fund[]>({
     queryKey: [ENDPOINT, params],
     queryFn: queryFn(params),
     select: (data) =>
-      data.map((income) => ({ ...income, date: new Date(income.date) })),
+      data.map((fund) => ({ ...fund, date: new Date(fund.date) })),
     placeholderData: keepPreviousData,
   });

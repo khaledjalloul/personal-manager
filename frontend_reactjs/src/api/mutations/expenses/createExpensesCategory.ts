@@ -8,6 +8,7 @@ const ENDPOINT = "expenses/categories";
 export type CreateExpensesCategoryRequestBody = {
   name: string;
   color: string;
+  keywords: string[];
 };
 
 const mutationFn = async (data: CreateExpensesCategoryRequestBody) => {

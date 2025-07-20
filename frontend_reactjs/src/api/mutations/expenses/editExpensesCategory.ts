@@ -9,6 +9,7 @@ export type EditExpensesCategoryRequestBody = {
   id: number;
   name?: string;
   color?: string;
+  keywords?: string[];
 };
 
 const mutationFn = async (data: EditExpensesCategoryRequestBody) => {

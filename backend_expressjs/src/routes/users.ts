@@ -1,9 +1,8 @@
 import {
   DiaryEntry,
   Expense,
-  ExpensesCategoryKeyword,
   Hike,
-  Income,
+  Fund,
   Note,
   PianoPiece,
   PrismaClient,
@@ -37,10 +36,6 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
             expenses: {
               omit: { id: true, userId: true, categoryId: true },
               orderBy: { date: 'asc' }
-            },
-            keywords: {
-              omit: { id: true, categoryId: true },
-              orderBy: { keyword: 'asc' }
             }
           },
           orderBy: {
@@ -52,11 +47,15 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true, categoryId: true },
           orderBy: { date: 'asc' }
         });
-        data.incomes = await prisma.income.findMany({
+        data.funds = await prisma.fund.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           orderBy: { date: 'asc' }
         });
+        data.fundKeywords = (await prisma.user.findUnique({
+          where: { id: req.user?.id },
+          select: { fundKeywords: true }
+        }))?.fundKeywords.sort();
         break;
       case 'diary':
         data.diary = await prisma.diaryEntry.findMany({
@@ -141,7 +140,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        if (!inputData.expensesCategories || !inputData.uncategorizedExpenses || !inputData.incomes)
+        if (!inputData.expensesCategories || !inputData.uncategorizedExpenses || !inputData.funds || !inputData.fundKeywords)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
       case 'diary':
@@ -173,14 +172,11 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
     switch (type) {
       case 'expenses':
         await prisma.expense.deleteMany({ where: { userId } });
-        await prisma.income.deleteMany({ where: { userId } });
-        for (const cat of await prisma.expensesCategory.findMany({ where: { userId }, select: { id: true } })) {
-          await prisma.expensesCategoryKeyword.deleteMany({ where: { categoryId: cat.id } });
-        }
+        await prisma.fund.deleteMany({ where: { userId } });
         await prisma.expensesCategory.deleteMany({ where: { userId } });
 
         for (const cat of inputData.expensesCategories) {
-          const { expenses, keywords, ...catData } = cat;
+          const { expenses, ...catData } = cat;
           const createdCat = await prisma.expensesCategory.create({
             data: { ...catData, userId },
           });
@@ -193,21 +189,17 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
               })),
             });
           }
-          if (keywords && keywords.length) {
-            await prisma.expensesCategoryKeyword.createMany({
-              data: keywords.map((k: ExpensesCategoryKeyword) => ({
-                ...k,
-                categoryId: createdCat.id,
-              })),
-            });
-          }
         }
         await prisma.expense.createMany({
           data: inputData.uncategorizedExpenses.map((e: Expense) => ({ ...e, userId })),
         });
-        await prisma.income.createMany({
-          data: inputData.incomes.map((i: Income) => ({ ...i, userId })),
+        await prisma.fund.createMany({
+          data: inputData.funds.map((f: Fund) => ({ ...f, userId })),
         });
+        await prisma.user.update({
+          where: { id: req.user?.id },
+          data: { fundKeywords: inputData.fundKeywords }
+        })
         break;
 
       case 'diary':
@@ -273,24 +265,21 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
 router.get('/me', async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user?.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    }
+    omit: { hash: true }
   });
   res.json(user);
 });
 
 router.post('/me', async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { name, email } = req.body;
+  const { name, email, fundKeywords } = req.body;
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
       name,
-      email
+      email,
+      fundKeywords
     }
   });
 

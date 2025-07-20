@@ -2,6 +2,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
+  fundKeywords: string[];
   token?: string;
 };
 
@@ -9,6 +10,7 @@ export type ExpensesCategory = {
   id: number;
   name: string;
   color: string;
+  keywords: string[];
 };
 
 export type Expense = {
@@ -22,17 +24,12 @@ export type Expense = {
   type: "manual" | "auto";
 };
 
-export type ExpensesCategoryKeyword = {
-  id: number;
-  keyword: string;
-  category: ExpensesCategory;
-}
-
-export type Income = {
+export type Fund = {
   id: number;
   date: Date;
   source: string;
   amount: number;
+  type: "manual" | "auto";
 };
 
 export type Hike = {

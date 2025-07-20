@@ -1,7 +1,7 @@
 import {
     User,
     Expense,
-    Income,
+    Fund,
     ExpensesCategory,
     Hike,
     PianoPiece,
@@ -11,7 +11,6 @@ import {
     Note,
     VideoGame,
     VideoGameType,
-    ExpensesCategoryKeyword
 } from '../types';
 
 
@@ -19,27 +18,16 @@ export const user: User = {
     id: 1,
     name: 'John Doe',
     email: 'jdoe@hotmail.com',
+    fundKeywords: ["salary"],
     token: 'fake-jwt-token'
 };
 
 export const expensesCategories: ExpensesCategory[] = [
-    { id: 1, name: 'Groceries', color: 'green' },
-    { id: 2, name: 'Tools/Services', color: 'yellow' },
-    { id: 3, name: 'Entertainment', color: 'purple' },
-    { id: 4, name: 'Housing', color: 'orange' },
-    { id: 5, name: 'One-time', color: 'blue' },
-    { id: 6, name: 'Tuition', color: 'red' },
-];
-
-export const expensesCategoryKeywords: ExpensesCategoryKeyword[] = [
-    { id: 1, keyword: 'groceries', category: expensesCategories[0] },
-    { id: 2, keyword: 'tools', category: expensesCategories[1] },
-    { id: 3, keyword: 'services', category: expensesCategories[1] },
-    { id: 4, keyword: 'entertainment', category: expensesCategories[2] },
-    { id: 5, keyword: 'housing', category: expensesCategories[3] },
-    { id: 6, keyword: 'one-time', category: expensesCategories[4] },
-    { id: 7, keyword: 'tuition', category: expensesCategories[5] },
-    { id: 8, keyword: 'ETH', category: expensesCategories[5] }
+    { id: 1, name: 'Groceries', color: 'green', keywords: ["groceries"] },
+    { id: 2, name: 'Tools/Services', color: 'yellow', keywords: ["tools", "services"] },
+    { id: 3, name: 'Entertainment', color: 'purple', keywords: ["movies"] },
+    { id: 4, name: 'Housing', color: 'orange', keywords: ["housing"] },
+    { id: 5, name: 'Tuition', color: 'red', keywords: ["tuition"] },
 ];
 
 export const expenses: Expense[] = [
@@ -85,18 +73,20 @@ export const expenses: Expense[] = [
     }
 ];
 
-export const incomes: Income[] = [
+export const funds: Fund[] = [
     {
         id: 1,
         date: new Date("2025-01-01"),
         source: 'Salary',
-        amount: 3000.00
+        amount: 3000.00,
+        type: "auto"
     },
     {
         id: 2,
         date: new Date("2025-02-01"),
         source: 'Freelance Work',
-        amount: 1500.00
+        amount: 1500.00,
+        type: "manual"
     }
 ];
 

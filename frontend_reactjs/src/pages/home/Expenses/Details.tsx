@@ -8,8 +8,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useExpenses, useIncomes } from "../../../api";
-import { ExpenseTableRow, IncomeTableRow } from "../../../components";
+import { useExpenses, useFunds } from "../../../api";
+import { ExpenseTableRow, FundTableRow } from "../../../components";
 import { useOutletContext } from "react-router-dom";
 
 export const ExpensesDetails = () => {
@@ -20,15 +20,16 @@ export const ExpensesDetails = () => {
     tags: [],
     searchText: searchText.trim(),
   });
-  const { data: incomes } = useIncomes({
+  const { data: funds } = useFunds({
+    type: "all",
     searchText: searchText.trim(),
   });
 
-  const combinedData = [...expenses ?? [], ...incomes ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());
+  const combinedData = [...expenses ?? [], ...funds ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const tableRows = combinedData.map((item, index) => {
     if ('source' in item) {
-      return <IncomeTableRow key={item.id} index={index} income={item} />;
+      return <FundTableRow key={item.id} index={index} fund={item} />;
     } else {
       return <ExpenseTableRow key={item.id} index={index} expense={item} />;
     }

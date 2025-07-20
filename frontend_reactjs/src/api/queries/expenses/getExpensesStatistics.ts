@@ -16,7 +16,7 @@ export type GetExpensesStatisticsResponse = {
   months: {
     [month: string]: {
       expenses: number;
-      incomes: number;
+      funds: number;
     }
   }
 };

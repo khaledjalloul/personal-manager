@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
 
-const ENDPOINT = "expenses/incomes";
+const ENDPOINT = "expenses/funds";
 
-export type DeleteIncomeRequestBody = {
+export type DeleteFundRequestBody = {
   id: number;
 };
 
-const mutationFn = async (data: DeleteIncomeRequestBody) => {
+const mutationFn = async (data: DeleteFundRequestBody) => {
   return await client
     .delete(`/${ENDPOINT}/${data.id}`)
     .then((res) => res.data)
@@ -18,10 +18,10 @@ const mutationFn = async (data: DeleteIncomeRequestBody) => {
     });
 };
 
-export const useDeleteIncome = () => {
+export const useDeleteFund = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<null, AxiosError<{ message: string }>, DeleteIncomeRequestBody>({
+  return useMutation<null, AxiosError<{ message: string }>, DeleteFundRequestBody>({
     mutationFn,
     onSuccess: () => {
       queryClient.refetchQueries({

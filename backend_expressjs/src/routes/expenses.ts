@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ExpenseType, PrismaClient } from '@prisma/client';
+import { Expense, ExpenseType, Fund, PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import dayjs, { Dayjs } from 'dayjs';
 import csv from 'csv-parser';
@@ -13,86 +13,56 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 dayjs.extend(customParseFormat);
 
-// Incomes
+// Funds
 
-router.get('/incomes', async (req: Request, res: Response) => {
+router.get('/funds', async (req: Request, res: Response) => {
+  const { type } = req.query;
   const searchText = (req.query.searchText as string) ?? "";
 
-  const incomes = await prisma.income.findMany({
+  const funds = await prisma.fund.findMany({
     where: {
       userId: req.user?.id,
+      type: type === 'all' ? undefined : type as ExpenseType,
       source: { contains: searchText.trim(), mode: 'insensitive' }
     },
     orderBy: { date: 'desc' },
   });
-  res.json(incomes);
+  res.json(funds);
 });
 
-router.post('/incomes', async (req: Request, res: Response) => {
-  const { date, source, amount } = req.body;
-  const newIncome = await prisma.income.create({
+router.post('/funds', async (req: Request, res: Response) => {
+  const { date, source, amount, type } = req.body;
+  const newFund = await prisma.fund.create({
     data: {
       userId: req.user!.id,
       date: new Date(date),
       source,
-      amount
+      amount,
+      type
     }
   });
-  res.json(newIncome);
+  res.json(newFund);
 });
 
-router.post('/incomes/:id', async (req: Request, res: Response) => {
-  const incomeId = Number(req.params.id);
-  const { date, source, amount } = req.body;
-  const updatedIncome = await prisma.income.update({
-    where: { id: incomeId },
+router.post('/funds/:id', async (req: Request, res: Response) => {
+  const fundId = Number(req.params.id);
+  const { date, source, amount, type } = req.body;
+  const updatedFund = await prisma.fund.update({
+    where: { id: fundId },
     data: {
       date: new Date(date),
       source,
-      amount
+      amount,
+      type
     }
   });
-  res.json(updatedIncome);
+  res.json(updatedFund);
 });
 
-router.delete('/incomes/:id', async (req: Request, res: Response) => {
-  const incomeId = Number(req.params.id);
-  await prisma.income.delete({ where: { id: incomeId } });
-  res.json({ message: 'Income deleted successfully' });
-});
-
-// Category Keywords
-
-router.get('/categories/keywords', async (req: Request, res: Response) => {
-  const categoryId = Number(req.query.categoryId ?? 0);
-  const keywords = await prisma.expensesCategoryKeyword.findMany({
-    where: { categoryId },
-    include: { category: true },
-    orderBy: { keyword: 'asc' },
-  });
-  res.json(keywords);
-});
-
-router.post('/categories/keywords', async (req: Request, res: Response) => {
-  const { categoryId, keyword } = req.body;
-  const category = await prisma.expensesCategory.findUnique({ where: { id: categoryId } });
-  if (!category) return res.status(400).json({ error: 'Category not found' });
-
-  const newKeyword = await prisma.expensesCategoryKeyword.create({
-    data: {
-      category: { connect: { id: categoryId } },
-      keyword
-    },
-    include: { category: true },
-  });
-
-  res.json(newKeyword);
-});
-
-router.delete('/categories/keywords/:id', async (req: Request, res: Response) => {
-  const keywordId = Number(req.params.id);
-  await prisma.expensesCategoryKeyword.delete({ where: { id: keywordId } });
-  res.json({ message: 'Keyword deleted successfully' });
+router.delete('/funds/:id', async (req: Request, res: Response) => {
+  const fundId = Number(req.params.id);
+  await prisma.fund.delete({ where: { id: fundId } });
+  res.json({ message: 'Fund deleted successfully' });
 });
 
 // Categories
@@ -102,16 +72,18 @@ router.get('/categories', async (_req: Request, res: Response) => {
     where: { userId: _req.user?.id },
     orderBy: { name: 'asc' },
   });
-  res.json(categories);
+  const categoriesWithSortedKeywords = categories.map(c => ({ ...c, keywords: c.keywords.sort() }))
+  res.json(categoriesWithSortedKeywords);
 });
 
 router.post('/categories', async (req: Request, res: Response) => {
-  const { name, color } = req.body;
+  const { name, color, keywords } = req.body;
   const newCategory = await prisma.expensesCategory.create({
     data: {
       userId: req.user!.id,
       name,
-      color
+      color,
+      keywords
     }
   });
   res.json(newCategory);
@@ -119,12 +91,13 @@ router.post('/categories', async (req: Request, res: Response) => {
 
 router.post('/categories/:id', async (req: Request, res: Response) => {
   const categoryId = Number(req.params.id);
-  const { name, color } = req.body;
+  const { name, color, keywords } = req.body;
   const updatedCategory = await prisma.expensesCategory.update({
     where: { id: categoryId },
     data: {
       name,
-      color
+      color,
+      keywords
     }
   });
   res.json(updatedCategory);
@@ -136,10 +109,6 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
   await prisma.expense.updateMany({
     where: { categoryId },
     data: { categoryId: null },
-  });
-
-  await prisma.expensesCategoryKeyword.deleteMany({
-    where: { categoryId }
   });
 
   await prisma.expensesCategory.delete({ where: { id: categoryId } });
@@ -208,7 +177,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     months: {
       [month: string]: {
         expenses: number;
-        incomes: number;
+        funds: number;
       }
     }
   } = {
@@ -223,7 +192,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     where: { userId: req.user?.id },
     orderBy: { name: 'asc' },
   }));
-  categories.push({ id: -1, name: "Uncategorized", color: "gray", userId: -1 });
+  categories.push({ id: -1, name: "Uncategorized", color: "gray", userId: -1, keywords: [] });
 
   const expenses = await prisma.expense.findMany({
     where: { userId: req.user?.id },
@@ -231,7 +200,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     include: { category: true },
   });
 
-  const incomes = await prisma.income.findMany({
+  const funds = await prisma.fund.findMany({
     where: { userId: req.user?.id },
     orderBy: { date: 'asc' },
   });
@@ -251,7 +220,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
 
     if (!statistics.months[month]) {
-      statistics.months[month] = { expenses: 0, incomes: 0 };
+      statistics.months[month] = { expenses: 0, funds: 0 };
     }
 
     statistics.categories[category.name].total += amount;
@@ -263,14 +232,14 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
   }
 
-  for (const { date, amount } of incomes ?? []) {
+  for (const { date, amount } of funds ?? []) {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!statistics.months[month]) {
-      statistics.months[month] = { expenses: 0, incomes: 0 };
+      statistics.months[month] = { expenses: 0, funds: 0 };
     }
 
-    statistics.months[month].incomes += amount;
+    statistics.months[month].funds += amount;
   }
 
   const numMonths = Object.keys(statistics.months).length;
@@ -299,7 +268,7 @@ const csvKeys = {
   details: "Details"
 }
 
-type AutoExpense = {
+type AutoEntry = {
   date: Date;
   bookingText: string;
   curr: string;
@@ -314,11 +283,25 @@ type AutoExpense = {
   details: string;
 }
 
+type FundWithoutId = Omit<Fund, 'id'>;
+type ExpenseWithoutId = Omit<Expense, 'id'>;
+
+
 router.post("/auto", upload.single('file'), async (req: Request, res: Response) => {
   if (!req.file)
     return res.status(400).send('No file uploaded.');
 
-  const results: AutoExpense[] = [];
+  const expensesCategories = await prisma.expensesCategory.findMany({
+    where: { userId: req.user?.id },
+    select: { id: true, keywords: true },
+  });
+
+  const fundKeywords = (await prisma.user.findUnique({
+    where: { id: req.user?.id },
+    select: { fundKeywords: true }
+  }))?.fundKeywords || [];
+
+  const results: AutoEntry[] = [];
   const stream = Readable.from(req.file.buffer);
 
   stream
@@ -343,30 +326,43 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
       });
     })
     .on('end', async () => {
-      const categories = await prisma.expensesCategory.findMany({
-        where: { userId: req.user?.id },
-        select: { id: true, keywords: true },
-      });
+      const funds: FundWithoutId[] = [];
+      const expenses: ExpenseWithoutId[] = [];
 
-      await prisma.expense.createMany({
-        data: results.map(expense => {
-          const amount = expense.debitCHF || -expense.creditCHF || 0;
-          const category = categories.find(cat =>
+      results.forEach(entry => {
+        const amount = entry.debitCHF || -entry.creditCHF || 0;
+        const isFund = fundKeywords.some(keyword =>
+          entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
+        );
+
+        if (isFund && amount) {
+          funds.push({
+            date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
+            source: entry.bookingText,
+            amount,
+            type: 'auto',
+            userId: req.user!.id
+          })
+        } else {
+          const category = expensesCategories.find(cat =>
             cat.keywords.some(keyword =>
-              expense.bookingText.toLowerCase().includes(keyword.keyword.toLowerCase())
+              entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
             )
           );
-          return {
+          expenses.push({
             userId: req.user!.id,
-            date: isNaN(expense.valueDate.getTime()) ? new Date() : expense.valueDate,
-            categoryId: amount !== 0 ? category?.id : undefined,
-            description: expense.bookingText,
-            vendor: expense.paymentPurpose,
+            date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
+            categoryId: (amount !== 0 && category) ? category.id : null,
+            description: entry.bookingText,
+            vendor: entry.paymentPurpose,
             amount,
             type: "auto",
-          }
-        })
-      });
+            tags: []
+          });
+        }
+      })
+      await prisma.fund.createMany({ data: funds });
+      await prisma.expense.createMany({ data: expenses });
 
       res.json({ message: 'CSV processed successfully', data: results });
     })
@@ -383,6 +379,12 @@ router.delete("/auto", async (req: Request, res: Response) => {
       type: "auto"
     }
   });
+  await prisma.fund.deleteMany({
+    where: {
+      userId: req.user?.id,
+      type: "auto"
+    }
+  })
   res.json({ message: 'Automated expenses deleted successfully' });
 });
 
@@ -441,6 +443,7 @@ router.post('/:id', async (req: Request, res: Response) => {
       description: data.description,
       vendor: data.vendor,
       amount: data.amount,
+      type: data.type
     },
     include: { category: true },
   });

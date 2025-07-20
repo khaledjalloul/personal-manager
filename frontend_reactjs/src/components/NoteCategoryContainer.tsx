@@ -69,7 +69,9 @@ export const NoteCategoryContainer = ({
             </IconButton>
           )}
 
-          {isOpen ? <ExpandLess /> : <ExpandMore />}
+          {isOpen ?
+            <ExpandLess sx={{ color: "text.primary" }} /> :
+            <ExpandMore sx={{ color: "text.primary" }} />}
         </Box>
       </Box>
 

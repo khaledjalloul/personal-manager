@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, TextField, Typography } from "@mui/material"
 import { ExpensesCategory } from "../types"
 import { Clear, Delete, Edit, Save, Send } from "@mui/icons-material"
-import { useCreateExpensesCategory, useCreateExpensesCategoryKeyword, useDeleteExpensesCategory, useDeleteExpensesCategoryKeyword, useEditExpensesCategory, useExpensesCategoryKeywords } from "../api"
+import { useCreateExpensesCategory, useDeleteExpensesCategory, useEditExpensesCategory, useEditUser } from "../api"
 import { Dispatch, Fragment, SetStateAction, useState } from "react"
 import { ConfirmDeleteDialog } from "./modals"
 
@@ -16,15 +16,10 @@ export const ExpensesCategoryCard = ({
 
 }) => {
 
-  const { data: keywords } = useExpensesCategoryKeywords({
-    categoryId: category.id
-  })
-
-  const { mutate: createCategory, isPending: createCategoryLoading } = useCreateExpensesCategory();
-  const { mutate: editCategory, isPending: editCategoryLoading } = useEditExpensesCategory();
-  const { mutate: deleteCategory, isPending: deleteCategoryLoading } = useDeleteExpensesCategory();
-  const { mutate: createKeyword, isPending: createKeywordLoading } = useCreateExpensesCategoryKeyword();
-  const { mutate: deleteKeyword, isPending: deleteKeywordLoading } = useDeleteExpensesCategoryKeyword();
+  const { mutate: createCategory, isPending: createLoading } = useCreateExpensesCategory();
+  const { mutate: editCategory, isPending: editLoading } = useEditExpensesCategory();
+  const { mutate: deleteCategory, isPending: deleteLoading } = useDeleteExpensesCategory();
+  const { mutate: editFundKeywords, isPending: editFundKeywordsLoading } = useEditUser();
 
   const [isEditing, setIsEditing] = useState(isAddingCategory);
   const [name, setName] = useState(category.name);
@@ -42,7 +37,14 @@ export const ExpensesCategoryCard = ({
         }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {!isEditing ? (
-            <Typography variant="body1">{category.name}</Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                mt: category.id === -999 ? 1 : 0
+              }}
+            >
+              {category.name}
+            </Typography>
           ) : (
             <TextField
               size="small"
@@ -53,7 +55,7 @@ export const ExpensesCategoryCard = ({
             />
           )}
 
-          {!isEditing && (
+          {category.id !== -999 && !isEditing && (
             <IconButton
               size="small"
               sx={{ ml: 'auto' }}
@@ -63,11 +65,11 @@ export const ExpensesCategoryCard = ({
             </IconButton>
           )}
 
-          {!isEditing && (
+          {category.id !== -999 && !isEditing && (
             <IconButton
               size="small"
               color="error"
-              loading={deleteCategoryLoading}
+              loading={deleteLoading}
               onClick={() => setConfirmDeleteOpen(true)}
             >
               <Delete />
@@ -79,7 +81,7 @@ export const ExpensesCategoryCard = ({
               size="small"
               sx={{ ml: 'auto' }}
               color="success"
-              loading={createCategoryLoading || editCategoryLoading}
+              loading={createLoading || editLoading}
               onClick={() => {
                 if (category.id !== -1) {
                   editCategory({
@@ -90,7 +92,8 @@ export const ExpensesCategoryCard = ({
                 } else {
                   createCategory({
                     name: name.trim(),
-                    color: "blue" // TODO: remove
+                    color: "blue", // TODO: remove
+                    keywords: []
                   })
                   setIsAddingCategory(false);
                 }
@@ -129,8 +132,8 @@ export const ExpensesCategoryCard = ({
             flexWrap: 'wrap',
             gap: 1
           }}>
-            {keywords?.map((keyword) => (
-              <Box key={keyword.id} sx={{
+            {category.keywords?.map((keyword) => (
+              <Box key={keyword} sx={{
                 pl: 1.5,
                 pr: 0.5,
                 pt: 0.5,
@@ -142,11 +145,21 @@ export const ExpensesCategoryCard = ({
                 alignItems: 'center',
                 gap: 0.5
               }}>
-                <Typography variant="body2">{keyword.keyword}</Typography>
+                <Typography variant="body2">{keyword}</Typography>
                 <IconButton
                   size="small"
-                  loading={deleteKeywordLoading}
-                  onClick={() => deleteKeyword({ id: keyword.id })}
+                  loading={editLoading || editFundKeywordsLoading}
+                  onClick={() => {
+                    if (category.id !== -999)
+                      editCategory({
+                        id: category.id,
+                        keywords: category.keywords.filter(k => k !== keyword)
+                      });
+                    else
+                      editFundKeywords({
+                        fundKeywords: category.keywords.filter(k => k !== keyword)
+                      });
+                  }}
                 >
                   <Clear />
                 </IconButton>
@@ -168,12 +181,17 @@ export const ExpensesCategoryCard = ({
                     size="small"
                     color="success"
                     disabled={!keyword || category.id === -1}
-                    loading={createKeywordLoading}
+                    loading={editLoading || editFundKeywordsLoading}
                     onClick={() => {
-                      createKeyword({
-                        categoryId: category.id,
-                        keyword
-                      })
+                      if (category.id !== -999)
+                        editCategory({
+                          id: category.id,
+                          keywords: [...category.keywords, keyword]
+                        })
+                      else
+                        editFundKeywords({
+                          fundKeywords: [...category.keywords, keyword]
+                        })
                       setKeyword("")
                     }}>
                     <Send />

@@ -6,44 +6,44 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { Income } from "../types";
+import { Fund } from "../types";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useCreateIncome, useDeleteIncome, useEditIncome } from "../api";
+import { useCreateFund, useDeleteFund, useEditFund } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 
 
-export const IncomeTableRow = ({
-	income,
+export const FundTableRow = ({
+	fund,
 	index,
 	editable = false, // Non-editable also means the component is used in the Details page, so it includes extra table cells
-	isAddingIncome,
-	setIsAddingIncome,
+	isAddingFund,
+	setIsAddingFund,
 }: {
-	income: Income;
+	fund: Fund;
 	index: number;
 	editable?: boolean;
-	isAddingIncome?: boolean;
-	setIsAddingIncome?: Dispatch<SetStateAction<boolean>>;
+	isAddingFund?: boolean;
+	setIsAddingFund?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-	const { mutate: createIncome, isPending: createLoading } = useCreateIncome();
-	const { mutate: editIncome, isPending: editLoading } = useEditIncome();
-	const { mutate: deleteIncome, isPending: deleteLoading } = useDeleteIncome();
+	const { mutate: createFund, isPending: createLoading } = useCreateFund();
+	const { mutate: editFund, isPending: editLoading } = useEditFund();
+	const { mutate: deleteFund, isPending: deleteLoading } = useDeleteFund();
 
-	const [isEditing, setIsEditing] = useState(isAddingIncome);
-	const [date, setDate] = useState(dayjs(income.date));
-	const [source, setSource] = useState(income.source);
-	const [amount, setAmount] = useState(income.amount);
+	const [isEditing, setIsEditing] = useState(isAddingFund);
+	const [date, setDate] = useState(dayjs(fund.date));
+	const [source, setSource] = useState(fund.source);
+	const [amount, setAmount] = useState(fund.amount);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
 	const resetFields = () => {
-		setDate(dayjs(income.date));
-		setSource(income.source);
-		setAmount(income.amount);
+		setDate(dayjs(fund.date));
+		setSource(fund.source);
+		setAmount(fund.amount);
 	}
 
 	return (
@@ -76,7 +76,7 @@ export const IncomeTableRow = ({
 
 				{!editable && (
 					<TableCell>
-						<Typography color="success" variant="body2">Income</Typography>
+						<Typography color="success" variant="body2">Fund</Typography>
 					</TableCell>
 				)}
 
@@ -141,32 +141,33 @@ export const IncomeTableRow = ({
 								loading={createLoading || editLoading}
 								disabled={!source.trim()}
 								onClick={() => {
-									if (income.id !== -1) {
-										editIncome({
-											id: income.id,
+									if (fund.id !== -1) {
+										editFund({
+											id: fund.id,
 											date: date.toDate(),
 											source: source.trim(),
 											amount,
 										});
 										setIsEditing(false);
-									} else if (setIsAddingIncome) {
-										createIncome({
+									} else if (setIsAddingFund) {
+										createFund({
 											date: date.toDate(),
 											source: source.trim(),
 											amount,
+											type: "manual"
 										});
-										setIsAddingIncome(false);
+										setIsAddingFund(false);
 									}
 								}}>
 								<Save />
 							</IconButton>
 
 							<IconButton size="small" onClick={() => {
-								if (income.id !== -1) {
+								if (fund.id !== -1) {
 									resetFields();
 									setIsEditing(false)
-								} else if (setIsAddingIncome) {
-									setIsAddingIncome(false);
+								} else if (setIsAddingFund) {
+									setIsAddingFund(false);
 								}
 							}}>
 								<Clear />
@@ -178,8 +179,8 @@ export const IncomeTableRow = ({
 			<ConfirmDeleteDialog
 				isOpen={confirmDeleteOpen}
 				setIsOpen={setConfirmDeleteOpen}
-				itemName={`income: ${income.source}`}
-				deleteFn={() => deleteIncome({ id: income.id })} />
+				itemName={`fund: ${fund.source}`}
+				deleteFn={() => deleteFund({ id: fund.id })} />
 		</Fragment>
 	)
 }

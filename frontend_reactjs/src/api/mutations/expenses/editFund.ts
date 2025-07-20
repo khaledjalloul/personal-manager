@@ -1,18 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { Income } from "../../../types";
+import { Fund } from "../../../types";
 
-const ENDPOINT = "expenses/incomes";
+const ENDPOINT = "expenses/funds";
 
-export type EditIncomeRequestBody = {
+export type EditFundRequestBody = {
   id: number;
   date?: Date;
   source?: string;
   amount?: number;
+  type?: "auto" | "manual";
 };
 
-const mutationFn = async (data: EditIncomeRequestBody) => {
+const mutationFn = async (data: EditFundRequestBody) => {
   return await client
     .post(`/${ENDPOINT}/${data.id}`, data)
     .then((res) => res.data)
@@ -22,10 +23,10 @@ const mutationFn = async (data: EditIncomeRequestBody) => {
     });
 };
 
-export const useEditIncome = () => {
+export const useEditFund = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Income, AxiosError<{ message: string }>, EditIncomeRequestBody>({
+  return useMutation<Fund, AxiosError<{ message: string }>, EditFundRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

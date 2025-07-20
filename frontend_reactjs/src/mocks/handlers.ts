@@ -2,7 +2,7 @@ import { DefaultBodyType, http, HttpResponse, PathParams } from 'msw';
 import {
   User,
   Expense,
-  Income,
+  Fund,
   ExpensesCategory,
   Hike,
   PianoPiece,
@@ -10,12 +10,11 @@ import {
   NoteCategory,
   DiaryEntry,
   VideoGame,
-  ExpensesCategoryKeyword
 } from '../types';
 import {
   user,
   expenses,
-  incomes,
+  funds,
   expensesCategories,
   hikes,
   pianoPieces,
@@ -23,24 +22,21 @@ import {
   notes,
   diaryEntries,
   videoGames,
-  expensesCategoryKeywords
 } from './data';
 import {
   CreateDiaryEntryRequestBody,
   CreateExpenseRequestBody,
-  CreateExpensesCategoryKeywordRequestBody,
   CreateExpensesCategoryRequestBody,
   CreateHikeRequestBody,
-  CreateIncomeRequestBody,
+  CreateFundRequestBody,
   CreateNoteCategoryRequestBody,
   CreateNoteRequestBody,
   CreatePianoPieceRequestBody,
   CreateVideoGameRequestBody,
   DeleteExpenseRequestBody,
-  DeleteExpensesCategoryKeywordRequestBody,
   DeleteExpensesCategoryRequestBody,
   DeleteHikeRequestBody,
-  DeleteIncomeRequestBody,
+  DeleteFundRequestBody,
   DeleteNoteCategoyRequestBody,
   DeleteNoteRequestBody,
   DeletePianoPieceRequestBody,
@@ -49,7 +45,7 @@ import {
   EditExpenseRequestBody,
   EditExpensesCategoryRequestBody,
   EditHikeRequestBody,
-  EditIncomeRequestBody,
+  EditFundRequestBody,
   EditNoteCategoryRequestBody,
   EditNoteRequestBody,
   EditPianoPieceRequestBody,
@@ -117,32 +113,32 @@ const expenseHandlers = [
       return HttpResponse.json({ message: 'Expense deleted successfully' });
     }
   }),
-  // Incomes
-  http.get<PathParams, DefaultBodyType, Income[]>('/expenses/incomes', () => HttpResponse.json(incomes)),
-  http.post<PathParams, CreateIncomeRequestBody, Income>('/expenses/incomes', async ({ request }) => {
-    const requestBody = await request.clone().json() as CreateIncomeRequestBody;
-    const newIncome: Income = {
-      id: incomes.length > 0 ? Math.max(...incomes.map(income => income.id)) + 1 : 0,
+  // Funds
+  http.get<PathParams, DefaultBodyType, Fund[]>('/expenses/funds', () => HttpResponse.json(funds)),
+  http.post<PathParams, CreateFundRequestBody, Fund>('/expenses/funds', async ({ request }) => {
+    const requestBody = await request.clone().json() as CreateFundRequestBody;
+    const newFund: Fund = {
+      id: funds.length > 0 ? Math.max(...funds.map(fund => fund.id)) + 1 : 0,
       ...requestBody
     }
-    incomes.push(newIncome);
-    return HttpResponse.json(newIncome);
+    funds.push(newFund);
+    return HttpResponse.json(newFund);
   }),
-  http.post<PathParams, EditIncomeRequestBody, Income>('/expenses/incomes/:id', async ({ request, params }) => {
-    const requestBody = await request.clone().json() as EditIncomeRequestBody;
-    const incomeId = parseInt(params.id as string);
-    const existingIndex = incomes.findIndex(income => income.id === incomeId);
+  http.post<PathParams, EditFundRequestBody, Fund>('/expenses/funds/:id', async ({ request, params }) => {
+    const requestBody = await request.clone().json() as EditFundRequestBody;
+    const fundId = parseInt(params.id as string);
+    const existingIndex = funds.findIndex(fund => fund.id === fundId);
     if (existingIndex !== -1) {
-      incomes[existingIndex] = { ...incomes[existingIndex], ...requestBody };
-      return HttpResponse.json(incomes[existingIndex]);
+      funds[existingIndex] = { ...funds[existingIndex], ...requestBody };
+      return HttpResponse.json(funds[existingIndex]);
     }
   }),
-  http.delete<PathParams, DeleteIncomeRequestBody>('/expenses/incomes/:id', ({ params }) => {
-    const incomeId = parseInt(params.id as string);
-    const existingIndex = incomes.findIndex(income => income.id === incomeId);
+  http.delete<PathParams, DeleteFundRequestBody>('/expenses/funds/:id', ({ params }) => {
+    const fundId = parseInt(params.id as string);
+    const existingIndex = funds.findIndex(fund => fund.id === fundId);
     if (existingIndex !== -1) {
-      incomes.splice(existingIndex, 1);
-      return HttpResponse.json({ message: 'Income deleted successfully' });
+      funds.splice(existingIndex, 1);
+      return HttpResponse.json({ message: 'Fund deleted successfully' });
     }
   }),
   // Categories
@@ -178,38 +174,6 @@ const expenseHandlers = [
       });
       expensesCategories.splice(existingIndex, 1);
       return HttpResponse.json({ message: 'Category deleted successfully' });
-    }
-  }),
-  // Category Keywords
-  http.get<PathParams, DefaultBodyType, ExpensesCategoryKeyword[]>('/expenses/categories/keywords', ({ request }) => {
-    const url = new URL(request.url)
-    var categoryId = url.searchParams.get('categoryId') ?? "0";
-
-    var keywordsToReturn = expensesCategoryKeywords.filter(keyword => (
-      keyword.category.id === parseInt(categoryId)
-    ));
-
-    return HttpResponse.json(keywordsToReturn);
-  }),
-  http.post<PathParams, CreateExpensesCategoryKeywordRequestBody, ExpensesCategoryKeyword>('/expenses/categories/keywords', async ({ request }) => {
-    const requestBody = await request.clone().json() as CreateExpensesCategoryKeywordRequestBody;
-    const category = expensesCategories.find(cat => cat.id === requestBody.categoryId);
-    if (category) {
-      const newKeyword: ExpensesCategoryKeyword = {
-        id: expensesCategoryKeywords.length > 0 ? Math.max(...expensesCategoryKeywords.map(keyword => keyword.id)) + 1 : 0,
-        ...requestBody,
-        category
-      }
-      expensesCategoryKeywords.push(newKeyword);
-      return HttpResponse.json(newKeyword);
-    }
-  }),
-  http.delete<PathParams, DeleteExpensesCategoryKeywordRequestBody>('/expenses/categories/keywords/:id', ({ params }) => {
-    const keywordId = parseInt(params.id as string);
-    const existingIndex = expensesCategoryKeywords.findIndex(keyword => keyword.id === keywordId);
-    if (existingIndex !== -1) {
-      expensesCategoryKeywords.splice(existingIndex, 1);
-      return HttpResponse.json({ message: 'Keyword deleted successfully' });
     }
   }),
 ];
