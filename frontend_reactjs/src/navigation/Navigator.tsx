@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import {
   About,
   Home,
@@ -20,7 +20,7 @@ import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
 
 export const Navigator = () => {
-  const router = createBrowserRouter([
+  const router = createHashRouter([
     {
       path: "/",
       element: <Authenticator />,
