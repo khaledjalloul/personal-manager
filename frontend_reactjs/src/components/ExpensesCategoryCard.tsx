@@ -2,8 +2,9 @@ import { Box, Grid, IconButton, TextField, Typography } from "@mui/material"
 import { ExpensesCategory } from "../types"
 import { Clear, Delete, Edit, Save, Send } from "@mui/icons-material"
 import { useCreateExpensesCategory, useDeleteExpensesCategory, useEditExpensesCategory, useEditUser } from "../api"
-import { Dispatch, Fragment, SetStateAction, useState } from "react"
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react"
 import { ConfirmDeleteDialog } from "./modals"
+import { SketchPicker } from 'react-color';
 
 export const ExpensesCategoryCard = ({
   category,
@@ -16,15 +17,25 @@ export const ExpensesCategoryCard = ({
 
 }) => {
 
-  const { mutate: createCategory, isPending: createLoading } = useCreateExpensesCategory();
-  const { mutate: editCategory, isPending: editLoading } = useEditExpensesCategory();
+  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateExpensesCategory();
+  const { mutate: editCategory, isPending: editLoading, isSuccess: editSuccess } = useEditExpensesCategory();
   const { mutate: deleteCategory, isPending: deleteLoading } = useDeleteExpensesCategory();
   const { mutate: editFundKeywords, isPending: editFundKeywordsLoading } = useEditUser();
 
   const [isEditing, setIsEditing] = useState(isAddingCategory);
-  const [name, setName] = useState(category.name);
-  const [keyword, setKeyword] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [colorPickerOpen, setColorPickerOpen] = useState(false);
+  const [name, setName] = useState(category.name);
+  const [color, setColor] = useState(category.color);
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    if (createSuccess) setIsAddingCategory(false);
+  }, [createSuccess]);
+
+  useEffect(() => {
+    if (editSuccess) setIsEditing(false);
+  }, [editSuccess]);
 
   return (
     <Fragment>
@@ -33,7 +44,8 @@ export const ExpensesCategoryCard = ({
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 1
+          gap: 1,
+          position: 'relative',
         }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {!isEditing ? (
@@ -55,6 +67,21 @@ export const ExpensesCategoryCard = ({
             />
           )}
 
+          {category.id !== -999 && (
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                backgroundColor: color,
+                ml: 1.5,
+                cursor: isEditing ? 'pointer' : 'default',
+                border: '1px solid gray'
+              }}
+              onClick={isEditing ? () => setColorPickerOpen(true) : undefined}
+            />
+          )}
+
           {category.id !== -999 && !isEditing && (
             <IconButton
               size="small"
@@ -65,17 +92,6 @@ export const ExpensesCategoryCard = ({
             </IconButton>
           )}
 
-          {category.id !== -999 && !isEditing && (
-            <IconButton
-              size="small"
-              color="error"
-              loading={deleteLoading}
-              onClick={() => setConfirmDeleteOpen(true)}
-            >
-              <Delete />
-            </IconButton>
-          )}
-
           {isEditing && (
             <IconButton
               size="small"
@@ -83,22 +99,31 @@ export const ExpensesCategoryCard = ({
               color="success"
               loading={createLoading || editLoading}
               onClick={() => {
-                if (category.id !== -1) {
+                if (category.id !== -1)
                   editCategory({
                     id: category.id,
-                    name: name.trim()
+                    name: name.trim(),
+                    color
                   })
-                  setIsEditing(false);
-                } else {
+                else
                   createCategory({
                     name: name.trim(),
-                    color: "blue", // TODO: remove
+                    color,
                     keywords: []
                   })
-                  setIsAddingCategory(false);
-                }
               }}>
               <Save />
+            </IconButton>
+          )}
+
+          {category.id !== -999 && category.id !== -1 && isEditing && (
+            <IconButton
+              size="small"
+              color="error"
+              loading={deleteLoading}
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
+              <Delete />
             </IconButton>
           )}
 
@@ -201,7 +226,34 @@ export const ExpensesCategoryCard = ({
             }}
           />
         </Box>
+
+        <Box
+          sx={{
+            display: colorPickerOpen ? 'block' : 'none',
+            position: "fixed",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1
+          }}
+          onClick={() => setColorPickerOpen(false)}
+        />
+
+        <Box
+          sx={{
+            display: colorPickerOpen ? 'block' : 'none',
+            position: "absolute",
+            backgroundColor: "pink",
+            zIndex: 2
+          }}>
+          <SketchPicker
+            color={color}
+            onChange={(color) => setColor(color.hex)}
+          />
+        </Box>
       </Grid>
+
       <ConfirmDeleteDialog
         isOpen={confirmDeleteOpen}
         setIsOpen={setConfirmDeleteOpen}

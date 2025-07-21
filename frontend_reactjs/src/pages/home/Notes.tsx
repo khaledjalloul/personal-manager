@@ -45,7 +45,7 @@ export const Notes = () => {
   const { data: notes } = useNotes({ searchText: searchText.trim() })
   const { data: noteCategories } = useNoteCategories();
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
-  const { mutate: deleteNote, isPending: deleteNoteLoading } = useDeleteNote();
+  const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
 
   useEffect(() => {
     if (selectedNote) {
@@ -58,6 +58,11 @@ export const Notes = () => {
       setSelectedNoteContent("");
     }
   }, [JSON.stringify(selectedNote)]);
+
+  useEffect(() => {
+    if (deleteSuccess && selectedNote)
+      setSelectedNote(undefined);
+  }, [deleteSuccess])
 
   return (
     <Wrapper>
@@ -194,15 +199,14 @@ export const Notes = () => {
                 disabled={!selectedNote}
                 loading={editNoteLoading}
                 onClick={() => {
-                  if (selectedNote) {
+                  if (selectedNote)
                     editNote({
                       id: selectedNote.id,
                       title: selectedNoteTitle.trim(),
                       content: selectedNoteContent,
                       dateModified: new Date(),
                       categoryId: selectedNoteCategory?.id,
-                    })
-                  }
+                    });
                 }}
               >
                 <Save />
@@ -290,10 +294,8 @@ export const Notes = () => {
         setIsOpen={setConfirmDeleteOpen}
         itemName={`note: ${selectedNote?.title || "Untitled"}`}
         deleteFn={() => {
-          if (selectedNote) {
+          if (selectedNote)
             deleteNote({ id: selectedNote.id });
-            setSelectedNote(undefined);
-          }
         }}
       />
     </Wrapper>

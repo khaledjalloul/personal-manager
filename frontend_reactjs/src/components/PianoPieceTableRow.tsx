@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { PianoPiece, PianoPieceStatus } from "../types";
 import { Clear, Delete, Edit, PictureAsPdf, Save, YouTube } from "@mui/icons-material";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -45,9 +45,17 @@ export const PianoPieceTableRow = ({
   const [sheetMusicUrl, setSheetMusicUrl] = useState(pianoPiece.sheetMusicUrl);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { mutate: createPiece, isPending: createLoading } = useCreatePianoPiece();
-  const { mutate: editPiece, isPending: editLoading } = useEditPianoPiece();
+  const { mutate: createPiece, isPending: createLoading, isSuccess: createSuccess } = useCreatePianoPiece();
+  const { mutate: editPiece, isPending: editLoading, isSuccess: editSuccess } = useEditPianoPiece();
   const { mutate: deletePiece, isPending: deleteLoading } = useDeletePianoPiece();
+
+  useEffect(() => {
+    if (createSuccess) setIsAddingPiece(false);
+  }, [createSuccess]);
+
+  useEffect(() => {
+    if (editSuccess) setIsEditing(false);
+  }, [editSuccess]);
 
   return (
     <Fragment>
@@ -185,14 +193,6 @@ export const PianoPieceTableRow = ({
                 <Edit />
               </IconButton>
 
-              <IconButton
-                size="small"
-                color="error"
-                loading={deleteLoading}
-                onClick={() => setConfirmDeleteOpen(true)}
-              >
-                <Delete />
-              </IconButton>
             </Box>
           </TableCell>
         ) : (
@@ -204,7 +204,7 @@ export const PianoPieceTableRow = ({
                 loading={createLoading || editLoading}
                 disabled={!name.trim()}
                 onClick={() => {
-                  if (pianoPiece.id !== -1) {
+                  if (pianoPiece.id !== -1)
                     editPiece({
                       id: pianoPiece.id,
                       name: name.trim(),
@@ -215,8 +215,7 @@ export const PianoPieceTableRow = ({
                       youtubeUrl: youtubeUrl.trim(),
                       sheetMusicUrl: sheetMusicUrl.trim()
                     });
-                    setIsEditing(false);
-                  } else {
+                  else
                     createPiece({
                       name: name.trim(),
                       origin: origin.trim(),
@@ -226,12 +225,20 @@ export const PianoPieceTableRow = ({
                       youtubeUrl: youtubeUrl.trim(),
                       sheetMusicUrl: sheetMusicUrl.trim()
                     });
-                    setIsAddingPiece(false);
-                  }
                 }}
               >
                 <Save />
               </IconButton>
+
+              {pianoPiece.id !== -1 && (
+                <IconButton
+                  size="small"
+                  color="error"
+                  loading={deleteLoading}
+                  onClick={() => setConfirmDeleteOpen(true)}
+                >
+                  <Delete />
+                </IconButton>)}
 
               <IconButton size="small" onClick={() => {
                 if (pianoPiece.id !== -1) {

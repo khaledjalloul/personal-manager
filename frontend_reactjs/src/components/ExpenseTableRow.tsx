@@ -33,8 +33,8 @@ export const ExpenseTableRow = ({
 }) => {
   const { data: expensesCategories } = useExpensesCategories();
 
-  const { mutate: createExpense, isPending: createLoading } = useCreateExpense();
-  const { mutate: editExpense, isPending: editLoading } = useEditExpense();
+  const { mutate: createExpense, isPending: createLoading, isSuccess: createSuccess } = useCreateExpense();
+  const { mutate: editExpense, isPending: editLoading, isSuccess: editSuccess } = useEditExpense();
   const { mutate: deleteExpense, isPending: deleteLoading } = useDeleteExpense();
 
   const [isEditing, setIsEditing] = useState(isAddingExpense);
@@ -49,6 +49,14 @@ export const ExpenseTableRow = ({
   useEffect(() => {
     setCategory(expense.category);
   }, [expense.category?.id]);
+
+  useEffect(() => {
+    if (createSuccess && setIsAddingExpense) setIsAddingExpense(false);
+  }, [createSuccess]);
+
+  useEffect(() => {
+    if (editSuccess) setIsEditing(false);
+  }, [editSuccess]);
 
   return (
     <Fragment>
@@ -154,21 +162,12 @@ export const ExpenseTableRow = ({
 
         {editable && (
           !isEditing ? (
-            <TableCell sx={{ display: 'flex', gap: 1 }}>
+            <TableCell>
               <IconButton
                 size="small"
                 onClick={() => setIsEditing(true)}
               >
                 <Edit />
-              </IconButton>
-
-              <IconButton
-                size="small"
-                color="error"
-                loading={deleteLoading}
-                onClick={() => setConfirmDeleteOpen(true)}
-              >
-                <Delete />
               </IconButton>
             </TableCell>
           ) : (
@@ -179,7 +178,7 @@ export const ExpenseTableRow = ({
                 loading={createLoading || editLoading}
                 disabled={!description.trim()}
                 onClick={() => {
-                  if (expense.id !== -1) {
+                  if (expense.id !== -1)
                     editExpense({
                       id: expense.id,
                       date: date.toDate(),
@@ -188,8 +187,7 @@ export const ExpenseTableRow = ({
                       vendor: vendor.trim(),
                       amount,
                     });
-                    setIsEditing(false);
-                  } else if (setIsAddingExpense) {
+                  else if (setIsAddingExpense)
                     createExpense({
                       date: date.toDate(),
                       categoryId: category?.id,
@@ -199,11 +197,20 @@ export const ExpenseTableRow = ({
                       tags: [],
                       type: 'manual'
                     });
-                    setIsAddingExpense(false);
-                  }
                 }}>
                 <Save />
               </IconButton>
+
+              {expense.id !== -1 && (
+                <IconButton
+                  size="small"
+                  color="error"
+                  loading={deleteLoading}
+                  onClick={() => setConfirmDeleteOpen(true)}
+                >
+                  <Delete />
+                </IconButton>
+              )}
 
               <IconButton size="small" onClick={() => {
                 if (expense.id !== -1) {

@@ -1,5 +1,5 @@
 import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
 import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
@@ -15,10 +15,14 @@ const CategoryCard = ({
 }) => {
 
   const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
-  const { mutate: deleteCategory, isPending: deletePending } = useDeleteNoteCategoy();
+  const { mutate: deleteCategory, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
 
   const [name, setName] = useState(category.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (deleteSuccess) setSelectedNote(undefined);
+  }, [deleteSuccess]);
 
   return (
     <Fragment>
@@ -62,7 +66,6 @@ const CategoryCard = ({
         itemName={`category: ${category.name}`}
         deleteFn={() => {
           deleteCategory({ id: category.id });
-          setSelectedNote(undefined);
         }}
       />
     </Fragment>
@@ -80,9 +83,13 @@ export const ManageNoteCategoriesModal = ({
 }) => {
 
   const { data: categories } = useNoteCategories();
-  const { mutate: createCategory, isPending: createLoading } = useCreateNoteCategory();
+  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateNoteCategory();
 
   const [newCategoryName, setNewCategoryName] = useState("")
+
+  useEffect(() => {
+    if (createSuccess) setNewCategoryName("");
+  }, [createSuccess]);
 
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
@@ -112,12 +119,7 @@ export const ManageNoteCategoriesModal = ({
                       color="success"
                       disabled={!newCategoryName}
                       loading={createLoading}
-                      onClick={() => {
-                        createCategory({
-                          name: newCategoryName.trim(),
-                        });
-                        setNewCategoryName("");
-                      }}
+                      onClick={() => createCategory({ name: newCategoryName.trim() })}
                     >
                       <Add />
                     </IconButton>

@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { DiaryEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
@@ -9,12 +9,16 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
   const { palette } = useTheme();
 
-  const { mutate: createEntry, isPending: createLoading } = useCreateDiaryEntry();
-  const { mutate: editEntry, isPending: editLoading } = useEditDiaryEntry();
+  const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateDiaryEntry();
+  const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry();
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [workContent, setWorkContent] = useState(entry.workContent);
+
+  useEffect(() => {
+    if (createSuccess || editSuccess) setIsEditing(false);
+  }, [createSuccess, editSuccess]);
 
   return (
     <Fragment>
@@ -60,7 +64,6 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                       content,
                       workContent
                     })
-                  setIsEditing(false);
                 }}
               >
                 <Save />

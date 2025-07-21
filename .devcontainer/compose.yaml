@@ -7,7 +7,7 @@ services:
       - "3000:3000"
       - "3007:3007"
     volumes:
-      - ..:/home/vscode/workspace
+      - ..:/workspaces/personal-manager
     depends_on:
       - postgres
     command: bash -c "while sleep 1000; do :; done"

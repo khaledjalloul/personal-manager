@@ -7,7 +7,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { Fund } from "../types";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -30,8 +30,8 @@ export const FundTableRow = ({
 	setIsAddingFund?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-	const { mutate: createFund, isPending: createLoading } = useCreateFund();
-	const { mutate: editFund, isPending: editLoading } = useEditFund();
+	const { mutate: createFund, isPending: createLoading, isSuccess: createSuccess } = useCreateFund();
+	const { mutate: editFund, isPending: editLoading, isSuccess: editSuccess } = useEditFund();
 	const { mutate: deleteFund, isPending: deleteLoading } = useDeleteFund();
 
 	const [isEditing, setIsEditing] = useState(isAddingFund);
@@ -40,11 +40,13 @@ export const FundTableRow = ({
 	const [amount, setAmount] = useState(fund.amount);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-	const resetFields = () => {
-		setDate(dayjs(fund.date));
-		setSource(fund.source);
-		setAmount(fund.amount);
-	}
+	useEffect(() => {
+		if (createSuccess && setIsAddingFund) setIsAddingFund(false);
+	}, [createSuccess]);
+
+	useEffect(() => {
+		if (editSuccess) setIsEditing(false);
+	}, [editSuccess]);
 
 	return (
 		<Fragment>
@@ -125,22 +127,11 @@ export const FundTableRow = ({
 
 				{editable && (
 					!isEditing ? (
-						<TableCell
-							sx={{ display: 'flex', gap: 1 }}
-						>
+						<TableCell>
 							<IconButton size="small"
 								onClick={() => setIsEditing(true)}
 							>
 								<Edit />
-							</IconButton>
-
-							<IconButton
-								size="small"
-								color="error"
-								loading={deleteLoading}
-								onClick={() => setConfirmDeleteOpen(true)}
-							>
-								<Delete />
 							</IconButton>
 						</TableCell>
 					) : (
@@ -151,30 +142,40 @@ export const FundTableRow = ({
 								loading={createLoading || editLoading}
 								disabled={!source.trim()}
 								onClick={() => {
-									if (fund.id !== -1) {
+									if (fund.id !== -1)
 										editFund({
 											id: fund.id,
 											date: date.toDate(),
 											source: source.trim(),
 											amount,
 										});
-										setIsEditing(false);
-									} else if (setIsAddingFund) {
+									else if (setIsAddingFund)
 										createFund({
 											date: date.toDate(),
 											source: source.trim(),
 											amount,
 											type: "manual"
 										});
-										setIsAddingFund(false);
-									}
 								}}>
 								<Save />
 							</IconButton>
 
+							{fund.id !== -1 && (
+								<IconButton
+									size="small"
+									color="error"
+									loading={deleteLoading}
+									onClick={() => setConfirmDeleteOpen(true)}
+								>
+									<Delete />
+								</IconButton>
+							)}
+
 							<IconButton size="small" onClick={() => {
 								if (fund.id !== -1) {
-									resetFields();
+									setDate(dayjs(fund.date));
+									setSource(fund.source);
+									setAmount(fund.amount);
 									setIsEditing(false)
 								} else if (setIsAddingFund) {
 									setIsAddingFund(false);

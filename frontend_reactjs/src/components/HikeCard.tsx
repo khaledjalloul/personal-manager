@@ -16,7 +16,7 @@ import {
   Clear,
   AddPhotoAlternate
 } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -47,8 +47,8 @@ export const HikeCard = ({
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createHike, isPending: createLoading } = useCreateHike();
-  const { mutate: editHike, isPending: editLoading } = useEditHike();
+  const { mutate: createHike, isPending: createLoading, isSuccess: createSuccess } = useCreateHike();
+  const { mutate: editHike, isPending: editLoading, isSuccess: editSuccess } = useEditHike();
   const { mutate: deleteHike, isPending: deleteLoading } = useDeleteHike();
 
   const [isEditing, setIsEditing] = useState(isAddingHike);
@@ -68,6 +68,14 @@ export const HikeCard = ({
 
   const durationWithBreaksHours = Math.floor(hike.durationWithBreaks);
   const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
+
+  useEffect(() => {
+    if (createSuccess) setIsAddingHike(false);
+  }, [createSuccess]);
+
+  useEffect(() => {
+    if (editSuccess) setIsEditing(false);
+  }, [editSuccess]);
 
   return (
     <Wrapper sx={{ backgroundColor: 'primary.light' }}>
@@ -117,7 +125,7 @@ export const HikeCard = ({
               loading={createLoading || editLoading}
               disabled={!description.trim()}
               onClick={() => {
-                if (hike.id !== -1) {
+                if (hike.id !== -1)
                   editHike({
                     id: hike.id,
                     date: date.toDate(),
@@ -130,8 +138,7 @@ export const HikeCard = ({
                     googleMapsUrl: googleMapsUrl.trim(),
                     coverImage: coverImage?.trim()
                   });
-                  setIsEditing(false);
-                } else {
+                else
                   createHike({
                     date: date.toDate(),
                     description: description.trim(),
@@ -144,8 +151,6 @@ export const HikeCard = ({
                     coverImage: coverImage?.trim(),
                     images: []
                   });
-                }
-                setIsAddingHike(false);
               }}
             >
               <Save />
@@ -365,7 +370,7 @@ export const HikeCard = ({
         itemName={`hike: ${description}`}
         deleteFn={() => deleteHike({ id: hike.id })}
       />
-    </Wrapper>
+    </Wrapper >
   )
 }
 

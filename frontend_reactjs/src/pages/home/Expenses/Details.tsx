@@ -28,12 +28,12 @@ export const ExpensesDetails = () => {
   const combinedData = [...expenses ?? [], ...funds ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const tableRows = combinedData.filter(item => {
-    return !('source' in item) || (filterCategoryIds.includes(-1) || filterCategoryIds.includes(-2));
+    return !('source' in item) || filterCategoryIds.includes(-1) || filterCategoryIds.includes(-2);
   }).map((item, index) => {
     if ('source' in item) {
-      return <FundTableRow key={item.id} index={index} fund={item} />;
+      return <FundTableRow key={`fund-${item.id}`} index={index} fund={item} />;
     } else {
-      return <ExpenseTableRow key={item.id} index={index} expense={item} />;
+      return <ExpenseTableRow key={`expense-${item.id}`} index={index} expense={item} />;
     }
   });
 

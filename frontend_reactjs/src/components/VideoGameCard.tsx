@@ -25,7 +25,7 @@ import {
   AddPhotoAlternate,
   DoneAll
 } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -48,8 +48,8 @@ export const VideoGameCard = ({
   setIsAddingGame: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createGame, isPending: createLoading } = useCreateVideoGame();
-  const { mutate: editGame, isPending: editLoading } = useEditVideoGame();
+  const { mutate: createGame, isPending: createLoading, isSuccess: createSuccess } = useCreateVideoGame();
+  const { mutate: editGame, isPending: editLoading, isSuccess: editSuccess } = useEditVideoGame();
   const { mutate: deleteGame, isPending: deleteLoading } = useDeleteVideoGame();
 
   const [isEditing, setIsEditing] = useState(isAddingGame);
@@ -63,6 +63,14 @@ export const VideoGameCard = ({
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (createSuccess) setIsAddingGame(false);
+  }, [createSuccess]);
+
+  useEffect(() => {
+    if (editSuccess) setIsEditing(false);
+  }, [editSuccess]);
 
   return (
     <Wrapper sx={{ backgroundColor: 'primary.light' }}>
@@ -109,7 +117,7 @@ export const VideoGameCard = ({
               loading={createLoading || editLoading}
               disabled={!name.trim()}
               onClick={() => {
-                if (game.id !== -1) {
+                if (game.id !== -1)
                   editGame({
                     id: game.id,
                     name: name.trim(),
@@ -122,8 +130,7 @@ export const VideoGameCard = ({
                     storeUrl: storeUrl.trim(),
                     coverImage: coverImage?.trim()
                   });
-                  setIsEditing(false);
-                } else {
+                else
                   createGame({
                     name: name.trim(),
                     platform: platform.trim(),
@@ -135,8 +142,6 @@ export const VideoGameCard = ({
                     storeUrl: storeUrl.trim(),
                     coverImage: coverImage?.trim()
                   });
-                }
-                setIsAddingGame(false);
               }}
             >
               <Save />

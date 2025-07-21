@@ -1,6 +1,6 @@
-cd ~/workspace/backend_expressjs
+cd /workspaces/personal-manager/backend_expressjs
 npm install
 npx prisma migrate dev
 
-cd ~/workspace/frontend_reactjs
+cd /workspaces/personal-manager/frontend_reactjs
 npm install
