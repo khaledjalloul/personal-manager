@@ -22,10 +22,11 @@ export const MonthlyExpenses = () => {
 
   if (!monthlyExpenses) return <div />;
   return (
-    <Box sx={{ p: '32px', pt: 0 }}>
+    <Box sx={{ p: '32px', pt: 0, display: 'flex', overflowY: 'hidden' }}>
       <TableContainer component={Paper} >
         <Table
           size="small"
+          stickyHeader
           sx={{
             '& th': {
               backgroundColor: "primary.main",

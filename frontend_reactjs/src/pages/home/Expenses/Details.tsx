@@ -13,11 +13,12 @@ import { ExpenseTableRow, FundTableRow } from "../../../components";
 import { useOutletContext } from "react-router-dom";
 
 export const ExpensesDetails = () => {
-  const { searchText } = useOutletContext<{ searchText: string }>();
+  const { searchText, filterCategoryIds } = useOutletContext<{ searchText: string, filterCategoryIds: number[] }>();
 
   const { data: expenses } = useExpenses({
     type: "all",
     searchText: searchText.trim(),
+    filterCategoryIds
   });
   const { data: funds } = useFunds({
     type: "all",
@@ -26,7 +27,9 @@ export const ExpensesDetails = () => {
 
   const combinedData = [...expenses ?? [], ...funds ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  const tableRows = combinedData.map((item, index) => {
+  const tableRows = combinedData.filter(item => {
+    return !('source' in item) || (filterCategoryIds.includes(-1) || filterCategoryIds.includes(-2));
+  }).map((item, index) => {
     if ('source' in item) {
       return <FundTableRow key={item.id} index={index} fund={item} />;
     } else {
@@ -49,11 +52,11 @@ export const ExpensesDetails = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Date ({tableRows.length})</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
               <TableCell sx={{ fontWeight: 'bold', textWrap: 'nowrap' }}>Description / Source</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Amount (CHF)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

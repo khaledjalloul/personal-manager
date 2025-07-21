@@ -65,15 +65,23 @@ export const ManageExpenses = () => {
 
   const { data: user } = useCurrentUser();
   const fundKeywords = user?.fundKeywords || [];
-  const { data: autoExpenses } = useExpenses({ type: "auto", searchText: "" });
+  const { data: autoExpenses } = useExpenses({
+    type: "auto",
+    searchText: "",
+    filterCategoryIds: [-1] // all
+  });
   const { data: manualExpenses } = useExpenses({
     type: "manual",
-    searchText: searchText.trim()
+    searchText: searchText.trim(),
+    filterCategoryIds: [-1] // all
   });
-  const { data: autoFunds } = useFunds({ type: "auto", searchText: "" });
+  const { data: autoFunds } = useFunds({
+    type: "auto",
+    searchText: "",
+  });
   const { data: manualFunds } = useFunds({
     type: "manual",
-    searchText: searchText.trim()
+    searchText: searchText.trim(),
   });
   const { data: categories } = useExpensesCategories();
   const { mutate: uploadAutoExpenses, isPending: uploadAutoExpensesLoading } = useUploadAutoExpenses();

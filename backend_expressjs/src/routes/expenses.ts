@@ -390,11 +390,30 @@ router.delete("/auto", async (req: Request, res: Response) => {
 router.get('/', async (req: Request, res: Response) => {
   const { type } = req.query;
   const searchText = (req.query.searchText as string || '').trim();
+  const filterCategoryIds = (req.query.filterCategoryIds as string || "-1").split(",").map(Number);
+
+  const unCategorizedxpenses = !filterCategoryIds.includes(-3) ? [] :
+    await prisma.expense.findMany({
+      where: {
+        userId: req.user?.id,
+        type: type === 'all' ? undefined : type as ExpenseType,
+        category: null,
+        OR: [
+          { description: { contains: searchText.trim(), mode: 'insensitive' } },
+          { vendor: { contains: searchText.trim(), mode: 'insensitive' } },
+          { tags: { hasSome: [searchText.trim()] } },
+          { category: { name: { contains: searchText.trim(), mode: 'insensitive' } } },
+        ],
+      },
+      orderBy: { date: 'desc' },
+      include: { category: true },
+    });
 
   const expenses = await prisma.expense.findMany({
     where: {
       userId: req.user?.id,
       type: type === 'all' ? undefined : type as ExpenseType,
+      categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
       OR: [
         { description: { contains: searchText.trim(), mode: 'insensitive' } },
         { vendor: { contains: searchText.trim(), mode: 'insensitive' } },
@@ -406,7 +425,8 @@ router.get('/', async (req: Request, res: Response) => {
     include: { category: true },
   });
 
-  res.json(expenses);
+  const combined = [...expenses, ...unCategorizedxpenses].sort((a, b) => b.date.getTime() - a.date.getTime());
+  res.json(combined);
 });
 
 router.post('/', async (req: Request, res: Response) => {

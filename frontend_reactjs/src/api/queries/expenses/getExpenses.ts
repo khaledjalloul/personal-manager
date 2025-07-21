@@ -7,6 +7,7 @@ const ENDPOINT = "expenses";
 export type GetExpensesRequestParams = {
   type: "manual" | "auto" | "all";
   searchText: string;
+  filterCategoryIds: number[];
 };
 
 const queryFn = (params: GetExpensesRequestParams) => async () => {
