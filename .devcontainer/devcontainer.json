@@ -1,7 +1,9 @@
 {
-    // "image": "khaledjalloul/devcontainer",
-    "dockerFile": "Dockerfile",
-    // "postCreateCommand": "bash .devcontainer/post_create.bash",
+    "dockerComposeFile": [
+        "compose.yaml"
+    ],
+    "service": "app",
+    "postCreateCommand": "bash .devcontainer/post_create.bash",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -41,6 +43,7 @@
             }
         }
     },
+    "workspaceFolder": "/home/vscode/workspace",
     "mounts": [
         // Enable GUI
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
@@ -50,6 +53,5 @@
     "containerEnv": {
         // Enable GUI
         "DISPLAY": "${env:DISPLAY}"
-    },
-    "runArgs": ["--network=host"]
+    }
 }

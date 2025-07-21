@@ -35,6 +35,7 @@ const App = () => {
             } else throw err;
           }
         );
+        setThemeData({ darkMode: true });
       }
       setUserData(userData);
     },

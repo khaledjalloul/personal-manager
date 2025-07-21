@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    ports:
+      - "3000:3000"
+      - "3007:3007"
+    volumes:
+      - ..:/home/vscode/workspace
+    depends_on:
+      - postgres
+    command: bash -c "while sleep 1000; do :; done"
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - personal-manager-postgres:/var/lib/postgresql/data
+
+volumes:
+  personal-manager-postgres:
