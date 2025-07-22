@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
+import prisma from '../utils/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 router.get('/', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";

@@ -5,14 +5,13 @@ import {
   Fund,
   Note,
   PianoPiece,
-  PrismaClient,
   VideoGame
 } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import multer from "multer";
+import prisma from '../utils/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Backup

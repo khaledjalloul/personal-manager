@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { Expense, ExpenseType, Fund, PrismaClient } from '@prisma/client';
+import { Expense, ExpenseType, Fund } from '@prisma/client';
 import { Request, Response } from 'express';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import csv from 'csv-parser';
 import { Readable } from 'stream';
 import multer from 'multer';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import prisma from '../utils/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
 
 dayjs.extend(customParseFormat);
