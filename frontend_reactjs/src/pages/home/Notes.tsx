@@ -26,6 +26,7 @@ import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer }
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
+import { useCtrlS } from "../../utils";
 
 
 export const Notes = () => {
@@ -47,6 +48,17 @@ export const Notes = () => {
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
 
+  const save = () => {
+    if (!selectedNote || isCategoriesModalOpen || !selectedNoteTitle.trim()) return;
+    editNote({
+      id: selectedNote.id,
+      title: selectedNoteTitle.trim(),
+      content: selectedNoteContent,
+      dateModified: new Date(),
+      categoryId: selectedNoteCategory?.id,
+    });
+  };
+
   useEffect(() => {
     if (selectedNote) {
       setSelectedNoteTitle(selectedNote.title);
@@ -58,6 +70,8 @@ export const Notes = () => {
       setSelectedNoteContent("");
     }
   }, [JSON.stringify(selectedNote)]);
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (deleteSuccess && selectedNote)
@@ -116,13 +130,12 @@ export const Notes = () => {
         container
         spacing={2}
         sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
+          height: 'calc(100% - 72px)',
           p: '32px',
           pt: 0
         }}
       >
-        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -132,7 +145,12 @@ export const Notes = () => {
             </IconButton>
           </Box>
 
-          <Box sx={{ flexGrow: 1, borderRadius: '8px', border: `solid 1px ${palette.text.primary}` }}>
+          <Box sx={{
+            flexGrow: 1,
+            borderRadius: '8px',
+            border: `solid 1px ${palette.text.primary}`,
+            overflowY: 'auto',
+          }}>
             <NoteCategoryContainer
               key={-1}
               category={{
@@ -196,18 +214,9 @@ export const Notes = () => {
               <IconButton
                 sx={{ ml: 'auto' }}
                 color="success"
-                disabled={!selectedNote}
+                disabled={!selectedNote || !selectedNoteTitle.trim()}
                 loading={editNoteLoading}
-                onClick={() => {
-                  if (selectedNote)
-                    editNote({
-                      id: selectedNote.id,
-                      title: selectedNoteTitle.trim(),
-                      content: selectedNoteContent,
-                      dateModified: new Date(),
-                      categoryId: selectedNoteCategory?.id,
-                    });
-                }}
+                onClick={save}
               >
                 <Save />
               </IconButton>
@@ -234,7 +243,7 @@ export const Notes = () => {
               flexDirection: 'column',
             }}>
               {selectedNote && (
-                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, m: 2, mb: 0 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, m: 2 }}>
                   <Typography variant="body2" color="gray">
                     Created: {dayjs(selectedNote.dateCreated).format('MMMM DD YYYY hh:mm:ss')}
                   </Typography>
@@ -262,7 +271,7 @@ export const Notes = () => {
         {previewEnabled && (
           <Grid
             size={{ xs: 12, lg: editorEnabled ? 5 : 10 }}
-            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
+            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh', height: '100%' }}
           >
             <Typography variant="h6" mb={1.6}>
               Markdown Preview
@@ -277,6 +286,7 @@ export const Notes = () => {
                 backgroundColor: palette.background.default,
                 color: palette.text.primary,
                 padding: '16px',
+                overflowY: 'auto',
               }}
             />
           </Grid>
@@ -325,6 +335,7 @@ const NoteEditor = styled.textarea`
   box-sizing: border-box;
   resize: none;
   padding: 16px;
+  padding-top: 0;
   margin: 0;
   outline: none;
   border: none;

@@ -5,6 +5,7 @@ import { Add, Delete, Save } from "@mui/icons-material";
 import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
 import { Note, NoteCategory } from "../../types";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
+import { useCtrlS } from "../../utils";
 
 const CategoryCard = ({
   category,
@@ -19,6 +20,15 @@ const CategoryCard = ({
 
   const [name, setName] = useState(category.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const save = () => {
+    editCategory({
+      id: category.id,
+      name: name.trim()
+    });
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (deleteSuccess) setSelectedNote(undefined);
@@ -38,12 +48,7 @@ const CategoryCard = ({
                   size="small"
                   color="success"
                   loading={editLoading}
-                  onClick={() => {
-                    editCategory({
-                      id: category.id,
-                      name: name.trim()
-                    });
-                  }}
+                  onClick={save}
                 >
                   <Save />
                 </IconButton>
@@ -87,6 +92,13 @@ export const ManageNoteCategoriesModal = ({
 
   const [newCategoryName, setNewCategoryName] = useState("")
 
+  const add = () => {
+    if (!newCategoryName.trim()) return;
+    createCategory({ name: newCategoryName.trim() });
+  }
+
+  useCtrlS(add);
+
   useEffect(() => {
     if (createSuccess) setNewCategoryName("");
   }, [createSuccess]);
@@ -117,9 +129,9 @@ export const ManageNoteCategoriesModal = ({
                     <IconButton
                       size="small"
                       color="success"
-                      disabled={!newCategoryName}
+                      disabled={!newCategoryName.trim()}
                       loading={createLoading}
-                      onClick={() => createCategory({ name: newCategoryName.trim() })}
+                      onClick={add}
                     >
                       <Add />
                     </IconButton>

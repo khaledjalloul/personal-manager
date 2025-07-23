@@ -22,6 +22,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateHike, useDeleteHike, useEditHike } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
+import { useCtrlS } from "../utils";
 
 const GoogleMapsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -68,6 +69,38 @@ export const HikeCard = ({
 
   const durationWithBreaksHours = Math.floor(hike.durationWithBreaks);
   const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
+
+  const save = () => {
+    if (!isEditing || !description.trim()) return;
+    if (hike.id !== -1)
+      editHike({
+        id: hike.id,
+        date: date.toDate(),
+        description: description.trim(),
+        distance,
+        ascent,
+        descent,
+        duration,
+        durationWithBreaks,
+        googleMapsUrl: googleMapsUrl.trim(),
+        coverImage: coverImage?.trim()
+      });
+    else
+      createHike({
+        date: date.toDate(),
+        description: description.trim(),
+        distance,
+        ascent,
+        descent,
+        duration,
+        durationWithBreaks,
+        googleMapsUrl: googleMapsUrl.trim(),
+        coverImage: coverImage?.trim(),
+        images: []
+      });
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (createSuccess) setIsAddingHike(false);
@@ -124,34 +157,7 @@ export const HikeCard = ({
               sx={{ ml: 'auto', }}
               loading={createLoading || editLoading}
               disabled={!description.trim()}
-              onClick={() => {
-                if (hike.id !== -1)
-                  editHike({
-                    id: hike.id,
-                    date: date.toDate(),
-                    description: description.trim(),
-                    distance,
-                    ascent,
-                    descent,
-                    duration,
-                    durationWithBreaks,
-                    googleMapsUrl: googleMapsUrl.trim(),
-                    coverImage: coverImage?.trim()
-                  });
-                else
-                  createHike({
-                    date: date.toDate(),
-                    description: description.trim(),
-                    distance,
-                    ascent,
-                    descent,
-                    duration,
-                    durationWithBreaks,
-                    googleMapsUrl: googleMapsUrl.trim(),
-                    coverImage: coverImage?.trim(),
-                    images: []
-                  });
-              }}
+              onClick={save}
             >
               <Save />
             </IconButton>

@@ -15,6 +15,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreatePianoPiece, useDeletePianoPiece, useEditPianoPiece } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
+import { useCtrlS } from "../utils";
 
 const pianoPieceStatusOptions = {
   [PianoPieceStatus.Planned]: "Planned",
@@ -48,6 +49,33 @@ export const PianoPieceTableRow = ({
   const { mutate: createPiece, isPending: createLoading, isSuccess: createSuccess } = useCreatePianoPiece();
   const { mutate: editPiece, isPending: editLoading, isSuccess: editSuccess } = useEditPianoPiece();
   const { mutate: deletePiece, isPending: deleteLoading } = useDeletePianoPiece();
+
+  const save = () => {
+    if (!isEditing || !name.trim()) return;
+    if (pianoPiece.id !== -1)
+      editPiece({
+        id: pianoPiece.id,
+        name: name.trim(),
+        origin: origin.trim(),
+        composer: composer.trim(),
+        status,
+        monthLearned: monthLearned && monthLearned.toDate(),
+        youtubeUrl: youtubeUrl.trim(),
+        sheetMusicUrl: sheetMusicUrl.trim()
+      });
+    else
+      createPiece({
+        name: name.trim(),
+        origin: origin.trim(),
+        composer: composer.trim(),
+        status,
+        monthLearned: monthLearned && monthLearned.toDate(),
+        youtubeUrl: youtubeUrl.trim(),
+        sheetMusicUrl: sheetMusicUrl.trim()
+      });
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (createSuccess) setIsAddingPiece(false);
@@ -203,29 +231,7 @@ export const PianoPieceTableRow = ({
                 size="small"
                 loading={createLoading || editLoading}
                 disabled={!name.trim()}
-                onClick={() => {
-                  if (pianoPiece.id !== -1)
-                    editPiece({
-                      id: pianoPiece.id,
-                      name: name.trim(),
-                      origin: origin.trim(),
-                      composer: composer.trim(),
-                      status,
-                      monthLearned: monthLearned && monthLearned.toDate(),
-                      youtubeUrl: youtubeUrl.trim(),
-                      sheetMusicUrl: sheetMusicUrl.trim()
-                    });
-                  else
-                    createPiece({
-                      name: name.trim(),
-                      origin: origin.trim(),
-                      composer: composer.trim(),
-                      status,
-                      monthLearned: monthLearned && monthLearned.toDate(),
-                      youtubeUrl: youtubeUrl.trim(),
-                      sheetMusicUrl: sheetMusicUrl.trim()
-                    });
-                }}
+                onClick={save}
               >
                 <Save />
               </IconButton>

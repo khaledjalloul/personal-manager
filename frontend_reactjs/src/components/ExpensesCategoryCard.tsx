@@ -5,6 +5,7 @@ import { useCreateExpensesCategory, useDeleteExpensesCategory, useEditExpensesCa
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react"
 import { ConfirmDeleteDialog } from "./modals"
 import { SketchPicker } from 'react-color';
+import { useCtrlS } from "../utils"
 
 export const ExpensesCategoryCard = ({
   category,
@@ -28,6 +29,24 @@ export const ExpensesCategoryCard = ({
   const [name, setName] = useState(category.name);
   const [color, setColor] = useState(category.color);
   const [keyword, setKeyword] = useState("");
+
+  const save = () => {
+    if (!isEditing || !name.trim()) return;
+    if (category.id !== -1)
+      editCategory({
+        id: category.id,
+        name: name.trim(),
+        color
+      })
+    else
+      createCategory({
+        name: name.trim(),
+        color,
+        keywords: []
+      })
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (createSuccess) setIsAddingCategory(false);
@@ -97,21 +116,9 @@ export const ExpensesCategoryCard = ({
               size="small"
               sx={{ ml: 'auto' }}
               color="success"
+              disabled={!name.trim()}
               loading={createLoading || editLoading}
-              onClick={() => {
-                if (category.id !== -1)
-                  editCategory({
-                    id: category.id,
-                    name: name.trim(),
-                    color
-                  })
-                else
-                  createCategory({
-                    name: name.trim(),
-                    color,
-                    keywords: []
-                  })
-              }}>
+              onClick={save}>
               <Save />
             </IconButton>
           )}

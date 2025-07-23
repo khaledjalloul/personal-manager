@@ -31,6 +31,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateVideoGame, useDeleteVideoGame, useEditVideoGame } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
+import { useCtrlS } from "../utils";
 
 const videoGameTypeOptions = {
   [VideoGameType.Single_Player]: "Single Player",
@@ -63,6 +64,37 @@ export const VideoGameCard = ({
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const save = () => {
+    if (!isEditing || !name.trim()) return;
+    if (game.id !== -1)
+      editGame({
+        id: game.id,
+        name: name.trim(),
+        platform: platform.trim(),
+        type,
+        completionCount,
+        firstPlayed: firstPlayed.toDate(),
+        price,
+        extraPurchases,
+        storeUrl: storeUrl.trim(),
+        coverImage: coverImage?.trim()
+      });
+    else
+      createGame({
+        name: name.trim(),
+        platform: platform.trim(),
+        type,
+        completionCount,
+        firstPlayed: firstPlayed.toDate(),
+        price,
+        extraPurchases,
+        storeUrl: storeUrl.trim(),
+        coverImage: coverImage?.trim()
+      });
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (createSuccess) setIsAddingGame(false);
@@ -116,33 +148,7 @@ export const VideoGameCard = ({
               sx={{ ml: 'auto' }}
               loading={createLoading || editLoading}
               disabled={!name.trim()}
-              onClick={() => {
-                if (game.id !== -1)
-                  editGame({
-                    id: game.id,
-                    name: name.trim(),
-                    platform: platform.trim(),
-                    type,
-                    completionCount,
-                    firstPlayed: firstPlayed.toDate(),
-                    price,
-                    extraPurchases,
-                    storeUrl: storeUrl.trim(),
-                    coverImage: coverImage?.trim()
-                  });
-                else
-                  createGame({
-                    name: name.trim(),
-                    platform: platform.trim(),
-                    type,
-                    completionCount,
-                    firstPlayed: firstPlayed.toDate(),
-                    price,
-                    extraPurchases,
-                    storeUrl: storeUrl.trim(),
-                    coverImage: coverImage?.trim()
-                  });
-              }}
+              onClick={save}
             >
               <Save />
             </IconButton>

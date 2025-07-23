@@ -1,9 +1,10 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { DiaryEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
+import { useCtrlS } from "../utils";
 
 export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
 
@@ -15,6 +16,26 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [workContent, setWorkContent] = useState(entry.workContent);
+
+  const save = () => {
+    if (!isEditing) return;
+
+    if (entry.id < 0)
+      createEntry({
+        date: entry.date,
+        content,
+        workContent,
+      })
+    else
+      editEntry({
+        id: entry.id,
+        date: entry.date,
+        content,
+        workContent
+      })
+  };
+
+  useCtrlS(save);
 
   useEffect(() => {
     if (createSuccess || editSuccess) setIsEditing(false);
@@ -50,21 +71,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
                 size="small"
                 color="success"
                 loading={createLoading || editLoading}
-                onClick={() => {
-                  if (entry.id < 0)
-                    createEntry({
-                      date: entry.date,
-                      content,
-                      workContent,
-                    })
-                  else
-                    editEntry({
-                      id: entry.id,
-                      date: entry.date,
-                      content,
-                      workContent
-                    })
-                }}
+                onClick={save}
               >
                 <Save />
               </IconButton>
@@ -129,7 +136,7 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           pl: !isEditing ? 2 : 1,
         }}>
           {!isEditing ? (
-            <Typography variant="body1">
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
               {workContent}
             </Typography>
           ) : (

@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ConfirmDeleteDialog } from "./modals";
+import { useCtrlS } from "../utils";
 
 
 export const ExpenseTableRow = ({
@@ -44,6 +45,31 @@ export const ExpenseTableRow = ({
   const [vendor, setVendor] = useState(expense.vendor);
   const [amount, setAmount] = useState(expense.amount);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const save = () => {
+    if (!isEditing || !description.trim()) return;
+    if (expense.id !== -1)
+      editExpense({
+        id: expense.id,
+        date: date.toDate(),
+        categoryId: category?.id,
+        description: description.trim(),
+        vendor: vendor.trim(),
+        amount,
+      });
+    else if (setIsAddingExpense)
+      createExpense({
+        date: date.toDate(),
+        categoryId: category?.id,
+        description: description.trim(),
+        vendor: vendor.trim(),
+        amount,
+        tags: [],
+        type: 'manual'
+      });
+  };
+
+  useCtrlS(save);
 
   // Handle case where category is deleted to update the displayed state
   useEffect(() => {
@@ -177,27 +203,7 @@ export const ExpenseTableRow = ({
                 color="success"
                 loading={createLoading || editLoading}
                 disabled={!description.trim()}
-                onClick={() => {
-                  if (expense.id !== -1)
-                    editExpense({
-                      id: expense.id,
-                      date: date.toDate(),
-                      categoryId: category?.id,
-                      description: description.trim(),
-                      vendor: vendor.trim(),
-                      amount,
-                    });
-                  else if (setIsAddingExpense)
-                    createExpense({
-                      date: date.toDate(),
-                      categoryId: category?.id,
-                      description: description.trim(),
-                      vendor: vendor.trim(),
-                      amount,
-                      tags: [],
-                      type: 'manual'
-                    });
-                }}>
+                onClick={save}>
                 <Save />
               </IconButton>
 

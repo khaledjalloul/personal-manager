@@ -14,6 +14,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateFund, useDeleteFund, useEditFund } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
+import { useCtrlS } from "../utils";
 
 
 export const FundTableRow = ({
@@ -39,6 +40,26 @@ export const FundTableRow = ({
 	const [source, setSource] = useState(fund.source);
 	const [amount, setAmount] = useState(fund.amount);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+	const save = () => {
+		if (!isEditing || !source.trim()) return;
+		if (fund.id !== -1)
+			editFund({
+				id: fund.id,
+				date: date.toDate(),
+				source: source.trim(),
+				amount,
+			});
+		else if (setIsAddingFund)
+			createFund({
+				date: date.toDate(),
+				source: source.trim(),
+				amount,
+				type: "manual"
+			});
+	};
+
+	useCtrlS(save);
 
 	useEffect(() => {
 		if (createSuccess && setIsAddingFund) setIsAddingFund(false);
@@ -141,22 +162,7 @@ export const FundTableRow = ({
 								color="success"
 								loading={createLoading || editLoading}
 								disabled={!source.trim()}
-								onClick={() => {
-									if (fund.id !== -1)
-										editFund({
-											id: fund.id,
-											date: date.toDate(),
-											source: source.trim(),
-											amount,
-										});
-									else if (setIsAddingFund)
-										createFund({
-											date: date.toDate(),
-											source: source.trim(),
-											amount,
-											type: "manual"
-										});
-								}}>
+								onClick={save}>
 								<Save />
 							</IconButton>
 
