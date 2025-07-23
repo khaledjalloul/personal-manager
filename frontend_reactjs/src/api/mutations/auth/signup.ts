@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import client from "../../client";
 import { useContext } from "react";
-import { UserContext } from "../../../utils";
+import { ThemeContext, UserContext } from "../../../utils";
 import { AxiosError } from "axios";
 
 type Request = {
@@ -29,13 +29,14 @@ const signUp = async (data: Request) => {
 
 export const useSignUp = () => {
   const { setUserData } = useContext(UserContext);
+  const { setThemeData } = useContext(ThemeContext);
 
   return useMutation<Response, AxiosError<{ message: string }>, Request>({
     mutationFn: signUp,
     onSuccess: (data) => {
       if (data) {
         setUserData(data);
-        localStorage.setItem("userData", JSON.stringify(data));
+        setThemeData({ darkMode: true });
       }
     },
   });

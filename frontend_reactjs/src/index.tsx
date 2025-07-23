@@ -35,8 +35,8 @@ const App = () => {
             } else throw err;
           }
         );
-        setThemeData({ darkMode: true });
       }
+      localStorage.setItem("userData", JSON.stringify(userData));
       setUserData(userData);
     },
   };

@@ -30,9 +30,8 @@ export const Diary = () => {
   });
 
   const displayedEntries: DiaryEntry[] | undefined = useMemo(() => {
-    if (searchText.trim()) {
+    if (searchText.trim())
       return diaryEntries;
-    }
 
     const lastDayOfMonth = new Date(selectedDate.year(), selectedDate.month() + 1, 0);
     const listOfDays = Array.from({ length: lastDayOfMonth.getDate() }, (_, i) => i + 1);
@@ -129,7 +128,7 @@ export const Diary = () => {
         )}
         <Grid container rowSpacing={1} flexGrow={1}>
           {displayedEntries?.map((entry) => (
-            <DiaryGridRow key={entry.id} entry={entry} />
+            <DiaryGridRow key={entry.id} entry={entry} isSearching={Boolean(searchText.trim())} />
           ))}
         </Grid>
       </Box>

@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Clear,
   CreateNewFolder,
@@ -26,12 +26,13 @@ import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer }
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
-import { useCtrlS } from "../../utils";
+import { useCtrlS, useKeybinding, UserContext } from "../../utils";
 
 
 export const Notes = () => {
 
   const { palette } = useTheme();
+  const { userData, setUserData } = useContext(UserContext);
 
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
@@ -64,6 +65,8 @@ export const Notes = () => {
       setSelectedNoteTitle(selectedNote.title);
       setSelectedNoteCategory(selectedNote.category);
       setSelectedNoteContent(selectedNote.content);
+      if (userData)
+        setUserData({ ...userData, lastOpenedNoteId: selectedNote.id });
     } else {
       setSelectedNoteTitle("");
       setSelectedNoteCategory(undefined);
@@ -72,6 +75,22 @@ export const Notes = () => {
   }, [JSON.stringify(selectedNote)]);
 
   useCtrlS(save);
+  useKeybinding("e", () => {
+    if (editorEnabled && !previewEnabled) return;
+    setEditorEnabled(!editorEnabled);
+  });
+  useKeybinding("q", () => {
+    if (previewEnabled && !editorEnabled) return;
+    setPreviewEnabled(!previewEnabled)
+  });
+
+  useEffect(() => {
+    if (notes && userData && userData.lastOpenedNoteId) {
+      const lastOpenNote = notes.find(note => note.id === userData.lastOpenedNoteId);
+      if (lastOpenNote)
+        setSelectedNote(lastOpenNote);
+    }
+  }, [JSON.stringify(notes)]);
 
   useEffect(() => {
     if (deleteSuccess && selectedNote)
@@ -245,10 +264,10 @@ export const Notes = () => {
               {selectedNote && (
                 <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4, m: 2 }}>
                   <Typography variant="body2" color="gray">
-                    Created: {dayjs(selectedNote.dateCreated).format('MMMM DD YYYY hh:mm:ss')}
+                    Created: {dayjs(selectedNote.dateCreated).format('MMMM DD YYYY HH:mm:ss')}
                   </Typography>
                   <Typography variant="body2" color="gray">
-                    Last Modified: {dayjs(selectedNote.dateModified).format('MMMM DD YYYY hh:mm:ss')}
+                    Last Modified: {dayjs(selectedNote.dateModified).format('MMMM DD YYYY HH:mm:ss')}
                   </Typography>
                 </Box>
               )}

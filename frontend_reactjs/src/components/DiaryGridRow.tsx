@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { DiaryEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
@@ -6,7 +6,13 @@ import dayjs from "dayjs";
 import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 import { useCtrlS } from "../utils";
 
-export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
+export const DiaryGridRow = ({
+  entry,
+  isSearching
+}: {
+  entry: DiaryEntry
+  isSearching: boolean
+}) => {
 
   const { palette } = useTheme();
 
@@ -23,15 +29,15 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
     if (entry.id < 0)
       createEntry({
         date: entry.date,
-        content,
-        workContent,
+        content: content.trim(),
+        workContent: workContent.trim(),
       })
     else
       editEntry({
         id: entry.id,
         date: entry.date,
-        content,
-        workContent
+        content: content.trim(),
+        workContent: workContent.trim(),
       })
   };
 
@@ -55,8 +61,8 @@ export const DiaryGridRow = ({ entry }: { entry: DiaryEntry }) => {
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <Typography variant="body1" >
-            {dayjs(entry.date).format("DD.MM.YYYY")}
+          <Typography variant="body1">
+            {dayjs(entry.date).format(isSearching ? "DD.MM.YYYY" : "DD dddd")}
           </Typography>
 
           {!isEditing ? (

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-export function useCtrlS(save: () => void) {
+export const useKeybinding = (key: string, fn: () => void) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "s") {
+      if (event.ctrlKey && event.key === key) {
         event.preventDefault();
-        save();
+        fn();
       }
     };
 
@@ -13,5 +13,9 @@ export function useCtrlS(save: () => void) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [save]);
+  }, [fn]);
+}
+
+export const useCtrlS = (fn: () => void) => {
+  useKeybinding("s", fn);
 }

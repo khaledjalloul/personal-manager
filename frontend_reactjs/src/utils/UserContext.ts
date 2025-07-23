@@ -5,6 +5,7 @@ export type UserData = {
   name: string;
   email: string;
   token: string;
+  lastOpenedNoteId?: number;
 } | null;
 
 export const UserContext = createContext<{
@@ -12,5 +13,5 @@ export const UserContext = createContext<{
   readonly setUserData: (userData?: UserData | null) => void;
 }>({
   userData: null,
-  setUserData: () => {},
+  setUserData: () => { },
 });
