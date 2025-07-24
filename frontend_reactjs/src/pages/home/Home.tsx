@@ -152,19 +152,23 @@ export const Home = () => {
           >
             <NavigationTitle title="Expenses" link="/expenses" />
 
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <ExpensesStatisticsCard
-                title="Total Spent This Month"
-                value={`${expensesStatistics?.totalExpensesThisMonth.toFixed(2)} CHF`}
-                color="primary.dark"
-              />
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                <ExpensesStatisticsCard
+                  title="Total Spent This Month"
+                  value={`${expensesStatistics?.totalExpensesThisMonth.toFixed(2)} CHF`}
+                  color="primary.dark"
+                />
+              </Grid>
 
-              <ExpensesStatisticsCard
-                title="Average Expenses Per Month"
-                value={`${expensesStatistics?.monthlyAverageExpenses.toFixed(2)} CHF`}
-                color="warning.dark"
-              />
-            </Box>
+              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                <ExpensesStatisticsCard
+                  title="Average Expenses Per Month"
+                  value={`${expensesStatistics?.monthlyAverageExpenses.toFixed(2)} CHF`}
+                  color="warning.dark"
+                />
+              </Grid>
+            </Grid>
           </Box>
 
           <Box
@@ -176,8 +180,27 @@ export const Home = () => {
             }}>
             <NavigationTitle title="Notes" link="/notes" />
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Typography variant="h6">Add New Note</Typography>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              alignItems: { xs: 'stretch', md: 'center' },
+              gap: 3
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h6">Add New Note</Typography>
+                <IconButton
+                  sx={{
+                    display: { xs: 'block', md: 'none' },
+                    color: 'success.main',
+                    ml: 'auto'
+                  }}
+                  loading={createNoteLoading}
+                  disabled={!noteContent.trim() || !selectedNoteCategory}
+                  onClick={saveNote}
+                >
+                  <Save />
+                </IconButton>
+              </Box>
 
               <TextField
                 variant="standard"
@@ -192,7 +215,10 @@ export const Home = () => {
                 <Select
                   variant="standard"
                   size="small"
-                  sx={{ minWidth: 150, ml: 2 }}
+                  sx={{
+                    minWidth: { xs: 0, md: 150 },
+                    ml: { xs: 0, md: 2 },
+                  }}
                   value={selectedNoteCategory.id}
                   onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
                 >
@@ -205,7 +231,11 @@ export const Home = () => {
               )}
 
               <IconButton
-                sx={{ color: 'success.main', ml: 'auto' }}
+                sx={{
+                  display: { xs: 'none', md: 'block' },
+                  color: 'success.main',
+                  ml: 'auto'
+                }}
                 loading={createNoteLoading}
                 disabled={!noteContent.trim() || !selectedNoteCategory}
                 onClick={saveNote}
@@ -218,6 +248,7 @@ export const Home = () => {
               flexGrow: 1,
               borderRadius: '8px',
               backgroundColor: 'primary.light',
+              mt: { xs: 1, md: 0 }
             }}>
               <textarea
                 value={noteContent}

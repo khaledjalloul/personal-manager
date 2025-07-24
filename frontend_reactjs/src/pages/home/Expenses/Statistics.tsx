@@ -97,8 +97,8 @@ export const ExpensesStatistics = () => {
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 5, mb: 5 }}>
-        <Grid container spacing={5}>
+      <Box sx={{ mt: 5, mb: { xs: 0, md: 5 } }}>
+        <Grid container spacing={{ xs: 10, md: 5 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{
               flex: 1,

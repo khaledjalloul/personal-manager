@@ -31,10 +31,16 @@ export const ExpensesWrapper = () => {
 
   return (
     <Wrapper>
-      <Header>
+      <Header
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: { xs: 2, md: 1 }
+        }}
+      >
         <NavLink to="/expenses">
           {({ }) => (
-            <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"}>
+            <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
               Statistics
             </Button>
           )}
@@ -42,7 +48,7 @@ export const ExpensesWrapper = () => {
 
         <NavLink to="/expenses/monthly">
           {({ isActive }) => (
-            <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"}>
+            <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"} fullWidth>
               Monthly
             </Button>
           )}
@@ -50,7 +56,7 @@ export const ExpensesWrapper = () => {
 
         <NavLink to="/expenses/details">
           {({ isActive }) => (
-            <Button startIcon={<ViewList />} variant={isActive ? "contained" : "outlined"}>
+            <Button startIcon={<ViewList />} variant={isActive ? "contained" : "outlined"} fullWidth>
               Details
             </Button>
           )}
@@ -58,7 +64,7 @@ export const ExpensesWrapper = () => {
 
         <NavLink to="/expenses/manage">
           {({ isActive }) => (
-            <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"}>
+            <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"} fullWidth>
               Manage
             </Button>
           )}
@@ -67,7 +73,7 @@ export const ExpensesWrapper = () => {
         <Select
           value={filterCategoryIds}
           sx={{
-            ml: "auto",
+            ml: { xs: 0, md: "auto" },
             display: location.pathname === "/expenses/details" ? "block" : "none"
           }}
           multiple
@@ -107,9 +113,10 @@ export const ExpensesWrapper = () => {
 
         <TextField
           sx={{
-            ml: location.pathname !== "/expenses/details" ? "auto" : 0,
-            minWidth: location.pathname !== "/expenses" ? "35vw" : 0,
-            opacity: location.pathname !== "/expenses" ? 1 : 0,
+            ml: { xs: 0, md: location.pathname !== "/expenses/details" ? "auto" : 0 },
+            minWidth: { xs: 0, md: location.pathname !== "/expenses" ? "35vw" : 0 },
+            opacity: { xs: 1, md: location.pathname !== "/expenses" ? 1 : 0 },
+            display: { xs: location.pathname !== "/expenses" ? 'flex' : 'none', md: 'flex' }
           }}
           disabled={location.pathname === "/expenses"}
           label="Search expenses"
@@ -148,12 +155,10 @@ const Wrapper = styled(Box)`
   padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 `;
 
 const Header = styled(Box)`
   display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 0 32px 0 32px;
 `;

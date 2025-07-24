@@ -51,15 +51,16 @@ export const DiaryGridRow = ({
   }, [createSuccess, editSuccess]);
 
   return (
-    <Fragment>
-      <Grid size={{ xs: 2 }} sx={{ display: 'flex' }}>
+    <Grid container>
+      <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
           backgroundColor: 'primary.light',
           p: 1,
           pl: 2,
-          mr: 1,
+          mr: { xs: 0, md: 1 },
+          mb: { xs: 1, md: 0 },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -103,15 +104,16 @@ export const DiaryGridRow = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 7 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopLeftRadius: '8px',
-          borderBottomLeftRadius: '8px',
+          borderBottomLeftRadius: { xs: 0, md: '8px' },
+          borderTopRightRadius: { xs: '8px', md: 0 },
           backgroundColor: 'primary.light',
-          p: !isEditing ? 1 : 0,
-          pr: !isEditing ? 2 : 1,
-          borderRight: `solid 1px ${palette.action.hover}`
+          p: 2,
+          borderRight: { xs: 'none', md: `solid 1px ${palette.action.hover}` },
+          borderBottom: { xs: `solid 1px ${palette.action.hover}`, md: 'none' }
         }}>
           {!isEditing ? (
             <Typography variant="body1">
@@ -123,10 +125,9 @@ export const DiaryGridRow = ({
               rows={10}
               placeholder="Content"
               style={{
-                width: 'calc(100% - 16px)',
-                minHeight: 'calc(100% - 16px)',
+                width: '100%',
+                minHeight: '100%',
                 resize: 'none',
-                padding: '8px',
                 outline: 'none',
                 border: 'none',
                 backgroundColor: palette.primary.light,
@@ -140,14 +141,14 @@ export const DiaryGridRow = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 3 }} sx={{ display: 'flex', overflow: 'hidden' }}>
+      <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', overflow: 'hidden' }}>
         <Box sx={{
           flexGrow: 1,
-          borderTopRightRadius: '8px',
+          borderTopRightRadius: { xs: 0, md: '8px' },
           borderBottomRightRadius: '8px',
+          borderBottomLeftRadius: { xs: '8px', md: 0 },
           backgroundColor: 'primary.light',
-          p: !isEditing ? 1 : 0,
-          pl: !isEditing ? 2 : 1,
+          p: 2,
         }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
@@ -158,10 +159,9 @@ export const DiaryGridRow = ({
               value={workContent}
               placeholder="Work / Projects"
               style={{
-                width: 'calc(100% - 16px)',
-                height: 'calc(100% - 16px)',
+                width: '100%',
+                height: '100%',
                 resize: 'none',
-                padding: '8px',
                 outline: 'none',
                 border: 'none',
                 backgroundColor: palette.primary.light,
@@ -174,7 +174,6 @@ export const DiaryGridRow = ({
           )}
         </Box>
       </Grid>
-
-    </Fragment >
+    </Grid>
   )
 }

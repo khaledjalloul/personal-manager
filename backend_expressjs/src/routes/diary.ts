@@ -77,7 +77,6 @@ router.get('/monthly', async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-  console.log("Creating diary entry", req.user.id, req.body);
   const { date, content, workContent, type } = req.body;
   const newEntry = await prisma.diaryEntry.create({
     data: {

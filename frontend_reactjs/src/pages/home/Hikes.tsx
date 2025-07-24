@@ -31,16 +31,28 @@ export const Hikes = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <Typography variant="h5">
-          Hikes ({hikes?.length || 0})
-        </Typography>
-        <IconButton onClick={() => setIsAddingHike(true)}>
-          <Add />
-        </IconButton>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: { xs: 2, md: 0 },
+          padding: '0 32px 0 32px'
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h5">
+            Hikes ({hikes?.length || 0})
+          </Typography>
+          <IconButton onClick={() => setIsAddingHike(true)}>
+            <Add />
+          </IconButton>
+        </Box>
+
         <TextField
           sx={{
-            minWidth: "35vw", ml: "auto",
+            minWidth: { xs: 0, md: "35vw" },
+            ml: { xs: 0, md: "auto" },
           }}
           label="Search hikes"
           placeholder="Description"
@@ -60,7 +72,7 @@ export const Hikes = () => {
             }
           }}
         />
-      </Header>
+      </Box>
 
       <Box sx={{ overflowY: 'auto', p: '32px', pt: 0 }}>
         {!isAddingHike && hikes?.length === 0 && (
@@ -103,12 +115,5 @@ const Wrapper = styled(Box)`
   padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-`;
-
-const Header = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 32px 0 32px;
+  gap: 24px;
 `;

@@ -121,7 +121,7 @@ export const Account = () => {
 
   return (
     <Wrapper>
-      <Grid container spacing={4} flexGrow={1}>
+      <Grid container spacing={{ xs: 6, md: 4 }} flexGrow={1}>
         <Grid size={{ xs: 12, md: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="h5" gutterBottom>
@@ -139,7 +139,10 @@ export const Account = () => {
             />
             <Button
               variant="contained"
-              onClick={() => editUser({ name, email })}
+              onClick={() => editUser({
+                name: name.trim(),
+                email: email.trim()
+              })}
               loading={editUserLoading}
             >
               Save Changes

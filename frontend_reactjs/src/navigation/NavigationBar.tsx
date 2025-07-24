@@ -53,7 +53,7 @@ export const NavigationBar = () => {
             sx={{
               display: {
                 xs: "none",
-                sm: "flex",
+                md: "flex",
               },
               ml: "auto",
               alignItems: "center",
@@ -107,7 +107,7 @@ export const NavigationBar = () => {
             sx={{
               display: {
                 xs: "flex",
-                sm: "none",
+                md: "none",
               },
               ml: "auto",
             }}

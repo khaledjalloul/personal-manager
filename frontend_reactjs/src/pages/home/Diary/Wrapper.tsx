@@ -26,47 +26,62 @@ export const DiaryWrapper = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <IconButton
-          disabled={Boolean(searchText.trim())}
-          onClick={() => setSelectedDate(
-            isDaily ? selectedDate.subtract(1, 'month') : selectedDate.subtract(1, 'year')
-          )}
-        >
-          <ArrowLeft />
-        </IconButton>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: { xs: 2, md: 1 },
+          padding: "0 32px 0 32px"
+        }}
+      >
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label={isDaily ? "Month" : "Year"}
-            views={isDaily ? ["year", "month"] : ["year"]}
-            openTo={isDaily ? "month" : "year"}
-            value={selectedDate}
-            onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
-            enableAccessibleFieldDOMStructure={false}
-            format={isDaily ? "MMMM YYYY" : "YYYY"}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton
             disabled={Boolean(searchText.trim())}
-            slotProps={{
-              textField: {
-                size: "small",
-                placeholder: "Date",
-              }
-            }}
-          />
-        </LocalizationProvider>
+            onClick={() => setSelectedDate(
+              isDaily ? selectedDate.subtract(1, 'month') : selectedDate.subtract(1, 'year')
+            )}
+          >
+            <ArrowLeft />
+          </IconButton>
 
-        <IconButton
-          disabled={Boolean(searchText.trim())}
-          onClick={() => setSelectedDate(
-            isDaily ? selectedDate.add(1, 'month') : selectedDate.add(1, 'year')
-          )}
-        >
-          <ArrowRight />
-        </IconButton>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={isDaily ? "Month" : "Year"}
+              views={isDaily ? ["year", "month"] : ["year"]}
+              openTo={isDaily ? "month" : "year"}
+              value={selectedDate}
+              onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
+              enableAccessibleFieldDOMStructure={false}
+              format={isDaily ? "MMMM YYYY" : "YYYY"}
+              disabled={Boolean(searchText.trim())}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  placeholder: "Date",
+                }
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+          </LocalizationProvider>
+
+          <IconButton
+            disabled={Boolean(searchText.trim())}
+            onClick={() => setSelectedDate(
+              isDaily ? selectedDate.add(1, 'month') : selectedDate.add(1, 'year')
+            )}
+          >
+            <ArrowRight />
+          </IconButton>
+        </Box>
 
         <Button
           variant="contained"
-          sx={{ ml: 1, width: 105 }}
+          sx={{
+            ml: { xs: 0, md: 1 },
+            width: { xs: 'auto', md: 105 }
+          }}
           onClick={() => setSelectedDate(dayjs(new Date()))}
           disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
         >
@@ -83,9 +98,10 @@ export const DiaryWrapper = () => {
 
         <TextField
           sx={{
-            ml: "auto",
-            minWidth: isDaily ? "35vw" : 0,
-            opacity: isDaily ? 1 : 0,
+            ml: { xs: 0, md: "auto" },
+            minWidth: { xs: 0, md: isDaily ? "35vw" : 0 },
+            opacity: { xs: 1, md: isDaily ? 1 : 0 },
+            display: { xs: isDaily ? 'flex' : 'none', md: 'flex' }
           }}
           disabled={!isDaily}
           label="Search diary entries"
@@ -106,7 +122,7 @@ export const DiaryWrapper = () => {
             }
           }}
         />
-      </Header>
+      </Box>
 
       <Outlet context={{ searchText, selectedDate }} />
 
@@ -120,12 +136,5 @@ const Wrapper = styled(Box)`
   padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-`;
-
-const Header = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 32px 0 32px;
+  gap: 24px;
 `;

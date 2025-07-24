@@ -103,26 +103,35 @@ export const Notes = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <Typography variant="h5">
-          Notes ({notes?.length || 0})
-        </Typography>
+      <Header
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: { xs: 2, md: 1 }
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+          <Typography variant="h5">
+            Notes ({notes?.length || 0})
+          </Typography>
 
-        <IconButton
-          sx={{ ml: "auto" }}
-          onClick={() => setEditorEnabled(!editorEnabled)}
-          disabled={editorEnabled && !previewEnabled}>
-          {editorEnabled ? <EditOff /> : <Edit />}
-        </IconButton>
-        <IconButton
-          onClick={() => setPreviewEnabled(!previewEnabled)}
-          disabled={previewEnabled && !editorEnabled}>
-          {previewEnabled ? <VisibilityOff /> : <Visibility />}
-        </IconButton>
+          <IconButton
+            sx={{ ml: "auto" }}
+            onClick={() => setEditorEnabled(!editorEnabled)}
+            disabled={editorEnabled && !previewEnabled}>
+            {editorEnabled ? <EditOff /> : <Edit />}
+          </IconButton>
+          <IconButton
+            onClick={() => setPreviewEnabled(!previewEnabled)}
+            disabled={previewEnabled && !editorEnabled}>
+            {previewEnabled ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </Box>
+
         <TextField
           sx={{
-            ml: 1,
-            minWidth: "35vw",
+            ml: { xs: 0, md: 1 },
+            minWidth: { xs: 0, md: "35vw" },
           }}
           label="Search notes"
           placeholder="Title, content"
@@ -151,14 +160,14 @@ export const Notes = () => {
 
       <Grid
         container
-        spacing={2}
+        spacing={{ xs: 4, md: 2 }}
         sx={{
-          height: 'calc(100% - 72px)',
+          height: 'calc(100% - 80px)',
           p: '32px',
           pt: 0
         }}
       >
-        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -201,10 +210,43 @@ export const Notes = () => {
             size={{ xs: 12, lg: previewEnabled ? 5 : 10 }}
             sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
-              <Typography variant="h6">
-                Editor:
-              </Typography>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              alignItems: { xs: 'stretch', md: 'center' },
+              mb: { xs: 3, md: 1 },
+              gap: { xs: 2, md: 1 }
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h6">
+                  Editor:
+                </Typography>
+
+                <IconButton
+                  sx={{ ml: 'auto', display: { xs: 'flex', md: 'none' } }}
+                  color="success"
+                  disabled={!selectedNote || !selectedNoteTitle.trim()}
+                  loading={editNoteLoading}
+                  onClick={save}
+                >
+                  <Save />
+                </IconButton>
+
+                <IconButton
+                  sx={{ display: { xs: 'flex', md: 'none' } }}
+                  color="error"
+                  disabled={!selectedNote}
+                  loading={deleteNoteLoading}
+                  onClick={() => {
+                    if (selectedNote) {
+                      setConfirmDeleteOpen(true);
+                    }
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+
+              </Box>
 
               <TextField
                 variant="standard"
@@ -237,7 +279,7 @@ export const Notes = () => {
               </Select>
 
               <IconButton
-                sx={{ ml: 'auto' }}
+                sx={{ ml: 'auto', display: { xs: 'none', md: 'flex' } }}
                 color="success"
                 disabled={!selectedNote || !selectedNoteTitle.trim()}
                 loading={editNoteLoading}
@@ -247,6 +289,7 @@ export const Notes = () => {
               </IconButton>
 
               <IconButton
+                sx={{ display: { xs: 'none', md: 'flex' } }}
                 color="error"
                 disabled={!selectedNote}
                 loading={deleteNoteLoading}
@@ -343,14 +386,12 @@ const Wrapper = styled(Box)`
   padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   overflow-y: auto;
 `;
 
 const Header = styled(Box)`
   display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 0 32px 0 32px;
 `;
 

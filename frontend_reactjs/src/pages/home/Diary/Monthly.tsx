@@ -33,15 +33,20 @@ export const MonthlyDiary = () => {
   ), [selectedDate, JSON.stringify(monthlyDiary)])
 
   return (
-    <Box sx={{ overflowY: 'auto', p: '32px', pt: 0 }}>
+    <Box sx={{
+      overflowY: 'auto',
+      p: '32px',
+      pt: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: { xs: 3, md: 1 }
+    }}>
       {displayedEntries?.length === 0 && (
         <Typography align="center" mt={7}>No monthly diary entries.</Typography>
       )}
-      <Grid container rowSpacing={1} flexGrow={1}>
-        {displayedEntries?.map((entry) => (
-          <DiaryGridRow key={entry.id} entry={entry} isSearching={false} />
-        ))}
-      </Grid>
+      {displayedEntries?.map((entry) => (
+        <DiaryGridRow key={entry.id} entry={entry} isSearching={false} />
+      ))}
     </Box>
   );
 };
