@@ -164,7 +164,7 @@ router.get('/monthly', async (req: Request, res: Response) => {
 
 router.get('/statistics', async (req: Request, res: Response) => {
   const statistics: {
-    totalMonthlyAverage: number;
+    monthlyAverageExpenses: number;
     totalExpenses: number;
     totalExpensesThisMonth: number;
     totalFunds: number;
@@ -181,7 +181,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
       }
     }
   } = {
-    totalMonthlyAverage: 0,
+    monthlyAverageExpenses: 0,
     totalExpenses: 0,
     totalExpensesThisMonth: 0,
     totalFunds: 0,
@@ -240,7 +240,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
   const numMonths = Object.keys(statistics.months).length;
   for (const category in statistics.categories) {
     statistics.categories[category].monthlyAverage = statistics.categories[category].total / numMonths;
-    statistics.totalMonthlyAverage += statistics.categories[category].monthlyAverage;
+    statistics.monthlyAverageExpenses += statistics.categories[category].monthlyAverage;
   }
 
   res.json(statistics);

@@ -186,7 +186,10 @@ export const VideoGameCard = ({
           )}
 
           {!isEditing && (
-            <IconButton onClick={() => window.open(storeUrl, '_blank')}>
+            <IconButton
+              disabled={!storeUrl.trim()}
+              onClick={() => window.open(storeUrl, '_blank')}
+            >
               <InsertLink />
             </IconButton>
           )}

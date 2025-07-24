@@ -37,7 +37,7 @@ export const Diary = () => {
     const listOfDays = Array.from({ length: lastDayOfMonth.getDate() }, (_, i) => i + 1);
 
     return listOfDays.map((day) => {
-      const date = dayjs(new Date(selectedDate.year(), selectedDate.month(), day));
+      const date = dayjs(new Date(selectedDate.year(), selectedDate.month(), day, 12));
 
       const existingEntry = diaryEntries?.find(entry => dayjs(entry.date).isSame(date, 'day'));
       if (existingEntry)
@@ -95,6 +95,12 @@ export const Diary = () => {
           disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
         >
           This Month
+        </Button>
+
+        <Button
+          variant="outlined"
+        >
+          Monthly Summary
         </Button>
 
         <TextField

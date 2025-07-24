@@ -83,6 +83,10 @@ export const Notes = () => {
     if (previewEnabled && !editorEnabled) return;
     setPreviewEnabled(!previewEnabled)
   });
+  useKeybinding("Delete", () => {
+    if (selectedNote)
+      setConfirmDeleteOpen(true);
+  });
 
   useEffect(() => {
     if (notes && userData && userData.lastOpenedNoteId) {
@@ -205,6 +209,8 @@ export const Notes = () => {
               <TextField
                 variant="standard"
                 size="small"
+                placeholder="Note Title"
+                sx={{ flexGrow: 1 }}
                 value={selectedNoteTitle}
                 onChange={(e) => setSelectedNoteTitle(e.target.value)}
                 disabled={!selectedNote}

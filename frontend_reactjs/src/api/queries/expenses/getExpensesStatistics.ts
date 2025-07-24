@@ -4,7 +4,7 @@ import client from "../../client";
 const ENDPOINT = "expenses/statistics";
 
 export type GetExpensesStatisticsResponse = {
-  totalMonthlyAverage: number;
+  monthlyAverageExpenses: number;
   totalExpenses: number;
   totalExpensesThisMonth: number;
   totalFunds: number;

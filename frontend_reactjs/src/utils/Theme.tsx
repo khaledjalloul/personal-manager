@@ -97,7 +97,7 @@ export const Theme = ({
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <StyledThemeProvider theme={theme}>
-          <GlobalStyle />
+          <GlobalStyle darkMode={themeData.darkMode} />
           {children}
         </StyledThemeProvider>
       </ThemeProvider>
@@ -105,11 +105,30 @@ export const Theme = ({
   );
 };
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle<{ darkMode: boolean }>`
   body {
     margin: 0;
   }
   p {
     margin: 0;
+  }
+
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.palette.background.default};
+    border-radius: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.palette.grey[500]};
+    border-radius: 7px;
+    cursor: default;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.palette.grey[700]};
   }
 `;

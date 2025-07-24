@@ -114,6 +114,7 @@ export const DiaryGridRow = ({
             <textarea
               value={content}
               rows={10}
+              placeholder="Content"
               style={{
                 width: 'calc(100% - 16px)',
                 minHeight: 'calc(100% - 16px)',
@@ -148,6 +149,7 @@ export const DiaryGridRow = ({
           ) : (
             <textarea
               value={workContent}
+              placeholder="Work / Projects"
               style={{
                 width: 'calc(100% - 16px)',
                 height: 'calc(100% - 16px)',

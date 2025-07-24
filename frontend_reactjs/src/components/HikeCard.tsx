@@ -24,7 +24,7 @@ import { useCreateHike, useDeleteHike, useEditHike } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
 
-const GoogleMapsIcon = () => (
+const GoogleMapsIcon = ({ disabled = false }: { disabled?: boolean }) => (
   <svg width="24" height="24" viewBox="0 0 24 24">
     <defs>
       <linearGradient id="mapGradient" x1="0" y1="0.5" x2="1" y2="1">
@@ -34,7 +34,7 @@ const GoogleMapsIcon = () => (
         <stop offset="100%" stopColor="#ea4335" />
       </linearGradient>
     </defs>
-    <Place sx={{ fill: "url(#mapGradient)" }} />
+    <Place sx={!disabled ? { fill: "url(#mapGradient)" } : {}} />
   </svg>
 )
 
@@ -200,8 +200,11 @@ export const HikeCard = ({
           )}
 
           {!isEditing && (
-            <IconButton onClick={() => window.open(googleMapsUrl, '_blank')}>
-              <GoogleMapsIcon />
+            <IconButton
+              disabled={!googleMapsUrl.trim()}
+              onClick={() => window.open(googleMapsUrl, '_blank')}
+            >
+              <GoogleMapsIcon disabled={!googleMapsUrl.trim()} />
             </IconButton>
           )}
         </Box>

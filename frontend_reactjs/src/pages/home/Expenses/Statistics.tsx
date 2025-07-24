@@ -28,6 +28,7 @@ import {
 } from 'chart.js';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { ThemeContext } from "../../../utils";
+import { ExpensesStatisticsCard } from "../../../components";
 
 ChartJS.register(
   CategoryScale,
@@ -55,59 +56,44 @@ export const ExpensesStatistics = () => {
     <Wrapper>
       <Grid container spacing={2} flexGrow={1}>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
-            <Typography variant="h6" color="white">
-              Total Balance
-            </Typography>
-            <Typography variant="h3" color="white">
-              {(statistics.totalFunds - statistics.totalExpenses).toFixed(2)} CHF
-            </Typography>
-          </StatisticsCard>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ExpensesStatisticsCard
+            title="Total Balance"
+            value={`${(statistics.totalFunds - statistics.totalExpenses).toFixed(2)} CHF`}
+            color="success.dark"
+          />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
-            <Typography variant="h6" color="white">
-              Bank Balance
-            </Typography>
-            <Typography variant="h3" color="white">
-              {(statistics.totalFunds - statistics.totalExpenses - user.wallet).toFixed(2)} CHF
-            </Typography>
-          </StatisticsCard>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ExpensesStatisticsCard
+            title="Bank Balance"
+            value={`${(statistics.totalFunds - statistics.totalExpenses - user.wallet).toFixed(2)} CHF`}
+            color="success.dark"
+          />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "success.dark" }}>
-            <Typography variant="h6" color="white">
-              Cash Balance
-            </Typography>
-            <Typography variant="h3" color="white">
-              {user.wallet.toFixed(2)} CHF
-            </Typography>
-          </StatisticsCard>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ExpensesStatisticsCard
+            title="Cash Balance"
+            value={`${user.wallet.toFixed(2)} CHF`}
+            color="success.dark"
+          />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}  >
-          <StatisticsCard sx={{ backgroundColor: "primary.dark" }}>
-            <Typography variant="h6" color="white">
-              Total Spent This Month
-            </Typography>
-            <Typography variant="h3" color="white">
-              {statistics.totalExpensesThisMonth.toFixed(2)} CHF
-            </Typography>
-          </StatisticsCard>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <ExpensesStatisticsCard
+            title="Total Spent This Month"
+            value={`${statistics.totalExpensesThisMonth.toFixed(2)} CHF`}
+            color="primary.dark"
+          />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }} >
-          <StatisticsCard sx={{ backgroundColor: "warning.dark" }}>
-            <Typography variant="h6" color="white">
-              Average Expenses Per Month
-            </Typography>
-            <Typography variant="h3" color="white">
-              {statistics.totalMonthlyAverage.toFixed(2)} CHF
-            </Typography>
-          </StatisticsCard>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <ExpensesStatisticsCard
+            title="Average Expenses Per Month"
+            value={`${statistics.monthlyAverageExpenses.toFixed(2)} CHF`}
+            color="warning.dark"
+          />
         </Grid>
       </Grid>
 
@@ -259,7 +245,7 @@ export const ExpensesStatistics = () => {
                     {category.monthlyAverage.toFixed(2)} CHF
                   </TableCell>
                 ))}
-                <TableCell>{statistics.totalMonthlyAverage.toFixed(2)} CHF</TableCell>
+                <TableCell>{statistics.monthlyAverageExpenses.toFixed(2)} CHF</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -277,12 +263,3 @@ const Wrapper = styled(Box)`
   padding: 32px;
   padding-top: 0;
 `;
-
-const StatisticsCard = styled(Box)`
-  border-radius: 8px;
-  padding: 32px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`; 

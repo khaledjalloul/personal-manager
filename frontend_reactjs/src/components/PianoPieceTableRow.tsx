@@ -175,21 +175,19 @@ export const PianoPieceTableRow = ({
         {!isEditing ? (
           <TableCell>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size="small" onClick={() => {
-                if (pianoPiece.youtubeUrl) {
-                  window.open(pianoPiece.youtubeUrl, "_blank");
-                }
-              }}
+              <IconButton
+                size="small"
+                disabled={!youtubeUrl.trim()}
+                onClick={() => window.open(pianoPiece.youtubeUrl, "_blank")}
               >
-                <YouTube sx={{ color: "#F00" }} />
+                <YouTube sx={{ color: youtubeUrl.trim() ? "#F00" : "" }} />
               </IconButton>
 
-              <IconButton size="small" onClick={() => {
-                if (pianoPiece.sheetMusicUrl) {
-                  window.open(pianoPiece.sheetMusicUrl, "_blank");
-                }
-              }
-              }>
+              <IconButton
+                size="small"
+                disabled={!sheetMusicUrl.trim()}
+                onClick={() => window.open(pianoPiece.sheetMusicUrl, "_blank")
+                }>
                 <PictureAsPdf />
               </IconButton>
             </Box>
@@ -272,6 +270,6 @@ export const PianoPieceTableRow = ({
         itemName={`piano piece: ${name}`}
         deleteFn={() => deletePiece({ id: pianoPiece.id })}
       />
-    </Fragment>
+    </Fragment >
   )
 }

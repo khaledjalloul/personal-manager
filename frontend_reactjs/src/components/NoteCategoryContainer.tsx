@@ -45,7 +45,7 @@ export const NoteCategoryContainer = ({
         }}
       >
         <Typography variant="body1" key={category.id}>
-          {category.name}
+          {category.name} ({notes?.length})
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
@@ -82,7 +82,7 @@ export const NoteCategoryContainer = ({
               key={note.id}
               onClick={() => setSelectedNote(note)}
               sx={{
-                pl: 2,
+                pl: 3,
                 pr: 1,
                 pt: 0.5,
                 pb: 0.5,

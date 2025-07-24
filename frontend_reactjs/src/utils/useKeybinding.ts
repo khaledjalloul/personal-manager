@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
-export const useKeybinding = (key: string, fn: () => void) => {
+export const useKeybinding = (key: string, fn: () => void, with_ctrl: boolean = true) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === key) {
+      if (with_ctrl ? event.ctrlKey && event.key === key : event.key === key) {
         event.preventDefault();
         fn();
       }

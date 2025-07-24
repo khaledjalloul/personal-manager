@@ -49,10 +49,6 @@ export const NavigationBar = () => {
             </IconButton>
           )}
 
-          {/* <Typography variant="h5" color="text.primary" noWrap>
-            Personal Manager
-          </Typography> */}
-
           <Box
             sx={{
               display: {

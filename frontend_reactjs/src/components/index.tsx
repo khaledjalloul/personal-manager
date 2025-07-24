@@ -1,6 +1,7 @@
 export * from "./modals";
 
 export * from "./AuthTextField";
+export * from './ExpensesStatisticsCard'
 export * from "./ExpenseTableRow";
 export * from "./FundTableRow";
 export * from "./HikeCard";
