@@ -8,7 +8,7 @@ const router = Router();
 
 router.get('/categories', async (req: Request, res: Response) => {
   const categories = await prisma.noteCategory.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     orderBy: { name: 'asc' },
   });
   res.json(categories);
@@ -18,7 +18,7 @@ router.post('/categories', async (req: Request, res: Response) => {
   const { name } = req.body;
   const category = await prisma.noteCategory.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       name
     }
   });
@@ -58,7 +58,7 @@ router.get('/', async (req: Request, res: Response) => {
     const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)
     notes = await prisma.note.findMany({
       where: {
-        userId: req.user?.id,
+        userId: req.user.id,
         categoryId: categoryIdSearch,
         OR: [
           { title: { contains: searchText.trim(), mode: "insensitive" } },
@@ -71,7 +71,7 @@ router.get('/', async (req: Request, res: Response) => {
   } else {
     notes = await prisma.note.findMany({
       where: {
-        userId: req.user?.id,
+        userId: req.user.id,
         OR: [
           { title: { contains: searchText.trim(), mode: "insensitive" } },
           { content: { contains: searchText.trim(), mode: "insensitive" } },
@@ -89,7 +89,7 @@ router.post('/', async (req: Request, res: Response) => {
   const newDate = new Date();
   const note = await prisma.note.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       title,
       content,
       category: categoryId !== undefined ? { connect: { id: categoryId } } : undefined,
@@ -107,7 +107,7 @@ router.post('/:id', async (req: Request, res: Response) => {
   const note = await prisma.note.update({
     where: { id: noteId },
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       title,
       content,
       category: categoryId !== undefined

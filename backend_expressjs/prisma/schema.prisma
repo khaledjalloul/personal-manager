@@ -105,12 +105,18 @@ model Note {
   tags         String[]
 }
 
+enum DiaryEntryType {
+  Daily
+  Monthly
+}
+
 model DiaryEntry {
-  id          Int      @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   userId      Int
   date        DateTime
   content     String
   workContent String
+  type        DiaryEntryType
 }
 
 enum VideoGameType {

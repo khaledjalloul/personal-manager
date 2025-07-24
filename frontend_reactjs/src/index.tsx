@@ -31,6 +31,7 @@ const App = () => {
           (err) => {
             if (err?.response?.status === HttpStatusCode.Unauthorized) {
               localStorage.removeItem("userData");
+              setThemeData({ darkMode: false });
               setUserData(null);
             } else throw err;
           }

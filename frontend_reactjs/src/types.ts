@@ -80,11 +80,17 @@ export type Note = {
   tags: string[];
 }
 
+export enum DiaryEntryType {
+  Daily = "Daily",
+  Monthly = "Monthly"
+}
+
 export type DiaryEntry = {
   id: number;
   date: Date;
   content: string;
   workContent: string;
+  type: DiaryEntryType;
 };
 
 export enum VideoGameType {

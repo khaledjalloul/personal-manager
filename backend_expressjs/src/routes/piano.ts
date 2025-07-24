@@ -9,7 +9,7 @@ router.get('/', async (req: Request, res: Response) => {
 
   const pianoPieces = await prisma.pianoPiece.findMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       OR: [
         { name: { contains: searchText.trim(), mode: 'insensitive' } },
         { origin: { contains: searchText.trim(), mode: 'insensitive' } },
@@ -25,7 +25,7 @@ router.post('/', async (req: Request, res: Response) => {
   const data = req.body;
   const newPianoPiece = await prisma.pianoPiece.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       name: data.name,
       composer: data.composer,
       origin: data.origin,

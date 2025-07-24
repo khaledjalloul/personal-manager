@@ -17,7 +17,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Backup
 
 router.get('/backup/:dataType', async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user.id;
   const { dataType } = req.params
 
   const dataTypes = dataType === 'all' ?
@@ -52,7 +52,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { date: 'asc' }
         });
         const user = await prisma.user.findUnique({
-          where: { id: req.user?.id },
+          where: { id: req.user.id },
           select: { fundKeywords: true, wallet: true }
         })
         data.fundKeywords = user?.fundKeywords.sort();
@@ -119,7 +119,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
 // Restore
 
 router.post('/restore/:dataType', upload.single('file'), async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user.id;
   const { dataType } = req.params;
 
   if (!req.file)
@@ -202,7 +202,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           data: inputData.funds.map((f: Fund) => ({ ...f, userId })),
         });
         await prisma.user.update({
-          where: { id: req.user?.id },
+          where: { id: req.user.id },
           data: {
             wallet: inputData.wallet,
             fundKeywords: inputData.fundKeywords
@@ -272,14 +272,14 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
 
 router.get('/me', async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({
-    where: { id: req.user?.id },
+    where: { id: req.user.id },
     omit: { hash: true }
   });
   res.json(user);
 });
 
 router.post('/me', async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user.id;
   const { name, email, fundKeywords } = req.body;
 
   const updatedUser = await prisma.user.update({

@@ -1,12 +1,19 @@
 import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
 import styled from "styled-components";
 import { ExpensesStatisticsCard } from "../../components";
-import { useCreateDiaryEntry, useCreateNote, useDiaryEntries, useEditDiaryEntry, useExpensesStatistics, useNoteCategories } from "../../api";
+import {
+  useCreateDiaryEntry,
+  useCreateNote,
+  useDailyDiaryEntries,
+  useEditDiaryEntry,
+  useExpensesStatistics,
+  useNoteCategories
+} from "../../api";
 import { ChevronRight, Save } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
-import { DiaryEntry } from "../../types";
+import { DiaryEntry, DiaryEntryType } from "../../types";
 import { useCtrlS } from "../../utils";
 
 const NavigationTitle = ({
@@ -50,7 +57,7 @@ export const Home = () => {
 
   const { data: expensesStatistics } = useExpensesStatistics();
   const { data: noteCategories } = useNoteCategories();
-  const { data: diaryEntries } = useDiaryEntries({
+  const { data: diaryEntries } = useDailyDiaryEntries({
     year: today.year(),
     month: today.month(),
     searchText: ""
@@ -71,7 +78,8 @@ export const Home = () => {
       id: -1,
       date: today.toDate(),
       content: "",
-      workContent: ""
+      workContent: "",
+      type: DiaryEntryType.Daily
     };
 
     if (!diaryEntries) return empty;
@@ -91,6 +99,7 @@ export const Home = () => {
         date: todaysDiaryEntry.date,
         content: diaryContent.trim(),
         workContent: diaryWorkContent.trim(),
+        type: DiaryEntryType.Daily,
       })
     else
       editDiaryEntry({
@@ -167,7 +176,7 @@ export const Home = () => {
             }}>
             <NavigationTitle title="Notes" link="/notes" />
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Typography variant="h6">Add New Note</Typography>
 
               <TextField
@@ -280,7 +289,7 @@ export const Home = () => {
             />
           </Box>
 
-          <Typography>Work / Projects</Typography>
+          <Typography mt={2}>Work / Projects</Typography>
 
           <Box sx={{
             flex: 0.5,

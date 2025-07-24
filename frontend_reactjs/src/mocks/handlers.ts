@@ -317,7 +317,7 @@ const noteHandlers = [
 ];
 
 const diaryHandlers = [
-  http.get<PathParams, DefaultBodyType, DiaryEntry[]>('/diary', ({ request }) => {
+  http.get<PathParams, DefaultBodyType, DiaryEntry[]>('/diary/daily', ({ request }) => {
     const url = new URL(request.url)
     var year = url.searchParams.get('year') ?? new Date().getFullYear().toString();
     var month = url.searchParams.get('month') ?? new Date().getMonth().toString();

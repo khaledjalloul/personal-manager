@@ -21,7 +21,7 @@ router.get('/funds', async (req: Request, res: Response) => {
 
   const funds = await prisma.fund.findMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       type: type === 'all' ? undefined : type as ExpenseType,
       source: { contains: searchText.trim(), mode: 'insensitive' }
     },
@@ -34,7 +34,7 @@ router.post('/funds', async (req: Request, res: Response) => {
   const { date, source, amount, type } = req.body;
   const newFund = await prisma.fund.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       date: new Date(date),
       source,
       amount,
@@ -69,7 +69,7 @@ router.delete('/funds/:id', async (req: Request, res: Response) => {
 
 router.get('/categories', async (_req: Request, res: Response) => {
   const categories = await prisma.expensesCategory.findMany({
-    where: { userId: _req.user?.id },
+    where: { userId: _req.user.id },
     orderBy: { name: 'asc' },
   });
   const categoriesWithSortedKeywords = categories.map(c => ({ ...c, keywords: c.keywords.sort() }))
@@ -80,7 +80,7 @@ router.post('/categories', async (req: Request, res: Response) => {
   const { name, color, keywords } = req.body;
   const newCategory = await prisma.expensesCategory.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       name,
       color,
       keywords
@@ -128,13 +128,13 @@ router.get('/monthly', async (req: Request, res: Response) => {
   } = {};
 
   const categoryNames = (await prisma.expensesCategory.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     orderBy: { name: 'asc' },
     select: { name: true },
   })).map(c => c.name);
 
   const expenses = await prisma.expense.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     orderBy: { date: 'desc' },
     include: { category: true },
   });
@@ -190,13 +190,13 @@ router.get('/statistics', async (req: Request, res: Response) => {
   };
 
   const expenses = await prisma.expense.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     orderBy: { date: 'asc' },
     include: { category: true },
   });
 
   const funds = await prisma.fund.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     orderBy: { date: 'asc' },
   });
 
@@ -287,12 +287,12 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
     return res.status(400).send('No file uploaded.');
 
   const expensesCategories = await prisma.expensesCategory.findMany({
-    where: { userId: req.user?.id },
+    where: { userId: req.user.id },
     select: { id: true, keywords: true },
   });
 
   const fundKeywords = (await prisma.user.findUnique({
-    where: { id: req.user?.id },
+    where: { id: req.user.id },
     select: { fundKeywords: true }
   }))?.fundKeywords || [];
 
@@ -337,7 +337,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
             source: entry.bookingText,
             amount,
             type: 'auto',
-            userId: req.user!.id
+            userId: req.user.id
           })
         } else {
           const category = expensesCategories.find(cat =>
@@ -347,7 +347,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
           );
           const amount = entry.debitCHF || -entry.creditCHF || 0;
           expenses.push({
-            userId: req.user!.id,
+            userId: req.user.id,
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
             categoryId: (amount !== 0 && category) ? category.id : null,
             description: entry.bookingText,
@@ -372,13 +372,13 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
 router.delete("/auto", async (req: Request, res: Response) => {
   await prisma.expense.deleteMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       type: "auto"
     }
   });
   await prisma.fund.deleteMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       type: "auto"
     }
   })
@@ -395,7 +395,7 @@ router.get('/', async (req: Request, res: Response) => {
   const unCategorizedxpenses = !filterCategoryIds.includes(-3) ? [] :
     await prisma.expense.findMany({
       where: {
-        userId: req.user?.id,
+        userId: req.user.id,
         type: type === 'all' ? undefined : type as ExpenseType,
         category: null,
         OR: [
@@ -411,7 +411,7 @@ router.get('/', async (req: Request, res: Response) => {
 
   const expenses = await prisma.expense.findMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       type: type === 'all' ? undefined : type as ExpenseType,
       categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
       OR: [
@@ -434,7 +434,7 @@ router.post('/', async (req: Request, res: Response) => {
 
   const newExpense = await prisma.expense.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       date: new Date(data.date),
       category: categoryId ? { connect: { id: categoryId } } : undefined,
       description: data.description,

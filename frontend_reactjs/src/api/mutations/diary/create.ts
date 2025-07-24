@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { DiaryEntry } from "../../../types";
+import { DiaryEntry, DiaryEntryType } from "../../../types";
 
 const ENDPOINT = "diary";
 
@@ -9,6 +9,7 @@ export type CreateDiaryEntryRequestBody = {
   date: Date;
   content: string;
   workContent: string;
+  type: DiaryEntryType;
 };
 
 const mutationFn = async (data: CreateDiaryEntryRequestBody) => {
@@ -26,9 +27,9 @@ export const useCreateDiaryEntry = () => {
 
   return useMutation<DiaryEntry, AxiosError<{ message: string }>, CreateDiaryEntryRequestBody>({
     mutationFn,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       queryClient.refetchQueries({
-        queryKey: [ENDPOINT],
+        queryKey: variables.type === DiaryEntryType.Daily ? ["diary/daily"] : ["diary/monthly"],
       });
     },
   });

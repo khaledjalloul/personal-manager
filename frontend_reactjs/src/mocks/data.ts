@@ -11,6 +11,7 @@ import {
     Note,
     VideoGame,
     VideoGameType,
+    DiaryEntryType,
 } from '../types';
 
 
@@ -232,19 +233,22 @@ export const diaryEntries: DiaryEntry[] = [
         id: 1,
         date: new Date("2025-07-01"),
         content: 'Had a productive day at work.',
-        workContent: 'Completed the project presentation.'
+        workContent: 'Completed the project presentation.',
+        type: DiaryEntryType.Daily
     },
     {
         id: 2,
         date: new Date("2025-07-02"),
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        workContent: 'Duis aute irure dolor in reprehenderit in voluptate'
+        workContent: 'Duis aute irure dolor in reprehenderit in voluptate',
+        type: DiaryEntryType.Daily
     },
     {
         id: 3,
         date: new Date("2025-06-03"),
         content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
-        workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.'
+        workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.',
+        type: DiaryEntryType.Daily
     }
 ];
 

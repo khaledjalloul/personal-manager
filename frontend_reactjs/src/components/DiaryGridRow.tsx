@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { DiaryEntry } from "../types";
+import { DiaryEntry, DiaryEntryType } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Clear, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
@@ -23,6 +23,8 @@ export const DiaryGridRow = ({
   const [content, setContent] = useState(entry.content);
   const [workContent, setWorkContent] = useState(entry.workContent);
 
+  const isDaily = entry.type === DiaryEntryType.Daily;
+
   const save = () => {
     if (!isEditing) return;
 
@@ -31,6 +33,7 @@ export const DiaryGridRow = ({
         date: entry.date,
         content: content.trim(),
         workContent: workContent.trim(),
+        type: entry.type,
       })
     else
       editEntry({
@@ -62,7 +65,11 @@ export const DiaryGridRow = ({
           justifyContent: 'space-between',
         }}>
           <Typography variant="body1">
-            {dayjs(entry.date).format(isSearching ? "DD.MM.YYYY" : "DD dddd")}
+            {dayjs(entry.date).format(
+              isDaily ?
+                (isSearching ? "DD.MM.YYYY" : "DD dddd") :
+                "MMMM"
+            )}
           </Typography>
 
           {!isEditing ? (

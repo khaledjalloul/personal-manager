@@ -2,18 +2,18 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { DiaryEntry } from "../../../types";
 import client from "../../client";
 
-const ENDPOINT = "diary";
+const ENDPOINT = "diary/daily";
 
-export type GetDiaryEntriesRequestParams = {
+export type GetDailyDiaryEntriesRequestParams = {
   year: number;
   month: number;
   searchText: string;
 };
 
-const queryFn = (params: GetDiaryEntriesRequestParams) => async () => {
+const queryFn = (params: GetDailyDiaryEntriesRequestParams) => async () => {
   const queryParams = Object.keys(params)
-    .filter((key) => params[key as keyof GetDiaryEntriesRequestParams] !== undefined)
-    .map((key) => `${key}=${params[key as keyof GetDiaryEntriesRequestParams]}`)
+    .filter((key) => params[key as keyof GetDailyDiaryEntriesRequestParams] !== undefined)
+    .map((key) => `${key}=${params[key as keyof GetDailyDiaryEntriesRequestParams]}`)
     .join("&");
 
   return await client
@@ -25,7 +25,7 @@ const queryFn = (params: GetDiaryEntriesRequestParams) => async () => {
     });
 };
 
-export const useDiaryEntries = (params: GetDiaryEntriesRequestParams) =>
+export const useDailyDiaryEntries = (params: GetDailyDiaryEntriesRequestParams) =>
   useQuery<DiaryEntry[]>({
     queryKey: [ENDPOINT, JSON.stringify(params)],
     queryFn: queryFn(params),

@@ -9,7 +9,7 @@ router.get('/', async (req: Request, res: Response) => {
 
   const videoGames = await prisma.videoGame.findMany({
     where: {
-      userId: req.user?.id,
+      userId: req.user.id,
       OR: [
         { name: { contains: searchText.trim(), mode: 'insensitive' } },
         { platform: { contains: searchText.trim(), mode: 'insensitive' } },
@@ -24,7 +24,7 @@ router.post('/', async (req: Request, res: Response) => {
   const data = req.body;
   const newVideoGame = await prisma.videoGame.create({
     data: {
-      userId: req.user!.id,
+      userId: req.user.id,
       name: data.name,
       platform: data.platform,
       type: data.type,
