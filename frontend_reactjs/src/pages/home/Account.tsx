@@ -49,7 +49,6 @@ const RestoreButton = ({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   const text = dataType === 'all' ? 'All Data' : "";
-  const formData = new FormData()
 
   return (
     <Fragment>

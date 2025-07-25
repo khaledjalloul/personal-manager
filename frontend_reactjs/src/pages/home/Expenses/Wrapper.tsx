@@ -39,11 +39,9 @@ export const ExpensesWrapper = () => {
         }}
       >
         <NavLink to="/expenses">
-          {({ }) => (
-            <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
-              Statistics
-            </Button>
-          )}
+          <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
+            Statistics
+          </Button>
         </NavLink>
 
         <NavLink to="/expenses/monthly">

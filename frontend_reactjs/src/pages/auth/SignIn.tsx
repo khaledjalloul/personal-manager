@@ -1,5 +1,5 @@
-import { Box, Button, CircularProgress, Link, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Box, Button, Link, Typography } from "@mui/material";
+import { Dispatch, SetStateAction } from "react";
 import { AuthSection } from "./Auth";
 import { AuthTextField } from "../../components";
 import styled from "styled-components";

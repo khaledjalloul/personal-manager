@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, } from "@mui/material";
+import { Box, Typography, } from "@mui/material";
 import { useMemo } from "react";
 import { useDailyDiaryEntries } from "../../../api";
 import { DiaryGridRow } from "../../../components";

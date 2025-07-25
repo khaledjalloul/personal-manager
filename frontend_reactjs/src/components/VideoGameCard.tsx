@@ -298,11 +298,12 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CreditCard sx={{ color: "text.primary" }} />
+            {(extraPurchases.trim() || isEditing) && <CreditCard sx={{ color: "text.primary" }} />}
             {!isEditing ? (
-              <Typography variant="body1">
+              extraPurchases.trim() && (<Typography variant="body1">
                 {extraPurchases}
               </Typography>
+              )
             ) : (
               <TextField
                 variant="standard"

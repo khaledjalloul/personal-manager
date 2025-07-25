@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Switch,
+  TextField,
+  Typography
+} from "@mui/material";
 import styled from "styled-components";
 import { useVideoGames } from "../../api";
 import { VideoGameCard } from "../../components";
@@ -23,9 +31,13 @@ export const VideoGames = () => {
 
   const [searchText, setSearchText] = useState("");
   const [isAddingGame, setIsAddingGame] = useState(false);
+  const [sortByDate, setSortByDate] = useState(false);
+  const [showUncompleted, setShowUncompleted] = useState(false);
 
   const { data: games } = useVideoGames({
     searchText: searchText.trim(),
+    sortByDate,
+    showUncompleted
   });
 
   return (
@@ -35,17 +47,50 @@ export const VideoGames = () => {
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: { xs: 'stretch', md: 'center' },
-          gap: { xs: 2, md: 0 },
+          gap: 2,
           padding: '0 32px 0 32px'
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h5">
-            Video Games ({games?.length || 0})
-          </Typography>
-          <IconButton onClick={() => setIsAddingGame(true)}>
-            <Add />
-          </IconButton>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          flexGrow: 1,
+          gap: { xs: 2, md: 0 }
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="h5">
+              Video Games ({games?.length || 0})
+            </Typography>
+            <IconButton onClick={() => setIsAddingGame(true)}>
+              <Add />
+            </IconButton>
+          </Box>
+
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            ml: 'auto',
+            gap: 2
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography>Sort by Date</Typography>
+              <Switch
+                checked={sortByDate}
+                onChange={(e) => setSortByDate(e.target.checked)}
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography>Not Played</Typography>
+              <Switch
+                checked={showUncompleted}
+                onChange={(e) => setShowUncompleted(e.target.checked)}
+              />
+            </Box>
+          </Box>
+
         </Box>
 
         <TextField

@@ -6,6 +6,8 @@ const ENDPOINT = "video-games";
 
 export type GetVideoGamesRequestParams = {
   searchText: string;
+  sortByDate: boolean;
+  showUncompleted: boolean;
 };
 
 const queryFn = (params: GetVideoGamesRequestParams) => async () => {

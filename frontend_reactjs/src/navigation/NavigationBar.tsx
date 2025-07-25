@@ -2,7 +2,6 @@ import { AccountCircle, ArrowBack } from "@mui/icons-material";
 import {
   AppBar,
   Box,
-  FormControlLabel,
   IconButton,
   Link,
   Menu,
