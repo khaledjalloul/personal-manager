@@ -10,16 +10,14 @@ import {
   useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Clear,
   CreateNewFolder,
   Delete,
   Edit,
   EditOff,
-  Save,
-  Visibility,
-  VisibilityOff
+  Save
 } from "@mui/icons-material";
 import { useDeleteNote, useEditNote, useNoteCategories, useNotes } from "../../api";
 import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
@@ -36,8 +34,9 @@ export const Notes = () => {
 
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
-  const [editorEnabled, setEditorEnabled] = useState(true);
-  const [previewEnabled, setPreviewEnabled] = useState(true);
+  const [editorEnabled, setEditorEnabled] = useState(false);
+  const [editorScrollValue, setEditorScrollValue] = useState(0);
+  const [previewScrollValue, setPreviewScrollValue] = useState(0);
   const [selectedNote, setSelectedNote] = useState<Note | undefined>();
   const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
   const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory | undefined>();
@@ -48,6 +47,9 @@ export const Notes = () => {
   const { data: noteCategories } = useNoteCategories();
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
+
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const save = () => {
     if (!selectedNote || isCategoriesModalOpen || !selectedNoteTitle.trim()) return;
@@ -72,21 +74,29 @@ export const Notes = () => {
       setSelectedNoteCategory(undefined);
       setSelectedNoteContent("");
     }
-  }, [JSON.stringify(selectedNote)]);
+
+    setEditorScrollValue(0);
+    setPreviewScrollValue(0);
+    if (editorRef.current)
+      editorRef.current.scrollTop = 0;
+    if (previewRef.current)
+      previewRef.current.scrollTop = 0;
+  }, [selectedNote?.id]);
 
   useCtrlS(save);
-  useKeybinding("e", () => {
-    if (editorEnabled && !previewEnabled) return;
-    setEditorEnabled(!editorEnabled);
-  });
-  useKeybinding("q", () => {
-    if (previewEnabled && !editorEnabled) return;
-    setPreviewEnabled(!previewEnabled)
-  });
-  useKeybinding("Delete", () => {
+  useKeybinding("e", () => setEditorEnabled(!editorEnabled));
+  useKeybinding("d", () => {
     if (selectedNote)
       setConfirmDeleteOpen(true);
   });
+
+  useEffect(() => {
+    if (editorEnabled && editorRef.current)
+      editorRef.current.scrollTop = editorScrollValue;
+
+    if (!editorEnabled && previewRef.current)
+      previewRef.current.scrollTop = previewScrollValue;
+  }, [editorEnabled]);
 
   useEffect(() => {
     if (notes && userData && userData.lastOpenedNoteId) {
@@ -99,15 +109,15 @@ export const Notes = () => {
   useEffect(() => {
     if (deleteSuccess && selectedNote)
       setSelectedNote(undefined);
-  }, [deleteSuccess])
+  }, [deleteSuccess]);
 
   return (
     <Wrapper>
       <Header
         sx={{
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
-          gap: { xs: 2, md: 1 }
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: { xs: 2, sm: 1 }
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -118,20 +128,15 @@ export const Notes = () => {
           <IconButton
             sx={{ ml: "auto" }}
             onClick={() => setEditorEnabled(!editorEnabled)}
-            disabled={editorEnabled && !previewEnabled}>
+          >
             {editorEnabled ? <EditOff /> : <Edit />}
-          </IconButton>
-          <IconButton
-            onClick={() => setPreviewEnabled(!previewEnabled)}
-            disabled={previewEnabled && !editorEnabled}>
-            {previewEnabled ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </Box>
 
         <TextField
           sx={{
-            ml: { xs: 0, md: 1 },
-            minWidth: { xs: 0, md: "35vw" },
+            ml: { xs: 0, sm: 1 },
+            minWidth: { xs: 0, sm: "35vw" },
           }}
           label="Search notes"
           placeholder="Title, content"
@@ -160,14 +165,14 @@ export const Notes = () => {
 
       <Grid
         container
-        spacing={{ xs: 4, md: 2 }}
+        spacing={{ xs: 4, sm: 2 }}
         sx={{
           height: 'calc(100% - 80px)',
           p: '32px',
           pt: 0
         }}
       >
-        <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
+        <Grid size={{ xs: 12, sm: 3, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -205,81 +210,24 @@ export const Notes = () => {
           </Box>
         </Grid>
 
-        {editorEnabled && (
-          <Grid
-            size={{ xs: 12, lg: previewEnabled ? 5 : 10 }}
-            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh' }}
-          >
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              alignItems: { xs: 'stretch', md: 'center' },
-              mb: { xs: 3, md: 1 },
-              gap: { xs: 2, md: 1 }
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h6">
-                  Editor:
-                </Typography>
-
-                <IconButton
-                  sx={{ ml: 'auto', display: { xs: 'flex', md: 'none' } }}
-                  color="success"
-                  disabled={!selectedNote || !selectedNoteTitle.trim()}
-                  loading={editNoteLoading}
-                  onClick={save}
-                >
-                  <Save />
-                </IconButton>
-
-                <IconButton
-                  sx={{ display: { xs: 'flex', md: 'none' } }}
-                  color="error"
-                  disabled={!selectedNote}
-                  loading={deleteNoteLoading}
-                  onClick={() => {
-                    if (selectedNote) {
-                      setConfirmDeleteOpen(true);
-                    }
-                  }}
-                >
-                  <Delete />
-                </IconButton>
-
-              </Box>
-
-              <TextField
-                variant="standard"
-                size="small"
-                placeholder="Note Title"
-                sx={{ flexGrow: 1 }}
-                value={selectedNoteTitle}
-                onChange={(e) => setSelectedNoteTitle(e.target.value)}
-                disabled={!selectedNote}
-              />
-
-              <Select
-                variant="standard"
-                size="small"
-                sx={{ minWidth: 150 }}
-                value={selectedNoteCategory?.id ?? -1}
-                onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
-                disabled={!selectedNote}
-              >
-                {!selectedNoteCategory && (
-                  <MenuItem value={-1} disabled>
-                    {selectedNote ? <em>Uncategorized</em> : ""}
-                  </MenuItem>
-                )}
-                {noteCategories?.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
+        <Grid
+          size={{ xs: 12, sm: 9, lg: 10 }}
+          sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh', height: '100%' }}
+        >
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'stretch', sm: 'center' },
+            mb: { xs: 3, sm: 1 },
+            gap: { xs: 2, sm: 1 }
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h6">
+                {editorEnabled ? "Editor" : "Preview"}:
+              </Typography>
 
               <IconButton
-                sx={{ ml: 'auto', display: { xs: 'none', md: 'flex' } }}
+                sx={{ ml: 'auto', display: { xs: 'flex', sm: 'none' } }}
                 color="success"
                 disabled={!selectedNote || !selectedNoteTitle.trim()}
                 loading={editNoteLoading}
@@ -289,7 +237,7 @@ export const Notes = () => {
               </IconButton>
 
               <IconButton
-                sx={{ display: { xs: 'none', md: 'flex' } }}
+                sx={{ display: { xs: 'flex', sm: 'none' } }}
                 color="error"
                 disabled={!selectedNote}
                 loading={deleteNoteLoading}
@@ -301,8 +249,65 @@ export const Notes = () => {
               >
                 <Delete />
               </IconButton>
+
             </Box>
 
+            <TextField
+              variant="standard"
+              size="small"
+              placeholder="Note Title"
+              sx={{ flexGrow: 1 }}
+              value={selectedNoteTitle}
+              onChange={(e) => setSelectedNoteTitle(e.target.value)}
+              disabled={!selectedNote}
+            />
+
+            <Select
+              variant="standard"
+              size="small"
+              sx={{ minWidth: 150 }}
+              value={selectedNoteCategory?.id ?? -1}
+              onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
+              disabled={!selectedNote}
+            >
+              {!selectedNoteCategory && (
+                <MenuItem value={-1} disabled>
+                  {selectedNote ? <em>Uncategorized</em> : ""}
+                </MenuItem>
+              )}
+              {noteCategories?.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <IconButton
+              sx={{ ml: 'auto', display: { xs: 'none', sm: 'flex' } }}
+              color="success"
+              disabled={!selectedNote || !selectedNoteTitle.trim()}
+              loading={editNoteLoading}
+              onClick={save}
+            >
+              <Save />
+            </IconButton>
+
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'flex' } }}
+              color="error"
+              disabled={!selectedNote}
+              loading={deleteNoteLoading}
+              onClick={() => {
+                if (selectedNote) {
+                  setConfirmDeleteOpen(true);
+                }
+              }}
+            >
+              <Delete />
+            </IconButton>
+          </Box>
+
+          {editorEnabled ? (
             <Box sx={{
               flexGrow: 1,
               borderRadius: '8px',
@@ -323,9 +328,11 @@ export const Notes = () => {
 
               <Box sx={{ flexGrow: 1 }}>
                 <NoteEditor
+                  ref={editorRef}
                   value={selectedNoteContent}
                   onChange={(e) => setSelectedNoteContent(e.target.value)}
                   disabled={!selectedNote}
+                  onScroll={(e) => setEditorScrollValue(e.currentTarget.scrollTop)}
                   style={{
                     backgroundColor: palette.background.default,
                     color: palette.text.primary,
@@ -333,32 +340,29 @@ export const Notes = () => {
                 />
               </Box>
             </Box>
-          </Grid>
-        )}
-
-        {previewEnabled && (
-          <Grid
-            size={{ xs: 12, lg: editorEnabled ? 5 : 10 }}
-            sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh', height: '100%' }}
-          >
-            <Typography variant="h6" mb={1.6}>
-              Markdown Preview
-            </Typography>
-
-            <MarkdownPreview
-              source={selectedNoteContent}
-              style={{
+          ) : (
+            <Box
+              ref={previewRef}
+              sx={{
                 flexGrow: 1,
                 borderRadius: '8px',
                 border: `solid 1px ${palette.text.primary}`,
-                backgroundColor: palette.background.default,
-                color: palette.text.primary,
-                padding: '16px',
                 overflowY: 'auto',
               }}
-            />
-          </Grid>
-        )}
+              onScroll={(test) => setPreviewScrollValue(test.currentTarget.scrollTop)}
+            >
+              <MarkdownPreview
+                source={selectedNoteContent}
+                style={{
+                  borderRadius: '8px',
+                  backgroundColor: palette.background.default,
+                  color: palette.text.primary,
+                  padding: '16px',
+                }}
+              />
+            </Box>
+          )}
+        </Grid>
       </Grid>
 
       <ManageNoteCategoriesModal

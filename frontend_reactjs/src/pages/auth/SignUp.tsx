@@ -30,8 +30,8 @@ export const SignUp = ({
 
     if (valid)
       signUp({
-        name: data.get("name") as string,
-        email: data.get("email") as string,
+        name: (data.get("name") as string).trim(),
+        email: (data.get("email") as string).trim(),
         password: data.get("password") as string,
       });
   };

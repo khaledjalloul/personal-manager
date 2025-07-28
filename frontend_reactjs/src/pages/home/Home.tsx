@@ -141,7 +141,7 @@ export const Home = () => {
   return (
     <Wrapper>
       <Grid container spacing={4} sx={{ flexGrow: 1 }}>
-        <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
           <Box
             sx={{
@@ -153,7 +153,7 @@ export const Home = () => {
             <NavigationTitle title="Expenses" link="/expenses" />
 
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+              <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
                 <ExpensesStatisticsCard
                   title="Total Spent This Month"
                   value={`${expensesStatistics?.totalExpensesThisMonth.toFixed(2)} CHF`}
@@ -161,7 +161,7 @@ export const Home = () => {
                 />
               </Grid>
 
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+              <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
                 <ExpensesStatisticsCard
                   title="Average Expenses Per Month"
                   value={`${expensesStatistics?.monthlyAverageExpenses.toFixed(2)} CHF`}
@@ -182,15 +182,15 @@ export const Home = () => {
 
             <Box sx={{
               display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              alignItems: { xs: 'stretch', md: 'center' },
+              flexDirection: { xs: 'column', lg: 'row' },
+              alignItems: { xs: 'stretch', lg: 'center' },
               gap: 3
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="h6">Add New Note</Typography>
                 <IconButton
                   sx={{
-                    display: { xs: 'block', md: 'none' },
+                    display: { xs: 'block', lg: 'none' },
                     color: 'success.main',
                     ml: 'auto'
                   }}
@@ -216,8 +216,8 @@ export const Home = () => {
                   variant="standard"
                   size="small"
                   sx={{
-                    minWidth: { xs: 0, md: 150 },
-                    ml: { xs: 0, md: 2 },
+                    minWidth: { xs: 0, lg: 150 },
+                    ml: { xs: 0, lg: 2 },
                   }}
                   value={selectedNoteCategory.id}
                   onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
@@ -232,7 +232,7 @@ export const Home = () => {
 
               <IconButton
                 sx={{
-                  display: { xs: 'none', md: 'block' },
+                  display: { xs: 'none', lg: 'block' },
                   color: 'success.main',
                   ml: 'auto'
                 }}
@@ -248,7 +248,7 @@ export const Home = () => {
               flexGrow: 1,
               borderRadius: '8px',
               backgroundColor: 'primary.light',
-              mt: { xs: 1, md: 0 }
+              mt: { xs: 1, lg: 0 }
             }}>
               <textarea
                 value={noteContent}
@@ -263,8 +263,7 @@ export const Home = () => {
                   border: 'none',
                   backgroundColor: palette.primary.light,
                   color: palette.text.primary,
-                  borderTopLeftRadius: '8px',
-                  borderBottomLeftRadius: '8px',
+                  borderRadius: '8px'
                 }}
                 onChange={(e) => setNoteContent(e.target.value)}
               />
@@ -274,7 +273,7 @@ export const Home = () => {
         </Grid>
 
         <Grid
-          size={{ xs: 12, md: 4 }}
+          size={{ xs: 12, lg: 4 }}
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -283,7 +282,7 @@ export const Home = () => {
         >
           <NavigationTitle title="Diary" link="/diary" />
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography variant="h6">Today {today.format('DD.MM.YYYY')}</Typography>
+            <Typography variant="h6">Today: {today.format('dddd, MMMM DD')}</Typography>
             <IconButton
               sx={{ color: 'success.main' }}
               loading={createDiaryLoading || editDiaryLoading}

@@ -44,9 +44,9 @@ export const Piano = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
-          gap: { xs: 2, md: 0 }
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: { xs: 2, sm: 0 }
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -60,8 +60,8 @@ export const Piano = () => {
 
         <TextField
           sx={{
-            minWidth: { xs: 0, md: "35vw" },
-            ml: { xs: 0, md: "auto" },
+            minWidth: { xs: 0, sm: "35vw" },
+            ml: { xs: 0, sm: "auto" },
           }}
           label="Search piano pieces"
           placeholder="Name, origin, composer"

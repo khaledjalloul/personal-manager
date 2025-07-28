@@ -91,6 +91,15 @@ export const Theme = ({
         },
       },
     },
+    breakpoints: {
+      values: {
+        xs: 0, // Default: 0px
+        sm: 750, // Default: 600px
+        md: 960, // Default: 960px
+        lg: 1100, // Default: 1200px
+        xl: 1536, // Default: 1536px
+      }
+    }
   });
 
   return (

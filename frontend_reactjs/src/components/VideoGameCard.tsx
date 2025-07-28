@@ -300,14 +300,16 @@ export const VideoGameCard = ({
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {(extraPurchases.trim() || isEditing) && <CreditCard sx={{ color: "text.primary" }} />}
             {!isEditing ? (
-              extraPurchases.trim() && (<Typography variant="body1">
-                {extraPurchases}
-              </Typography>
+              extraPurchases.trim() && (
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {extraPurchases}
+                </Typography>
               )
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Extra Purchases"
+                multiline
                 value={extraPurchases}
                 onChange={(e) => setExtraPurchases(e.target.value)}
               />

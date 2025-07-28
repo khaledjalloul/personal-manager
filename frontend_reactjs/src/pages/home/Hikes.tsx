@@ -82,7 +82,7 @@ export const Hikes = () => {
           {isAddingHike && (
             <Grid
               key={emptyHike.id}
-              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
               <HikeCard hike={emptyHike}
@@ -94,7 +94,7 @@ export const Hikes = () => {
           {hikes?.map((hike) => (
             <Grid
               key={hike.id}
-              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
               <HikeCard hike={hike}

@@ -7,8 +7,8 @@ import dayjs from 'dayjs';
 const router = Router();
 
 router.get('/daily', async (req: Request, res: Response) => {
-  const year = parseInt(req.query.year as string) || new Date().getFullYear();
-  const month = parseInt(req.query.month as string) || new Date().getMonth();
+  const year = parseInt(req.query.year as string) ?? new Date().getFullYear();
+  const month = parseInt(req.query.month as string) ?? new Date().getMonth();
   const searchText = (req.query.searchText as string) ?? "";
 
   const entries = await prisma.diaryEntry.findMany({
@@ -36,7 +36,7 @@ router.get('/daily', async (req: Request, res: Response) => {
 });
 
 router.get('/monthly', async (req: Request, res: Response) => {
-  const year = parseInt(req.query.year as string) || new Date().getFullYear();
+  const year = parseInt(req.query.year as string) ?? new Date().getFullYear();
 
   const allDates = await prisma.diaryEntry.findMany({
     where: {

@@ -33,45 +33,56 @@ export const ExpensesWrapper = () => {
     <Wrapper>
       <Header
         sx={{
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
-          gap: { xs: 2, md: 1 }
+          flexDirection: { xs: 'column', lg: 'row' },
+          alignItems: { xs: 'stretch', lg: 'center' },
+          gap: { xs: 2, lg: 1 }
         }}
       >
-        <NavLink to="/expenses">
-          <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
-            Statistics
-          </Button>
-        </NavLink>
 
-        <NavLink to="/expenses/monthly">
-          {({ isActive }) => (
-            <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"} fullWidth>
-              Monthly
+        <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          flexGrow: 1,
+          gap: { xs: 2, sm: 1 }
+        }}
+        >
+          <NavLink to="/expenses">
+            <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
+              Statistics
             </Button>
-          )}
-        </NavLink>
+          </NavLink>
 
-        <NavLink to="/expenses/details">
-          {({ isActive }) => (
-            <Button startIcon={<ViewList />} variant={isActive ? "contained" : "outlined"} fullWidth>
-              Details
-            </Button>
-          )}
-        </NavLink>
+          <NavLink to="/expenses/monthly">
+            {({ isActive }) => (
+              <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"} fullWidth>
+                Monthly
+              </Button>
+            )}
+          </NavLink>
 
-        <NavLink to="/expenses/manage">
-          {({ isActive }) => (
-            <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"} fullWidth>
-              Manage
-            </Button>
-          )}
-        </NavLink>
+          <NavLink to="/expenses/details">
+            {({ isActive }) => (
+              <Button startIcon={<ViewList />} variant={isActive ? "contained" : "outlined"} fullWidth>
+                Details
+              </Button>
+            )}
+          </NavLink>
+
+          <NavLink to="/expenses/manage">
+            {({ isActive }) => (
+              <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"} fullWidth>
+                Manage
+              </Button>
+            )}
+          </NavLink>
+        </Box>
 
         <Select
           value={filterCategoryIds}
           sx={{
-            ml: { xs: 0, md: "auto" },
+            ml: { xs: 0, lg: "auto" },
             display: location.pathname === "/expenses/details" ? "block" : "none"
           }}
           multiple
@@ -111,10 +122,10 @@ export const ExpensesWrapper = () => {
 
         <TextField
           sx={{
-            ml: { xs: 0, md: location.pathname !== "/expenses/details" ? "auto" : 0 },
-            minWidth: { xs: 0, md: location.pathname !== "/expenses" ? "35vw" : 0 },
-            opacity: { xs: 1, md: location.pathname !== "/expenses" ? 1 : 0 },
-            display: { xs: location.pathname !== "/expenses" ? 'flex' : 'none', md: 'flex' }
+            ml: { xs: 0, lg: location.pathname !== "/expenses/details" ? "auto" : 0 },
+            minWidth: { xs: 0, lg: location.pathname !== "/expenses" ? "35vw" : 0 },
+            opacity: { xs: 1, lg: location.pathname !== "/expenses" ? 1 : 0 },
+            display: { xs: location.pathname !== "/expenses" ? 'flex' : 'none', lg: 'flex' }
           }}
           disabled={location.pathname === "/expenses"}
           label="Search expenses"

@@ -18,7 +18,7 @@ export const SignIn = ({
 
     const data = new FormData(event.currentTarget);
     signIn({
-      email: data.get("email") as string,
+      email: (data.get("email") as string).trim(),
       password: data.get("password") as string,
     });
   };

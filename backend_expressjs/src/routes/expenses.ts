@@ -118,7 +118,7 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
 // Statistics
 
 router.get('/monthly', async (req: Request, res: Response) => {
-  const searchText = (req.query.searchText as string || '').trim();
+  const searchText = (req.query.searchText as string ?? '').trim();
 
   const monthlyExpenses: {
     [month: string]: {
@@ -389,8 +389,8 @@ router.delete("/auto", async (req: Request, res: Response) => {
 
 router.get('/', async (req: Request, res: Response) => {
   const { type } = req.query;
-  const searchText = (req.query.searchText as string || '').trim();
-  const filterCategoryIds = (req.query.filterCategoryIds as string || "-1").split(",").map(Number);
+  const searchText = (req.query.searchText as string ?? '').trim();
+  const filterCategoryIds = (req.query.filterCategoryIds as string ?? "-1").split(",").map(Number);
 
   const unCategorizedxpenses = !filterCategoryIds.includes(-3) ? [] :
     await prisma.expense.findMany({

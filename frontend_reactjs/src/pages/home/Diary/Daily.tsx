@@ -44,6 +44,7 @@ export const DailyDiary = () => {
     <Box sx={{
       overflowY: 'auto',
       p: '32px',
+      pr: '24px', // Adjusting for scrollbar
       pt: 0,
       display: 'flex',
       flexDirection: 'column',

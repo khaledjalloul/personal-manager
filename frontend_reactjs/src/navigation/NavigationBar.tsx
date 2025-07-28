@@ -52,7 +52,7 @@ export const NavigationBar = () => {
             sx={{
               display: {
                 xs: "none",
-                md: "flex",
+                sm: "flex",
               },
               ml: "auto",
               alignItems: "center",
@@ -106,7 +106,7 @@ export const NavigationBar = () => {
             sx={{
               display: {
                 xs: "flex",
-                md: "none",
+                sm: "none",
               },
               ml: "auto",
             }}
@@ -170,6 +170,7 @@ export const NavigationBar = () => {
 
 const StyledLink = styled(Link) <{ $path: string; $currentPath: string }>`
   text-decoration: none;
+  white-space: nowrap;
   color: ${({ theme, $path, $currentPath }) => {
     return (
       $path === "/"

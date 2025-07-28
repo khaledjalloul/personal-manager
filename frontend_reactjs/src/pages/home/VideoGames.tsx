@@ -45,18 +45,18 @@ export const VideoGames = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
+          flexDirection: { xs: 'column', lg: 'row' },
+          alignItems: { xs: 'stretch', lg: 'center' },
           gap: 2,
           padding: '0 32px 0 32px'
         }}
       >
         <Box sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
           flexGrow: 1,
-          gap: { xs: 2, md: 0 }
+          gap: { xs: 2, sm: 0 }
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="h5">
@@ -95,8 +95,8 @@ export const VideoGames = () => {
 
         <TextField
           sx={{
-            minWidth: { xs: 0, md: "35vw" },
-            ml: { xs: 0, md: "auto" },
+            minWidth: { xs: 0, lg: "35vw" },
+            ml: { xs: 0, lg: "auto" },
           }}
           label="Search video games"
           placeholder="Name, platform"
@@ -126,7 +126,7 @@ export const VideoGames = () => {
           {isAddingGame && (
             <Grid
               key={emptyGame.id}
-              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
               <VideoGameCard
@@ -139,7 +139,7 @@ export const VideoGames = () => {
           {games?.map((game) => (
             <Grid
               key={game.id}
-              size={{ xs: 12, md: 6, lg: 4, xl: 3 }}
+              size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
               <VideoGameCard

@@ -65,13 +65,27 @@ export const DiaryGridRow = ({
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <Typography variant="body1">
-            {dayjs(entry.date).format(
-              isDaily ?
-                (isSearching ? "DD.MM.YYYY" : "DD dddd") :
-                "MMMM"
+          <Box sx={{
+            display: 'flex',
+            flexDirection: {xs: 'row', md: 'column'},
+            alignItems: {xs: 'center', md: 'flex-start'},
+            gap: { xs: 1, md: 0 }
+          }}
+          >
+            <Typography sx={{ fontSize: { xs: 14, lg: 16 } }}>
+              {dayjs(entry.date).format(
+                isDaily ?
+                  (isSearching ? "DD.MM.YYYY" : "dddd") :
+                  "MMMM"
+              )}
+            </Typography>
+            {(isDaily && !isSearching) && (
+              <Typography variant="h5">
+                {dayjs(entry.date).format("DD")}
+              </Typography>
             )}
-          </Typography>
+
+          </Box>
 
           {!isEditing ? (
             <IconButton
@@ -104,12 +118,13 @@ export const DiaryGridRow = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, md: ((isEditing || workContent.trim()) ? 7 : 10) }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopLeftRadius: '8px',
-          borderBottomLeftRadius: { xs: 0, md: '8px' },
-          borderTopRightRadius: { xs: '8px', md: 0 },
+          borderBottomLeftRadius: { xs: (isEditing || workContent.trim()) ? 0 : '8px', md: '8px' },
+          borderTopRightRadius: { xs: '8px', md: (isEditing || workContent.trim()) ? 0 : '8px' },
+          borderBottomRightRadius: (isEditing || workContent.trim()) ? 0 : '8px',
           backgroundColor: 'primary.light',
           p: 2,
           borderRight: { xs: 'none', md: `solid 1px ${palette.action.hover}` },
@@ -141,7 +156,13 @@ export const DiaryGridRow = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', overflow: 'hidden' }}>
+      <Grid
+        size={{ xs: 12, md: 3 }}
+        sx={{
+          display: (isEditing || workContent.trim()) ? 'flex' : 'none',
+          overflow: 'hidden'
+        }}
+      >
         <Box sx={{
           flexGrow: 1,
           borderTopRightRadius: { xs: 0, md: '8px' },

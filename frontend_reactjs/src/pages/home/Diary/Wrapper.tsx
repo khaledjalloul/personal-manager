@@ -29,79 +29,90 @@ export const DiaryWrapper = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
-          gap: { xs: 2, md: 1 },
+          flexDirection: { xs: 'column', lg: 'row' },
+          alignItems: { xs: 'stretch', lg: 'center' },
+          gap: 2,
           padding: "0 32px 0 32px"
         }}
       >
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton
-            disabled={Boolean(searchText.trim())}
-            onClick={() => setSelectedDate(
-              isDaily ? selectedDate.subtract(1, 'month') : selectedDate.subtract(1, 'year')
-            )}
-          >
-            <ArrowLeft />
-          </IconButton>
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label={isDaily ? "Month" : "Year"}
-              views={isDaily ? ["year", "month"] : ["year"]}
-              openTo={isDaily ? "month" : "year"}
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
-              enableAccessibleFieldDOMStructure={false}
-              format={isDaily ? "MMMM YYYY" : "YYYY"}
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: { xs: 2, sm: 1 },
+          flexGrow: 1,
+        }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton
               disabled={Boolean(searchText.trim())}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  placeholder: "Date",
-                }
-              }}
-              sx={{ flexGrow: 1 }}
-            />
-          </LocalizationProvider>
+              onClick={() => setSelectedDate(
+                isDaily ? selectedDate.subtract(1, 'month') : selectedDate.subtract(1, 'year')
+              )}
+            >
+              <ArrowLeft />
+            </IconButton>
 
-          <IconButton
-            disabled={Boolean(searchText.trim())}
-            onClick={() => setSelectedDate(
-              isDaily ? selectedDate.add(1, 'month') : selectedDate.add(1, 'year')
-            )}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label={isDaily ? "Month" : "Year"}
+                views={isDaily ? ["year", "month"] : ["year"]}
+                openTo={isDaily ? "month" : "year"}
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
+                enableAccessibleFieldDOMStructure={false}
+                format={isDaily ? "MMMM YYYY" : "YYYY"}
+                disabled={Boolean(searchText.trim())}
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    placeholder: "Date",
+                  }
+                }}
+                sx={{ flexGrow: 1 }}
+              />
+            </LocalizationProvider>
+
+            <IconButton
+              disabled={Boolean(searchText.trim())}
+              onClick={() => setSelectedDate(
+                isDaily ? selectedDate.add(1, 'month') : selectedDate.add(1, 'year')
+              )}
+            >
+              <ArrowRight />
+            </IconButton>
+          </Box>
+
+          <Button
+            variant="contained"
+            sx={{
+              ml: { xs: 0, sm: 'auto', lg: 0 },
+              width: { xs: 'auto', sm: 105 },
+              textWrap: 'nowrap',
+            }}
+            onClick={() => setSelectedDate(dayjs(new Date()))}
+            disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
           >
-            <ArrowRight />
-          </IconButton>
+            This {isDaily ? "Month" : "Year"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={isDaily ? <Today /> : <ViewList />}
+            sx={{ whiteSpace: 'nowrap' }}
+            onClick={() => navigate(isDaily ? "/diary/monthly" : "/diary")}
+          >
+            {isDaily ? "Monthly Summary" : "Daily Entries"}
+          </Button>
         </Box>
-
-        <Button
-          variant="contained"
-          sx={{
-            ml: { xs: 0, md: 1 },
-            width: { xs: 'auto', md: 105 }
-          }}
-          onClick={() => setSelectedDate(dayjs(new Date()))}
-          disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
-        >
-          This {isDaily ? "Month" : "Year"}
-        </Button>
-
-        <Button
-          variant="outlined"
-          startIcon={isDaily ? <Today /> : <ViewList />}
-          onClick={() => navigate(isDaily ? "/diary/monthly" : "/diary")}
-        >
-          {isDaily ? "Monthly Summary" : "Daily Entries"}
-        </Button>
 
         <TextField
           sx={{
-            ml: { xs: 0, md: "auto" },
-            minWidth: { xs: 0, md: isDaily ? "35vw" : 0 },
-            opacity: { xs: 1, md: isDaily ? 1 : 0 },
-            display: { xs: isDaily ? 'flex' : 'none', md: 'flex' }
+            ml: { xs: 0, lg: "auto" },
+            minWidth: { xs: 0, lg: isDaily ? "35vw" : 0 },
+            opacity: { xs: 1, lg: isDaily ? 1 : 0 },
+            display: { xs: isDaily ? 'flex' : 'none', lg: 'flex' }
           }}
           disabled={!isDaily}
           label="Search diary entries"
