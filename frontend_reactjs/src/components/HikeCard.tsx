@@ -111,7 +111,10 @@ export const HikeCard = ({
   }, [editSuccess]);
 
   return (
-    <Wrapper sx={{ backgroundColor: 'primary.light' }}>
+    <Wrapper
+      sx={{ backgroundColor: 'primary.light' }}
+      onDoubleClick={() => setIsEditing(true)}
+    >
       <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
         {coverImage && (
           <CoverImage src={coverImage} />
@@ -193,11 +196,11 @@ export const HikeCard = ({
             </IconButton>
           )}
 
-          {!isEditing && (
+          {/* {!isEditing && (
             <IconButton disabled>
               <PermMedia />
             </IconButton>
-          )}
+          )} */}
 
           {!isEditing && (
             <IconButton

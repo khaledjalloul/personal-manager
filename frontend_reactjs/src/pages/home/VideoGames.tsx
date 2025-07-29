@@ -77,6 +77,7 @@ export const VideoGames = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography>Sort by Date</Typography>
               <Switch
+                disabled={showUncompleted}
                 checked={sortByDate}
                 onChange={(e) => setSortByDate(e.target.checked)}
               />
@@ -85,6 +86,7 @@ export const VideoGames = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography>Not Played</Typography>
               <Switch
+                disabled={sortByDate}
                 checked={showUncompleted}
                 onChange={(e) => setShowUncompleted(e.target.checked)}
               />

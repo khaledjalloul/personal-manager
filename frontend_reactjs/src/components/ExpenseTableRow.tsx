@@ -91,6 +91,7 @@ export const ExpenseTableRow = ({
           backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
           ":hover": editable ? { backgroundColor: "action.hover" } : {}
         }}
+        onDoubleClick={editable ? () => setIsEditing(true) : undefined}
       >
         <TableCell>
           {!isEditing ? date.format("DD.MM.YYYY") :

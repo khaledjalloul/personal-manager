@@ -93,6 +93,7 @@ export const PianoPieceTableRow = ({
           backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
           ":hover": { backgroundColor: "action.hover" }
         }}
+        onDoubleClick={() => setIsEditing(true)}
       >
         <TableCell sx={{ fontWeight: 'bold' }}>
           {!isEditing ? name :

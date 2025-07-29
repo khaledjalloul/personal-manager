@@ -105,7 +105,10 @@ export const VideoGameCard = ({
   }, [editSuccess]);
 
   return (
-    <Wrapper sx={{ backgroundColor: 'primary.light' }}>
+    <Wrapper
+      sx={{ backgroundColor: 'primary.light' }}
+      onDoubleClick={() => setIsEditing(true)}
+    >
       <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
         {coverImage && (
           <CoverImage src={coverImage} />
@@ -185,11 +188,8 @@ export const VideoGameCard = ({
             </IconButton>
           )}
 
-          {!isEditing && (
-            <IconButton
-              disabled={!storeUrl.trim()}
-              onClick={() => window.open(storeUrl, '_blank')}
-            >
+          {!isEditing && storeUrl.trim() && (
+            <IconButton onClick={() => window.open(storeUrl, '_blank')}>
               <InsertLink />
             </IconButton>
           )}
@@ -199,13 +199,14 @@ export const VideoGameCard = ({
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SportsEsportsOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                 {platform}
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Platform"
+                multiline
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value)}
               />
@@ -233,11 +234,13 @@ export const VideoGameCard = ({
           </Grid>
 
           <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Today sx={{ color: "text.primary" }} />
+            {(firstPlayed.isAfter(dayjs('2000-01-01')) || isEditing) && <Today sx={{ color: "text.primary" }} />}
             {!isEditing ? (
-              <Typography variant="body1">
-                {firstPlayed.format("DD.MM.YYYY")}
-              </Typography>
+              (firstPlayed.isAfter(dayjs('2000-01-01')) &&
+                <Typography variant="body1">
+                  {firstPlayed.format("DD.MM.YYYY")}
+                </Typography>
+              )
             ) : (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -281,30 +284,35 @@ export const VideoGameCard = ({
               ))}
           </Grid>
 
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: (extraPurchases.trim() || isEditing) ? 6 : 12 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SellOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                 {price}
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Price"
+                multiline
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
             )}
           </Grid>
 
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {(extraPurchases.trim() || isEditing) && <CreditCard sx={{ color: "text.primary" }} />}
+          <Grid size={{ xs: 6 }}
+            sx={{
+              display: (extraPurchases.trim() || isEditing) ? 'flex' : 'none',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <CreditCard sx={{ color: "text.primary" }} />
             {!isEditing ? (
-              extraPurchases.trim() && (
-                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                  {extraPurchases}
-                </Typography>
-              )
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                {extraPurchases}
+              </Typography>
             ) : (
               <TextField
                 variant="standard"

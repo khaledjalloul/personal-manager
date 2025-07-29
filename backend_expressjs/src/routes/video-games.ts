@@ -13,12 +13,8 @@ router.get('/', async (req: Request, res: Response) => {
   const videoGames = await prisma.videoGame.findMany({
     where: {
       userId: req.user.id,
-      ...(showUncompleted && {
-        AND: [
-          { type: { not: VideoGameType.Online } },
-          { completionCount: { equals: 0 } }
-        ]
-      }),
+      firstPlayed: showUncompleted ? { lt: new Date("2000-01-01") } :
+        sortByDate ? { gte: new Date("2000-01-01") } : undefined,
       OR: [
         { name: { contains: searchText.trim(), mode: 'insensitive' } },
         { platform: { contains: searchText.trim(), mode: 'insensitive' } },

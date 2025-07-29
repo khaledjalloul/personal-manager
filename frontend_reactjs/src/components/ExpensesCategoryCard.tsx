@@ -82,7 +82,10 @@ export const ExpensesCategoryCard = ({
           gap: 1,
           position: 'relative',
         }}>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <Box
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+          onDoubleClick={() => setIsEditing(true)}
+        >
           {!isEditing ? (
             <Typography
               variant="body1"

@@ -51,7 +51,7 @@ export const DiaryGridRow = ({
   }, [createSuccess, editSuccess]);
 
   return (
-    <Grid container>
+    <Grid container onDoubleClick={() => setIsEditing(true)}>
       <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
@@ -67,8 +67,8 @@ export const DiaryGridRow = ({
         }}>
           <Box sx={{
             display: 'flex',
-            flexDirection: {xs: 'row', md: 'column'},
-            alignItems: {xs: 'center', md: 'flex-start'},
+            flexDirection: { xs: 'row', md: 'column' },
+            alignItems: { xs: 'center', md: 'flex-start' },
             gap: { xs: 1, md: 0 }
           }}
           >
