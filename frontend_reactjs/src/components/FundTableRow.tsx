@@ -31,15 +31,15 @@ export const FundTableRow = ({
 	setIsAddingFund?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-	const { mutate: createFund, isPending: createLoading, isSuccess: createSuccess } = useCreateFund();
-	const { mutate: editFund, isPending: editLoading, isSuccess: editSuccess } = useEditFund();
-	const { mutate: deleteFund, isPending: deleteLoading } = useDeleteFund();
-
 	const [isEditing, setIsEditing] = useState(isAddingFund);
 	const [date, setDate] = useState(dayjs(fund.date));
 	const [source, setSource] = useState(fund.source);
 	const [amount, setAmount] = useState(fund.amount);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+	const { mutate: createFund, isPending: createLoading, isSuccess: createSuccess } = useCreateFund();
+	const { mutate: editFund, isPending: editLoading, isSuccess: editSuccess } = useEditFund();
+	const { mutate: deleteFund, isPending: deleteLoading } = useDeleteFund();
 
 	const save = () => {
 		if (!isEditing || !source.trim()) return;

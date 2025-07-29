@@ -160,8 +160,8 @@ export const diaryEntries: DiaryEntry[] = [
 // ############### Journal ###############
 
 export const journalCategories: JournalCategory[] = [
-    { id: 1, name: 'Personal' },
-    { id: 2, name: 'Work' },
+    { id: 1, name: 'Personal', sections: [{ entries: [{ id: 1 }, { id: 2 }, { id: 5 }] }] },
+    { id: 2, name: 'Work', sections: [{ entries: [{ id: 3 }, { id: 4 }] }] },
 ];
 
 export const journalSections: JournalSection[] = [

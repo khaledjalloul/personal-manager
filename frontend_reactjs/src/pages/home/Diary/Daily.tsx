@@ -1,7 +1,7 @@
 import { Box, Typography, } from "@mui/material";
 import { useMemo } from "react";
 import { useDailyDiaryEntries } from "../../../api";
-import { DiaryGridRow } from "../../../components";
+import { DiaryEntryContainer } from "../../../components";
 import dayjs, { Dayjs } from 'dayjs';
 import { DiaryEntry, DiaryEntryType } from "../../../types";
 import { useOutletContext } from "react-router-dom";
@@ -54,7 +54,7 @@ export const DailyDiary = () => {
         <Typography align="center" mt={7}>No diary entries.</Typography>
       )}
       {displayedEntries?.map((entry) => (
-        <DiaryGridRow key={entry.id} entry={entry} isSearching={Boolean(searchText.trim())} />
+        <DiaryEntryContainer key={entry.id} entry={entry} isSearching={Boolean(searchText.trim())} />
       ))}
     </Box>
   );

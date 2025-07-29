@@ -32,6 +32,17 @@ router.get('/categories', async (req: Request, res: Response) => {
         }
       ]
     },
+    include: {
+      sections: {
+        select: {
+          entries: {
+            select: {
+              id: true,
+            }
+          }
+        }
+      }
+    },
     orderBy: { name: 'asc' },
   });
   res.json(categories);
@@ -114,11 +125,12 @@ router.get('/sections', async (req: Request, res: Response) => {
 });
 
 router.post('/sections', async (req: Request, res: Response) => {
-  const { name } = req.body;
+  const { name, categoryId } = req.body;
   const section = await prisma.journalSection.create({
     data: {
       userId: req.user.id,
-      name
+      name,
+      category: categoryId && { connect: { id: categoryId } }
     }
   });
   res.json(section);
@@ -186,7 +198,7 @@ router.post('/', async (req: Request, res: Response) => {
       userId: req.user.id,
       date,
       content,
-      section: sectionId !== undefined ? { connect: { id: sectionId } } : undefined
+      section: sectionId && { connect: { id: sectionId } }
     },
   });
   res.json(entry);

@@ -13,7 +13,7 @@ import { ChevronRight, Save } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
-import { DiaryEntry, DiaryEntryType } from "../../types";
+import { DiaryEntry, DiaryEntryType, NoteCategory } from "../../types";
 import { useCtrlS } from "../../utils";
 
 const NavigationTitle = ({
@@ -55,6 +55,12 @@ export const Home = () => {
   const navigate = useNavigate();
   const { palette } = useTheme();
 
+  const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory>();
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteContent, setNoteContent] = useState("");
+  const [diaryContent, setDiaryContent] = useState("");
+  const [diaryWorkContent, setDiaryWorkContent] = useState("");
+
   const { data: expensesStatistics } = useExpensesStatistics();
   const { data: noteCategories } = useNoteCategories({ searchText: "" });
   const { data: diaryEntries } = useDailyDiaryEntries({
@@ -66,12 +72,6 @@ export const Home = () => {
   const { mutate: createDiaryEntry, isPending: createDiaryLoading } = useCreateDiaryEntry();
   const { mutate: editDiaryEntry, isPending: editDiaryLoading } = useEditDiaryEntry();
   const { mutate: createNote, isPending: createNoteLoading, isSuccess: createNoteSuccess } = useCreateNote();
-
-  const [selectedNoteCategory, setSelectedNoteCategory] = useState(noteCategories?.[0]);
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteContent, setNoteContent] = useState("");
-  const [diaryContent, setDiaryContent] = useState("");
-  const [diaryWorkContent, setDiaryWorkContent] = useState("");
 
   const todaysDiaryEntry = useMemo(() => {
     const empty: DiaryEntry = {

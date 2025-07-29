@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 import { useCtrlS } from "../utils";
 
-export const DiaryGridRow = ({
+export const DiaryEntryContainer = ({
   entry,
   isSearching
 }: {
@@ -16,12 +16,12 @@ export const DiaryGridRow = ({
 
   const { palette } = useTheme();
 
-  const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateDiaryEntry();
-  const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry();
-
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [workContent, setWorkContent] = useState(entry.workContent);
+
+  const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateDiaryEntry();
+  const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry();
 
   const isDaily = entry.type === DiaryEntryType.Daily;
 
@@ -52,7 +52,7 @@ export const DiaryGridRow = ({
 
   return (
     <Grid container onDoubleClick={() => setIsEditing(true)}>
-      <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, md: 2, xl: 1.5 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
@@ -118,7 +118,7 @@ export const DiaryGridRow = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: ((isEditing || workContent.trim()) ? 7 : 10) }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, md: ((isEditing || workContent.trim()) ? 7 : 10), xl: ((isEditing || workContent.trim()) ? 7.5 : 10.5) }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderTopLeftRadius: '8px',

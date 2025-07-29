@@ -18,17 +18,17 @@ export const ExpensesCategoryCard = ({
 
 }) => {
 
-  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateExpensesCategory();
-  const { mutate: editCategory, isPending: editLoading, isSuccess: editSuccess } = useEditExpensesCategory();
-  const { mutate: deleteCategory, isPending: deleteLoading } = useDeleteExpensesCategory();
-  const { mutate: editFundKeywords, isPending: editFundKeywordsLoading } = useEditUser();
-
   const [isEditing, setIsEditing] = useState(isAddingCategory);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [name, setName] = useState(category.name);
   const [color, setColor] = useState(category.color);
   const [keyword, setKeyword] = useState("");
+
+  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateExpensesCategory();
+  const { mutate: editCategory, isPending: editLoading, isSuccess: editSuccess } = useEditExpensesCategory();
+  const { mutate: deleteCategory, isPending: deleteLoading } = useDeleteExpensesCategory();
+  const { mutate: editFundKeywords, isPending: editFundKeywordsLoading } = useEditUser();
 
   const save = () => {
     if (!isEditing || !name.trim()) return;

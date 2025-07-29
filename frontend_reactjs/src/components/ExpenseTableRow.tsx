@@ -32,11 +32,6 @@ export const ExpenseTableRow = ({
   isAddingExpense?: boolean;
   setIsAddingExpense?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { data: expensesCategories } = useExpensesCategories();
-
-  const { mutate: createExpense, isPending: createLoading, isSuccess: createSuccess } = useCreateExpense();
-  const { mutate: editExpense, isPending: editLoading, isSuccess: editSuccess } = useEditExpense();
-  const { mutate: deleteExpense, isPending: deleteLoading } = useDeleteExpense();
 
   const [isEditing, setIsEditing] = useState(isAddingExpense);
   const [date, setDate] = useState(dayjs(expense.date));
@@ -46,8 +41,15 @@ export const ExpenseTableRow = ({
   const [amount, setAmount] = useState(expense.amount);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const { data: expensesCategories } = useExpensesCategories();
+
+  const { mutate: createExpense, isPending: createLoading, isSuccess: createSuccess } = useCreateExpense();
+  const { mutate: editExpense, isPending: editLoading, isSuccess: editSuccess } = useEditExpense();
+  const { mutate: deleteExpense, isPending: deleteLoading } = useDeleteExpense();
+
   const save = () => {
     if (!isEditing || !description.trim()) return;
+    // TODO: Change to isAddingExpense
     if (expense.id !== -1)
       editExpense({
         id: expense.id,

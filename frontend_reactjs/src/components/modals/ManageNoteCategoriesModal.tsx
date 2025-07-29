@@ -15,11 +15,11 @@ const CategoryCard = ({
   setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
 }) => {
 
-  const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
-  const { mutate: deleteCategory, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
-
   const [name, setName] = useState(category.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
+  const { mutate: deleteCategory, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
 
   const save = () => {
     editCategory({

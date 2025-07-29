@@ -44,9 +44,10 @@ const RestoreButton = ({
 }: {
   dataType: string;
 }) => {
-  const { mutate: restoreData, isPending, isSuccess } = useRestoreData();
 
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+
+  const { mutate: restoreData, isPending, isSuccess } = useRestoreData();
 
   const text = dataType === 'all' ? 'All Data' : "";
 
@@ -105,11 +106,12 @@ const RestoreButton = ({
 
 export const Account = () => {
 
-  const { data: user } = useCurrentUser()
-  const { mutate: editUser, isPending: editUserLoading } = useEditUser();
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("");
 
-  const [name, setName] = useState(user?.name ?? "")
-  const [email, setEmail] = useState(user?.email ?? "");
+  const { data: user } = useCurrentUser();
+
+  const { mutate: editUser, isPending: editUserLoading } = useEditUser();
 
   useEffect(() => {
     if (user) {

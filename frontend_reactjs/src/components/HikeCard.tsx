@@ -48,10 +48,6 @@ export const HikeCard = ({
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createHike, isPending: createLoading, isSuccess: createSuccess } = useCreateHike();
-  const { mutate: editHike, isPending: editLoading, isSuccess: editSuccess } = useEditHike();
-  const { mutate: deleteHike, isPending: deleteLoading } = useDeleteHike();
-
   const [isEditing, setIsEditing] = useState(isAddingHike);
   const [date, setDate] = useState(dayjs(hike.date));
   const [description, setDescription] = useState(hike.description);
@@ -63,6 +59,10 @@ export const HikeCard = ({
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
   const [coverImage, setCoverImage] = useState(hike.coverImage); // TODO: Add image upload
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: createHike, isPending: createLoading, isSuccess: createSuccess } = useCreateHike();
+  const { mutate: editHike, isPending: editLoading, isSuccess: editSuccess } = useEditHike();
+  const { mutate: deleteHike, isPending: deleteLoading } = useDeleteHike();
 
   const durationHours = Math.floor(hike.duration);
   const durationMinutes = Math.round((hike.duration - durationHours) * 60);

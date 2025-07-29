@@ -63,8 +63,13 @@ const emptyExpense: Expense = {
 export const ManageExpenses = () => {
   const { searchText } = useOutletContext<{ searchText: string }>();
 
+  const [isAddingFund, setIsAddingFund] = useState(false);
+  const [isAddingExpense, setIsAddingExpense] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
   const { data: user } = useCurrentUser();
-  const fundKeywords = user?.fundKeywords || [];
+  const { data: categories } = useExpensesCategories();
   const { data: autoExpenses } = useExpenses({
     type: ExpenseType.Auto,
     searchText: "",
@@ -83,14 +88,11 @@ export const ManageExpenses = () => {
     type: ExpenseType.Manual,
     searchText: searchText.trim(),
   });
-  const { data: categories } = useExpensesCategories();
+
   const { mutate: uploadAutoExpenses, isPending: uploadAutoExpensesLoading } = useUploadAutoExpenses();
   const { mutate: deleteAutoExpenses, isPending: deleteAutoExpensesLoading } = useDeleteAutoExpenses();
 
-  const [isAddingFund, setIsAddingFund] = useState(false);
-  const [isAddingExpense, setIsAddingExpense] = useState(false);
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const fundKeywords = user?.fundKeywords || [];
 
   return (
     <Wrapper>

@@ -15,9 +15,9 @@ import {
   Clear,
   CreateNewFolder,
   Delete,
-  Edit,
-  EditOff,
-  Save
+  Save,
+  Visibility,
+  VisibilityOff
 } from "@mui/icons-material";
 import { useDeleteNote, useEditNote, useNoteCategories, useNotes } from "../../api";
 import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
@@ -130,7 +130,7 @@ export const Notes = () => {
             sx={{ ml: "auto" }}
             onClick={() => setEditorEnabled(!editorEnabled)}
           >
-            {editorEnabled ? <EditOff /> : <Edit />}
+            {editorEnabled ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </Box>
 
@@ -375,7 +375,7 @@ export const Notes = () => {
       <ConfirmDeleteDialog
         isOpen={confirmDeleteOpen}
         setIsOpen={setConfirmDeleteOpen}
-        itemName={`note: ${selectedNote?.title || "Untitled"}`}
+        itemName={`note: ${selectedNote?.title}`}
         deleteFn={() => {
           if (selectedNote)
             deleteNote({ id: selectedNote.id });

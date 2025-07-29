@@ -223,9 +223,33 @@ const journalHandlers = [
   // Categories
   http.get<PathParams, DefaultBodyType, JournalCategory[]>('/journal/categories', () => HttpResponse.json(journalCategories)),
   // Sections
-  http.get<PathParams, DefaultBodyType, JournalSection[]>('/journal/sections', () => HttpResponse.json(journalSections)),
+  http.get<PathParams, DefaultBodyType, JournalSection[]>('/journal/sections', ({ request }) => {
+    const url = new URL(request.url)
+    var categoryId = url.searchParams.get('categoryId') ?? "";
+
+    if (categoryId) {
+      var sectionsToReturn;
+      if (categoryId === "-1")
+        sectionsToReturn = journalSections.filter(section => !section.category);
+      else
+        sectionsToReturn = journalSections.filter(section => section.category?.id === parseInt(categoryId));
+      return HttpResponse.json(sectionsToReturn);
+    } else return HttpResponse.json([]);
+  }),
   // Entries
-  http.get<PathParams, DefaultBodyType, JournalEntry[]>('/journal', () => HttpResponse.json(journalEntries)),
+  http.get<PathParams, DefaultBodyType, JournalEntry[]>('/journal', ({ request }) => {
+    const url = new URL(request.url)
+    var sectionId = url.searchParams.get('sectionId') ?? "";
+
+    var entriesToReturn = journalEntries;
+    if (sectionId) {
+      if (sectionId === "-1")
+        entriesToReturn = journalEntries.filter(entry => !entry.section);
+      else
+        entriesToReturn = journalEntries.filter(entry => entry.section?.id === parseInt(sectionId));
+    }
+    return HttpResponse.json(entriesToReturn);
+  }),
 ];
 
 // ############### Notes ###############

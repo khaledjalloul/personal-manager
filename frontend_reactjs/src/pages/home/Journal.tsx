@@ -10,12 +10,23 @@ import {
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import {
+  Add,
   Clear,
-  CreateNewFolder
+  Delete,
+  Edit,
+  Save
 } from "@mui/icons-material";
-import { useJournalCategories, useJournalEntries } from "../../api";
+import {
+  useCreateJournalCategory,
+  useCreateJournalSection,
+  useDeleteJournalCategory,
+  useEditJournalCategory,
+  useJournalCategories,
+  useJournalSections
+} from "../../api";
 import { JournalCategory } from "../../types";
-import { UserContext } from "../../utils";
+import { useCtrlS, UserContext } from "../../utils";
+import { ConfirmDeleteDialog, JournalSectionContainer } from "../../components";
 
 
 export const Journal = () => {
@@ -25,10 +36,61 @@ export const Journal = () => {
 
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<JournalCategory>();
-  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
+  const [isEditingCategory, setIsEditingCategory] = useState(false);
+  const [isAddingSection, setIsAddingSection] = useState(false);
+  const [newSectionName, setNewSectionName] = useState("");
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { data: entries } = useJournalEntries({ searchText: searchText.trim() })
   const { data: categories } = useJournalCategories({ searchText: searchText.trim() });
+  const { data: sections } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
+
+  const { mutate: createCategory, isPending: createCategoryLoading } = useCreateJournalCategory();
+  const { mutate: editCategory, isPending: editCategoryLoading, isSuccess: editCategorySuccess } = useEditJournalCategory();
+  const { mutate: deleteCategory, isPending: deleteCategoryLoading } = useDeleteJournalCategory();
+  const { mutate: createSection, isPending: createSectionLoading, isSuccess: createSectionSuccess } = useCreateJournalSection();
+
+  const saveEditCategory = () => {
+    if (!selectedCategory || !selectedCategoryName?.trim()) return;
+
+    editCategory({
+      id: selectedCategory.id,
+      name: selectedCategoryName.trim()
+    });
+  };
+
+  const saveCreateSection = () => {
+    if (!selectedCategory || !newSectionName.trim()) return;
+
+    createSection({
+      categoryId: selectedCategory.id,
+      name: newSectionName.trim()
+    });
+  };
+
+  useCtrlS(() => { saveEditCategory(); saveCreateSection(); });
+
+  useEffect(() => {
+    if (editCategorySuccess) setIsEditingCategory(false);
+  }, [editCategorySuccess]);
+
+  useEffect(() => {
+    if (createSectionSuccess) {
+      setIsAddingSection(false);
+      setNewSectionName("");
+    }
+  }, [createSectionSuccess]);
+
+  useEffect(() => {
+    setIsAddingSection(false);
+    if (selectedCategory) {
+      setSelectedCategoryName(selectedCategory.name);
+      if (userData)
+        setUserData({ ...userData, lastOpenedJournalCategoryId: selectedCategory.id });
+    } else {
+      setSelectedCategoryName("");
+    }
+  }, [selectedCategory?.id]);
 
   useEffect(() => {
     if (categories && userData && userData.lastOpenedJournalCategoryId) {
@@ -95,8 +157,11 @@ export const Journal = () => {
             <Typography variant="h6" mr={1}>
               Categories
             </Typography>
-            <IconButton size="small" onClick={() => setIsCategoriesModalOpen(true)}>
-              <CreateNewFolder />
+            <IconButton
+              size="small"
+              loading={createCategoryLoading}
+              onClick={() => createCategory({ name: "New Category" })}>
+              <Add />
             </IconButton>
           </Box>
 
@@ -106,17 +171,150 @@ export const Journal = () => {
             border: `solid 1px ${palette.text.primary}`,
             overflowY: 'auto',
           }}>
-
+            {categories?.map((category) => (
+              <Box
+                key={category.id}
+                onClick={() => setSelectedCategory(category)}
+                sx={{
+                  p: 1,
+                  cursor: 'pointer',
+                  borderTopLeftRadius: '8px',
+                  borderTopRightRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  backgroundColor: selectedCategory?.id === category.id ? "primary.light" : "background.default",
+                  ":hover": selectedCategory?.id !== category.id ? { backgroundColor: "action.hover" } : {},
+                }}
+              >
+                <Typography variant="body1" key={category.id}>
+                  {category.name} ({category.sections?.reduce((acc, section) => acc + section.entries.length, 0)})
+                </Typography>
+              </Box>
+            ))}
           </Box>
         </Grid>
 
         <Grid
           size={{ xs: 12, sm: 9, lg: 10 }}
-          sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh', height: '100%' }}
+          sx={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 2, pl: 2 }}
         >
+          {!isEditingCategory ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h6">
+                {selectedCategoryName ?? "Select a category"}
+              </Typography>
 
+              {selectedCategory && (
+                <IconButton
+                  size="small"
+                  sx={{ ml: 2 }}
+                  onClick={() => setIsEditingCategory(true)}
+                >
+                  {/* TODO: make all buttons properly small */}
+                  <Edit />
+                </IconButton>
+              )}
+
+              {selectedCategory && (
+                <IconButton
+                  size="small"
+                  onClick={() => setIsAddingSection(true)}
+                >
+                  <Add />
+                </IconButton>
+              )}
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <TextField
+                label="Category Name"
+                variant="standard"
+                value={selectedCategoryName || ""}
+                onChange={(e) => setSelectedCategoryName(e.target.value)} />
+
+              <IconButton
+                size="small"
+                color="success"
+                loading={editCategoryLoading}
+                disabled={!selectedCategoryName?.trim()}
+                onClick={saveEditCategory}
+              >
+                <Save />
+              </IconButton>
+
+              <IconButton
+                size="small"
+                color="error"
+                loading={deleteCategoryLoading}
+                onClick={() => {
+                  if (selectedCategory)
+                    setConfirmDeleteOpen(true);
+                }}
+              >
+                <Delete />
+              </IconButton>
+
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setSelectedCategoryName(selectedCategory?.name);
+                  setIsEditingCategory(false);
+                }}
+              >
+                <Clear />
+              </IconButton>
+            </Box>
+          )}
+
+          {isAddingSection && selectedCategory && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <TextField
+                label="New Section Name"
+                variant="standard"
+                value={newSectionName}
+                onChange={(e) => setNewSectionName(e.target.value)}
+              />
+              <IconButton
+                size="small"
+                color="success"
+                loading={createSectionLoading}
+                disabled={!newSectionName.trim()}
+                onClick={saveCreateSection}
+              >
+                <Save />
+              </IconButton>
+
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setIsAddingSection(false);
+                  setNewSectionName("");
+                }}
+              >
+                <Clear />
+              </IconButton>
+            </Box>
+          )}
+
+          {sections?.map((section) => (
+            <JournalSectionContainer
+              key={section.id}
+              section={section}
+              searchText={searchText}
+            />
+          ))}
         </Grid>
       </Grid>
+
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteOpen}
+        setIsOpen={setConfirmDeleteOpen}
+        itemName={`journal category: ${selectedCategory?.name}`}
+        deleteFn={() => {
+          if (selectedCategory)
+            deleteCategory({ id: selectedCategory.id });
+        }}
+      />
 
     </Wrapper>
   );

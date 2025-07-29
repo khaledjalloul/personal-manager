@@ -49,10 +49,6 @@ export const VideoGameCard = ({
   setIsAddingGame: Dispatch<SetStateAction<boolean>>
 }) => {
 
-  const { mutate: createGame, isPending: createLoading, isSuccess: createSuccess } = useCreateVideoGame();
-  const { mutate: editGame, isPending: editLoading, isSuccess: editSuccess } = useEditVideoGame();
-  const { mutate: deleteGame, isPending: deleteLoading } = useDeleteVideoGame();
-
   const [isEditing, setIsEditing] = useState(isAddingGame);
   const [name, setName] = useState(game.name);
   const [platform, setPlatform] = useState(game.platform);
@@ -64,6 +60,10 @@ export const VideoGameCard = ({
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: createGame, isPending: createLoading, isSuccess: createSuccess } = useCreateVideoGame();
+  const { mutate: editGame, isPending: editLoading, isSuccess: editSuccess } = useEditVideoGame();
+  const { mutate: deleteGame, isPending: deleteLoading } = useDeleteVideoGame();
 
   const save = () => {
     if (!isEditing || !name.trim()) return;
