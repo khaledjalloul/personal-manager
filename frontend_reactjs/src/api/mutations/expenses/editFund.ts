@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { Fund } from "../../../types";
+import { ExpenseType, Fund } from "../../../types";
 
 const ENDPOINT = "expenses/funds";
 
@@ -10,7 +10,7 @@ export type EditFundRequestBody = {
   date?: Date;
   source?: string;
   amount?: number;
-  type?: "auto" | "manual";
+  type?: ExpenseType;
 };
 
 const mutationFn = async (data: EditFundRequestBody) => {

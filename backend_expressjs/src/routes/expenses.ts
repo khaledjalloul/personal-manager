@@ -23,7 +23,7 @@ router.get('/funds', async (req: Request, res: Response) => {
     where: {
       userId: req.user.id,
       type: type === 'all' ? undefined : type as ExpenseType,
-      source: { contains: searchText.trim(), mode: 'insensitive' }
+      source: { contains: searchText, mode: 'insensitive' }
     },
     orderBy: { date: 'desc' },
   });
@@ -106,11 +106,6 @@ router.post('/categories/:id', async (req: Request, res: Response) => {
 router.delete('/categories/:id', async (req: Request, res: Response) => {
   const categoryId = Number(req.params.id);
 
-  await prisma.expense.updateMany({
-    where: { categoryId },
-    data: { categoryId: null },
-  });
-
   await prisma.expensesCategory.delete({ where: { id: categoryId } });
   res.json({ message: 'Category deleted successfully' });
 });
@@ -141,7 +136,7 @@ router.get('/monthly', async (req: Request, res: Response) => {
 
   expenses.forEach(expense => {
     const dayjsDate = dayjs(expense.date);
-    if (!dayjsDate.format("MMMM YYYY").toLowerCase().includes(searchText.trim().toLowerCase()))
+    if (!dayjsDate.format("MMMM YYYY").toLowerCase().includes(searchText.toLowerCase()))
       return;
 
     const monthStr = `${expense.date.getFullYear()}-${String(expense.date.getMonth() + 1).padStart(2, '0')}`;
@@ -336,7 +331,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
             source: entry.bookingText,
             amount,
-            type: 'auto',
+            type: ExpenseType.Auto,
             userId: req.user.id
           })
         } else {
@@ -353,7 +348,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
             description: entry.bookingText,
             vendor: entry.paymentPurpose,
             amount,
-            type: "auto",
+            type: ExpenseType.Auto,
             tags: []
           });
         }
@@ -373,13 +368,13 @@ router.delete("/auto", async (req: Request, res: Response) => {
   await prisma.expense.deleteMany({
     where: {
       userId: req.user.id,
-      type: "auto"
+      type: ExpenseType.Auto
     }
   });
   await prisma.fund.deleteMany({
     where: {
       userId: req.user.id,
-      type: "auto"
+      type: ExpenseType.Auto
     }
   })
   res.json({ message: 'Automated expenses deleted successfully' });
@@ -399,10 +394,10 @@ router.get('/', async (req: Request, res: Response) => {
         type: type === 'all' ? undefined : type as ExpenseType,
         category: null,
         OR: [
-          { description: { contains: searchText.trim(), mode: 'insensitive' } },
-          { vendor: { contains: searchText.trim(), mode: 'insensitive' } },
-          { tags: { hasSome: [searchText.trim()] } },
-          { category: { name: { contains: searchText.trim(), mode: 'insensitive' } } },
+          { description: { contains: searchText, mode: 'insensitive' } },
+          { vendor: { contains: searchText, mode: 'insensitive' } },
+          { tags: { hasSome: [searchText] } },
+          { category: { name: { contains: searchText, mode: 'insensitive' } } },
         ],
       },
       orderBy: { date: 'desc' },
@@ -415,10 +410,10 @@ router.get('/', async (req: Request, res: Response) => {
       type: type === 'all' ? undefined : type as ExpenseType,
       categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
       OR: [
-        { description: { contains: searchText.trim(), mode: 'insensitive' } },
-        { vendor: { contains: searchText.trim(), mode: 'insensitive' } },
-        { tags: { hasSome: [searchText.trim()] } },
-        { category: { name: { contains: searchText.trim(), mode: 'insensitive' } } },
+        { description: { contains: searchText, mode: 'insensitive' } },
+        { vendor: { contains: searchText, mode: 'insensitive' } },
+        { tags: { hasSome: [searchText] } },
+        { category: { name: { contains: searchText, mode: 'insensitive' } } },
       ],
     },
     orderBy: { date: 'desc' },

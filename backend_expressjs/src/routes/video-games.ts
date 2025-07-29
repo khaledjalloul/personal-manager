@@ -16,10 +16,10 @@ router.get('/', async (req: Request, res: Response) => {
       firstPlayed: showUncompleted ? { lt: new Date("2000-01-01") } :
         sortByDate ? { gte: new Date("2000-01-01") } : undefined,
       OR: [
-        { name: { contains: searchText.trim(), mode: 'insensitive' } },
-        { platform: { contains: searchText.trim(), mode: 'insensitive' } },
-        { price: { contains: searchText.trim(), mode: 'insensitive' } },
-        { extraPurchases: { contains: searchText.trim(), mode: 'insensitive' } }
+        { name: { contains: searchText, mode: 'insensitive' } },
+        { platform: { contains: searchText, mode: 'insensitive' } },
+        { price: { contains: searchText, mode: 'insensitive' } },
+        { extraPurchases: { contains: searchText, mode: 'insensitive' } }
       ]
     },
     orderBy: sortByDate ? { firstPlayed: 'asc' } : { name: 'asc' },

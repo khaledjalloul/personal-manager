@@ -24,7 +24,7 @@ import {
 import { ConfirmDeleteDialog, ExpensesCategoryCard, ExpenseTableRow, FundTableRow } from "../../../components";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
-import { Expense, ExpensesCategory, Fund } from "../../../types";
+import { Expense, ExpensesCategory, ExpenseType, Fund } from "../../../types";
 import { useOutletContext } from "react-router-dom";
 
 const fundsCategory: ExpensesCategory = {
@@ -39,7 +39,7 @@ const emptyFund: Fund = {
   date: new Date(),
   source: "",
   amount: 0,
-  type: "manual"
+  type: ExpenseType.Manual
 }
 
 const emptyCategory: ExpensesCategory = {
@@ -55,7 +55,7 @@ const emptyExpense: Expense = {
   category: emptyCategory,
   description: "",
   vendor: "",
-  type: "manual",
+  type: ExpenseType.Manual,
   amount: 0,
   tags: [],
 }
@@ -66,21 +66,21 @@ export const ManageExpenses = () => {
   const { data: user } = useCurrentUser();
   const fundKeywords = user?.fundKeywords || [];
   const { data: autoExpenses } = useExpenses({
-    type: "auto",
+    type: ExpenseType.Auto,
     searchText: "",
     filterCategoryIds: [-1] // all
   });
   const { data: manualExpenses } = useExpenses({
-    type: "manual",
+    type: ExpenseType.Manual,
     searchText: searchText.trim(),
     filterCategoryIds: [-1] // all
   });
   const { data: autoFunds } = useFunds({
-    type: "auto",
+    type: ExpenseType.Auto,
     searchText: "",
   });
   const { data: manualFunds } = useFunds({
-    type: "manual",
+    type: ExpenseType.Manual,
     searchText: searchText.trim(),
   });
   const { data: categories } = useExpensesCategories();

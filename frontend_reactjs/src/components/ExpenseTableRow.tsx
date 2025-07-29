@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Expense } from "../types";
+import { Expense, ExpenseType } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { useCreateExpense, useDeleteExpense, useEditExpense, useExpensesCategories } from "../api";
@@ -65,7 +65,7 @@ export const ExpenseTableRow = ({
         vendor: vendor.trim(),
         amount,
         tags: [],
-        type: 'manual'
+        type: ExpenseType.Manual
       });
   };
 

@@ -26,8 +26,8 @@ model ExpensesCategory {
 }
 
 enum ExpenseType {
-  manual
-  auto
+  Manual
+  Auto
 }
 
 model Expense {
@@ -35,7 +35,7 @@ model Expense {
   userId      Int
   date        DateTime
   categoryId  Int?
-  category    ExpensesCategory? @relation(fields: [categoryId], references: [id])
+  category    ExpensesCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   description String
   vendor      String
   amount      Float
@@ -52,19 +52,62 @@ model Fund {
   type   ExpenseType
 }
 
-model Hike {
-  id                 Int      @id @default(autoincrement())
-  userId             Int
-  date               DateTime
-  description        String
-  distance           Float
-  ascent             Float
-  descent            Float
-  duration           Float
-  durationWithBreaks Float
-  coverImage         String
-  images             String[]
-  googleMapsUrl      String
+enum DiaryEntryType {
+  Daily
+  Monthly
+}
+
+model DiaryEntry {
+  id          Int            @id @default(autoincrement())
+  userId      Int
+  date        DateTime
+  content     String
+  workContent String
+  type        DiaryEntryType
+}
+
+model JournalCategory {
+  id       Int              @id @default(autoincrement())
+  userId   Int
+  name     String
+  sections JournalSection[]
+}
+
+model JournalSection {
+  id         Int              @id @default(autoincrement())
+  userId     Int
+  categoryId Int?
+  category   JournalCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name       String
+  entries    JournalEntry[]
+}
+
+model JournalEntry {
+  id        Int             @id @default(autoincrement())
+  userId    Int
+  sectionId Int?
+  section   JournalSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  date      DateTime
+  content   String
+}
+
+model NoteCategory {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  name   String
+  notes  Note[]
+}
+
+model Note {
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  dateCreated  DateTime
+  dateModified DateTime
+  categoryId   Int?
+  category     NoteCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  title        String
+  content      String
+  tags         String[]
 }
 
 enum PianoPieceStatus {
@@ -86,37 +129,19 @@ model PianoPiece {
   monthLearned  DateTime?
 }
 
-model NoteCategory {
-  id     Int    @id @default(autoincrement())
-  userId Int
-  name   String
-  notes  Note[]
-}
-
-model Note {
-  id           Int           @id @default(autoincrement())
-  userId       Int
-  dateCreated  DateTime
-  dateModified DateTime
-  categoryId   Int?
-  category     NoteCategory? @relation(fields: [categoryId], references: [id])
-  title        String
-  content      String
-  tags         String[]
-}
-
-enum DiaryEntryType {
-  Daily
-  Monthly
-}
-
-model DiaryEntry {
-  id          Int            @id @default(autoincrement())
-  userId      Int
-  date        DateTime
-  content     String
-  workContent String
-  type        DiaryEntryType
+model Hike {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  date               DateTime
+  description        String
+  distance           Float
+  ascent             Float
+  descent            Float
+  duration           Float
+  durationWithBreaks Float
+  coverImage         String
+  images             String[]
+  googleMapsUrl      String
 }
 
 enum VideoGameType {

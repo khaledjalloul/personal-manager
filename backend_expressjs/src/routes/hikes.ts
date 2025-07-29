@@ -10,7 +10,7 @@ router.get('/', async (req: Request, res: Response) => {
   const hikes = await prisma.hike.findMany({
     where: {
       userId: req.user.id,
-      description: { contains: searchText.trim(), mode: 'insensitive' }
+      description: { contains: searchText, mode: 'insensitive' }
     },
     orderBy: { date: 'asc' },
   });

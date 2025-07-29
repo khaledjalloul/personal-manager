@@ -12,6 +12,7 @@ import {
     VideoGame,
     VideoGameType,
     DiaryEntryType,
+    ExpenseType,
 } from '../types';
 
 
@@ -41,7 +42,7 @@ export const expenses: Expense[] = [
         vendor: 'Cafe XYZ',
         amount: 15.99,
         tags: ['lunch', 'cafe'],
-        type: 'manual'
+        type: ExpenseType.Manual
     },
     {
         id: 2,
@@ -51,7 +52,7 @@ export const expenses: Expense[] = [
         vendor: 'City Bus',
         amount: 2.50,
         tags: ['transport', 'bus'],
-        type: 'auto'
+        type: ExpenseType.Auto
     },
     {
         id: 3,
@@ -61,7 +62,7 @@ export const expenses: Expense[] = [
         vendor: 'Cinema ABC',
         amount: 12.00,
         tags: ['movie', 'entertainment'],
-        type: 'manual'
+        type: ExpenseType.Manual
     },
     {
         id: 4,
@@ -71,7 +72,7 @@ export const expenses: Expense[] = [
         vendor: 'Power Company',
         amount: 45.00,
         tags: ['utilities', 'electricity'],
-        type: 'auto'
+        type: ExpenseType.Auto
     }
 ];
 
@@ -81,14 +82,14 @@ export const funds: Fund[] = [
         date: new Date("2025-01-01"),
         source: 'Salary',
         amount: 3000.00,
-        type: "auto"
+        type: ExpenseType.Auto
     },
     {
         id: 2,
         date: new Date("2025-02-01"),
         source: 'Freelance Work',
         amount: 1500.00,
-        type: "manual"
+        type: ExpenseType.Manual
     }
 ];
 

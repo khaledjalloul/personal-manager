@@ -4,13 +4,31 @@ import prisma from '../utils/prisma';
 
 const router = Router();
 
-// Note Categories
+// Categories
 
 router.get('/categories', async (req: Request, res: Response) => {
+  const searchText = (req.query.searchText as string) ?? "";
+
   const categories = await prisma.noteCategory.findMany({
-    where: { userId: req.user.id },
+    where: {
+      userId: req.user.id,
+      OR: [
+        { name: { contains: searchText, mode: 'insensitive' } },
+        {
+          notes: {
+            some: {
+              OR: [
+                { title: { contains: searchText, mode: 'insensitive' } },
+                { content: { contains: searchText, mode: 'insensitive' } },
+              ]
+            }
+          }
+        }
+      ]
+    },
     orderBy: { name: 'asc' },
   });
+
   res.json(categories);
 });
 
@@ -38,11 +56,6 @@ router.post('/categories/:id', async (req: Request, res: Response) => {
 router.delete('/categories/:id', async (req: Request, res: Response) => {
   const categoryId = parseInt(req.params.id);
 
-  await prisma.note.updateMany({
-    where: { categoryId },
-    data: { categoryId: null }
-  });
-
   await prisma.noteCategory.delete({ where: { id: categoryId } });
   res.json({ message: 'Category deleted successfully' });
 });
@@ -53,6 +66,7 @@ router.get('/', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
+  // TODO: combine
   let notes;
   if (categoryId) {
     const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)
@@ -61,8 +75,8 @@ router.get('/', async (req: Request, res: Response) => {
         userId: req.user.id,
         categoryId: categoryIdSearch,
         OR: [
-          { title: { contains: searchText.trim(), mode: "insensitive" } },
-          { content: { contains: searchText.trim(), mode: "insensitive" } },
+          { title: { contains: searchText, mode: "insensitive" } },
+          { content: { contains: searchText, mode: "insensitive" } },
         ]
       },
       include: { category: true },
@@ -73,8 +87,8 @@ router.get('/', async (req: Request, res: Response) => {
       where: {
         userId: req.user.id,
         OR: [
-          { title: { contains: searchText.trim(), mode: "insensitive" } },
-          { content: { contains: searchText.trim(), mode: "insensitive" } },
+          { title: { contains: searchText, mode: "insensitive" } },
+          { content: { contains: searchText, mode: "insensitive" } },
         ]
       },
       include: { category: true },

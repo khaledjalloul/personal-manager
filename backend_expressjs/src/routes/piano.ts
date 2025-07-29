@@ -11,9 +11,9 @@ router.get('/', async (req: Request, res: Response) => {
     where: {
       userId: req.user.id,
       OR: [
-        { name: { contains: searchText.trim(), mode: 'insensitive' } },
-        { origin: { contains: searchText.trim(), mode: 'insensitive' } },
-        { composer: { contains: searchText.trim(), mode: 'insensitive' } },
+        { name: { contains: searchText, mode: 'insensitive' } },
+        { origin: { contains: searchText, mode: 'insensitive' } },
+        { composer: { contains: searchText, mode: 'insensitive' } },
       ]
     },
     orderBy: { monthLearned: 'asc' },

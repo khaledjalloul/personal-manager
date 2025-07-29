@@ -6,7 +6,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { Fund } from "../types";
+import { ExpenseType, Fund } from "../types";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
@@ -55,7 +55,7 @@ export const FundTableRow = ({
 				date: date.toDate(),
 				source: source.trim(),
 				amount,
-				type: "manual"
+				type: ExpenseType.Manual
 			});
 	};
 

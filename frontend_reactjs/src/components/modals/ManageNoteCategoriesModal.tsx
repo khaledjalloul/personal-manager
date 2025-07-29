@@ -87,7 +87,7 @@ export const ManageNoteCategoriesModal = ({
   setSelectedNote: Dispatch<SetStateAction<Note | undefined>>
 }) => {
 
-  const { data: categories } = useNoteCategories();
+  const { data: categories } = useNoteCategories({ searchText: "" });
   const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateNoteCategory();
 
   const [newCategoryName, setNewCategoryName] = useState("")

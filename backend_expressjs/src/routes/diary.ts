@@ -16,10 +16,10 @@ router.get('/daily', async (req: Request, res: Response) => {
       userId: req.user.id,
       type: DiaryEntryType.Daily,
       ...(
-        searchText.trim() ? {
+        searchText ? {
           OR: [
-            { content: { contains: searchText.trim(), mode: 'insensitive' } },
-            { workContent: { contains: searchText.trim(), mode: 'insensitive' } },
+            { content: { contains: searchText, mode: 'insensitive' } },
+            { workContent: { contains: searchText, mode: 'insensitive' } },
           ],
         } : {
           date: {

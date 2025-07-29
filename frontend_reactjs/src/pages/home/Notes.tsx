@@ -37,14 +37,15 @@ export const Notes = () => {
   const [editorEnabled, setEditorEnabled] = useState(false);
   const [editorScrollValue, setEditorScrollValue] = useState(0);
   const [previewScrollValue, setPreviewScrollValue] = useState(0);
-  const [selectedNote, setSelectedNote] = useState<Note | undefined>();
+  const [selectedNote, setSelectedNote] = useState<Note>();
   const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
-  const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory | undefined>();
+  const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory>();
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: notes } = useNotes({ searchText: searchText.trim() })
-  const { data: noteCategories } = useNoteCategories();
+  const { data: noteCategories } = useNoteCategories({ searchText: searchText.trim() });
+
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
 

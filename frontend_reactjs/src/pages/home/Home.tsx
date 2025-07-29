@@ -56,7 +56,7 @@ export const Home = () => {
   const { palette } = useTheme();
 
   const { data: expensesStatistics } = useExpensesStatistics();
-  const { data: noteCategories } = useNoteCategories();
+  const { data: noteCategories } = useNoteCategories({ searchText: "" });
   const { data: diaryEntries } = useDailyDiaryEntries({
     year: today.year(),
     month: today.month(),

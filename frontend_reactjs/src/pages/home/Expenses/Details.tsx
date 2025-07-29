@@ -11,17 +11,18 @@ import {
 import { useExpenses, useFunds } from "../../../api";
 import { ExpenseTableRow, FundTableRow } from "../../../components";
 import { useOutletContext } from "react-router-dom";
+import { ExpenseType } from "../../../types";
 
 export const ExpensesDetails = () => {
   const { searchText, filterCategoryIds } = useOutletContext<{ searchText: string, filterCategoryIds: number[] }>();
 
   const { data: expenses } = useExpenses({
-    type: "all",
+    type: ExpenseType.Auto,
     searchText: searchText.trim(),
     filterCategoryIds
   });
   const { data: funds } = useFunds({
-    type: "all",
+    type: ExpenseType.Auto,
     searchText: searchText.trim(),
   });
 

@@ -6,6 +6,7 @@ export type UserData = {
   email: string;
   token: string;
   lastOpenedNoteId?: number;
+  lastOpenedJournalCategoryId?: number;
 } | null;
 
 export const UserContext = createContext<{

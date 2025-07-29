@@ -4,9 +4,18 @@ import client from "../../client";
 
 const ENDPOINT = "notes/categories";
 
-const queryFn = async () => {
+export type GetNoteCategoriesRequestParams = {
+  searchText: string;
+};
+
+const queryFn = (params: GetNoteCategoriesRequestParams) => async () => {
+  const queryParams = Object.keys(params)
+    .filter((key) => params[key as keyof GetNoteCategoriesRequestParams] !== undefined)
+    .map((key) => `${key}=${params[key as keyof GetNoteCategoriesRequestParams]}`)
+    .join("&");
+
   return await client
-    .get(`/${ENDPOINT}`)
+    .get(`/${ENDPOINT}?${queryParams}`)
     .then((res) => res.data)
     .catch((err) => {
       console.error(`${ENDPOINT}-error`, err?.response?.data);
@@ -14,9 +23,9 @@ const queryFn = async () => {
     });
 };
 
-export const useNoteCategories = () =>
+export const useNoteCategories = (params: GetNoteCategoriesRequestParams) =>
   useQuery<NoteCategory[]>({
-    queryKey: [ENDPOINT],
-    queryFn,
+    queryKey: [ENDPOINT, params],
+    queryFn: queryFn(params),
     placeholderData: keepPreviousData,
   });

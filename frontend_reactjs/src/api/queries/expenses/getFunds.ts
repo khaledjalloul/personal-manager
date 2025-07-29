@@ -1,11 +1,11 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Fund } from "../../../types";
+import { ExpenseType, Fund } from "../../../types";
 import client from "../../client";
 
 const ENDPOINT = "expenses/funds";
 
 export type GetFundsRequestParams = {
-  type: "manual" | "auto" | "all";
+  type: ExpenseType | "All";
   searchText: string;
 };
 

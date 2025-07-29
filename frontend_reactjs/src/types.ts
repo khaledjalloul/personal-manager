@@ -14,6 +14,11 @@ export type ExpensesCategory = {
   keywords: string[];
 };
 
+export enum ExpenseType {
+  Manual = "Manual",
+  Auto = "Auto"
+}
+
 export type Expense = {
   id: number;
   date: Date;
@@ -22,7 +27,7 @@ export type Expense = {
   vendor: string;
   amount: number;
   tags: string[];
-  type: "manual" | "auto";
+  type: ExpenseType;
 };
 
 export type Fund = {
@@ -30,22 +35,54 @@ export type Fund = {
   date: Date;
   source: string;
   amount: number;
-  type: "manual" | "auto";
+  type: ExpenseType;
 };
 
-export type Hike = {
+export enum DiaryEntryType {
+  Daily = "Daily",
+  Monthly = "Monthly"
+};
+
+export type DiaryEntry = {
   id: number;
   date: Date;
-  description: string;
-  distance: number;
-  ascent: number;
-  descent: number;
-  duration: number;
-  durationWithBreaks: number;
-  coverImage: string;
-  images: string[];
-  googleMapsUrl: string;
-}
+  content: string;
+  workContent: string;
+  type: DiaryEntryType;
+};
+
+export type JournalCategory = {
+  id: number;
+  name: string;
+};
+
+export type JournalSection = {
+  id: number;
+  category: JournalCategory;
+  name: string;
+};
+
+export type JournalEntry = {
+  id: number;
+  section: JournalSection;
+  date: Date;
+  content: string;
+};
+
+export type NoteCategory = {
+  id: number;
+  name: string;
+};
+
+export type Note = {
+  id: number;
+  dateCreated: Date;
+  dateModified: Date;
+  category?: NoteCategory;
+  title: string;
+  content: string;
+  tags: string[];
+};
 
 export enum PianoPieceStatus {
   Planned = "Planned",
@@ -63,41 +100,27 @@ export type PianoPiece = {
   sheetMusicUrl: string;
   youtubeUrl: string;
   monthLearned?: Date;
-}
+};
 
-export type NoteCategory = {
-  id: number;
-  name: string;
-}
-
-export type Note = {
-  id: number;
-  dateCreated: Date;
-  dateModified: Date;
-  category?: NoteCategory;
-  title: string;
-  content: string;
-  tags: string[];
-}
-
-export enum DiaryEntryType {
-  Daily = "Daily",
-  Monthly = "Monthly"
-}
-
-export type DiaryEntry = {
+export type Hike = {
   id: number;
   date: Date;
-  content: string;
-  workContent: string;
-  type: DiaryEntryType;
+  description: string;
+  distance: number;
+  ascent: number;
+  descent: number;
+  duration: number;
+  durationWithBreaks: number;
+  coverImage: string;
+  images: string[];
+  googleMapsUrl: string;
 };
 
 export enum VideoGameType {
   Online = "Online",
   Single_Player = "Single_Player",
   Both = "Both"
-}
+};
 
 export type VideoGame = {
   id: number;
@@ -110,4 +133,4 @@ export type VideoGame = {
   extraPurchases: string;
   storeUrl: string;
   coverImage: string;
-}
+};
