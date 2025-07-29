@@ -58,7 +58,7 @@ export const MonthlyExpenses = () => {
                 </TableCell>
                 {expensesCategories?.map((category) => (
                   <TableCell key={category.id}>
-                    {monthlyExpenses[month][category.name].toFixed(2)} CHF
+                    {monthlyExpenses[month][category.name]?.toFixed(2)} CHF
                   </TableCell>
                 ))}
                 <TableCell>

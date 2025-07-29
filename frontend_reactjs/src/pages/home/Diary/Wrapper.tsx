@@ -115,7 +115,7 @@ export const DiaryWrapper = () => {
             display: { xs: isDaily ? 'flex' : 'none', lg: 'flex' }
           }}
           disabled={!isDaily}
-          label="Search diary entries"
+          label="Search diary"
           placeholder="Content, work content"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}

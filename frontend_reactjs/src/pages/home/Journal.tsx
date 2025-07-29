@@ -56,8 +56,8 @@ export const Journal = () => {
             ml: { xs: 0, sm: 'auto' },
             minWidth: { xs: 0, sm: "35vw" },
           }}
-          label="Search notes"
-          placeholder="Title, content"
+          label="Search journal"
+          placeholder="Category, section, content"
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);

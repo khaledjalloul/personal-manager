@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import { GetExpensesStatisticsResponse, GetMonthlyExpensesResponse } from '../api';
 import {
     User,
     Expense,
@@ -13,8 +15,12 @@ import {
     VideoGameType,
     DiaryEntryType,
     ExpenseType,
+    JournalCategory,
+    JournalSection,
+    JournalEntry,
 } from '../types';
 
+// ############### Users ###############
 
 export const user: User = {
     id: 1,
@@ -25,12 +31,12 @@ export const user: User = {
     token: 'fake-jwt-token'
 };
 
+// ############### Expenses ###############
+
 export const expensesCategories: ExpensesCategory[] = [
     { id: 1, name: 'Groceries', color: 'green', keywords: ["groceries"] },
     { id: 2, name: 'Tools/Services', color: 'yellow', keywords: ["tools", "services"] },
     { id: 3, name: 'Entertainment', color: 'purple', keywords: ["movies"] },
-    { id: 4, name: 'Housing', color: 'orange', keywords: ["housing"] },
-    { id: 5, name: 'Tuition', color: 'red', keywords: ["tuition"] },
 ];
 
 export const expenses: Expense[] = [
@@ -67,7 +73,7 @@ export const expenses: Expense[] = [
     {
         id: 4,
         date: new Date("2025-02-10"),
-        category: expensesCategories[3],
+        category: expensesCategories[1],
         description: 'Electricity bill',
         vendor: 'Power Company',
         amount: 45.00,
@@ -93,77 +99,87 @@ export const funds: Fund[] = [
     }
 ];
 
-export const hikes: Hike[] = [
-    {
-        id: 1,
-        date: new Date("2025-07-01"),
-        description: 'Morning hike in the mountains',
-        distance: 5.0,
-        ascent: 300,
-        descent: 200,
-        duration: 3.4,
-        durationWithBreaks: 3.9,
-        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuRviGmuOIjiaBd9elsOJ9lthIA9hKV6JGQ&s",
-        images: [],
-        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+export const expensesStatistics: GetExpensesStatisticsResponse = {
+    totalExpenses: 75.49,
+    totalExpensesThisMonth: 28.49,
+    monthlyAverageExpenses: 50.00,
+    totalFunds: 4500.00,
+    categories: {
+        [expensesCategories[0].name]: { monthlyAverage: 20.00, total: 60.00 },
+        [expensesCategories[1].name]: { monthlyAverage: 10.00, total: 30.00 },
+        [expensesCategories[2].name]: { monthlyAverage: 12.00, total: 12.00 }
     },
-    {
-        id: 2,
-        date: new Date("2025-07-05"),
-        description: 'Evening walk in the park',
-        distance: 2.0,
-        ascent: 50,
-        descent: 30,
-        duration: 5.1,
-        durationWithBreaks: 6.8,
-        coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
-        images: [],
-        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+    months: {
+        "2025-01": { expenses: 300.00, funds: 3000.00 },
+        "2025-02": { expenses: 150.00, funds: 1500.00 },
+        "2025-03": { expenses: 75.49, funds: 4500.00 },
     }
-];
+};
 
-export const pianoPieces: PianoPiece[] = [
+export const monthlyExpenses: GetMonthlyExpensesResponse = {
+    "2025-01": {
+        [expensesCategories[0].name]: 60.00,
+        [expensesCategories[1].name]: 30.00,
+        [expensesCategories[2].name]: 12.00,
+        total: 300.00,
+    },
+    "2025-02": {
+        [expensesCategories[0].name]: 20.00,
+        [expensesCategories[1].name]: 10.00,
+        [expensesCategories[2].name]: 12.00,
+        total: 150.00,
+    }
+};
+
+// ############### Diary ###############
+
+export const diaryEntries: DiaryEntry[] = [
     {
         id: 1,
-        name: 'Fur Elise',
-        composer: 'Beethoven',
-        origin: 'Classical',
-        status: PianoPieceStatus.Learned,
-        monthLearned: new Date("2025-01-01"),
-        sheetMusicUrl: 'https://example.com/fur-elise-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+        date: new Date(),
+        content: 'Had a productive day at work.',
+        workContent: 'Completed the project presentation.',
+        type: DiaryEntryType.Daily
     },
     {
         id: 2,
-        name: 'Clair de Lune',
-        composer: 'Debussy',
-        origin: 'Impressionist',
-        status: PianoPieceStatus.Learning,
-        monthLearned: undefined,
-        sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
+        date: dayjs().subtract(1, 'day').toDate(),
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        workContent: 'Duis aute irure dolor in reprehenderit in voluptate',
+        type: DiaryEntryType.Daily
     },
     {
         id: 3,
-        name: 'Prelude in C Major',
-        composer: 'Bach',
-        origin: 'Baroque',
-        status: PianoPieceStatus.Planned,
-        monthLearned: undefined,
-        sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
-    },
-    {
-        id: 4,
-        name: 'Moonlight Sonata',
-        composer: 'Beethoven',
-        origin: 'Classical',
-        status: PianoPieceStatus.Learned_Forgotten,
-        monthLearned: new Date("2025-04-01"),
-        sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+        date: dayjs().add(1, 'day').toDate(),
+        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
+        workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.',
+        type: DiaryEntryType.Daily
     }
 ];
+
+// ############### Journal ###############
+
+export const journalCategories: JournalCategory[] = [
+    { id: 1, name: 'Personal' },
+    { id: 2, name: 'Work' },
+];
+
+export const journalSections: JournalSection[] = [
+    { id: 1, category: journalCategories[0], name: 'Reflections' },
+    { id: 2, category: journalCategories[0], name: 'Project Ideas' },
+    { id: 3, category: journalCategories[1], name: 'Meeting Notes' },
+    { id: 4, category: journalCategories[1], name: 'Task Lists' }
+];
+
+export const journalEntries: JournalEntry[] = [
+    { id: 1, section: journalSections[0], date: new Date(), content: 'Good day.' },
+    { id: 2, section: journalSections[1], date: new Date(), content: 'New project idea: a personal finance tracker.' },
+    { id: 3, section: journalSections[2], date: new Date(), content: 'Meeting with the team went well.' },
+    { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation' },
+    { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.' }
+];
+
+// ############### Notes ###############
 
 export const noteCategories: NoteCategory[] = [
     { id: 1, name: 'Personal' },
@@ -229,29 +245,83 @@ export const notes: Note[] = [
     }
 ];
 
-export const diaryEntries: DiaryEntry[] = [
+// ############### Piano ###############
+
+export const pianoPieces: PianoPiece[] = [
     {
         id: 1,
-        date: new Date("2025-07-01"),
-        content: 'Had a productive day at work.',
-        workContent: 'Completed the project presentation.',
-        type: DiaryEntryType.Daily
+        name: 'Fur Elise',
+        composer: 'Beethoven',
+        origin: 'Classical',
+        status: PianoPieceStatus.Learned,
+        monthLearned: new Date("2025-01-01"),
+        sheetMusicUrl: 'https://example.com/fur-elise-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
     },
     {
         id: 2,
-        date: new Date("2025-07-02"),
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        workContent: 'Duis aute irure dolor in reprehenderit in voluptate',
-        type: DiaryEntryType.Daily
+        name: 'Clair de Lune',
+        composer: 'Debussy',
+        origin: 'Impressionist',
+        status: PianoPieceStatus.Learning,
+        monthLearned: undefined,
+        sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
     },
     {
         id: 3,
-        date: new Date("2025-06-03"),
-        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.',
-        workContent: 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.',
-        type: DiaryEntryType.Daily
+        name: 'Prelude in C Major',
+        composer: 'Bach',
+        origin: 'Baroque',
+        status: PianoPieceStatus.Planned,
+        monthLearned: undefined,
+        sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+    },
+    {
+        id: 4,
+        name: 'Moonlight Sonata',
+        composer: 'Beethoven',
+        origin: 'Classical',
+        status: PianoPieceStatus.Learned_Forgotten,
+        monthLearned: new Date("2025-04-01"),
+        sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
     }
 ];
+
+// ############### Hikes ###############
+
+export const hikes: Hike[] = [
+    {
+        id: 1,
+        date: new Date("2025-07-01"),
+        description: 'Morning hike in the mountains',
+        distance: 5.0,
+        ascent: 300,
+        descent: 200,
+        duration: 3.4,
+        durationWithBreaks: 3.9,
+        coverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuRviGmuOIjiaBd9elsOJ9lthIA9hKV6JGQ&s",
+        images: [],
+        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+    },
+    {
+        id: 2,
+        date: new Date("2025-07-05"),
+        description: 'Evening walk in the park',
+        distance: 2.0,
+        ascent: 50,
+        descent: 30,
+        duration: 5.1,
+        durationWithBreaks: 6.8,
+        coverImage: "https://8515463.fs1.hubspotusercontent-na1.net/hubfs/8515463/Impact%20of%20trees%20on%20the%20world.jpg",
+        images: [],
+        googleMapsUrl: "https://maps.app.goo.gl/LvpaPxcWUFwdnNvF9"
+    }
+];
+
+// ############### Video Games ###############
 
 export const videoGames: VideoGame[] = [
     {

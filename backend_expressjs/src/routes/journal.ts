@@ -78,6 +78,7 @@ router.get('/sections', async (req: Request, res: Response) => {
       where: {
         categoryId: categoryIdSearch,
         OR: [
+          { category: { name: { contains: searchText, mode: 'insensitive' } } },
           { name: { contains: searchText, mode: 'insensitive' } },
           {
             entries: {
@@ -95,6 +96,7 @@ router.get('/sections', async (req: Request, res: Response) => {
       where: {
         userId: req.user.id,
         OR: [
+          { category: { name: { contains: searchText, mode: 'insensitive' } } },
           { name: { contains: searchText, mode: 'insensitive' } },
           {
             entries: {
@@ -152,7 +154,11 @@ router.get('/', async (req: Request, res: Response) => {
       where: {
         userId: req.user.id,
         sectionId: sectionIdSearch,
-        content: { contains: searchText, mode: 'insensitive' }
+        OR: [
+          { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
+          { section: { name: { contains: searchText, mode: 'insensitive' } } },
+          { content: { contains: searchText, mode: 'insensitive' } }
+        ]
       },
       orderBy: { date: 'asc' },
     });
@@ -160,7 +166,11 @@ router.get('/', async (req: Request, res: Response) => {
     entries = await prisma.journalEntry.findMany({
       where: {
         userId: req.user.id,
-        content: { contains: searchText, mode: 'insensitive' }
+        OR: [
+          { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
+          { section: { name: { contains: searchText, mode: 'insensitive' } } },
+          { content: { contains: searchText, mode: 'insensitive' } }
+        ]
       },
       orderBy: { date: 'asc' },
     });

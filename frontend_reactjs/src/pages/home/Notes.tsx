@@ -140,7 +140,7 @@ export const Notes = () => {
             minWidth: { xs: 0, sm: "35vw" },
           }}
           label="Search notes"
-          placeholder="Title, content"
+          placeholder="Category, title, content"
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);

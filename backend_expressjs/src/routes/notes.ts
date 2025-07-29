@@ -75,6 +75,7 @@ router.get('/', async (req: Request, res: Response) => {
         userId: req.user.id,
         categoryId: categoryIdSearch,
         OR: [
+          { category: { name: { contains: searchText, mode: "insensitive" } } },
           { title: { contains: searchText, mode: "insensitive" } },
           { content: { contains: searchText, mode: "insensitive" } },
         ]
@@ -87,6 +88,7 @@ router.get('/', async (req: Request, res: Response) => {
       where: {
         userId: req.user.id,
         OR: [
+          { category: { name: { contains: searchText, mode: "insensitive" } } },
           { title: { contains: searchText, mode: "insensitive" } },
           { content: { contains: searchText, mode: "insensitive" } },
         ]
