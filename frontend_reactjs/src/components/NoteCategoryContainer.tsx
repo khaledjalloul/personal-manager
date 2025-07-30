@@ -33,7 +33,7 @@ export const NoteCategoryContainer = ({
       <Box
         onClick={() => setIsOpen(!isOpen)}
         sx={{
-          pl: 1,
+          pl: 1.5,
           pr: 1,
           pt: category.id !== -1 ? 0.5 : 1.2,
           pb: category.id !== -1 ? 0.5 : 1.2,

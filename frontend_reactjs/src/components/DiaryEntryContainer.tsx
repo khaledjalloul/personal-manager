@@ -76,13 +76,18 @@ export const DiaryEntryContainer = ({
             <Typography sx={{ fontSize: { xs: 14, lg: 16 } }}>
               {dayjs(entry.date).format(
                 isDaily ?
-                  (searchText.trim() ? "DD.MM.YYYY" : "dddd") :
+                  (searchText ? "DD.MM.YYYY" : "dddd") :
                   "MMMM"
               )}
             </Typography>
-            {(isDaily && !searchText.trim()) && (
+            {isDaily && !searchText && (
               <Typography variant="h5">
                 {dayjs(entry.date).format("DD")}
+              </Typography>
+            )}
+            {!isDaily && searchText && (
+              <Typography variant="body2">
+                {dayjs(entry.date).format("YYYY")}
               </Typography>
             )}
 
@@ -131,8 +136,8 @@ export const DiaryEntryContainer = ({
           borderBottom: { xs: `solid 1px ${palette.action.hover}`, md: 'none' }
         }}>
           {!isEditing ? (
-            <Typography variant="body1">
-              <SearchTextHighlight text={content} searchText={searchText.trim()} />
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+              <SearchTextHighlight text={content} searchText={searchText} />
             </Typography>
           ) : (
             <textarea
@@ -173,7 +178,7 @@ export const DiaryEntryContainer = ({
         }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-              {workContent}
+              <SearchTextHighlight text={workContent} searchText={searchText} />
             </Typography>
           ) : (
             <textarea

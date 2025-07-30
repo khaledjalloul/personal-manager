@@ -149,7 +149,7 @@ export const JournalEntryContainer = ({
           p: 2,
         }}>
           {!isEditing ? (
-            <Typography>
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>
               <SearchTextHighlight text={content} searchText={searchText.trim()} />
             </Typography>
           ) : (

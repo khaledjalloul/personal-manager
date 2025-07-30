@@ -58,6 +58,7 @@ const CategoryBox = ({
       onClick={() => setSelectedCategory(category)}
       sx={{
         p: 1,
+        pl: 1.5,
         cursor: 'pointer',
         borderTopLeftRadius: '8px',
         borderTopRightRadius: '8px',

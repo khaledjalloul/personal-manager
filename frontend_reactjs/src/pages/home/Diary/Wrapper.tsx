@@ -4,6 +4,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useDailyDiaryEntries, useMonthlyDiaryEntries } from "../../../api";
 
 export const DiaryWrapper = () => {
 
@@ -21,6 +23,16 @@ export const DiaryWrapper = () => {
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(new Date()));
   const [searchText, setSearchText] = useState("");
+
+  const { data: dailyEntries } = useDailyDiaryEntries({
+    year: selectedDate.year(),
+    month: selectedDate.month(),
+    searchText: encodeURIComponent(searchText),
+  });
+  const { data: monthlyDiary } = useMonthlyDiaryEntries({
+    year: selectedDate.year(),
+    searchText: searchText.trim(),
+  });
 
   const isDaily = location.pathname === "/diary";
 
@@ -105,6 +117,12 @@ export const DiaryWrapper = () => {
           >
             {isDaily ? "Monthly Summary" : "Daily Entries"}
           </Button>
+
+          {searchText && (
+            <Typography ml={1}>
+              ({isDaily ? dailyEntries?.length : monthlyDiary?.entries.length} entries)
+            </Typography>
+          )}
         </Box>
 
         <TextField

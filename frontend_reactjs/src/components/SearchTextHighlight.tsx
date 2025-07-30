@@ -15,7 +15,9 @@ export const SearchTextHighlight = ({
 
   if (!searchText) return <Fragment>{text}</Fragment>;
 
-  const regex = new RegExp(`(${searchText})`, 'gi');
+  const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedSearchText})`, 'gi');
+
   const parts = text.split(regex);
 
   return (
@@ -45,7 +47,9 @@ export const SearchTextHighlight = ({
 export const addSearchTextHighlight = (text: string, searchText: string, palette: Palette) => {
   if (!searchText) return text;
 
-  const regex = new RegExp(`(${searchText})`, 'gi');
+  const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedSearchText})`, 'gi');
+
   const parts = text.split(regex);
 
   return parts.map((part) => !regex.test(part) ? part : (

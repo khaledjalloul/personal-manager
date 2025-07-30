@@ -13,11 +13,11 @@ export const DailyDiary = () => {
   const { data: diaryEntries } = useDailyDiaryEntries({
     year: selectedDate.year(),
     month: selectedDate.month(),
-    searchText: searchText.trim(),
+    searchText: encodeURIComponent(searchText), // Intentionally untrimmed to search for words with spaces
   });
 
   const displayedEntries: DiaryEntry[] | undefined = useMemo(() => {
-    if (searchText.trim())
+    if (searchText)
       return diaryEntries;
 
     const lastDayOfMonth = new Date(selectedDate.year(), selectedDate.month() + 1, 0);
@@ -38,7 +38,7 @@ export const DailyDiary = () => {
         type: DiaryEntryType.Daily
       }
     });
-  }, [selectedDate, searchText.trim(), JSON.stringify(diaryEntries)])
+  }, [selectedDate, searchText, JSON.stringify(diaryEntries)])
 
   return (
     <Box sx={{

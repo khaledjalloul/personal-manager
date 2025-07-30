@@ -60,7 +60,8 @@ router.get('/monthly', async (req: Request, res: Response) => {
         return new Date(date.year(), date.month(), 1, 12).toISOString();
       })
     )
-  ).map(date => new Date(date));
+  ).map(date => new Date(date))
+    .sort((a, b) => a.getTime() - b.getTime());
 
   const entries = await prisma.diaryEntry.findMany({
     where: {
