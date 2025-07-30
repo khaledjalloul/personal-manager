@@ -72,7 +72,7 @@ export const HikeCard = ({
 
   const save = () => {
     if (!isEditing || !description.trim()) return;
-    if (hike.id !== -1)
+    if (!isAddingHike)
       editHike({
         id: hike.id,
         date: date.toDate(),
@@ -150,7 +150,7 @@ export const HikeCard = ({
               sx={{ ml: 'auto' }}
               onClick={() => setIsEditing(true)}
             >
-              <Edit />
+              <Edit fontSize="small" />
             </IconButton>
           )}
 
@@ -162,23 +162,23 @@ export const HikeCard = ({
               disabled={!description.trim()}
               onClick={save}
             >
-              <Save />
+              <Save fontSize="small" />
             </IconButton>
           )}
 
-          {isEditing && hike.id !== -1 && (
+          {isEditing && !isAddingHike && (
             <IconButton
               color="error"
               loading={deleteLoading}
               onClick={() => setConfirmDeleteOpen(true)}
             >
-              <Delete />
+              <Delete fontSize="small" />
             </IconButton>
           )}
 
           {isEditing && (
             <IconButton onClick={() => {
-              if (hike.id !== -1) {
+              if (!isAddingHike) {
                 setDate(dayjs(hike.date));
                 setDescription(hike.description);
                 setDistance(hike.distance);
@@ -192,13 +192,13 @@ export const HikeCard = ({
                 setIsAddingHike(false);
               }
             }}>
-              <Clear />
+              <Clear fontSize="small" />
             </IconButton>
           )}
 
           {/* {!isEditing && (
             <IconButton disabled>
-              <PermMedia />
+              <PermMedia fontSize="small" />
             </IconButton>
           )} */}
 
@@ -207,7 +207,7 @@ export const HikeCard = ({
               disabled={!googleMapsUrl.trim()}
               onClick={() => window.open(googleMapsUrl, '_blank')}
             >
-              <GoogleMapsIcon disabled={!googleMapsUrl.trim()} />
+              <GoogleMapsIcon disabled={!googleMapsUrl.trim()}  />
             </IconButton>
           )}
         </Box>

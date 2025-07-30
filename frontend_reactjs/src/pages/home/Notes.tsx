@@ -234,7 +234,7 @@ export const Notes = () => {
                 loading={editNoteLoading}
                 onClick={save}
               >
-                <Save />
+                <Save fontSize="small" />
               </IconButton>
 
               <IconButton
@@ -248,9 +248,8 @@ export const Notes = () => {
                   }
                 }}
               >
-                <Delete />
+                <Delete fontSize="small" />
               </IconButton>
-
             </Box>
 
             <TextField
@@ -294,7 +293,7 @@ export const Notes = () => {
             </IconButton>
 
             <IconButton
-              sx={{ display: { xs: 'none', sm: 'flex' } }}
+              sx={{ display: { xs: 'none', sm: 'flex' }, ml: -1 }}
               color="error"
               disabled={!selectedNote}
               loading={deleteNoteLoading}

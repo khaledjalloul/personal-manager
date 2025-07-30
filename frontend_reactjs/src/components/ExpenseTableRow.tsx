@@ -49,8 +49,7 @@ export const ExpenseTableRow = ({
 
   const save = () => {
     if (!isEditing || !description.trim()) return;
-    // TODO: Change to isAddingExpense
-    if (expense.id !== -1)
+    if (!isAddingExpense)
       editExpense({
         id: expense.id,
         date: date.toDate(),
@@ -117,7 +116,9 @@ export const ExpenseTableRow = ({
 
         <TableCell>
           {!isEditing ? (
-            category?.name ?? (
+            category?.name ? (
+              <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>{category.name}</Typography>
+            ) : (
               <Typography color={!editable ? 'gray' : 'text.primary'} variant="body2">
                 <em>Uncategorized</em>
               </Typography>
@@ -196,7 +197,7 @@ export const ExpenseTableRow = ({
                 size="small"
                 onClick={() => setIsEditing(true)}
               >
-                <Edit />
+                <Edit fontSize="small" />
               </IconButton>
             </TableCell>
           ) : (
@@ -207,22 +208,22 @@ export const ExpenseTableRow = ({
                 loading={createLoading || editLoading}
                 disabled={!description.trim()}
                 onClick={save}>
-                <Save />
+                <Save fontSize="small" />
               </IconButton>
 
-              {expense.id !== -1 && (
+              {!isAddingExpense && (
                 <IconButton
                   size="small"
                   color="error"
                   loading={deleteLoading}
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
-                  <Delete />
+                  <Delete fontSize="small" />
                 </IconButton>
               )}
 
               <IconButton size="small" onClick={() => {
-                if (expense.id !== -1) {
+                if (!isAddingExpense) {
                   setDate(dayjs(expense.date));
                   setCategory(expense.category);
                   setDescription(expense.description);
@@ -233,7 +234,7 @@ export const ExpenseTableRow = ({
                   setIsAddingExpense(false);
                 }
               }}>
-                <Clear />
+                <Clear fontSize="small" />
               </IconButton>
             </TableCell>
           )

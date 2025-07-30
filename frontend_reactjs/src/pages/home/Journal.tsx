@@ -256,25 +256,25 @@ export const Journal = () => {
           sx={{ display: 'flex', flexDirection: 'column', gap: 2, pl: 2 }}
         >
           {!isEditingCategory ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{ display: 'flex', alignItems: 'center' }}
+              onDoubleClick={selectedCategory && selectedCategory.id !== -1 ? () => setIsEditingCategory(true) : undefined}
+            >
               <Typography variant="h6">
                 {selectedCategoryName || "Select a category"}
               </Typography>
 
               {selectedCategory && selectedCategory.id !== -1 && (
                 <IconButton
-                  size="small"
                   sx={{ ml: 2 }}
                   onClick={() => setIsEditingCategory(true)}
                 >
-                  {/* TODO: make all buttons properly small */}
                   <Edit />
                 </IconButton>
               )}
 
               {selectedCategory && selectedCategory.id !== -1 && (
                 <IconButton
-                  size="small"
                   onClick={() => setIsAddingSection(true)}
                 >
                   <Add />
@@ -282,7 +282,7 @@ export const Journal = () => {
               )}
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <TextField
                 label="Category Name"
                 variant="standard"
@@ -290,7 +290,7 @@ export const Journal = () => {
                 onChange={(e) => setSelectedCategoryName(e.target.value)} />
 
               <IconButton
-                size="small"
+                sx={{ ml: 1 }}
                 color="success"
                 loading={editCategoryLoading}
                 disabled={!selectedCategoryName?.trim()}
@@ -300,7 +300,6 @@ export const Journal = () => {
               </IconButton>
 
               <IconButton
-                size="small"
                 color="error"
                 loading={deleteCategoryLoading}
                 onClick={() => {
@@ -312,7 +311,6 @@ export const Journal = () => {
               </IconButton>
 
               <IconButton
-                size="small"
                 onClick={() => {
                   setSelectedCategoryName(selectedCategory?.name);
                   setIsEditingCategory(false);
@@ -324,7 +322,7 @@ export const Journal = () => {
           )}
 
           {isAddingSection && selectedCategory && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <TextField
                 label="New Section Name"
                 variant="standard"
@@ -332,23 +330,22 @@ export const Journal = () => {
                 onChange={(e) => setNewSectionName(e.target.value)}
               />
               <IconButton
-                size="small"
+                sx={{ ml: 1 }}
                 color="success"
                 loading={createSectionLoading}
                 disabled={!newSectionName.trim()}
                 onClick={saveCreateSection}
               >
-                <Save />
+                <Save fontSize="small" />
               </IconButton>
 
               <IconButton
-                size="small"
                 onClick={() => {
                   setIsAddingSection(false);
                   setNewSectionName("");
                 }}
               >
-                <Clear />
+                <Clear fontSize="small" />
               </IconButton>
             </Box>
           )}
@@ -373,7 +370,7 @@ export const Journal = () => {
         }}
       />
 
-    </Wrapper>
+    </Wrapper >
   );
 };
 

@@ -32,7 +32,7 @@ export const ExpensesCategoryCard = ({
 
   const save = () => {
     if (!isEditing || !name.trim()) return;
-    if (category.id !== -1)
+    if (!isAddingCategory)
       editCategory({
         id: category.id,
         name: name.trim(),
@@ -84,7 +84,7 @@ export const ExpensesCategoryCard = ({
         }}>
         <Box
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
-          onDoubleClick={() => setIsEditing(true)}
+          onDoubleClick={category.id !== -999 ? () => setIsEditing(true) : undefined}
         >
           {!isEditing ? (
             <Typography
@@ -122,40 +122,37 @@ export const ExpensesCategoryCard = ({
 
           {category.id !== -999 && !isEditing && (
             <IconButton
-              size="small"
               sx={{ ml: 'auto' }}
               onClick={() => setIsEditing(true)}
             >
-              <Edit />
+              <Edit fontSize="small" />
             </IconButton>
           )}
 
           {isEditing && (
             <IconButton
-              size="small"
               sx={{ ml: 'auto' }}
               color="success"
               disabled={!name.trim()}
               loading={createLoading || editLoading}
               onClick={save}>
-              <Save />
+              <Save fontSize="small" />
             </IconButton>
           )}
 
-          {category.id !== -999 && category.id !== -1 && isEditing && (
+          {category.id !== -999 && !isAddingCategory && isEditing && (
             <IconButton
-              size="small"
               color="error"
               loading={deleteLoading}
               onClick={() => setConfirmDeleteOpen(true)}
             >
-              <Delete />
+              <Delete fontSize="small" />
             </IconButton>
           )}
 
           {isEditing && (
             <IconButton size="small" onClick={() => {
-              if (category.id !== -1) {
+              if (!isAddingCategory) {
                 setName(category.name);
                 setIsEditing(false);
               } else {
@@ -212,7 +209,7 @@ export const ExpensesCategoryCard = ({
                       });
                   }}
                 >
-                  <Clear />
+                  <Clear fontSize="small" />
                 </IconButton>
               </Box>
             ))}
@@ -224,17 +221,16 @@ export const ExpensesCategoryCard = ({
             sx={{ mt: 'auto' }}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            disabled={category.id === -1}
+            disabled={isAddingCategory}
             slotProps={{
               input: {
                 endAdornment: (
                   <IconButton
-                    size="small"
                     color="success"
-                    disabled={!keyword.trim() || category.id === -1}
+                    disabled={!keyword.trim() || isAddingCategory}
                     loading={editLoading || editFundKeywordsLoading}
                     onClick={addKeyword}>
-                    <Send />
+                    <Send fontSize="small" />
                   </IconButton>
                 )
               }

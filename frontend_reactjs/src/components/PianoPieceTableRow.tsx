@@ -52,7 +52,7 @@ export const PianoPieceTableRow = ({
 
   const save = () => {
     if (!isEditing || !name.trim()) return;
-    if (pianoPiece.id !== -1)
+    if (!isAddingPiece)
       editPiece({
         id: pianoPiece.id,
         name: name.trim(),
@@ -167,7 +167,7 @@ export const PianoPieceTableRow = ({
                 />
               </LocalizationProvider>
               <IconButton size="small" onClick={() => setMonthLearned(undefined)}>
-                <Clear />
+                <Clear fontSize="small" />
               </IconButton>
             </Box>
           }
@@ -181,7 +181,7 @@ export const PianoPieceTableRow = ({
                 disabled={!youtubeUrl.trim()}
                 onClick={() => window.open(pianoPiece.youtubeUrl, "_blank")}
               >
-                <YouTube sx={{ color: youtubeUrl.trim() ? "#F00" : "" }} />
+                <YouTube sx={{ color: youtubeUrl.trim() ? "#F00" : "" }} fontSize="small" />
               </IconButton>
 
               <IconButton
@@ -189,7 +189,7 @@ export const PianoPieceTableRow = ({
                 disabled={!sheetMusicUrl.trim()}
                 onClick={() => window.open(pianoPiece.sheetMusicUrl, "_blank")
                 }>
-                <PictureAsPdf />
+                <PictureAsPdf fontSize="small" />
               </IconButton>
             </Box>
           </TableCell>
@@ -217,7 +217,7 @@ export const PianoPieceTableRow = ({
           <TableCell>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton size="small" onClick={() => setIsEditing(true)}>
-                <Edit />
+                <Edit fontSize="small" />
               </IconButton>
 
             </Box>
@@ -232,21 +232,21 @@ export const PianoPieceTableRow = ({
                 disabled={!name.trim()}
                 onClick={save}
               >
-                <Save />
+                <Save fontSize="small" />
               </IconButton>
 
-              {pianoPiece.id !== -1 && (
+              {!isAddingPiece && (
                 <IconButton
                   size="small"
                   color="error"
                   loading={deleteLoading}
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
-                  <Delete />
+                  <Delete fontSize="small" />
                 </IconButton>)}
 
               <IconButton size="small" onClick={() => {
-                if (pianoPiece.id !== -1) {
+                if (!isAddingPiece) {
                   setName(pianoPiece.name);
                   setOrigin(pianoPiece.origin);
                   setComposer(pianoPiece.composer);
@@ -259,7 +259,7 @@ export const PianoPieceTableRow = ({
                   setIsAddingPiece(false);
                 }
               }}>
-                <Clear />
+                <Clear fontSize="small" />
               </IconButton>
             </Box>
           </TableCell>

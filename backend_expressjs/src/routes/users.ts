@@ -5,7 +5,8 @@ import {
   Fund,
   Note,
   PianoPiece,
-  VideoGame
+  VideoGame,
+  JournalEntry
 } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import multer from "multer";
@@ -21,7 +22,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
   const { dataType } = req.params
 
   const dataTypes = dataType === 'all' ?
-    ['expenses', 'diary', 'notes', 'piano', 'hikes', 'video-games'] :
+    ['expenses', 'diary', 'journal', 'notes', 'piano', 'hikes', 'video-games'] :
     [dataType];
   let data: any = {};
 
@@ -65,6 +66,29 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { date: 'asc' }
         });
         break;
+      case 'journal':
+        data.journalCategories = await prisma.journalCategory.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          include: {
+            sections: {
+              omit: { id: true, userId: true, categoryId: true },
+              orderBy: { name: 'asc' },
+              include: {
+                entries: {
+                  omit: { id: true, userId: true, sectionId: true },
+                  orderBy: { date: 'asc' }
+                }
+              }
+            }
+          },
+          orderBy: { name: 'asc' }
+        });
+        data.uncategorizedJournalEntries = await prisma.journalEntry.findMany({
+          where: { userId, section: null },
+          omit: { id: true, userId: true, sectionId: true },
+          orderBy: { date: 'asc' }
+        });
       case 'notes':
         data.noteCategories = await prisma.noteCategory.findMany({
           where: { userId },
@@ -133,7 +157,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   }
 
   const dataTypes = dataType === 'all'
-    ? ['expenses', 'diary', 'notes', 'piano', 'hikes', 'video-games']
+    ? ['expenses', 'diary', 'journal', 'notes', 'piano', 'hikes', 'video-games']
     : [dataType];
 
 
@@ -151,6 +175,10 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
       case 'diary':
         if (!inputData.diary)
           return res.status(400).json({ error: "Invalid diary data" });
+        break;
+      case 'journal':
+        if (!inputData.journalCategories || !inputData.uncategorizedJournalEntries)
+          return res.status(400).json({ error: "Invalid journal data" });
         break;
       case 'notes':
         if (!inputData.noteCategories || !inputData.uncategorizedNotes)
@@ -214,6 +242,38 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.diaryEntry.deleteMany({ where: { userId } });
         await prisma.diaryEntry.createMany({
           data: inputData.diary.map((d: DiaryEntry) => ({ ...d, userId })),
+        });
+        break;
+
+      case 'journal':
+        await prisma.journalEntry.deleteMany({ where: { userId } });
+        await prisma.journalCategory.deleteMany({ where: { userId } });
+
+        for (const cat of inputData.journalCategories) {
+          const { sections, ...catData } = cat;
+          const createdCat = await prisma.journalCategory.create({
+            data: { ...catData, userId },
+          });
+          if (sections && sections.length) {
+            for (const section of sections) {
+              const { entries, ...sectionData } = section;
+              const createdSection = await prisma.journalSection.create({
+                data: { ...sectionData, userId, categoryId: createdCat.id },
+              });
+              if (entries && entries.length) {
+                await prisma.journalEntry.createMany({
+                  data: entries.map((e: JournalEntry) => ({
+                    ...e,
+                    userId,
+                    sectionId: createdSection.id
+                  })),
+                });
+              }
+            }
+          }
+        }
+        await prisma.journalEntry.createMany({
+          data: inputData.uncategorizedJournalEntries.map((e: JournalEntry) => ({ ...e, userId })),
         });
         break;
 

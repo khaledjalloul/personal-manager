@@ -89,29 +89,28 @@ export const DiaryEntryContainer = ({
 
           {!isEditing ? (
             <IconButton
-              size="small"
               onClick={() => setIsEditing(true)}>
-              <Edit />
+              <Edit fontSize="small" />
             </IconButton>
           ) : (
             <Box>
               <IconButton
-                size="small"
+              size="small"
                 color="success"
                 loading={createLoading || editLoading}
                 onClick={save}
               >
-                <Save />
+                <Save fontSize="small" />
               </IconButton>
 
               <IconButton
-                size="small"
+              size="small"
                 onClick={() => {
                   setContent(entry.content);
                   setWorkContent(entry.workContent);
                   setIsEditing(false)
                 }}>
-                <Clear />
+                <Clear fontSize="small" />
               </IconButton>
             </Box>
           )}

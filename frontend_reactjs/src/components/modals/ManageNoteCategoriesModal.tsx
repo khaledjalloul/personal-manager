@@ -50,7 +50,7 @@ const CategoryCard = ({
                   loading={editLoading}
                   onClick={save}
                 >
-                  <Save />
+                  <Save fontSize="small" />
                 </IconButton>
                 <IconButton
                   size="small"
@@ -58,7 +58,7 @@ const CategoryCard = ({
                   loading={deletePending}
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
-                  <Delete />
+                  <Delete fontSize="small" />
                 </IconButton>
               </Box>
             ),
@@ -133,7 +133,7 @@ export const ManageNoteCategoriesModal = ({
                       loading={createLoading}
                       onClick={add}
                     >
-                      <Add />
+                      <Add fontSize="small" />
                     </IconButton>
                   ),
                 },

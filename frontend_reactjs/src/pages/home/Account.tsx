@@ -11,6 +11,7 @@ const dataTypes: {
 } = {
   expenses: "Expenses",
   diary: "Diary",
+  journal: "Journal",
   notes: "Notes",
   piano: "Piano Pieces",
   hikes: "Hikes",

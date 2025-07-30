@@ -33,7 +33,7 @@ export const JournalEntryContainer = ({
   const save = () => {
     if (!isEditing || !content.trim()) return;
 
-    if (entry.id !== -1)
+    if (!isAddingEntry)
       editEntry({
         id: entry.id,
         date: date.toDate(),
@@ -79,13 +79,12 @@ export const JournalEntryContainer = ({
               </Typography>
 
               <IconButton
-                size="small"
                 onClick={() => setIsEditing(true)}>
-                <Edit />
+                <Edit fontSize="small" />
               </IconButton>
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={date}
@@ -104,29 +103,26 @@ export const JournalEntryContainer = ({
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <IconButton
-                  size="small"
                   color="success"
                   loading={createLoading || editLoading}
                   disabled={!content.trim()}
                   onClick={save}
                 >
-                  <Save />
+                  <Save fontSize="small" />
                 </IconButton>
 
-                {entry.id !== -1 && (
+                {!isAddingEntry && (
                   <IconButton
-                    size="small"
                     color="error"
                     loading={deleteLoading}
                     onClick={() => setConfirmDeleteOpen(true)}>
-                    <Delete />
+                    <Delete fontSize="small" />
                   </IconButton>
                 )}
 
                 <IconButton
-                  size="small"
                   onClick={() => {
-                    if (entry.id !== -1) {
+                    if (!isAddingEntry) {
                       setDate(dayjs(entry.date));
                       setContent(entry.content);
                       setIsEditing(false);
@@ -134,7 +130,7 @@ export const JournalEntryContainer = ({
                       setIsAddingEntry(false);
                     }
                   }}>
-                  <Clear />
+                  <Clear fontSize="small" />
                 </IconButton>
               </Box>
             </Box>

@@ -43,7 +43,7 @@ export const FundTableRow = ({
 
 	const save = () => {
 		if (!isEditing || !source.trim()) return;
-		if (fund.id !== -1)
+		if (!isAddingFund)
 			editFund({
 				id: fund.id,
 				date: date.toDate(),
@@ -153,7 +153,7 @@ export const FundTableRow = ({
 							<IconButton size="small"
 								onClick={() => setIsEditing(true)}
 							>
-								<Edit />
+								<Edit fontSize="small" />
 							</IconButton>
 						</TableCell>
 					) : (
@@ -164,22 +164,22 @@ export const FundTableRow = ({
 								loading={createLoading || editLoading}
 								disabled={!source.trim()}
 								onClick={save}>
-								<Save />
+								<Save fontSize="small" />
 							</IconButton>
 
-							{fund.id !== -1 && (
+							{!isAddingFund && (
 								<IconButton
 									size="small"
 									color="error"
 									loading={deleteLoading}
 									onClick={() => setConfirmDeleteOpen(true)}
 								>
-									<Delete />
+									<Delete fontSize="small" />
 								</IconButton>
 							)}
 
 							<IconButton size="small" onClick={() => {
-								if (fund.id !== -1) {
+								if (!isAddingFund) {
 									setDate(dayjs(fund.date));
 									setSource(fund.source);
 									setAmount(fund.amount);
@@ -188,7 +188,7 @@ export const FundTableRow = ({
 									setIsAddingFund(false);
 								}
 							}}>
-								<Clear />
+								<Clear fontSize="small" />
 							</IconButton>
 						</TableCell>
 					)

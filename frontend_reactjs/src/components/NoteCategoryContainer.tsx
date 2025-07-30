@@ -65,13 +65,13 @@ export const NoteCategoryContainer = ({
                   tags: []
                 })
               }}>
-              <Add />
+              <Add fontSize="small" />
             </IconButton>
           )}
 
           {isOpen ?
-            <ExpandLess sx={{ color: "text.primary" }} /> :
-            <ExpandMore sx={{ color: "text.primary" }} />}
+            <ExpandLess sx={{ color: "text.primary" }} fontSize="small" /> :
+            <ExpandMore sx={{ color: "text.primary" }} fontSize="small" />}
         </Box>
       </Box>
 

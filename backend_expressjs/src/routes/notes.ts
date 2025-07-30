@@ -66,7 +66,6 @@ router.get('/', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
-  // TODO: combine
   let notes;
   if (categoryId) {
     const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)

@@ -67,7 +67,7 @@ export const VideoGameCard = ({
 
   const save = () => {
     if (!isEditing || !name.trim()) return;
-    if (game.id !== -1)
+    if (!isAddingGame)
       editGame({
         id: game.id,
         name: name.trim(),
@@ -141,7 +141,7 @@ export const VideoGameCard = ({
 
           {!isEditing && (
             <IconButton sx={{ ml: 'auto' }} onClick={() => setIsEditing(true)}>
-              <Edit />
+              <Edit fontSize="small" />
             </IconButton>
           )}
 
@@ -153,23 +153,23 @@ export const VideoGameCard = ({
               disabled={!name.trim()}
               onClick={save}
             >
-              <Save />
+              <Save fontSize="small" />
             </IconButton>
           )}
 
-          {isEditing && game.id !== -1 && (
+          {isEditing && !isAddingGame && (
             <IconButton
               color="error"
               loading={deleteLoading}
               onClick={() => setConfirmDeleteOpen(true)}
             >
-              <Delete />
+              <Delete fontSize="small" />
             </IconButton>
           )}
 
           {isEditing && (
             <IconButton onClick={() => {
-              if (game.id !== -1) {
+              if (!isAddingGame) {
                 setName(game.name);
                 setPlatform(game.platform);
                 setType(game.type);
@@ -184,13 +184,13 @@ export const VideoGameCard = ({
                 setIsAddingGame(false);
               }
             }}>
-              <Clear />
+              <Clear fontSize="small" />
             </IconButton>
           )}
 
           {!isEditing && storeUrl.trim() && (
             <IconButton onClick={() => window.open(storeUrl, '_blank')}>
-              <InsertLink />
+              <InsertLink fontSize="small" />
             </IconButton>
           )}
         </Box>

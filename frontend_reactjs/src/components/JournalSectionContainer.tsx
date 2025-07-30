@@ -60,31 +60,31 @@ export const JournalSectionContainer = ({
   return (
     <Box>
       {!isEditingSection ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+          onDoubleClick={section.id !== -1 ? () => setIsEditingSection(true) : undefined}
+        >
           <Typography variant="subtitle1">{section.name} ({entries?.length || 0})</Typography>
 
           {section.id !== -1 && (
             <IconButton
-              size="small"
               sx={{ ml: 2 }}
               onClick={() => setIsEditingSection(true)}
             >
-              {/* TODO: make all buttons properly small */}
-              <Edit />
+              <Edit fontSize="small" />
             </IconButton>
           )}
 
           {section.id !== -1 && (
             <IconButton
-              size="small"
               onClick={() => setIsAddingEntry(true)}
             >
-              <Add />
+              <Add fontSize="small" />
             </IconButton>
           )}
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <TextField
             label="Section Name"
             variant="standard"
@@ -92,32 +92,30 @@ export const JournalSectionContainer = ({
             onChange={(e) => setSectionName(e.target.value)} />
 
           <IconButton
-            size="small"
+            sx={{ ml: 1 }}
             color="success"
             loading={editSectionLoading}
             disabled={!sectionName.trim()}
             onClick={save}
           >
-            <Save />
+            <Save fontSize="small" />
           </IconButton>
 
           <IconButton
-            size="small"
             color="error"
             loading={deleteSectionLoading}
             onClick={() => setConfirmDeleteOpen(true)}
           >
-            <Delete />
+            <Delete fontSize="small" />
           </IconButton>
 
           <IconButton
-            size="small"
             onClick={() => {
               setSectionName(section.name);
               setIsEditingSection(false);
             }}
           >
-            <Clear />
+            <Clear fontSize="small" />
           </IconButton>
         </Box>
       )}
