@@ -12,3 +12,4 @@ export * from './VideoGameCard';
 export * from './ExpensesCategoryCard';
 export * from './JournalSectionContainer';
 export * from './JournalEntryContainer';
+export * from './SearchTextHighlight';

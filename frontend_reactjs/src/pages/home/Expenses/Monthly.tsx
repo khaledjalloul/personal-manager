@@ -11,6 +11,7 @@ import {
 import { useExpensesCategories, useMonthlyExpenses } from "../../../api";
 import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
+import { SearchTextHighlight } from "../../../components";
 
 export const MonthlyExpenses = () => {
   const { searchText } = useOutletContext<{ searchText: string }>();
@@ -54,7 +55,7 @@ export const MonthlyExpenses = () => {
                 }}
               >
                 <TableCell>
-                  {dayjs(month).format("MMMM YYYY")}
+                  <SearchTextHighlight text={dayjs(month).format("MMMM YYYY")} searchText={searchText} />
                 </TableCell>
                 {expensesCategories?.map((category) => (
                   <TableCell key={category.id}>

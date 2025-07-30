@@ -131,6 +131,7 @@ export const ManageExpenses = () => {
                     key={emptyFund.id}
                     fund={{ ...emptyFund, date: new Date() }}
                     index={emptyFund.id}
+                    searchText={searchText}
                     isAddingFund={isAddingFund}
                     setIsAddingFund={setIsAddingFund}
                     editable />
@@ -140,6 +141,7 @@ export const ManageExpenses = () => {
                     key={fund.id}
                     fund={fund}
                     index={index}
+                    searchText={searchText}
                     editable />
                 ))}
               </TableBody>
@@ -187,6 +189,7 @@ export const ManageExpenses = () => {
                       date: new Date()
                     }}
                     index={emptyExpense.id}
+                    searchText={searchText}
                     isAddingExpense={isAddingExpense}
                     setIsAddingExpense={setIsAddingExpense}
                     editable />
@@ -196,6 +199,7 @@ export const ManageExpenses = () => {
                     key={expense.id}
                     expense={expense}
                     index={index}
+                    searchText={searchText}
                     editable />
                 ))}
               </TableBody>
@@ -267,6 +271,7 @@ export const ManageExpenses = () => {
           <ExpensesCategoryCard
             key={emptyCategory.id}
             category={emptyCategory}
+            searchText={searchText}
             isAddingCategory={isAddingCategory}
             setIsAddingCategory={setIsAddingCategory}
           />
@@ -274,6 +279,7 @@ export const ManageExpenses = () => {
         <ExpensesCategoryCard
           key={fundsCategory.id}
           category={{ ...fundsCategory, keywords: fundKeywords }}
+          searchText={searchText}
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}
         />
@@ -281,6 +287,7 @@ export const ManageExpenses = () => {
           <ExpensesCategoryCard
             key={category.id}
             category={category}
+            searchText={searchText}
             isAddingCategory={isAddingCategory}
             setIsAddingCategory={setIsAddingCategory}
           />

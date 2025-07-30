@@ -20,7 +20,7 @@ import {
   VisibilityOff
 } from "@mui/icons-material";
 import { useDeleteNote, useEditNote, useNoteCategories, useNotes } from "../../api";
-import { ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
+import { addSearchTextHighlight, ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
@@ -43,7 +43,8 @@ export const Notes = () => {
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { data: notes } = useNotes({ searchText: searchText.trim() })
+  const { data: notes } = useNotes({ searchText: searchText.trim() });
+  const { data: allNoteCategories } = useNoteCategories({ searchText: "" });
   const { data: noteCategories } = useNoteCategories({ searchText: searchText.trim() });
 
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
@@ -116,6 +117,8 @@ export const Notes = () => {
     if (deleteSuccess && selectedNote)
       setSelectedNote(undefined);
   }, [deleteSuccess]);
+
+  const selectedNoteContentWithSearchHighlight = addSearchTextHighlight(selectedNoteContent, searchText.trim(), palette);
 
   return (
     <Wrapper>
@@ -267,7 +270,7 @@ export const Notes = () => {
               size="small"
               sx={{ minWidth: 150 }}
               value={selectedNoteCategory?.id ?? -1}
-              onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
+              onChange={(e) => setSelectedNoteCategory(allNoteCategories?.find(cat => cat.id === e.target.value))}
               disabled={!selectedNote}
             >
               {!selectedNoteCategory && (
@@ -275,7 +278,7 @@ export const Notes = () => {
                   {selectedNote ? <em>Uncategorized</em> : ""}
                 </MenuItem>
               )}
-              {noteCategories?.map((category) => (
+              {allNoteCategories?.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>
@@ -352,7 +355,7 @@ export const Notes = () => {
               onScroll={(test) => setPreviewScrollValue(test.currentTarget.scrollTop)}
             >
               <MarkdownPreview
-                source={selectedNoteContent}
+                source={selectedNoteContentWithSearchHighlight}
                 style={{
                   borderRadius: '8px',
                   backgroundColor: palette.background.default,

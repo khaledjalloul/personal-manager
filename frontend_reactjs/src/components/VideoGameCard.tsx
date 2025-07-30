@@ -32,6 +32,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateVideoGame, useDeleteVideoGame, useEditVideoGame } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 const videoGameTypeOptions = {
   [VideoGameType.Single_Player]: "Single Player",
@@ -41,10 +42,12 @@ const videoGameTypeOptions = {
 
 export const VideoGameCard = ({
   game,
+  searchText,
   isAddingGame,
   setIsAddingGame
 }: {
   game: VideoGame,
+  searchText: string,
   isAddingGame: boolean,
   setIsAddingGame: Dispatch<SetStateAction<boolean>>
 }) => {
@@ -128,7 +131,7 @@ export const VideoGameCard = ({
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
-              {name}
+              <SearchTextHighlight text={name} searchText={searchText.trim()} />
             </Typography>
           ) : (
             <TextField
@@ -200,7 +203,7 @@ export const VideoGameCard = ({
             <SportsEsportsOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                {platform}
+                <SearchTextHighlight text={platform} searchText={searchText.trim()} />
               </Typography>
             ) : (
               <TextField
@@ -288,7 +291,7 @@ export const VideoGameCard = ({
             <SellOutlined sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                {price}
+                <SearchTextHighlight text={price} searchText={searchText.trim()} />
               </Typography>
             ) : (
               <TextField
@@ -311,7 +314,7 @@ export const VideoGameCard = ({
             <CreditCard sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                {extraPurchases}
+                <SearchTextHighlight text={extraPurchases} searchText={searchText.trim()} />
               </Typography>
             ) : (
               <TextField

@@ -5,7 +5,6 @@ import {
   AccessTime,
   Edit,
   MoreTime,
-  PermMedia,
   Straighten,
   Today,
   TrendingDown,
@@ -23,6 +22,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateHike, useDeleteHike, useEditHike } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 const GoogleMapsIcon = ({ disabled = false }: { disabled?: boolean }) => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -40,10 +40,12 @@ const GoogleMapsIcon = ({ disabled = false }: { disabled?: boolean }) => (
 
 export const HikeCard = ({
   hike,
+  searchText,
   isAddingHike,
   setIsAddingHike
 }: {
   hike: Hike,
+  searchText: string,
   isAddingHike: boolean,
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
@@ -134,7 +136,7 @@ export const HikeCard = ({
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isEditing ? (
             <Typography variant="h6" color="text.primary" sx={{ mr: 1 }}>
-              {description}
+              <SearchTextHighlight text={description} searchText={searchText.trim()} />
             </Typography>
           ) : (
             <TextField
@@ -207,7 +209,7 @@ export const HikeCard = ({
               disabled={!googleMapsUrl.trim()}
               onClick={() => window.open(googleMapsUrl, '_blank')}
             >
-              <GoogleMapsIcon disabled={!googleMapsUrl.trim()}  />
+              <GoogleMapsIcon disabled={!googleMapsUrl.trim()} />
             </IconButton>
           )}
         </Box>

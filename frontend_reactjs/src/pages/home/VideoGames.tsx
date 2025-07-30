@@ -101,7 +101,7 @@ export const VideoGames = () => {
             ml: { xs: 0, lg: "auto" },
           }}
           label="Search video games"
-          placeholder="Name, platform"
+          placeholder="Name, platform, price, extra purchases"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -133,6 +133,7 @@ export const VideoGames = () => {
             >
               <VideoGameCard
                 game={emptyGame}
+                searchText={searchText}
                 isAddingGame={isAddingGame}
                 setIsAddingGame={setIsAddingGame}
               />
@@ -146,6 +147,7 @@ export const VideoGames = () => {
             >
               <VideoGameCard
                 game={game}
+                searchText={searchText}
                 isAddingGame={isAddingGame}
                 setIsAddingGame={setIsAddingGame}
               />

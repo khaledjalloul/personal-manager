@@ -15,17 +15,20 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreateFund, useDeleteFund, useEditFund } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 
 export const FundTableRow = ({
 	fund,
 	index,
 	editable = false, // Non-editable also means the component is used in the Details page, so it includes extra table cells
+	searchText,
 	isAddingFund,
 	setIsAddingFund,
 }: {
 	fund: Fund;
 	index: number;
+	searchText: string;
 	editable?: boolean;
 	isAddingFund?: boolean;
 	setIsAddingFund?: Dispatch<SetStateAction<boolean>>;
@@ -105,7 +108,7 @@ export const FundTableRow = ({
 				)}
 
 				<TableCell width={"40%"}>
-					{!isEditing ? source :
+					{!isEditing ? <SearchTextHighlight text={source} searchText={searchText.trim()} /> :
 						<TextField
 							variant="standard"
 							placeholder="Source"

@@ -40,13 +40,13 @@ export const ExpensesWrapper = () => {
       >
 
         <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { xs: 'stretch', sm: 'center' },
-          flexGrow: 1,
-          gap: { xs: 2, sm: 1 }
-        }}
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'stretch', sm: 'center' },
+            flexGrow: 1,
+            gap: { xs: 2, sm: 1 }
+          }}
         >
           <NavLink to="/expenses">
             <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
@@ -130,9 +130,9 @@ export const ExpensesWrapper = () => {
           disabled={location.pathname === "/expenses"}
           label="Search expenses"
           placeholder={
-            location.pathname === "/expenses/monthly" ?
-              "Month" :
-              "Category, description, source, vendor"
+            location.pathname === "/expenses/monthly" ? "Month" :
+              location.pathname === "/expenses/details" ? "Category, description, source, vendor" :
+                "Category, description, source, vendor, keyword"
           }
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}

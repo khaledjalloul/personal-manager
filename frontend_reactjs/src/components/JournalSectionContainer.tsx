@@ -6,6 +6,7 @@ import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useCtrlS } from "../utils";
 import { ConfirmDeleteDialog } from "./modals";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 const emptyEntry: JournalEntry = {
   id: -1,
@@ -64,7 +65,10 @@ export const JournalSectionContainer = ({
           sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
           onDoubleClick={section.id !== -1 ? () => setIsEditingSection(true) : undefined}
         >
-          <Typography variant="subtitle1">{section.name} ({entries?.length || 0})</Typography>
+          <Typography variant="subtitle1">
+            <SearchTextHighlight text={section.name} searchText={searchText.trim()} />
+            {" "}({entries?.length || 0})
+          </Typography>
 
           {section.id !== -1 && (
             <IconButton
@@ -128,6 +132,7 @@ export const JournalSectionContainer = ({
         {isAddingEntry && (
           <JournalEntryContainer
             entry={{ ...emptyEntry, section }}
+            searchText={searchText}
             isAddingEntry={isAddingEntry}
             setIsAddingEntry={setIsAddingEntry}
           />
@@ -136,6 +141,7 @@ export const JournalSectionContainer = ({
           <JournalEntryContainer
             key={entry.id}
             entry={entry}
+            searchText={searchText}
             isAddingEntry={isAddingEntry}
             setIsAddingEntry={setIsAddingEntry}
           />

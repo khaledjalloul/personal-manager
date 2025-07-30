@@ -32,9 +32,9 @@ export const ExpensesDetails = () => {
     return !('source' in item) || filterCategoryIds.includes(-1) || filterCategoryIds.includes(-2);
   }).map((item, index) => {
     if ('source' in item) {
-      return <FundTableRow key={`fund-${item.id}`} index={index} fund={item} />;
+      return <FundTableRow key={`fund-${item.id}`} index={index} fund={item} searchText={searchText} />;
     } else {
-      return <ExpenseTableRow key={`expense-${item.id}`} index={index} expense={item} />;
+      return <ExpenseTableRow key={`expense-${item.id}`} index={index} expense={item} searchText={searchText} />;
     }
   });
 

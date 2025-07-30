@@ -5,13 +5,14 @@ import { Clear, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 export const DiaryEntryContainer = ({
   entry,
-  isSearching
+  searchText,
 }: {
   entry: DiaryEntry
-  isSearching: boolean
+  searchText: string
 }) => {
 
   const { palette } = useTheme();
@@ -75,11 +76,11 @@ export const DiaryEntryContainer = ({
             <Typography sx={{ fontSize: { xs: 14, lg: 16 } }}>
               {dayjs(entry.date).format(
                 isDaily ?
-                  (isSearching ? "DD.MM.YYYY" : "dddd") :
+                  (searchText.trim() ? "DD.MM.YYYY" : "dddd") :
                   "MMMM"
               )}
             </Typography>
-            {(isDaily && !isSearching) && (
+            {(isDaily && !searchText.trim()) && (
               <Typography variant="h5">
                 {dayjs(entry.date).format("DD")}
               </Typography>
@@ -95,7 +96,7 @@ export const DiaryEntryContainer = ({
           ) : (
             <Box>
               <IconButton
-              size="small"
+                size="small"
                 color="success"
                 loading={createLoading || editLoading}
                 onClick={save}
@@ -104,7 +105,7 @@ export const DiaryEntryContainer = ({
               </IconButton>
 
               <IconButton
-              size="small"
+                size="small"
                 onClick={() => {
                   setContent(entry.content);
                   setWorkContent(entry.workContent);
@@ -131,7 +132,7 @@ export const DiaryEntryContainer = ({
         }}>
           {!isEditing ? (
             <Typography variant="body1">
-              {content}
+              <SearchTextHighlight text={content} searchText={searchText.trim()} />
             </Typography>
           ) : (
             <textarea

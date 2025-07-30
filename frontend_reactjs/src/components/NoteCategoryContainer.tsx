@@ -3,6 +3,7 @@ import { Note, NoteCategory } from "../types";
 import { useCreateNote, useNotes } from "../api";
 import { Box, IconButton, Typography } from "@mui/material";
 import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 export const NoteCategoryContainer = ({
   category,
@@ -45,7 +46,8 @@ export const NoteCategoryContainer = ({
         }}
       >
         <Typography variant="body1" key={category.id}>
-          {category.name} ({notes?.length})
+          <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
+          {" "}({notes?.length})
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
@@ -91,7 +93,9 @@ export const NoteCategoryContainer = ({
                 ":hover": selectedNote?.id !== note.id ? { backgroundColor: "action.hover" } : {},
               }}
             >
-              <Typography variant="body1">{note.title}</Typography>
+              <Typography>
+                <SearchTextHighlight text={note.title} searchText={searchText.trim()} />
+              </Typography>
             </Box>
           ))}
         </Box>

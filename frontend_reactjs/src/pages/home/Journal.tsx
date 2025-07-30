@@ -27,7 +27,7 @@ import {
 } from "../../api";
 import { JournalCategory, JournalSection } from "../../types";
 import { useCtrlS, UserContext } from "../../utils";
-import { ConfirmDeleteDialog, JournalSectionContainer } from "../../components";
+import { ConfirmDeleteDialog, JournalSectionContainer, SearchTextHighlight } from "../../components";
 
 const uncategorizedCategory: JournalCategory = {
   id: -1,
@@ -42,10 +42,12 @@ const uncategorizedSection: JournalSection = {
 
 const CategoryBox = ({
   category,
+  searchText,
   selectedCategory,
   setSelectedCategory
 }: {
   category: JournalCategory;
+  searchText: string;
   selectedCategory?: JournalCategory;
   setSelectedCategory: Dispatch<SetStateAction<JournalCategory | undefined>>;
 }) => {
@@ -65,7 +67,8 @@ const CategoryBox = ({
       }}
     >
       <Typography variant="body1">
-        {category.name} ({totalEntryCount})
+        <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
+        {" "}({totalEntryCount})
       </Typography>
     </Box>
   );
@@ -236,6 +239,7 @@ export const Journal = () => {
                   ...uncategorizedCategory,
                   sections: [{ entries: uncategorizedEntries }]
                 }}
+                searchText={searchText}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
               />
@@ -244,6 +248,7 @@ export const Journal = () => {
               <CategoryBox
                 key={category.id}
                 category={category}
+                searchText={searchText}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
               />
@@ -261,7 +266,10 @@ export const Journal = () => {
               onDoubleClick={selectedCategory && selectedCategory.id !== -1 ? () => setIsEditingCategory(true) : undefined}
             >
               <Typography variant="h6">
-                {selectedCategoryName || "Select a category"}
+                {selectedCategoryName ?
+                  <SearchTextHighlight text={selectedCategoryName} searchText={searchText.trim()} />
+                  : "Select a category"
+                }
               </Typography>
 
               {selectedCategory && selectedCategory.id !== -1 && (

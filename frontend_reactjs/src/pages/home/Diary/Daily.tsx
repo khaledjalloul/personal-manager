@@ -54,7 +54,7 @@ export const DailyDiary = () => {
         <Typography align="center" mt={7}>No diary entries.</Typography>
       )}
       {displayedEntries?.map((entry) => (
-        <DiaryEntryContainer key={entry.id} entry={entry} isSearching={Boolean(searchText.trim())} />
+        <DiaryEntryContainer key={entry.id} entry={entry} searchText={searchText} />
       ))}
     </Box>
   );

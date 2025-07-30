@@ -17,17 +17,20 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 
 export const ExpenseTableRow = ({
   expense,
   index,
+  searchText,
   editable = false,
   isAddingExpense,
   setIsAddingExpense,
 }: {
   expense: Expense;
   index: number;
+  searchText: string;
   editable?: boolean;
   isAddingExpense?: boolean;
   setIsAddingExpense?: Dispatch<SetStateAction<boolean>>;
@@ -117,7 +120,9 @@ export const ExpenseTableRow = ({
         <TableCell>
           {!isEditing ? (
             category?.name ? (
-              <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>{category.name}</Typography>
+              <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+                <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
+              </Typography>
             ) : (
               <Typography color={!editable ? 'gray' : 'text.primary'} variant="body2">
                 <em>Uncategorized</em>
@@ -145,7 +150,9 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell width={"35%"}>
-          {!isEditing ? description :
+          {!isEditing ?
+            <SearchTextHighlight text={description} searchText={searchText.trim()} />
+            :
             <TextField
               variant="standard"
               placeholder="Description"
@@ -157,7 +164,9 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? vendor :
+          {!isEditing ?
+            <SearchTextHighlight text={vendor} searchText={searchText.trim()} />
+            :
             <TextField
               variant="standard"
               placeholder="Vendor"

@@ -6,6 +6,7 @@ const ENDPOINT = "diary/monthly";
 
 export type GetMonthlyDiaryEntriesRequestParams = {
   year: number;
+  searchText: string;
 };
 
 export type GetMonthlyDiaryEntriesResponse = {

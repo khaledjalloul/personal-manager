@@ -6,13 +6,16 @@ import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react"
 import { ConfirmDeleteDialog } from "./modals"
 import { SketchPicker } from 'react-color';
 import { useCtrlS, useKeybinding } from "../utils"
+import { SearchTextHighlight } from "./SearchTextHighlight"
 
 export const ExpensesCategoryCard = ({
   category,
+  searchText,
   isAddingCategory,
   setIsAddingCategory
 }: {
   category: ExpensesCategory,
+  searchText: string,
   isAddingCategory: boolean,
   setIsAddingCategory: Dispatch<SetStateAction<boolean>>
 
@@ -72,6 +75,8 @@ export const ExpensesCategoryCard = ({
     if (editSuccess) setIsEditing(false);
   }, [editSuccess]);
 
+  const filteredKeywords = category.keywords.filter(k => k.toLowerCase().includes(searchText.toLowerCase()));
+
   return (
     <Fragment>
       <Grid
@@ -93,7 +98,7 @@ export const ExpensesCategoryCard = ({
                 mt: category.id === -999 ? 1 : 0
               }}
             >
-              {category.name} ({category.keywords.length})
+              {category.name} ({filteredKeywords.length})
             </Typography>
           ) : (
             <TextField
@@ -180,7 +185,7 @@ export const ExpensesCategoryCard = ({
             flexWrap: 'wrap',
             gap: 1
           }}>
-            {category.keywords?.map((keyword) => (
+            {filteredKeywords.map((keyword) => (
               <Box key={keyword} sx={{
                 pl: 1.5,
                 pr: 0.5,
@@ -193,7 +198,9 @@ export const ExpensesCategoryCard = ({
                 alignItems: 'center',
                 gap: 0.5
               }}>
-                <Typography variant="body2">{keyword}</Typography>
+                <Typography variant="body2">
+                  <SearchTextHighlight text={keyword} searchText={searchText.trim()} />
+                </Typography>
                 <IconButton
                   size="small"
                   loading={editLoading || editFundKeywordsLoading}

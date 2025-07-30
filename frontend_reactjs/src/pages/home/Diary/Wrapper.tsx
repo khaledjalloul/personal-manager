@@ -110,11 +110,8 @@ export const DiaryWrapper = () => {
         <TextField
           sx={{
             ml: { xs: 0, lg: "auto" },
-            minWidth: { xs: 0, lg: isDaily ? "35vw" : 0 },
-            opacity: { xs: 1, lg: isDaily ? 1 : 0 },
-            display: { xs: isDaily ? 'flex' : 'none', lg: 'flex' }
+            minWidth: { xs: 0, lg: "35vw" },
           }}
-          disabled={!isDaily}
           label="Search diary"
           placeholder="Content, work content"
           value={searchText}

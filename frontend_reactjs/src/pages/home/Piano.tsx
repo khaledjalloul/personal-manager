@@ -111,6 +111,7 @@ export const Piano = () => {
                 key={emptyPiece.id}
                 pianoPiece={emptyPiece}
                 index={emptyPiece.id}
+                searchText={searchText}
                 isAddingPiece={isAddingPiece}
                 setIsAddingPiece={setIsAddingPiece}
               />
@@ -120,6 +121,7 @@ export const Piano = () => {
                 key={piece.id}
                 pianoPiece={piece}
                 index={index}
+                searchText={searchText}
                 isAddingPiece={isAddingPiece}
                 setIsAddingPiece={setIsAddingPiece}
               />

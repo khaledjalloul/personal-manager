@@ -85,7 +85,9 @@ export const Hikes = () => {
               size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
-              <HikeCard hike={emptyHike}
+              <HikeCard
+                hike={emptyHike}
+                searchText={searchText}
                 isAddingHike={isAddingHike}
                 setIsAddingHike={setIsAddingHike}
               />
@@ -97,7 +99,9 @@ export const Hikes = () => {
               size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
               sx={{ display: 'flex' }}
             >
-              <HikeCard hike={hike}
+              <HikeCard
+                hike={hike}
+                searchText={searchText}
                 isAddingHike={isAddingHike}
                 setIsAddingHike={setIsAddingHike}
               />

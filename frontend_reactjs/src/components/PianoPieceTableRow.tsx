@@ -16,6 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useCreatePianoPiece, useDeletePianoPiece, useEditPianoPiece } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 const pianoPieceStatusOptions = {
   [PianoPieceStatus.Planned]: "Planned",
@@ -27,11 +28,13 @@ const pianoPieceStatusOptions = {
 export const PianoPieceTableRow = ({
   pianoPiece,
   index,
+  searchText,
   isAddingPiece,
   setIsAddingPiece
 }: {
   pianoPiece: PianoPiece;
   index: number;
+  searchText: string;
   isAddingPiece: boolean;
   setIsAddingPiece: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -96,7 +99,7 @@ export const PianoPieceTableRow = ({
         onDoubleClick={() => setIsEditing(true)}
       >
         <TableCell sx={{ fontWeight: 'bold' }}>
-          {!isEditing ? name :
+          {!isEditing ? <SearchTextHighlight text={name} searchText={searchText.trim()} /> :
             <TextField
               variant="standard"
               placeholder="Name"
@@ -108,7 +111,7 @@ export const PianoPieceTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? origin :
+          {!isEditing ? <SearchTextHighlight text={origin} searchText={searchText.trim()} /> :
             <TextField
               variant="standard"
               placeholder="Origin"
@@ -120,7 +123,7 @@ export const PianoPieceTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? composer :
+          {!isEditing ? <SearchTextHighlight text={composer} searchText={searchText.trim()} /> :
             <TextField
               variant="standard"
               placeholder="Composer"

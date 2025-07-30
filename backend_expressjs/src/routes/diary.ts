@@ -37,6 +37,7 @@ router.get('/daily', async (req: Request, res: Response) => {
 
 router.get('/monthly', async (req: Request, res: Response) => {
   const year = parseInt(req.query.year as string) ?? new Date().getFullYear();
+  const searchText = (req.query.searchText as string) ?? "";
 
   const allDates = await prisma.diaryEntry.findMany({
     where: {
@@ -65,10 +66,19 @@ router.get('/monthly', async (req: Request, res: Response) => {
     where: {
       userId: req.user.id,
       type: DiaryEntryType.Monthly,
-      date: {
-        gte: new Date(year, 0, 1),
-        lt: new Date(year + 1, 0, 1),
-      }
+      ...(
+        searchText ? {
+          OR: [
+            { content: { contains: searchText, mode: 'insensitive' } },
+            { workContent: { contains: searchText, mode: 'insensitive' } },
+          ],
+        } : {
+          date: {
+            gte: new Date(year, 0, 1),
+            lt: new Date(year + 1, 0, 1),
+          }
+        }
+      ),
     },
     orderBy: { date: 'asc' },
   });

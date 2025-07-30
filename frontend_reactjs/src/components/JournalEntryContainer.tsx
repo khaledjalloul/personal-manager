@@ -8,13 +8,16 @@ import { useCtrlS } from "../utils";
 import { ConfirmDeleteDialog } from "./modals";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { SearchTextHighlight } from "./SearchTextHighlight";
 
 export const JournalEntryContainer = ({
   entry,
+  searchText,
   isAddingEntry,
   setIsAddingEntry
 }: {
   entry: JournalEntry
+  searchText: string
   isAddingEntry: boolean
   setIsAddingEntry: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -146,8 +149,8 @@ export const JournalEntryContainer = ({
           p: 2,
         }}>
           {!isEditing ? (
-            <Typography variant="body1">
-              {content}
+            <Typography>
+              <SearchTextHighlight text={content} searchText={searchText.trim()} />
             </Typography>
           ) : (
             <textarea

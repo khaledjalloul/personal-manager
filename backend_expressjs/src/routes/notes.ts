@@ -93,7 +93,7 @@ router.get('/', async (req: Request, res: Response) => {
         ]
       },
       include: { category: true },
-      orderBy: { title: 'asc' }
+      orderBy: [{ category: { name: 'asc' } }, { title: 'asc' }]
     });
   }
   res.json(notes);
