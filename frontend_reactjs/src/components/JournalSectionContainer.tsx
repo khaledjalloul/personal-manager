@@ -1,6 +1,6 @@
 import { Box, IconButton, TextField, Typography } from "@mui/material"
 import { JournalEntry, JournalSection } from "../types";
-import { useCreateJournalEntry, useDeleteJournalSection, useEditJournalSection, useJournalEntries } from "../api";
+import { useDeleteJournalSection, useEditJournalSection, useJournalEntries } from "../api";
 import { JournalEntryContainer } from "./JournalEntryContainer";
 import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -43,7 +43,7 @@ export const JournalSectionContainer = ({
   const { mutate: deleteSection, isPending: deleteSectionLoading } = useDeleteJournalSection();
 
   const save = () => {
-    if (!sectionName.trim()) return;
+    if (!isEditingSection || !sectionName.trim()) return;
 
     editSection({
       id: section.id,
@@ -61,23 +61,27 @@ export const JournalSectionContainer = ({
     <Box>
       {!isEditingSection ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-          <Typography variant="subtitle1">{section.name} ({entries?.length})</Typography>
+          <Typography variant="subtitle1">{section.name} ({entries?.length || 0})</Typography>
 
-          <IconButton
-            size="small"
-            sx={{ ml: 2 }}
-            onClick={() => setIsEditingSection(true)}
-          >
-            {/* TODO: make all buttons properly small */}
-            <Edit />
-          </IconButton>
+          {section.id !== -1 && (
+            <IconButton
+              size="small"
+              sx={{ ml: 2 }}
+              onClick={() => setIsEditingSection(true)}
+            >
+              {/* TODO: make all buttons properly small */}
+              <Edit />
+            </IconButton>
+          )}
 
-          <IconButton
-            size="small"
-            onClick={() => setIsAddingEntry(true)}
-          >
-            <Add />
-          </IconButton>
+          {section.id !== -1 && (
+            <IconButton
+              size="small"
+              onClick={() => setIsAddingEntry(true)}
+            >
+              <Add />
+            </IconButton>
+          )}
         </Box>
       ) : (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>

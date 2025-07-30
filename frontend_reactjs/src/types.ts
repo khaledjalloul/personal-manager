@@ -65,7 +65,7 @@ export type JournalSection = {
 
 export type JournalEntry = {
   id: number;
-  section: JournalSection;
+  section?: JournalSection;
   date: Date;
   content: string;
 };

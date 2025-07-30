@@ -39,11 +39,11 @@ export const JournalEntryContainer = ({
         date: date.toDate(),
         content: content.trim(),
       });
-    else
+    else if (entry.section)
       createEntry({
+        sectionId: entry.section.id,
         date: date.toDate(),
         content: content.trim(),
-        sectionId: entry.section.id,
       });
   };
 

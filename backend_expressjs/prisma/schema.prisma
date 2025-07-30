@@ -74,10 +74,10 @@ model JournalCategory {
 }
 
 model JournalSection {
-  id         Int              @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   userId     Int
-  categoryId Int?
-  category   JournalCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId Int
+  category   JournalCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   name       String
   entries    JournalEntry[]
 }

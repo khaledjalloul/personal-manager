@@ -100,12 +100,17 @@ export const Notes = () => {
   }, [editorEnabled]);
 
   useEffect(() => {
-    if (notes && userData && userData.lastOpenedNoteId) {
-      const lastOpenNote = notes.find(note => note.id === userData.lastOpenedNoteId);
-      if (lastOpenNote)
-        setSelectedNote(lastOpenNote);
+    if (notes) {
+      if (!searchText.trim() && userData && userData.lastOpenedNoteId) {
+        const lastOpenNote = notes.find(note => note.id === userData.lastOpenedNoteId);
+        if (lastOpenNote)
+          setSelectedNote(lastOpenNote);
+      } else if (searchText.trim()) {
+        if (notes.length > 0) setSelectedNote(notes[0]);
+        else setSelectedNote(undefined);
+      }
     }
-  }, [JSON.stringify(notes)]);
+  }, [JSON.stringify(notes), searchText]);
 
   useEffect(() => {
     if (deleteSuccess && selectedNote)
@@ -142,12 +147,7 @@ export const Notes = () => {
           label="Search notes"
           placeholder="Category, title, content"
           value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            if (selectedNote) {
-              setSelectedNote(undefined);
-            }
-          }}
+          onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
             input: {
               endAdornment: searchText.length > 0 && (

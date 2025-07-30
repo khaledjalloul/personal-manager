@@ -30,6 +30,9 @@ export const useCreateJournalEntry = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["journal/categories"],
+      });
     },
   });
 };

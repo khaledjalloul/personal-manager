@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import {
   Add,
   Clear,
@@ -22,12 +22,54 @@ import {
   useDeleteJournalCategory,
   useEditJournalCategory,
   useJournalCategories,
+  useJournalEntries,
   useJournalSections
 } from "../../api";
-import { JournalCategory } from "../../types";
+import { JournalCategory, JournalSection } from "../../types";
 import { useCtrlS, UserContext } from "../../utils";
 import { ConfirmDeleteDialog, JournalSectionContainer } from "../../components";
 
+const uncategorizedCategory: JournalCategory = {
+  id: -1,
+  name: "Uncategorized",
+};
+
+const uncategorizedSection: JournalSection = {
+  id: -1,
+  name: "All Uncategorized Entries",
+  category: uncategorizedCategory,
+};
+
+const CategoryBox = ({
+  category,
+  selectedCategory,
+  setSelectedCategory
+}: {
+  category: JournalCategory;
+  selectedCategory?: JournalCategory;
+  setSelectedCategory: Dispatch<SetStateAction<JournalCategory | undefined>>;
+}) => {
+  const totalEntryCount = category.sections?.reduce((acc, section) => acc + section.entries.length, 0) || 0;
+
+  return (
+    <Box
+      onClick={() => setSelectedCategory(category)}
+      sx={{
+        p: 1,
+        cursor: 'pointer',
+        borderTopLeftRadius: '8px',
+        borderTopRightRadius: '8px',
+        alignItems: 'center',
+        backgroundColor: selectedCategory?.id === category.id ? "primary.light" : "background.default",
+        ":hover": selectedCategory?.id !== category.id ? { backgroundColor: "action.hover" } : {},
+      }}
+    >
+      <Typography variant="body1">
+        {category.name} ({totalEntryCount})
+      </Typography>
+    </Box>
+  );
+}
 
 export const Journal = () => {
 
@@ -43,15 +85,21 @@ export const Journal = () => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: categories } = useJournalCategories({ searchText: searchText.trim() });
-  const { data: sections } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
+  const { data: sectionsRaw } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
+  const { data: uncategorizedEntries } = useJournalEntries({
+    sectionId: -1,
+    searchText: searchText.trim()
+  });
+
+  const sections: JournalSection[] | undefined = selectedCategory?.id === -1 ? [uncategorizedSection] : sectionsRaw;
 
   const { mutate: createCategory, isPending: createCategoryLoading } = useCreateJournalCategory();
   const { mutate: editCategory, isPending: editCategoryLoading, isSuccess: editCategorySuccess } = useEditJournalCategory();
-  const { mutate: deleteCategory, isPending: deleteCategoryLoading } = useDeleteJournalCategory();
+  const { mutate: deleteCategory, isPending: deleteCategoryLoading, isSuccess: deleteCategorySuccess } = useDeleteJournalCategory();
   const { mutate: createSection, isPending: createSectionLoading, isSuccess: createSectionSuccess } = useCreateJournalSection();
 
   const saveEditCategory = () => {
-    if (!selectedCategory || !selectedCategoryName?.trim()) return;
+    if (!selectedCategory || !isEditingCategory || !selectedCategoryName?.trim()) return;
 
     editCategory({
       id: selectedCategory.id,
@@ -60,7 +108,7 @@ export const Journal = () => {
   };
 
   const saveCreateSection = () => {
-    if (!selectedCategory || !newSectionName.trim()) return;
+    if (!selectedCategory || !isAddingSection || !newSectionName.trim()) return;
 
     createSection({
       categoryId: selectedCategory.id,
@@ -73,6 +121,13 @@ export const Journal = () => {
   useEffect(() => {
     if (editCategorySuccess) setIsEditingCategory(false);
   }, [editCategorySuccess]);
+
+  useEffect(() => {
+    if (deleteCategorySuccess) {
+      setSelectedCategory(undefined);
+      setIsEditingCategory(false);
+    }
+  }, [deleteCategorySuccess]);
 
   useEffect(() => {
     if (createSectionSuccess) {
@@ -93,12 +148,19 @@ export const Journal = () => {
   }, [selectedCategory?.id]);
 
   useEffect(() => {
-    if (categories && userData && userData.lastOpenedJournalCategoryId) {
-      const lastOpenCategory = categories.find(category => category.id === userData.lastOpenedJournalCategoryId);
-      if (lastOpenCategory)
-        setSelectedCategory(lastOpenCategory);
+    if (categories) {
+      const categoriesToSearch = uncategorizedEntries?.length ? [...categories, uncategorizedCategory] : categories;
+
+      if (!searchText.trim() && userData && userData.lastOpenedJournalCategoryId) {
+        const lastOpenCategory = categoriesToSearch.find(category => category.id === userData.lastOpenedJournalCategoryId);
+        if (lastOpenCategory)
+          setSelectedCategory(lastOpenCategory);
+      } else if (searchText.trim()) {
+        if (categoriesToSearch.length > 0) setSelectedCategory(categoriesToSearch[0]);
+        else setSelectedCategory(undefined);
+      }
     }
-  }, [JSON.stringify(categories)]);
+  }, [JSON.stringify(categories), JSON.stringify(uncategorizedEntries), searchText]);
 
   return (
     <Wrapper>
@@ -121,12 +183,7 @@ export const Journal = () => {
           label="Search journal"
           placeholder="Category, section, content"
           value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            if (selectedCategory) {
-              setSelectedCategory(undefined);
-            }
-          }}
+          onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
             input: {
               endAdornment: searchText.length > 0 && (
@@ -147,12 +204,13 @@ export const Journal = () => {
         container
         spacing={{ xs: 4, sm: 2 }}
         sx={{
-          height: 'calc(100% - 80px)',
+          flexGrow: 1,
           p: '32px',
-          pt: 0
+          pt: 0,
+          overflowY: 'auto',
         }}
       >
-        <Grid size={{ xs: 12, sm: 3, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
+        <Grid size={{ xs: 12, sm: 3, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -171,40 +229,39 @@ export const Journal = () => {
             border: `solid 1px ${palette.text.primary}`,
             overflowY: 'auto',
           }}>
-            {categories?.map((category) => (
-              <Box
-                key={category.id}
-                onClick={() => setSelectedCategory(category)}
-                sx={{
-                  p: 1,
-                  cursor: 'pointer',
-                  borderTopLeftRadius: '8px',
-                  borderTopRightRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  backgroundColor: selectedCategory?.id === category.id ? "primary.light" : "background.default",
-                  ":hover": selectedCategory?.id !== category.id ? { backgroundColor: "action.hover" } : {},
+            {uncategorizedEntries?.length ? (
+              <CategoryBox
+                key={-1}
+                category={{
+                  ...uncategorizedCategory,
+                  sections: [{ entries: uncategorizedEntries }]
                 }}
-              >
-                <Typography variant="body1" key={category.id}>
-                  {category.name} ({category.sections?.reduce((acc, section) => acc + section.entries.length, 0)})
-                </Typography>
-              </Box>
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            ) : null}
+            {categories?.map((category) => (
+              <CategoryBox
+                key={category.id}
+                category={category}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
             ))}
           </Box>
         </Grid>
 
         <Grid
           size={{ xs: 12, sm: 9, lg: 10 }}
-          sx={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 2, pl: 2 }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pl: 2 }}
         >
           {!isEditingCategory ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h6">
-                {selectedCategoryName ?? "Select a category"}
+                {selectedCategoryName || "Select a category"}
               </Typography>
 
-              {selectedCategory && (
+              {selectedCategory && selectedCategory.id !== -1 && (
                 <IconButton
                   size="small"
                   sx={{ ml: 2 }}
@@ -215,7 +272,7 @@ export const Journal = () => {
                 </IconButton>
               )}
 
-              {selectedCategory && (
+              {selectedCategory && selectedCategory.id !== -1 && (
                 <IconButton
                   size="small"
                   onClick={() => setIsAddingSection(true)}

@@ -36,6 +36,13 @@ router.get('/categories', async (req: Request, res: Response) => {
       sections: {
         select: {
           entries: {
+            where: {
+              OR: [
+                { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
+                { section: { name: { contains: searchText, mode: 'insensitive' } } },
+                { content: { contains: searchText, mode: 'insensitive' } },
+              ]
+            },
             select: {
               id: true,
             }
@@ -82,45 +89,26 @@ router.get('/sections', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
-  let sections;
-  if (categoryId) {
-    const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)
-    sections = await prisma.journalSection.findMany({
-      where: {
-        categoryId: categoryIdSearch,
-        OR: [
-          { category: { name: { contains: searchText, mode: 'insensitive' } } },
-          { name: { contains: searchText, mode: 'insensitive' } },
-          {
-            entries: {
-              some: {
-                content: { contains: searchText, mode: 'insensitive' }
-              }
+  if (!categoryId) return res.json([]);
+
+  const sections = await prisma.journalSection.findMany({
+    where: {
+      categoryId: parseInt(categoryId),
+      OR: [
+        { category: { name: { contains: searchText, mode: 'insensitive' } } },
+        { name: { contains: searchText, mode: 'insensitive' } },
+        {
+          entries: {
+            some: {
+              content: { contains: searchText, mode: 'insensitive' }
             }
           }
-        ]
-      },
-      orderBy: { name: 'asc' },
-    });
-  } else {
-    sections = await prisma.journalSection.findMany({
-      where: {
-        userId: req.user.id,
-        OR: [
-          { category: { name: { contains: searchText, mode: 'insensitive' } } },
-          { name: { contains: searchText, mode: 'insensitive' } },
-          {
-            entries: {
-              some: {
-                content: { contains: searchText, mode: 'insensitive' }
-              }
-            }
-          }
-        ]
-      },
-      orderBy: { name: 'asc' },
-    });
-  }
+        }
+      ]
+    },
+    orderBy: { name: 'asc' },
+  });
+
   res.json(sections);
 });
 
