@@ -393,6 +393,7 @@ const Wrapper = styled(Box)`
   flex-direction: column;
   flex-grow: 1;
   border-radius: 8px;
+  border: ${({ theme }) => `solid 1px ${theme.palette.grey[700]}}`};
 `;
 
 const CoverImage = styled.img`

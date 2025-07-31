@@ -5,7 +5,6 @@ import {
   InputAdornment,
   TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
 import styled from "styled-components";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
@@ -77,7 +76,6 @@ const CategoryBox = ({
 
 export const Journal = () => {
 
-  const { palette } = useTheme();
   const { userData, setUserData } = useContext(UserContext);
 
   const [searchText, setSearchText] = useState("");
@@ -209,12 +207,18 @@ export const Journal = () => {
         spacing={{ xs: 4, sm: 2 }}
         sx={{
           flexGrow: 1,
-          p: '32px',
-          pt: 0,
-          overflowY: 'auto',
+          height: 'calc(100% - 80px)',
+          boxSizing: 'border-box',
         }}
       >
-        <Grid size={{ xs: 12, sm: 3, lg: 2 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Grid
+          size={{ xs: 12, sm: 3, lg: 2 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            pl: '32px',
+            pb: '32px',
+          }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
               Categories
@@ -230,7 +234,8 @@ export const Journal = () => {
           <Box sx={{
             flexGrow: 1,
             borderRadius: '8px',
-            border: `solid 1px ${palette.text.primary}`,
+            border: `solid 1px`,
+            borderColor: 'grey.700',
             overflowY: 'auto',
           }}>
             {uncategorizedEntries?.length ? (
@@ -259,7 +264,15 @@ export const Journal = () => {
 
         <Grid
           size={{ xs: 12, sm: 9, lg: 10 }}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pl: 2 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            pr: '32px',
+            pb: '32px',
+            height: '100%',
+            overflowY: 'auto',
+          }}
         >
           {!isEditingCategory ? (
             <Box

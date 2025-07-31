@@ -189,7 +189,7 @@ export const Notes = () => {
           <Box sx={{
             flexGrow: 1,
             borderRadius: '8px',
-            border: `solid 1px ${palette.text.primary}`,
+            border: `solid 1px ${palette.grey[700]}`,
             overflowY: 'auto',
           }}>
             <NoteCategoryContainer
@@ -314,7 +314,7 @@ export const Notes = () => {
             <Box sx={{
               flexGrow: 1,
               borderRadius: '8px',
-              border: `solid 1px ${palette.text.primary}`,
+              border: `solid 1px ${palette.grey[700]}`,
               display: 'flex',
               flexDirection: 'column',
             }}>
@@ -349,10 +349,11 @@ export const Notes = () => {
               sx={{
                 flexGrow: 1,
                 borderRadius: '8px',
-                border: `solid 1px ${palette.text.primary}`,
+                border: `solid 1px ${palette.grey[700]}`,
                 overflowY: 'auto',
               }}
               onScroll={(test) => setPreviewScrollValue(test.currentTarget.scrollTop)}
+              onDoubleClick={() => setEditorEnabled(true)}
             >
               <MarkdownPreview
                 source={selectedNoteContentWithSearchHighlight}

@@ -173,8 +173,9 @@ export const ExpensesCategoryCard = ({
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          border: 'solid 1px gray',
-          borderRadius: 1,
+          border: 'solid 1px',
+          borderColor: 'grey.700',
+          borderRadius: 2,
           padding: 1,
           gap: 2
         }}>
@@ -191,7 +192,7 @@ export const ExpensesCategoryCard = ({
                 pr: 0.5,
                 pt: 0.5,
                 pb: 0.5,
-                borderRadius: 1,
+                borderRadius: 2,
                 backgroundColor: 'primary.light',
                 display: 'flex',
                 flexDirection: 'row',

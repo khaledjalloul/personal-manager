@@ -247,6 +247,7 @@ export const Home = () => {
             <Box sx={{
               flexGrow: 1,
               borderRadius: '8px',
+              border: `solid 1px ${palette.grey[700]}`,
               backgroundColor: 'primary.light',
               mt: { xs: 1, lg: 0 }
             }}>
@@ -299,6 +300,7 @@ export const Home = () => {
             flex: 1,
             borderRadius: '8px',
             backgroundColor: 'primary.light',
+            border: `solid 1px ${palette.grey[700]}`,
           }}>
             <textarea
               value={diaryContent}
@@ -325,6 +327,7 @@ export const Home = () => {
             flex: 0.5,
             borderRadius: '8px',
             backgroundColor: 'primary.light',
+            border: `solid 1px ${palette.grey[700]}`,
           }}>
             <textarea
               value={diaryWorkContent}

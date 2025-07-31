@@ -172,11 +172,11 @@ export const journalSections: JournalSection[] = [
 ];
 
 export const journalEntries: JournalEntry[] = [
-    { id: 1, section: journalSections[0], date: new Date(), content: 'Good day.' },
-    { id: 2, section: journalSections[1], date: new Date(), content: 'New project idea: a personal finance tracker.' },
-    { id: 3, section: journalSections[2], date: new Date(), content: 'Meeting with the team went well.' },
-    { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation' },
-    { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.' }
+    { id: 1, section: journalSections[0], date: new Date(), content: 'Good day.', subEntries: ['sub 1', 'sub 2'] },
+    { id: 2, section: journalSections[1], date: new Date(), content: 'New project idea: a personal finance tracker.', subEntries: [] },
+    { id: 3, section: journalSections[2], date: new Date(), content: 'Meeting with the team went well.', subEntries: [] },
+    { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation', subEntries: [] },
+    { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.', subEntries: [] }
 ];
 
 // ############### Notes ###############

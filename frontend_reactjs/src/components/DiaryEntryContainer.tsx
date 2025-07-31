@@ -65,6 +65,7 @@ export const DiaryEntryContainer = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          border: `solid 1px ${palette.grey[700]}`
         }}>
           <Box sx={{
             display: 'flex',
@@ -132,8 +133,9 @@ export const DiaryEntryContainer = ({
           borderBottomRightRadius: (isEditing || workContent.trim()) ? 0 : '8px',
           backgroundColor: 'primary.light',
           p: 2,
-          borderRight: { xs: 'none', md: `solid 1px ${palette.action.hover}` },
-          borderBottom: { xs: `solid 1px ${palette.action.hover}`, md: 'none' }
+          border: `solid 1px ${palette.grey[700]}`,
+          borderRight: { xs: `solid 1px ${palette.grey[700]}`, md: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}` },
+          borderBottom: { xs: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}`, md: `solid 1px ${palette.grey[700]}` },
         }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
@@ -175,6 +177,7 @@ export const DiaryEntryContainer = ({
           borderBottomLeftRadius: { xs: '8px', md: 0 },
           backgroundColor: 'primary.light',
           p: 2,
+          border: `solid 1px ${palette.grey[700]}`,
         }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>

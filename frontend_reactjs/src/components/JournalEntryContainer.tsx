@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { JournalEntry } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
-import { Clear, Delete, Edit, Save } from "@mui/icons-material";
+import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useCreateJournalEntry, useDeleteJournalEntry, useEditJournalEntry } from "../api";
 import { useCtrlS } from "../utils";
@@ -27,6 +27,7 @@ export const JournalEntryContainer = ({
   const [isEditing, setIsEditing] = useState(isAddingEntry);
   const [date, setDate] = useState(dayjs(entry.date));
   const [content, setContent] = useState(entry.content);
+  const [subEntries, setSubEntries] = useState(entry.subEntries);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalEntry();
@@ -41,12 +42,14 @@ export const JournalEntryContainer = ({
         id: entry.id,
         date: date.toDate(),
         content: content.trim(),
+        subEntries: subEntries.map(se => se.trim())
       });
     else if (entry.section)
       createEntry({
         sectionId: entry.section.id,
         date: date.toDate(),
         content: content.trim(),
+        subEntries: subEntries.map(se => se.trim())
       });
   };
 
@@ -74,10 +77,11 @@ export const JournalEntryContainer = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          border: `solid 1px ${palette.grey[700]}`
         }}>
           {!isEditing ? (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexGrow: 1 }}>
-              <Typography sx={{ fontSize: { xs: 14, lg: 16 } }}>
+              <Typography sx={{ fontSize: { xs: 12, lg: 14 } }}>
                 {dayjs(entry.date).format("DD.MM.YYYY")}
               </Typography>
 
@@ -106,6 +110,12 @@ export const JournalEntryContainer = ({
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <IconButton
+                  onClick={() => setSubEntries([...subEntries, ""])}
+                >
+                  <Add fontSize="small" />
+                </IconButton>
+
+                <IconButton
                   color="success"
                   loading={createLoading || editLoading}
                   disabled={!content.trim()}
@@ -128,6 +138,7 @@ export const JournalEntryContainer = ({
                     if (!isAddingEntry) {
                       setDate(dayjs(entry.date));
                       setContent(entry.content);
+                      setSubEntries(entry.subEntries);
                       setIsEditing(false);
                     } else {
                       setIsAddingEntry(false);
@@ -146,10 +157,11 @@ export const JournalEntryContainer = ({
           flexGrow: 1,
           borderRadius: '8px',
           backgroundColor: 'primary.light',
-          p: 2,
+          p: 1,
+          border: `solid 1px ${palette.grey[700]}`
         }}>
           {!isEditing ? (
-            <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
               <SearchTextHighlight text={content} searchText={searchText.trim()} />
             </Typography>
           ) : (
@@ -171,6 +183,67 @@ export const JournalEntryContainer = ({
               onChange={(e) => setContent(e.target.value)}
             />
           )}
+        </Box>
+      </Grid>
+
+      <Grid size={{ xs: 12, md: 2 }} sx={{ display: { xs: 'none', md: 'flex' } }} />
+
+      <Grid size={{ xs: 12, md: 10 }} sx={{ display: 'flex' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            flexGrow: 1,
+            mt: 1,
+            ml: 1
+          }}>
+          {subEntries.map((subEntry, index) => (
+            <Box
+              key={index}
+              sx={{
+                flexGrow: 1,
+                borderRadius: '8px',
+                backgroundColor: 'primary.light',
+                p: 1,
+                border: `solid 1px ${palette.grey[700]}`,
+                position: 'relative'
+              }}>
+              {!isEditing ? (
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  <SearchTextHighlight text={subEntry} searchText={searchText.trim()} />
+                </Typography>
+              ) : (
+                <textarea
+                  value={subEntry}
+                  rows={5}
+                  placeholder="Sub-Entry"
+                  style={{
+                    width: '100%',
+                    minHeight: '100%',
+                    resize: 'none',
+                    outline: 'none',
+                    border: 'none',
+                    backgroundColor: palette.primary.light,
+                    color: palette.text.primary,
+                    borderTopLeftRadius: '8px',
+                    borderBottomLeftRadius: '8px',
+                  }}
+                  onChange={(e) => setSubEntries(subEntries.map((se, i) => i === index ? e.target.value : se))}
+                />
+              )}
+
+              {isEditing && (
+                <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: '-48px', display: 'flex', alignItems: 'center' }}>
+                  <IconButton
+                    color="error"
+                    onClick={() => setSubEntries(subEntries.filter((_, i) => i !== index))}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+          ))}
         </Box>
       </Grid>
 

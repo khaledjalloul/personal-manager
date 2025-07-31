@@ -12,6 +12,7 @@ const emptyEntry: JournalEntry = {
   id: -1,
   date: new Date(),
   content: "",
+  subEntries: [],
   section: {
     id: -1,
     name: "",

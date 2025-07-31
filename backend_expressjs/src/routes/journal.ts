@@ -180,12 +180,13 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.post('/', async (req: Request, res: Response) => {
-  const { date, content, sectionId } = req.body;
+  const { date, content, subEntries, sectionId } = req.body;
   const entry = await prisma.journalEntry.create({
     data: {
       userId: req.user.id,
       date,
       content,
+      subEntries,
       section: sectionId && { connect: { id: sectionId } }
     },
   });
@@ -194,13 +195,14 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.post('/:id', async (req: Request, res: Response) => {
   const entryId = parseInt(req.params.id);
-  const { date, content } = req.body;
+  const { date, content, subEntries } = req.body;
   const entry = await prisma.journalEntry.update({
     where: { id: entryId },
     data: {
       userId: req.user.id,
       date,
-      content
+      content,
+      subEntries
     },
   });
   res.json(entry);

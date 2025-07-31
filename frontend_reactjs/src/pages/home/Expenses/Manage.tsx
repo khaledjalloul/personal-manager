@@ -332,7 +332,7 @@ const CSVFileUploadWrapper = styled(Box)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: solid 1px gray;
+  border: ${({ theme }) => `solid 1px ${theme.palette.grey[700]}`};
   border-radius: 8px;
   padding: 32px;
 `;

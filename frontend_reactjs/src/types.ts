@@ -68,6 +68,7 @@ export type JournalEntry = {
   section?: JournalSection;
   date: Date;
   content: string;
+  subEntries: string[];
 };
 
 export type NoteCategory = {

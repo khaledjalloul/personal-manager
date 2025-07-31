@@ -9,6 +9,7 @@ export type EditJournalEntryRequestBody = {
   id: number;
   date?: Date;
   content?: string;
+  subEntries?: string[];
 };
 
 const mutationFn = async (data: EditJournalEntryRequestBody) => {

@@ -83,12 +83,13 @@ model JournalSection {
 }
 
 model JournalEntry {
-  id        Int             @id @default(autoincrement())
-  userId    Int
-  sectionId Int?
-  section   JournalSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
-  date      DateTime
-  content   String
+  id         Int             @id @default(autoincrement())
+  userId     Int
+  sectionId  Int?
+  section    JournalSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  date       DateTime
+  content    String
+  subEntries String[]
 }
 
 model NoteCategory {
