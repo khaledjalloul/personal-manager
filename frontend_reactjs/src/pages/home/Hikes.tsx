@@ -30,7 +30,7 @@ export const Hikes = () => {
   });
 
   return (
-    <Wrapper>
+    <Wrapper sx={{ height: { xs: 'auto', sm: '100%' } }}>
       <Box
         sx={{
           display: 'flex',
@@ -114,10 +114,10 @@ export const Hikes = () => {
 }
 
 const Wrapper = styled(Box)`
-  height: 100%;
   box-sizing: border-box;
   padding-top: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background-color: ${({ theme }) => theme.palette.background.default};
 `;

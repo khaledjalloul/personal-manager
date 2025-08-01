@@ -160,6 +160,7 @@ export const NavigationBar = () => {
         </Toolbar>
       </AppBar>
 
+      {/* TODO: Remove fixed height */}
       <Box width={'100vw'} height={'calc(100vh - 64px)'} mt={8}>
         <Outlet />
       </Box>

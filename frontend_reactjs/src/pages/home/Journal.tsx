@@ -217,7 +217,8 @@ export const Journal = () => {
             display: 'flex',
             flexDirection: 'column',
             pl: '32px',
-            pb: '32px',
+            pb: { xs: 0, sm: '32px' },
+            pr: { xs: '32px', sm: 0 },
           }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
             <Typography variant="h6" mr={1}>
@@ -270,7 +271,8 @@ export const Journal = () => {
             gap: 2,
             pr: '32px',
             pb: '32px',
-            height: '100%',
+            pl: { xs: '32px', sm: 0 },
+            height: { sx: 'auto', sm: '100%' },
             overflowY: 'auto',
           }}
         >

@@ -15,7 +15,7 @@ export const ExpensesStatisticsCard = ({
       <Typography variant="h6" color="white">
         {title}
       </Typography>
-      <Typography variant="h3" color="white">
+      <Typography variant="h3" color="white" sx={{ fontSize: { xs: 40, sm: 48 } }}>
         {value}
       </Typography>
     </Wrapper>

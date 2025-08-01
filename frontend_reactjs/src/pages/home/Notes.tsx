@@ -34,7 +34,7 @@ export const Notes = () => {
 
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
-  const [editorEnabled, setEditorEnabled] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editorScrollValue, setEditorScrollValue] = useState(0);
   const [previewScrollValue, setPreviewScrollValue] = useState(0);
   const [selectedNote, setSelectedNote] = useState<Note>();
@@ -86,19 +86,19 @@ export const Notes = () => {
   }, [selectedNote?.id]);
 
   useCtrlS(save);
-  useKeybinding("e", () => setEditorEnabled(!editorEnabled));
+  useKeybinding("e", () => setIsEditing(!isEditing));
   useKeybinding("d", () => {
     if (selectedNote)
       setConfirmDeleteOpen(true);
   });
 
   useEffect(() => {
-    if (editorEnabled && editorRef.current)
+    if (isEditing && editorRef.current)
       editorRef.current.scrollTop = editorScrollValue;
 
-    if (!editorEnabled && previewRef.current)
+    if (!isEditing && previewRef.current)
       previewRef.current.scrollTop = previewScrollValue;
-  }, [editorEnabled]);
+  }, [isEditing]);
 
   useEffect(() => {
     if (notes) {
@@ -136,9 +136,9 @@ export const Notes = () => {
 
           <IconButton
             sx={{ ml: "auto" }}
-            onClick={() => setEditorEnabled(!editorEnabled)}
+            onClick={() => setIsEditing(!isEditing)}
           >
-            {editorEnabled ? <VisibilityOff /> : <Visibility />}
+            {isEditing ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </Box>
 
@@ -171,7 +171,7 @@ export const Notes = () => {
         container
         spacing={{ xs: 4, sm: 2 }}
         sx={{
-          height: 'calc(100% - 80px)',
+          height: { xs: isEditing ? 'calc(100% - 80px)' : 'auto', sm: 'calc(100% - 100px)' },
           p: '32px',
           pt: 0
         }}
@@ -216,7 +216,12 @@ export const Notes = () => {
 
         <Grid
           size={{ xs: 12, sm: 9, lg: 10 }}
-          sx={{ display: 'flex', flexDirection: 'column', minHeight: '50vh', height: '100%' }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: { xs: isEditing ? '50vh' : 'auto', sm: '50vh' },
+            height: { xs: isEditing ? '100%' : 'auto', sm: '100%' },
+          }}
         >
           <Box sx={{
             display: 'flex',
@@ -227,7 +232,7 @@ export const Notes = () => {
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="h6">
-                {editorEnabled ? "Editor" : "Preview"}:
+                {isEditing ? "Editor" : "Preview"}:
               </Typography>
 
               <IconButton
@@ -310,7 +315,7 @@ export const Notes = () => {
             </IconButton>
           </Box>
 
-          {editorEnabled ? (
+          {isEditing ? (
             <Box sx={{
               flexGrow: 1,
               borderRadius: '8px',
@@ -353,7 +358,7 @@ export const Notes = () => {
                 overflowY: 'auto',
               }}
               onScroll={(test) => setPreviewScrollValue(test.currentTarget.scrollTop)}
-              onDoubleClick={() => setEditorEnabled(true)}
+              onDoubleClick={() => setIsEditing(true)}
             >
               <MarkdownPreview
                 source={selectedNoteContentWithSearchHighlight}

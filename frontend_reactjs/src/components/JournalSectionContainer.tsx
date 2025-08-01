@@ -128,7 +128,7 @@ export const JournalSectionContainer = ({
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: { xs: 3, md: 1 }
+        gap: { xs: 3, lg: 1 }
       }}>
         {isAddingEntry && (
           <JournalEntryContainer

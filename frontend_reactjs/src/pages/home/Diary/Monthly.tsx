@@ -36,7 +36,7 @@ export const MonthlyDiary = () => {
 
   return (
     <Box sx={{
-      overflowY: 'auto',
+      overflowY: { xs: 'unset', sm: 'auto' },
       p: '32px',
       pt: 0,
       display: 'flex',

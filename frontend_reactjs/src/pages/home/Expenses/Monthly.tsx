@@ -23,7 +23,12 @@ export const MonthlyExpenses = () => {
 
   if (!monthlyExpenses) return <div />;
   return (
-    <Box sx={{ p: '32px', pt: 0, display: 'flex', overflowY: 'hidden' }}>
+    <Box sx={{
+      p: '32px',
+      pt: 0,
+      display: 'flex',
+      overflowY: {xs: 'visible', sm: 'hidden'},
+    }}>
       <TableContainer component={Paper} >
         <Table
           size="small"

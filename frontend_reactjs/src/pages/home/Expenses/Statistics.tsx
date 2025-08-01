@@ -53,7 +53,7 @@ export const ExpensesStatistics = () => {
 
   if (!statistics || !user) return <div />
   return (
-    <Wrapper>
+    <Wrapper sx={{ overflowY: { sx: 'unset', sm: 'auto' } }}>
       <Grid container spacing={2} flexGrow={1}>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
@@ -259,7 +259,6 @@ const Wrapper = styled(Box)`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
   padding: 32px;
   padding-top: 0;
 `;

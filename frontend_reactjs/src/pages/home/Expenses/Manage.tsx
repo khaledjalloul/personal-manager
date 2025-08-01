@@ -97,7 +97,7 @@ export const ManageExpenses = () => {
   return (
     <Wrapper>
       <Grid container spacing={2}>
-        <FundGridItem size={{ xs: 12, lg: 5 }} sx={{ maxHeight: '60vh' }}>
+        <FundGridItem size={{ xs: 12, lg: 5 }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Manual Funds ({manualFunds?.length})</Typography>
 
@@ -149,7 +149,7 @@ export const ManageExpenses = () => {
           </TableContainer>
         </FundGridItem>
 
-        <ManualExpensesGridItem size={{ xs: 12, lg: 7 }} sx={{ maxHeight: '60vh' }}>
+        <ManualExpensesGridItem size={{ xs: 12, lg: 7 }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
             <Typography variant="h6">Manual Expenses ({manualExpenses?.length})</Typography>
 
@@ -212,15 +212,15 @@ export const ManageExpenses = () => {
 
       <CSVFileUploadWrapper>
 
-        <Typography>
+        <Typography sx={{ textAlign: 'center' }}>
           Imported Funds: {autoFunds?.length}
         </Typography>
 
-        <Typography>
+        <Typography sx={{ textAlign: 'center' }}>
           Imported Expenses: {autoExpenses?.length}
         </Typography>
 
-        <Typography >
+        <Typography sx={{ textAlign: 'center' }}>
           Imported & Uncategorized Expenses: {autoExpenses?.filter(exp => !exp.category).length}
         </Typography>
 
@@ -306,10 +306,8 @@ export const ManageExpenses = () => {
 };
 
 const Wrapper = styled(Box)`
-  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; // Idk why but needed to prevent extra scroll
   gap: 16px;
   padding: 32px;
   padding-top: 0;

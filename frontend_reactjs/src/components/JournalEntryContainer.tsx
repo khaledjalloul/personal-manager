@@ -65,15 +65,15 @@ export const JournalEntryContainer = ({
 
   return (
     <Grid container onDoubleClick={() => setIsEditing(true)}>
-      <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
           backgroundColor: 'primary.light',
           p: 1,
           pl: 2,
-          mr: { xs: 0, md: 1 },
-          mb: { xs: 1, md: 0 },
+          mr: { xs: 0, lg: 1 },
+          mb: { xs: 1, lg: 0 },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -81,7 +81,7 @@ export const JournalEntryContainer = ({
         }}>
           {!isEditing ? (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexGrow: 1 }}>
-              <Typography sx={{ fontSize: { xs: 12, lg: 14 } }}>
+              <Typography variant="body2">
                 {dayjs(entry.date).format("DD.MM.YYYY")}
               </Typography>
 
@@ -152,7 +152,7 @@ export const JournalEntryContainer = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 10 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, lg: 10 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
           borderRadius: '8px',
@@ -186,9 +186,9 @@ export const JournalEntryContainer = ({
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 2 }} sx={{ display: { xs: 'none', md: 'flex' } }} />
+      <Grid size={2} sx={{ display: { xs: 'none', lg: subEntries.length ? 'flex' : 'none' } }} />
 
-      <Grid size={{ xs: 12, md: 10 }} sx={{ display: 'flex' }}>
+      <Grid size={{ xs: 12, lg: 10 }} sx={{ display: subEntries.length ? 'flex' : 'none' }}>
         <Box
           sx={{
             display: 'flex',

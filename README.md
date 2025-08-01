@@ -13,6 +13,9 @@ cd backend_expressjs
 npm install
 npx prisma migrate dev
 npm start
+
+# In case of migration mess / errors, back up first then:
+npx prisma migrate reset
 ```
 
 3. Configure the ReactJS frontend's environment variables in `frontend_reactjs/.env.local` then run it:
@@ -27,7 +30,7 @@ npm start
 
 - Frontend: Hosted on [GitHub pages](https://khaledjalloul.github.io/personal-manager).
   - Trigger rebuild using `npm run deploy`.
-- Backend: Hosted on [Render](https://render.com/).
-  - Use `npx prisma migrate deploy` instead of `dev` during configuration.
+- Backend: Hosted on [Heroku](https://www.heroku.com/).
+  - Use `npx prisma migrate deploy` instead of `dev` during configuration or if the database models change.
   - Rebuild is automatically triggered on commit.
-- PostgreSQL Database: Hosted on [Clever Cloud](https://www.clever-cloud.com/).
+- PostgreSQL Database: Hosted on [Heroku](https://www.heroku.com/).

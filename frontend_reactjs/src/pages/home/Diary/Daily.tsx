@@ -42,7 +42,7 @@ export const DailyDiary = () => {
 
   return (
     <Box sx={{
-      overflowY: 'auto',
+      overflowY: { xs: 'unset', sm: 'auto' },
       p: '32px',
       pr: '24px', // Adjusting for scrollbar
       pt: 0,

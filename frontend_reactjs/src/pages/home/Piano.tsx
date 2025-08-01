@@ -40,7 +40,7 @@ export const Piano = () => {
   });
 
   return (
-    <Wrapper>
+    <Wrapper sx={{ height: { xs: 'auto', sm: '100%' } }}>
       <Box
         sx={{
           display: 'flex',
@@ -134,11 +134,11 @@ export const Piano = () => {
 };
 
 const Wrapper = styled(Box)`
-  height: 100%;
   box-sizing: border-box;
   padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background-color: ${({ theme }) => theme.palette.background.default};
 `;
 
