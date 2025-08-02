@@ -354,4 +354,16 @@ router.post('/me', async (req: Request, res: Response) => {
   res.json(updatedUser);
 });
 
+router.delete('/:id', async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  if (Number(id) !== userId) {
+    return res.status(403).json({ error: "You can only delete your own account" });
+  }
+
+  await prisma.user.delete({ where: { id: userId } });
+  res.json({ status: "User deleted successfully" });
+});
+
 export default router;

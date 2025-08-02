@@ -59,7 +59,7 @@ router.post('/categories', async (req: Request, res: Response) => {
   const { name } = req.body;
   const category = await prisma.journalCategory.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name
     }
   });
@@ -116,7 +116,7 @@ router.post('/sections', async (req: Request, res: Response) => {
   const { name, categoryId } = req.body;
   const section = await prisma.journalSection.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name,
       category: categoryId && { connect: { id: categoryId } }
     }
@@ -183,7 +183,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { date, content, subEntries, sectionId } = req.body;
   const entry = await prisma.journalEntry.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       date,
       content,
       subEntries,

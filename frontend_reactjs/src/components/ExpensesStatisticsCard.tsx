@@ -7,7 +7,7 @@ export const ExpensesStatisticsCard = ({
   color
 }: {
   title: string,
-  value: string,
+  value?: number,
   color: string
 }) => {
   return (
@@ -16,7 +16,7 @@ export const ExpensesStatisticsCard = ({
         {title}
       </Typography>
       <Typography variant="h3" color="white" sx={{ fontSize: { xs: 40, sm: 48 } }}>
-        {value}
+        {value?.toFixed(2) || "0.00"} CHF
       </Typography>
     </Wrapper>
   )

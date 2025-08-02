@@ -31,7 +31,7 @@ router.post('/', async (req: Request, res: Response) => {
   const data = req.body;
   const newVideoGame = await prisma.videoGame.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name: data.name,
       platform: data.platform,
       type: data.type,

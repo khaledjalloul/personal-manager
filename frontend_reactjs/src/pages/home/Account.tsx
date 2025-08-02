@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { Check, Download, Upload } from "@mui/icons-material";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { useBackupData, useCurrentUser, useEditUser, useRestoreData } from "../../api";
+import { useBackupData, useCurrentUser, useDeleteUser, useEditUser, useRestoreData } from "../../api";
 import { Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
-import { ConfirmRestoreDialog } from "../../components";
+import { ConfirmDeleteDialog, ConfirmRestoreDialog } from "../../components";
 
 const dataTypes: {
   [key: string]: string;
@@ -109,10 +109,12 @@ export const Account = () => {
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
 
   const { data: user } = useCurrentUser();
 
   const { mutate: editUser, isPending: editUserLoading } = useEditUser();
+  const { mutate: deleteUser, isPending: deleteUserLoading } = useDeleteUser();
 
   useEffect(() => {
     if (user) {
@@ -148,6 +150,14 @@ export const Account = () => {
               loading={editUserLoading}
             >
               Save Changes
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => setConfirmDeleteDialogOpen(true)}
+              loading={deleteUserLoading}
+            >
+              Delete Account
             </Button>
           </Box>
         </Grid>
@@ -196,6 +206,16 @@ export const Account = () => {
           </Box>
         </Grid>
       </Grid>
+
+      <ConfirmDeleteDialog
+        isOpen={confirmDeleteDialogOpen}
+        setIsOpen={setConfirmDeleteDialogOpen}
+        itemName="your account"
+        deleteFn={() => {
+          if (user)
+            deleteUser({ id: user.id });
+        }}
+      />
     </Wrapper>
   );
 };

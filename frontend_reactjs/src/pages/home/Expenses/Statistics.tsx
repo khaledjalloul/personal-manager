@@ -59,7 +59,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <ExpensesStatisticsCard
             title="Total Balance"
-            value={`${(statistics.totalFunds - statistics.totalExpenses).toFixed(2)} CHF`}
+            value={statistics.totalFunds - statistics.totalExpenses}
             color="success.dark"
           />
         </Grid>
@@ -67,7 +67,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <ExpensesStatisticsCard
             title="Bank Balance"
-            value={`${(statistics.totalFunds - statistics.totalExpenses - user.wallet).toFixed(2)} CHF`}
+            value={statistics.totalFunds - statistics.totalExpenses - user.wallet}
             color="success.dark"
           />
         </Grid>
@@ -75,7 +75,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <ExpensesStatisticsCard
             title="Cash Balance"
-            value={`${user.wallet.toFixed(2)} CHF`}
+            value={user.wallet}
             color="success.dark"
           />
         </Grid>
@@ -83,7 +83,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <ExpensesStatisticsCard
             title="Total Spent This Month"
-            value={`${statistics.totalExpensesThisMonth.toFixed(2)} CHF`}
+            value={statistics.totalExpensesThisMonth}
             color="primary.dark"
           />
         </Grid>
@@ -91,7 +91,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <ExpensesStatisticsCard
             title="Average Expenses Per Month"
-            value={`${statistics.monthlyAverageExpenses.toFixed(2)} CHF`}
+            value={statistics.monthlyAverageExpenses}
             color="warning.dark"
           />
         </Grid>

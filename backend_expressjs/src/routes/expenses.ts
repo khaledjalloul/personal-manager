@@ -34,7 +34,7 @@ router.post('/funds', async (req: Request, res: Response) => {
   const { date, source, amount, type } = req.body;
   const newFund = await prisma.fund.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       date: new Date(date),
       source,
       amount,
@@ -80,7 +80,7 @@ router.post('/categories', async (req: Request, res: Response) => {
   const { name, color, keywords } = req.body;
   const newCategory = await prisma.expensesCategory.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name,
       color,
       keywords
@@ -429,7 +429,7 @@ router.post('/', async (req: Request, res: Response) => {
 
   const newExpense = await prisma.expense.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       date: new Date(data.date),
       category: categoryId ? { connect: { id: categoryId } } : undefined,
       description: data.description,

@@ -25,7 +25,7 @@ router.post('/', async (req: Request, res: Response) => {
   const data = req.body;
   const newPianoPiece = await prisma.pianoPiece.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name: data.name,
       composer: data.composer,
       origin: data.origin,

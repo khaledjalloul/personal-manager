@@ -36,7 +36,7 @@ router.post('/categories', async (req: Request, res: Response) => {
   const { name } = req.body;
   const category = await prisma.noteCategory.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       name
     }
   });
@@ -104,7 +104,7 @@ router.post('/', async (req: Request, res: Response) => {
   const newDate = new Date();
   const note = await prisma.note.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       title,
       content,
       category: categoryId !== undefined ? { connect: { id: categoryId } } : undefined,
@@ -122,7 +122,6 @@ router.post('/:id', async (req: Request, res: Response) => {
   const note = await prisma.note.update({
     where: { id: noteId },
     data: {
-      userId: req.user.id,
       title,
       content,
       category: categoryId !== undefined

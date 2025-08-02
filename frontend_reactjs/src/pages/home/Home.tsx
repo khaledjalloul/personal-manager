@@ -156,7 +156,7 @@ export const Home = () => {
               <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
                 <ExpensesStatisticsCard
                   title="Total Spent This Month"
-                  value={`${expensesStatistics?.totalExpensesThisMonth.toFixed(2)} CHF`}
+                  value={expensesStatistics?.totalExpensesThisMonth}
                   color="primary.dark"
                 />
               </Grid>
@@ -164,7 +164,7 @@ export const Home = () => {
               <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
                 <ExpensesStatisticsCard
                   title="Average Expenses Per Month"
-                  value={`${expensesStatistics?.monthlyAverageExpenses.toFixed(2)} CHF`}
+                  value={expensesStatistics?.monthlyAverageExpenses}
                   color="warning.dark"
                 />
               </Grid>

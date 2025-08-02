@@ -91,7 +91,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { date, content, workContent, type } = req.body;
   const newEntry = await prisma.diaryEntry.create({
     data: {
-      userId: req.user.id,
+      user: { connect: { id: req.user.id } },
       date: new Date(date),
       content,
       workContent,
