@@ -101,14 +101,21 @@ model JournalSection {
 }
 
 model JournalEntry {
-  id         Int             @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   userId     Int
-  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   sectionId  Int?
-  section    JournalSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  section    JournalSection?   @relation(fields: [sectionId], references: [id], onDelete: SetNull)
   date       DateTime
   content    String
-  subEntries String[]
+  subEntries JournalSubEntry[]
+}
+
+model JournalSubEntry {
+  id      Int          @id @default(autoincrement())
+  content String
+  entryId Int
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }
 
 model NoteCategory {

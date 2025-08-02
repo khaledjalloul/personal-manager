@@ -27,7 +27,7 @@ export const JournalEntryContainer = ({
   const [isEditing, setIsEditing] = useState(isAddingEntry);
   const [date, setDate] = useState(dayjs(entry.date));
   const [content, setContent] = useState(entry.content);
-  const [subEntries, setSubEntries] = useState(entry.subEntries);
+  const [subEntries, setSubEntries] = useState(entry.subEntries.map(se => se.content));
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalEntry();
@@ -138,7 +138,7 @@ export const JournalEntryContainer = ({
                     if (!isAddingEntry) {
                       setDate(dayjs(entry.date));
                       setContent(entry.content);
-                      setSubEntries(entry.subEntries);
+                      setSubEntries(entry.subEntries.map(se => se.content));
                       setIsEditing(false);
                     } else {
                       setIsAddingEntry(false);

@@ -14,22 +14,9 @@ router.get('/categories', async (req: Request, res: Response) => {
       userId: req.user.id,
       OR: [
         { name: { contains: searchText, mode: 'insensitive' } },
-        {
-          sections: {
-            some: {
-              OR: [
-                { name: { contains: searchText, mode: 'insensitive' } },
-                {
-                  entries: {
-                    some: {
-                      content: { contains: searchText, mode: 'insensitive' }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
+        { sections: { some: { name: { contains: searchText, mode: 'insensitive' } } } },
+        { sections: { some: { entries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } },
+        { sections: { some: { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } } } }
       ]
     },
     include: {
@@ -41,6 +28,7 @@ router.get('/categories', async (req: Request, res: Response) => {
                 { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
                 { section: { name: { contains: searchText, mode: 'insensitive' } } },
                 { content: { contains: searchText, mode: 'insensitive' } },
+                { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
               ]
             },
             select: {
@@ -97,13 +85,8 @@ router.get('/sections', async (req: Request, res: Response) => {
       OR: [
         { category: { name: { contains: searchText, mode: 'insensitive' } } },
         { name: { contains: searchText, mode: 'insensitive' } },
-        {
-          entries: {
-            some: {
-              content: { contains: searchText, mode: 'insensitive' }
-            }
-          }
-        }
+        { entries: { some: { content: { contains: searchText, mode: 'insensitive' } } } },
+        { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } }
       ]
     },
     orderBy: { name: 'asc' },
@@ -157,8 +140,14 @@ router.get('/', async (req: Request, res: Response) => {
         OR: [
           { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
           { section: { name: { contains: searchText, mode: 'insensitive' } } },
-          { content: { contains: searchText, mode: 'insensitive' } }
+          { content: { contains: searchText, mode: 'insensitive' } },
+          { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
         ]
+      },
+      include: {
+        subEntries: {
+          orderBy: { id: 'asc' },
+        },
       },
       orderBy: { date: 'asc' },
     });
@@ -169,8 +158,14 @@ router.get('/', async (req: Request, res: Response) => {
         OR: [
           { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
           { section: { name: { contains: searchText, mode: 'insensitive' } } },
-          { content: { contains: searchText, mode: 'insensitive' } }
+          { content: { contains: searchText, mode: 'insensitive' } },
+          { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
         ]
+      },
+      include: {
+        subEntries: {
+          orderBy: { id: 'asc' },
+        },
       },
       orderBy: { date: 'asc' },
     });
@@ -181,12 +176,20 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   const { date, content, subEntries, sectionId } = req.body;
+
+  // TODO: Create separate routes for sub-entries
   const entry = await prisma.journalEntry.create({
     data: {
       user: { connect: { id: req.user.id } },
       date,
       content,
-      subEntries,
+      subEntries: {
+        createMany: {
+          data: subEntries.map((subEntry: string) => ({
+            content: subEntry
+          }))
+        }
+      },
       section: sectionId && { connect: { id: sectionId } }
     },
   });
@@ -196,13 +199,24 @@ router.post('/', async (req: Request, res: Response) => {
 router.post('/:id', async (req: Request, res: Response) => {
   const entryId = parseInt(req.params.id);
   const { date, content, subEntries } = req.body;
+
+  await prisma.journalSubEntry.deleteMany({
+    where: { entryId }
+  });
+
   const entry = await prisma.journalEntry.update({
     where: { id: entryId },
     data: {
       userId: req.user.id,
       date,
       content,
-      subEntries
+      subEntries: {
+        createMany: {
+          data: subEntries.map((subEntry: string) => ({
+            content: subEntry
+          }))
+        }
+      }
     },
   });
   res.json(entry);

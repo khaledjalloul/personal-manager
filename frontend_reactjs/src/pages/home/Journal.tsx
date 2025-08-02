@@ -88,6 +88,9 @@ export const Journal = () => {
 
   const { data: categories } = useJournalCategories({ searchText: searchText.trim() });
   const { data: sectionsRaw } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
+  const { data: allEntries } = useJournalEntries({
+    searchText: searchText.trim()
+  });
   const { data: uncategorizedEntries } = useJournalEntries({
     sectionId: -1,
     searchText: searchText.trim()
@@ -174,7 +177,7 @@ export const Journal = () => {
         }}
       >
         <Typography variant="h5">
-          Journal ({categories?.length || 0})
+          Journal ({allEntries?.length || 0})
         </Typography>
 
         <TextField
