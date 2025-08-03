@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/personal-manager/static/css/main.d3c48a8e.css",
-    "main.js": "/personal-manager/static/js/main.579dbf3a.js",
+    "main.js": "/personal-manager/static/js/main.13dcee9f.js",
     "index.html": "/personal-manager/index.html",
     "main.d3c48a8e.css.map": "/personal-manager/static/css/main.d3c48a8e.css.map",
-    "main.579dbf3a.js.map": "/personal-manager/static/js/main.579dbf3a.js.map"
+    "main.13dcee9f.js.map": "/personal-manager/static/js/main.13dcee9f.js.map"
   },
   "entrypoints": [
     "static/css/main.d3c48a8e.css",
-    "static/js/main.579dbf3a.js"
+    "static/js/main.13dcee9f.js"
   ]
 }
