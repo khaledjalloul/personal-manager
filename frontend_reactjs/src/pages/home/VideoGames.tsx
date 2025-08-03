@@ -41,7 +41,7 @@ export const VideoGames = () => {
   });
 
   return (
-    <Wrapper sx={{ xs: 'auto', sm: '100%' }}>
+    <Wrapper sx={{ height: { xs: 'auto', sm: '100%' } }}>
       <Box
         sx={{
           display: 'flex',

@@ -70,7 +70,7 @@ export const Home = () => {
   });
 
   const { mutate: createDiaryEntry, isPending: createDiaryLoading } = useCreateDiaryEntry();
-  const { mutate: editDiaryEntry, isPending: editDiaryLoading } = useEditDiaryEntry();
+  const { mutate: editDiaryEntry, isPending: editDiaryLoading } = useEditDiaryEntry(DiaryEntryType.Daily);
   const { mutate: createNote, isPending: createNoteLoading, isSuccess: createNoteSuccess } = useCreateNote();
 
   const todaysDiaryEntry = useMemo(() => {

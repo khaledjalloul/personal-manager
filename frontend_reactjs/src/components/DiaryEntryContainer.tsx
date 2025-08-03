@@ -22,7 +22,7 @@ export const DiaryEntryContainer = ({
   const [workContent, setWorkContent] = useState(entry.workContent);
 
   const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateDiaryEntry();
-  const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry();
+  const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry(entry.type);
 
   const isDaily = entry.type === DiaryEntryType.Daily;
 

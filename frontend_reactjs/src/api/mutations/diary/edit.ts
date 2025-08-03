@@ -10,7 +10,6 @@ export type EditDiaryEntryRequestBody = {
   date?: Date;
   content?: string;
   workContent?: string;
-  type?: DiaryEntryType;
 };
 
 const mutationFn = async (data: EditDiaryEntryRequestBody) => {
@@ -23,14 +22,14 @@ const mutationFn = async (data: EditDiaryEntryRequestBody) => {
     });
 };
 
-export const useEditDiaryEntry = () => {
+export const useEditDiaryEntry = (type: DiaryEntryType) => {
   const queryClient = useQueryClient();
 
   return useMutation<DiaryEntry, AxiosError<{ message: string }>, EditDiaryEntryRequestBody>({
     mutationFn,
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       queryClient.refetchQueries({
-        queryKey: variables.type === DiaryEntryType.Daily ? ["diary/daily"] : ["diary/monthly"],
+        queryKey: type === DiaryEntryType.Daily ? ["diary/daily"] : ["diary/monthly"],
       });
     },
   });

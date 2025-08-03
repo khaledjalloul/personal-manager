@@ -172,7 +172,6 @@ export const JournalEntryContainer = ({
               style={{
                 width: '100%',
                 minHeight: '100%',
-                resize: 'none',
                 outline: 'none',
                 border: 'none',
                 backgroundColor: palette.primary.light,
@@ -216,12 +215,11 @@ export const JournalEntryContainer = ({
               ) : (
                 <textarea
                   value={subEntry}
-                  rows={5}
+                  rows={10}
                   placeholder="Sub-Entry"
                   style={{
                     width: '100%',
                     minHeight: '100%',
-                    resize: 'none',
                     outline: 'none',
                     border: 'none',
                     backgroundColor: palette.primary.light,
@@ -234,7 +232,16 @@ export const JournalEntryContainer = ({
               )}
 
               {isEditing && (
-                <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: '-48px', display: 'flex', alignItems: 'center' }}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: { xs: 0, sm: '8px', lg: 0 },
+                    bottom: { xs: 0, sm: 'auto', lg: 0 },
+                    left: { xs: '-38px', sm: 'auto', lg: '-48px' },
+                    right: { xs: 'auto', sm: '16px', lg: 'auto' },
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
                   <IconButton
                     color="error"
                     onClick={() => setSubEntries(subEntries.filter((_, i) => i !== index))}>

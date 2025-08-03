@@ -381,6 +381,7 @@ router.delete("/auto", async (req: Request, res: Response) => {
 });
 
 // Expenses
+// TODO: Handle cash expenses (separate from bank balance calculation, but still part of statistics)
 
 router.get('/', async (req: Request, res: Response) => {
   const { type } = req.query;

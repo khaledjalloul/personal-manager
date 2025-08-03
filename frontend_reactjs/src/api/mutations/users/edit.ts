@@ -8,6 +8,7 @@ const ENDPOINT = "users/me";
 export type EditUserRequestBody = {
   name?: string;
   email?: string;
+  wallet?: number;
   fundKeywords?: string[];
 };
 

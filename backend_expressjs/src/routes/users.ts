@@ -365,13 +365,14 @@ router.get('/me', async (req: Request, res: Response) => {
 
 router.post('/me', async (req: Request, res: Response) => {
   const userId = req.user.id;
-  const { name, email, fundKeywords } = req.body;
+  const { name, email, wallet, fundKeywords } = req.body;
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
       name,
       email,
+      wallet,
       fundKeywords
     }
   });

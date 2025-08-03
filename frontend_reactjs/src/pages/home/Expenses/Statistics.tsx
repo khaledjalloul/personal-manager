@@ -59,7 +59,7 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <ExpensesStatisticsCard
             title="Total Balance"
-            value={statistics.totalFunds - statistics.totalExpenses}
+            value={statistics.totalFunds - statistics.totalExpenses + user.wallet}
             color="success.dark"
           />
         </Grid>
@@ -67,16 +67,17 @@ export const ExpensesStatistics = () => {
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <ExpensesStatisticsCard
             title="Bank Balance"
-            value={statistics.totalFunds - statistics.totalExpenses - user.wallet}
+            value={statistics.totalFunds - statistics.totalExpenses}
             color="success.dark"
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} sx={{ display: 'flex' }}>
           <ExpensesStatisticsCard
-            title="Cash Balance"
+            title="Wallet Balance"
             value={user.wallet}
             color="success.dark"
+            isWallet
           />
         </Grid>
 
