@@ -176,6 +176,7 @@ export const ToDoMilestoneContainer = ({
             searchText={searchText}
             isAddingTask={isAddingTask}
             setIsAddingTask={setIsAddingTask}
+            editable
           />
         )}
         {tasks?.map((task) => (
@@ -185,6 +186,7 @@ export const ToDoMilestoneContainer = ({
             searchText={searchText}
             isAddingTask={isAddingTask}
             setIsAddingTask={setIsAddingTask}
+            editable
           />
         ))}
       </Box>

@@ -114,9 +114,9 @@ export const expensesStatistics: GetExpensesStatisticsResponse = {
         [expensesCategories[2].name]: { monthlyAverage: 12.00, total: 12.00 }
     },
     months: {
-        "2025-01": { expenses: 300.00, funds: 3000.00 },
-        "2025-02": { expenses: 150.00, funds: 1500.00 },
-        "2025-03": { expenses: 75.49, funds: 4500.00 },
+        "2025-01": { expenses: 300.00, funds: 3000.00, total: 2700.00 },
+        "2025-02": { expenses: 150.00, funds: 1500.00, total: 1350.00 },
+        "2025-03": { expenses: 75.49, funds: 4500.00, total: 4424.51 },
     }
 };
 

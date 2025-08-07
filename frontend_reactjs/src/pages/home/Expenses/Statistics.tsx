@@ -132,7 +132,7 @@ export const ExpensesStatistics = () => {
                         .map((m) => (
                           overTimeType === "expenses" ? m[1].expenses :
                             overTimeType === "funds" ? m[1].funds :
-                              m[1].funds - m[1].expenses
+                              m[1].total
                         )),
                       backgroundColor:
                         overTimeType === "expenses" ? palette.warning.main :

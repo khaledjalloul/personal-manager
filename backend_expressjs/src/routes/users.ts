@@ -6,7 +6,8 @@ import {
   Note,
   PianoPiece,
   VideoGame,
-  JournalSubEntry
+  JournalSubEntry,
+  ToDoTask
 } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import multer from "multer";
@@ -60,6 +61,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         data.fundKeywords = user?.fundKeywords.sort();
         data.wallet = user?.wallet;
         break;
+
       case 'diary':
         data.diary = await prisma.diaryEntry.findMany({
           where: { userId },
@@ -67,6 +69,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { date: 'asc' }
         });
         break;
+
       case 'journal':
         data.journalCategories = await prisma.journalCategory.findMany({
           where: { userId },
@@ -96,6 +99,25 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true, sectionId: true },
           orderBy: { date: 'asc' }
         });
+
+      case 'todo':
+        data.toDoMilestones = await prisma.toDoMilestone.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          include: {
+            tasks: {
+              omit: { id: true, userId: true, milestoneId: true },
+              orderBy: { id: 'asc' }
+            }
+          }
+        });
+        data.toDoTasks = await prisma.toDoTask.findMany({
+          where: { userId, milestone: null },
+          omit: { id: true, userId: true, milestoneId: true },
+          orderBy: { date: 'asc' }
+        });
+        break;
+
       case 'notes':
         data.noteCategories = await prisma.noteCategory.findMany({
           where: { userId },
@@ -114,6 +136,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { title: 'asc' }
         });
         break;
+
       case 'piano':
         data.pianoPieces = await prisma.pianoPiece.findMany({
           where: { userId },
@@ -121,6 +144,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { monthLearned: 'asc' }
         });
         break;
+
       case 'hikes':
         data.hikes = await prisma.hike.findMany({
           where: { userId },
@@ -128,6 +152,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           orderBy: { date: 'asc' }
         });
         break;
+
       case 'video-games':
         data.videoGames = await prisma.videoGame.findMany({
           where: { userId },
@@ -164,7 +189,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   }
 
   const dataTypes = dataType === 'all'
-    ? ['expenses', 'diary', 'journal', 'notes', 'piano', 'hikes', 'video-games']
+    ? ['expenses', 'diary', 'journal', 'todo', 'notes', 'piano', 'hikes', 'video-games']
     : [dataType];
 
 
@@ -190,6 +215,10 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
       case 'notes':
         if (!inputData.noteCategories || !inputData.uncategorizedNotes)
           return res.status(400).json({ error: "Invalid notes data" });
+        break;
+      case 'todo':
+        if (!inputData.toDoMilestones || !inputData.toDoTasks)
+          return res.status(400).json({ error: "Invalid todo data" });
         break;
       case 'piano':
         if (!inputData.pianoPieces)
@@ -301,6 +330,30 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             });
           }
         }
+        break;
+
+      case 'todo':
+        await prisma.toDoTask.deleteMany({ where: { userId } });
+        await prisma.toDoMilestone.deleteMany({ where: { userId } });
+
+        for (const milestone of inputData.toDoMilestones) {
+          const { tasks, ...milestoneData } = milestone;
+          const createdMilestone = await prisma.toDoMilestone.create({
+            data: { ...milestoneData, userId },
+          });
+          if (tasks && tasks.length) {
+            await prisma.toDoTask.createMany({
+              data: tasks.map((t: ToDoTask) => ({
+                ...t,
+                userId,
+                milestoneId: createdMilestone.id
+              })),
+            });
+          }
+        }
+        await prisma.toDoTask.createMany({
+          data: inputData.toDoTasks.map((t: ToDoTask) => ({ ...t, userId })),
+        });
         break;
 
       case 'notes':

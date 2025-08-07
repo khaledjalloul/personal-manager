@@ -48,7 +48,7 @@ export const GeneralToDo = () => {
       gap: 1
     }}>
       {!isAddingTask && toDoTasks?.length === 0 && (
-        <Typography align="center" mt={7}>No tasks found.</Typography>
+        <Typography align="center" mt={7}>No tasks.</Typography>
       )}
       {isAddingTask && (
         <ToDoTaskContainer
@@ -56,6 +56,7 @@ export const GeneralToDo = () => {
           searchText={searchText}
           isAddingTask={true}
           setIsAddingTask={setIsAddingTask}
+          editable
         />
       )}
       {toDoTasks?.map((task) => (
@@ -65,6 +66,7 @@ export const GeneralToDo = () => {
           searchText={searchText}
           isAddingTask={isAddingTask}
           setIsAddingTask={setIsAddingTask}
+          editable
         />
       ))}
     </Box>

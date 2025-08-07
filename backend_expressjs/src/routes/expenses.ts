@@ -173,6 +173,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
       [month: string]: {
         expenses: number;
         funds: number;
+        total: number;
       }
     }
   } = {
@@ -209,7 +210,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
 
     if (!statistics.months[month]) {
-      statistics.months[month] = { expenses: 0, funds: 0 };
+      statistics.months[month] = { expenses: 0, funds: 0, total: 0 };
     }
 
     statistics.categories[category.name].total += amount;
@@ -225,7 +226,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!statistics.months[month]) {
-      statistics.months[month] = { expenses: 0, funds: 0 };
+      statistics.months[month] = { expenses: 0, funds: 0, total: 0 };
     }
 
     statistics.months[month].funds += amount;
@@ -237,6 +238,17 @@ router.get('/statistics', async (req: Request, res: Response) => {
     statistics.categories[category].monthlyAverage = statistics.categories[category].total / numMonths;
     statistics.monthlyAverageExpenses += statistics.categories[category].monthlyAverage;
   }
+
+  for (const month in statistics.months) {
+    for (const month2 in statistics.months) {
+      statistics.months[month].total += statistics.months[month2].funds - statistics.months[month2].expenses;
+      if (month === month2) break;
+    }
+  }
+
+  statistics.categories = Object.fromEntries(
+    Object.entries(statistics.categories).sort(([a], [b]) => a.localeCompare(b))
+  );
 
   res.json(statistics);
 })

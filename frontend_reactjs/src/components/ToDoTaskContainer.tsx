@@ -14,12 +14,14 @@ export const ToDoTaskContainer = ({
   task,
   searchText,
   isAddingTask,
-  setIsAddingTask
+  setIsAddingTask,
+  editable = false
 }: {
   task: ToDoTask,
   searchText: string;
   isAddingTask: boolean;
   setIsAddingTask: Dispatch<SetStateAction<boolean>>;
+  editable?: boolean;
 }) => {
 
   const [date, setDate] = useState(task.date && dayjs(task.date));
@@ -35,7 +37,7 @@ export const ToDoTaskContainer = ({
   const { mutate: deleteTask, isPending: deleteTaskLoading } = useDeleteToDoTask();
 
   const save = () => {
-    if (!isEditing || !content.trim() || !date) return;
+    if (!editable || !isEditing || !content.trim() || !date) return;
 
     if (isAddingTask) {
       createTask({
@@ -95,7 +97,7 @@ export const ToDoTaskContainer = ({
             setTimeout(() => {
               if (newStatus === statusRef.current)
                 editTask({ id: task.id, status: newStatus });
-            }, 1000);
+            }, 3000);
           }}
         >
           {status === ToDoTaskStatus.Completed ? (
@@ -109,7 +111,7 @@ export const ToDoTaskContainer = ({
       )
       }
 
-      {
+      {editable && (
         !isEditing ? (
           <IconButton onClick={() => setIsEditing(true)}>
             <Edit fontSize="small" />
@@ -148,7 +150,7 @@ export const ToDoTaskContainer = ({
             </IconButton>
           </Box>
         )
-      }
+      )}
 
       {!task.milestoneId && (
         !isEditing ? (
@@ -163,7 +165,7 @@ export const ToDoTaskContainer = ({
               mr: 1
             }}
           >
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
               {date.format(task.status === ToDoTaskStatus.Pending ? "MMM DD" : "DD.MM.YYYY")}
             </Typography>
           </Box>

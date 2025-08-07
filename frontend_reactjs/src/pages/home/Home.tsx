@@ -1,13 +1,14 @@
 import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
 import styled from "styled-components";
-import { ExpensesStatisticsCard } from "../../components";
+import { ExpensesStatisticsCard, ToDoTaskContainer } from "../../components";
 import {
   useCreateDiaryEntry,
   useCreateNote,
   useDailyDiaryEntries,
   useEditDiaryEntry,
   useExpensesStatistics,
-  useNoteCategories
+  useNoteCategories,
+  useToDoTasks
 } from "../../api";
 import { ChevronRight, Save } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -62,6 +63,10 @@ export const Home = () => {
   const [diaryWorkContent, setDiaryWorkContent] = useState("");
 
   const { data: expensesStatistics } = useExpensesStatistics();
+  const { data: toDoTasks } = useToDoTasks({
+    isArchived: false,
+    searchText: "",
+  });
   const { data: noteCategories } = useNoteCategories({ searchText: "" });
   const { data: diaryEntries } = useDailyDiaryEntries({
     year: today.year(),
@@ -140,9 +145,20 @@ export const Home = () => {
 
   return (
     <Wrapper>
-      <Grid container spacing={4} sx={{ flexGrow: 1 }}>
-        <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-
+      <Grid
+        container
+        spacing={{ xs: 6, lg: 4 }}
+        sx={{ flexGrow: 1, height: { xs: 'auto', xl: '100%' } }}
+      >
+        <Grid
+          size={{ xs: 12, lg: 8 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: { xs: 6, lg: 4 },
+            height: { xs: 'auto', xl: '100%' },
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
@@ -171,26 +187,107 @@ export const Home = () => {
             </Grid>
           </Box>
 
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2
-            }}>
-            <NavigationTitle title="Notes" link="/notes" />
+          <Grid
+            container
+            spacing={{ xs: 6, lg: 4 }}
+            sx={{ flexGrow: 1, overflowY: { xs: 'unset', xl: 'hidden' } }}>
+            <Grid
+              size={{ xs: 12, xl: 6 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                height: { xs: 'auto', xl: '100%' },
+              }}>
+              <NavigationTitle title="To Do" link="/todo" />
 
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', lg: 'row' },
-              alignItems: { xs: 'stretch', lg: 'center' },
-              gap: 3
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h6">Add New Note</Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1,
+                  mt: 1,
+                  overflowY: 'auto',
+                }}
+              >
+                {toDoTasks?.length === 0 && (
+                  <Typography align="center" mt={3} mb={3}>No tasks.</Typography>
+                )}
+                {toDoTasks?.map((task) => (
+                  <ToDoTaskContainer
+                    key={task.id}
+                    task={task}
+                    searchText=""
+                    isAddingTask={false}
+                    setIsAddingTask={() => { }}
+                  />
+                ))}
+              </Box>
+            </Grid>
+
+            <Grid
+              size={{ xs: 12, xl: 6 }}
+              sx={{
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2
+              }}>
+              <NavigationTitle title="Notes" link="/notes" />
+
+              <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', lg: 'row' },
+                alignItems: { xs: 'stretch', lg: 'center' },
+                gap: 3
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>Add New Note</Typography>
+                  <IconButton
+                    sx={{
+                      display: { xs: 'block', lg: 'none' },
+                      color: 'success.main',
+                      ml: 'auto'
+                    }}
+                    loading={createNoteLoading}
+                    disabled={!noteContent.trim() || !selectedNoteCategory}
+                    onClick={saveNote}
+                  >
+                    <Save />
+                  </IconButton>
+                </Box>
+
+                <TextField
+                  variant="standard"
+                  size="small"
+                  placeholder="Note Title"
+                  sx={{ flexGrow: 1 }}
+                  value={noteTitle}
+                  onChange={(e) => setNoteTitle(e.target.value)}
+                />
+
+                {selectedNoteCategory && (
+                  <Select
+                    variant="standard"
+                    size="small"
+                    sx={{
+                      minWidth: { xs: 0, lg: 150 },
+                      ml: { xs: 0, lg: 2 },
+                    }}
+                    value={selectedNoteCategory.id}
+                    onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
+                  >
+                    {noteCategories?.map((category) => (
+                      <MenuItem key={category.id} value={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+
                 <IconButton
                   sx={{
-                    display: { xs: 'block', lg: 'none' },
+                    display: { xs: 'none', lg: 'block' },
                     color: 'success.main',
                     ml: 'auto'
                   }}
@@ -202,75 +299,34 @@ export const Home = () => {
                 </IconButton>
               </Box>
 
-              <TextField
-                variant="standard"
-                size="small"
-                placeholder="Note Title"
-                sx={{ flexGrow: 1 }}
-                value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
-              />
-
-              {selectedNoteCategory && (
-                <Select
-                  variant="standard"
-                  size="small"
-                  sx={{
-                    minWidth: { xs: 0, lg: 150 },
-                    ml: { xs: 0, lg: 2 },
+              <Box sx={{
+                flexGrow: 1,
+                borderRadius: '8px',
+                border: `solid 1px ${palette.grey[700]}`,
+                backgroundColor: 'primary.light',
+                mt: { xs: 1, lg: 0 }
+              }}>
+                <textarea
+                  value={noteContent}
+                  rows={10}
+                  placeholder="Note"
+                  style={{
+                    width: 'calc(100% - 32px)',
+                    minHeight: 'calc(100% - 32px)',
+                    resize: 'none',
+                    padding: '16px',
+                    outline: 'none',
+                    border: 'none',
+                    backgroundColor: palette.primary.light,
+                    color: palette.text.primary,
+                    borderRadius: '8px'
                   }}
-                  value={selectedNoteCategory.id}
-                  onChange={(e) => setSelectedNoteCategory(noteCategories?.find(cat => cat.id === e.target.value))}
-                >
-                  {noteCategories?.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                />
+              </Box>
 
-              <IconButton
-                sx={{
-                  display: { xs: 'none', lg: 'block' },
-                  color: 'success.main',
-                  ml: 'auto'
-                }}
-                loading={createNoteLoading}
-                disabled={!noteContent.trim() || !selectedNoteCategory}
-                onClick={saveNote}
-              >
-                <Save />
-              </IconButton>
-            </Box>
-
-            <Box sx={{
-              flexGrow: 1,
-              borderRadius: '8px',
-              border: `solid 1px ${palette.grey[700]}`,
-              backgroundColor: 'primary.light',
-              mt: { xs: 1, lg: 0 }
-            }}>
-              <textarea
-                value={noteContent}
-                rows={10}
-                placeholder="Note"
-                style={{
-                  width: 'calc(100% - 32px)',
-                  minHeight: 'calc(100% - 32px)',
-                  resize: 'none',
-                  padding: '16px',
-                  outline: 'none',
-                  border: 'none',
-                  backgroundColor: palette.primary.light,
-                  color: palette.text.primary,
-                  borderRadius: '8px'
-                }}
-                onChange={(e) => setNoteContent(e.target.value)}
-              />
-            </Box>
-
-          </Box>
+            </Grid>
+          </Grid>
         </Grid>
 
         <Grid

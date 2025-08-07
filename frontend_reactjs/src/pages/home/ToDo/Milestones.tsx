@@ -45,7 +45,7 @@ export const ToDoMilestones = () => {
       gap: 5
     }}>
       {!isAddingMilestone && toDoMilestones?.length === 0 && (
-        <Typography align="center" mt={7}>No milestones found.</Typography>
+        <Typography align="center" mt={7}>No milestones.</Typography>
       )}
       {isAddingMilestone && (
         <ToDoMilestoneContainer

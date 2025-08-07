@@ -80,7 +80,7 @@ router.get('/', async (req: Request, res: Response) => {
           { content: { contains: searchText, mode: "insensitive" } },
         ]
       },
-      orderBy: { date: 'desc' }
+      orderBy: { id: 'asc' }
     });
   } else {
     const statusesWhere = !isArchived ?
