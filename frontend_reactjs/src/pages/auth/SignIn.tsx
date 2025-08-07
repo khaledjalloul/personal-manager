@@ -23,7 +23,9 @@ export const SignIn = ({
     });
   };
 
-  const emailError = error?.response?.status === HttpStatusCode.Unauthorized ? "Invalid email or password" : "";
+  const emailError = error?.response?.status === HttpStatusCode.Unauthorized ?
+    "Invalid email or password." :
+    error?.response?.status === HttpStatusCode.Forbidden ? "Account is not approved. Please contact me for approval." : "";
 
   return (
     <Wrapper
@@ -41,7 +43,12 @@ export const SignIn = ({
           error={Boolean(emailError)}
           helperText={emailError}
         />
-        <AuthTextField required name="password" label="Password" />
+        <AuthTextField
+          required
+          name="password"
+          label="Password"
+          error={Boolean(emailError)}
+        />
 
         <Button
           type="submit"

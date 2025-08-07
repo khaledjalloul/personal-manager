@@ -19,7 +19,7 @@ const mutationFn = async (data: RestoreDataRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

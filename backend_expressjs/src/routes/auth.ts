@@ -15,6 +15,7 @@ router.post('/signup', async (req, res) => {
     data: {
       name,
       email,
+      isApproved: false,
       wallet: 0,
       hash
     }
@@ -29,6 +30,10 @@ router.post('/signin', async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.hash))) {
     return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  if (!user.isApproved) {
+    return res.status(403).json({ message: 'Account not approved' });
   }
 
   const token = generateToken({ id: user.id, email: user.email });

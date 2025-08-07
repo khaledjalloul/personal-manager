@@ -18,7 +18,7 @@ const mutationFn = async (data: UploadAutoExpensesRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`upload-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

@@ -10,6 +10,8 @@ export type EditUserRequestBody = {
   email?: string;
   wallet?: number;
   fundKeywords?: string[];
+  oldPassword?: string;
+  newPassword?: string;
 };
 
 const mutationFn = async (data: EditUserRequestBody) => {
@@ -18,7 +20,7 @@ const mutationFn = async (data: EditUserRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`edit-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

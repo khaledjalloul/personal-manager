@@ -25,7 +25,7 @@ const mutationFn = async (data: EditHikeRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`edit-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

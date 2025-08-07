@@ -106,6 +106,7 @@ export const DiaryEntryContainer = ({
                 color="success"
                 loading={createLoading || editLoading}
                 onClick={save}
+                sx={{ mr: { xs: 3, md: 0 } }}
               >
                 <Save fontSize="small" />
               </IconButton>

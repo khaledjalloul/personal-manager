@@ -11,6 +11,7 @@ import {
 import { Request, Response, Router } from "express";
 import multer from "multer";
 import prisma from '../utils/prisma';
+import bcrypt from 'bcrypt';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -365,7 +366,23 @@ router.get('/me', async (req: Request, res: Response) => {
 
 router.post('/me', async (req: Request, res: Response) => {
   const userId = req.user.id;
-  const { name, email, wallet, fundKeywords } = req.body;
+  const { name, email, wallet, fundKeywords, oldPassword, newPassword } = req.body;
+
+  if (email) {
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser && existingUser.id !== userId) {
+      return res.status(409).json({ error: "Email already in use" });
+    }
+  }
+
+  let hash: string | undefined;
+  if (newPassword) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !(await bcrypt.compare(oldPassword, user.hash))) {
+      return res.status(400).json({ error: "Invalid old password" });
+    }
+    hash = await bcrypt.hash(newPassword, 10);
+  }
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
@@ -373,7 +390,8 @@ router.post('/me', async (req: Request, res: Response) => {
       name,
       email,
       wallet,
-      fundKeywords
+      fundKeywords,
+      hash
     }
   });
 

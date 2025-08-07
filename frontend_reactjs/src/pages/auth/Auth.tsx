@@ -138,7 +138,7 @@ const ParallaxImage = styled(Box)`
   right: 0;
   top: 0;
   bottom: 0;
-  /* background-image: url("assets/images/eth-background2.jpg"); */
+  background-image: url("https://lh7-rt.googleusercontent.com/docsz/AD_4nXd-MdPelI6pjdU1BqFrYM1jMfobD8MDLAmwZKXYtHme9i6-Ld5Ak0g_1F5VLitYZTJYM6IKNGKbtAMySE7VcD8tC7aLtkFrrejFyCOo7f0Fb5aav28_x1XuosouwyQ6R6x7B6lckaXvmRpMT7ctey9f7NU?key=QsqFXMLoKKaTCdnzgNNvCQ");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

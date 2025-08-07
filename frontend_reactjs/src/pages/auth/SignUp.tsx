@@ -1,17 +1,18 @@
 import { Box, Button, Link, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AuthSection } from "./Auth";
 import { AuthTextField } from "../../components";
 import styled from "styled-components";
 import { useSignUp } from "../../api";
 import { HttpStatusCode } from "axios";
+import { Info } from "@mui/icons-material";
 
 export const SignUp = ({
   setAuthSection,
 }: {
   setAuthSection: Dispatch<SetStateAction<AuthSection>>;
 }) => {
-  const { mutate: signUp, isPending: signUpLoading, error } = useSignUp();
+  const { mutate: signUp, isPending: signUpLoading, error, isSuccess } = useSignUp();
 
   const [passwordError, setPasswordError] = useState<string>("");
 
@@ -36,7 +37,14 @@ export const SignUp = ({
       });
   };
 
-  const emailError = error?.response?.status === HttpStatusCode.Conflict ? "Email is already in use" : "";
+  useEffect(() => {
+    if (isSuccess) {
+      setAuthSection("signin");
+      setPasswordError("");
+    }
+  }, [isSuccess]);
+
+  const emailError = error?.response?.status === HttpStatusCode.Conflict ? "Email is already in use." : "";
 
   return (
     <Wrapper
@@ -63,6 +71,15 @@ export const SignUp = ({
           helperText={passwordError}
           onChange={() => setPasswordError("")}
         />
+
+        <Box sx={{ display: "flex", flexDirection: "row", alignItems: 'center', gap: 1 }}>
+          <Info sx={{ color: 'grey.300' }} />
+
+          <Typography variant="body2" sx={{ color: "grey.300" }}>
+            Contact me for account approval.
+          </Typography>
+
+        </Box>
 
         <Button
           type="submit"

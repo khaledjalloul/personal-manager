@@ -2,6 +2,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
+  isApproved: boolean;
   wallet: number;
   fundKeywords: string[];
   token?: string;

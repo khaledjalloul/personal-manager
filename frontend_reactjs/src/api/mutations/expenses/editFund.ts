@@ -19,7 +19,7 @@ const mutationFn = async (data: EditFundRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`edit-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

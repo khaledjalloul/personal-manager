@@ -91,7 +91,7 @@ export const JournalEntryContainer = ({
               </IconButton>
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, flexGrow: 1 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={date}

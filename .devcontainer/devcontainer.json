@@ -7,25 +7,12 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                // Python
-                "ms-python.python",
-                "ms-python.autopep8",
-                "ms-python.vscode-pylance",
-                // C++
-                "ms-vscode.cpptools",
-                "ms-vscode.cpptools-extension-pack",
-                "kylinideteam.cmake-intellisence",
-                "xaver.clang-format",
                 // ReactJS
                 "styled-components.vscode-styled-components",
                 // ExpressJS
                 "prisma.prisma",
-                // Docker
-                "ms-azuretools.vscode-docker",
                 // GitLens
                 "eamodio.gitlens",
-                // ROS
-                "morningfrog.urdf-visualizer",
                 // Misc
                 "redhat.vscode-yaml",
                 "redhat.vscode-xml",
@@ -33,25 +20,10 @@
                 "foxundermoon.shell-format"
             ],
             "settings": {
-                "python.defaultInterpreterPath": "/home/vscode/venv/bin/python3.12",
-                "python.analysis.typeCheckingMode": "strict",
                 "gitlens.codeLens.authors.enabled": false,
-                "gitlens.codeLens.recentChange.enabled": false,
-                "C_Cpp.default.includePath": [
-                    "${workspaceFolder}/**"
-                ]
+                "gitlens.codeLens.recentChange.enabled": false
             }
         }
     },
-    "workspaceFolder": "/workspaces/personal-manager",
-    "mounts": [
-        // Enable GUI
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-        // Enable Docker-in-Docker
-        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-    ],
-    "containerEnv": {
-        // Enable GUI
-        "DISPLAY": "${env:DISPLAY}"
-    }
+    "workspaceFolder": "/workspaces/personal-manager"
 }

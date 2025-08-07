@@ -24,7 +24,7 @@ const mutationFn = async (data: CreateHikeRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`create-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

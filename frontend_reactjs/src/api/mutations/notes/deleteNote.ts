@@ -14,7 +14,7 @@ const mutationFn = async (data: DeleteNoteRequestBody) => {
     .then((res) => res.data)
     .catch((err) => {
       console.error(`delete-${ENDPOINT}-error`, err?.response?.data);
-      throw err?.response?.data;
+      throw err;
     });
 };
 

@@ -5,6 +5,7 @@ import { useBackupData, useCurrentUser, useDeleteUser, useEditUser, useRestoreDa
 import { Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { ConfirmDeleteDialog, ConfirmRestoreDialog } from "../../components";
+import { HttpStatusCode } from "axios";
 
 const dataTypes: {
   [key: string]: string;
@@ -109,11 +110,13 @@ export const Account = () => {
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
 
   const { data: user } = useCurrentUser();
 
-  const { mutate: editUser, isPending: editUserLoading } = useEditUser();
+  const { mutate: editUser, isPending: editUserLoading, error: editUserError } = useEditUser();
   const { mutate: deleteUser, isPending: deleteUserLoading } = useDeleteUser();
 
   useEffect(() => {
@@ -123,6 +126,10 @@ export const Account = () => {
     }
   }, [JSON.stringify(user)]);
 
+
+  const emailError = editUserError?.response?.status === HttpStatusCode.Conflict ? "Email is already in use." : "";
+  const passwordError = editUserError?.response?.status === HttpStatusCode.BadRequest ? "Incorrect password." : "";
+
   return (
     <Wrapper>
       <Grid container spacing={{ xs: 6, md: 4 }} flexGrow={1}>
@@ -131,6 +138,11 @@ export const Account = () => {
             <Typography variant="h5" gutterBottom>
               Account
             </Typography>
+
+            <Typography variant="body1" textAlign={"center"}>
+              Personal Information
+            </Typography>
+
             <TextField
               label="Name"
               value={name}
@@ -140,6 +152,8 @@ export const Account = () => {
               label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={Boolean(emailError)}
+              helperText={emailError}
             />
             <Button
               variant="contained"
@@ -151,6 +165,41 @@ export const Account = () => {
             >
               Save Changes
             </Button>
+
+            <Typography variant="body1" mt={2} textAlign={"center"}>
+              Change Password
+            </Typography>
+
+            <TextField
+              label="Old Password"
+              type="password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              error={Boolean(passwordError)}
+              helperText={passwordError}
+            />
+            <TextField
+              label="New Password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+
+            <Button
+              variant="contained"
+              onClick={() => editUser({
+                oldPassword: oldPassword.trim(),
+                newPassword: newPassword.trim()
+              })}
+              loading={editUserLoading}
+            >
+              Change Password
+            </Button>
+
+            <Typography variant="body1" mt={2} textAlign={"center"}>
+              Delete Account
+            </Typography>
+
             <Button
               variant="outlined"
               color="error"
