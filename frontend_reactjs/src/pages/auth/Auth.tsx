@@ -4,7 +4,6 @@ import { SignIn } from "./SignIn";
 import { SignUp } from "./SignUp";
 import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import { Box } from "@mui/material";
-import { About } from "../home";
 
 export type AuthSection = "signin" | "signup";
 
@@ -58,7 +57,7 @@ export const Auth = () => {
           </ParallaxImageContainer>
         </AuthWrapper>
 
-        <ExpandDiv
+        {/* <ExpandDiv
           sx={{
             justifyContent: {
               xs: "flex-end",
@@ -76,12 +75,12 @@ export const Auth = () => {
               })
             }
           />
-        </ExpandDiv>
+        </ExpandDiv> */}
       </Box>
 
-      <About />
+      {/* <About /> */}
 
-      <StyledExpandLess
+      {/* <StyledExpandLess
         as={ExpandLess}
         sx={{ fontSize: { sx: "24px", md: "35px" } }}
         onClick={() =>
@@ -90,7 +89,7 @@ export const Auth = () => {
             behavior: "smooth",
           })
         }
-      />
+      /> */}
     </Box>
   );
 };

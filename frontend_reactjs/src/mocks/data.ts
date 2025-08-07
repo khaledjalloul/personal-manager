@@ -18,6 +18,9 @@ import {
     JournalCategory,
     JournalSection,
     JournalEntry,
+    ToDoMilestone,
+    ToDoTaskStatus,
+    ToDoTask,
 } from '../types';
 
 // ############### Users ###############
@@ -181,6 +184,63 @@ export const journalEntries: JournalEntry[] = [
     { id: 3, section: journalSections[2], date: new Date(), content: 'Meeting with the team went well.', subEntries: [] },
     { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation', subEntries: [] },
     { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.', subEntries: [] }
+];
+
+// ############### To Do ###############
+
+export const toDoMilestones: ToDoMilestone[] = [
+    {
+        id: 1,
+        date: new Date("2025-07-01"),
+        description: 'Home',
+    },
+    {
+        id: 2,
+        date: new Date("2025-07-05"),
+        description: 'Work'
+    }
+];
+
+export const toDoTasks: ToDoTask[] = [
+    {
+        id: 1,
+        content: 'Buy groceries',
+        date: new Date("2025-07-01"),
+        status: ToDoTaskStatus.Pending
+    },
+    {
+        id: 2,
+        content: 'Clean the house',
+        date: new Date("2025-07-02"),
+        status: ToDoTaskStatus.Completed
+    },
+    {
+        id: 3,
+        content: 'Prepare presentation for the meeting',
+        date: new Date("2025-07-03"),
+        status: ToDoTaskStatus.NotCompleted
+    },
+    {
+        id: 4,
+        content: 'Buy a vacuum cleaner',
+        date: toDoMilestones[0].date,
+        status: ToDoTaskStatus.NotCompleted,
+        milestoneId: 1
+    },
+    {
+        id: 5,
+        content: 'Attend team meeting',
+        date: toDoMilestones[1].date,
+        status: ToDoTaskStatus.Completed,
+        milestoneId: 2
+    },
+    {
+        id: 6,
+        content: 'Submit project proposal',
+        date: toDoMilestones[1].date,
+        status: ToDoTaskStatus.Pending,
+        milestoneId: 2
+    }
 ];
 
 // ############### Notes ###############

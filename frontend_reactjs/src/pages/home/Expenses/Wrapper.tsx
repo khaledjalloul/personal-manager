@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
@@ -20,8 +21,10 @@ export const ExpensesWrapper = () => {
 
   const [searchText, setSearchText] = useState("");
   const [filterCategoryIds, setFilterCategoryIds] = useState([-1]);
+  const [displayedCount, setDisplayedCount] = useState(0);
 
   const { data: categories } = useExpensesCategories();
+
   const extraCategories = [
     { id: -1, name: "All Categories" },
     { id: -2, name: "Funds" },
@@ -38,6 +41,9 @@ export const ExpensesWrapper = () => {
           gap: { xs: 2, lg: 1 }
         }}
       >
+        <Typography variant="h5" sx={{ whiteSpace: 'nowrap', mr: { xs: 0, sm: 2 } }}>
+          Expenses{(location.pathname.includes("monthly") || location.pathname.includes("details")) ? ` (${displayedCount})` : ""}
+        </Typography>
 
         <Box
           sx={{
@@ -123,7 +129,7 @@ export const ExpensesWrapper = () => {
         <TextField
           sx={{
             ml: { xs: 0, lg: location.pathname !== "/expenses/details" ? "auto" : 0 },
-            minWidth: { xs: 0, lg: location.pathname !== "/expenses" ? "35vw" : 0 },
+            minWidth: { xs: 0, lg: location.pathname !== "/expenses" ? "20vw" : 0, xl: location.pathname !== "/expenses" ? "35vw" : 0 },
             opacity: { xs: 1, lg: location.pathname !== "/expenses" ? 1 : 0 },
             display: { xs: location.pathname !== "/expenses" ? 'flex' : 'none', lg: 'flex' }
           }}
@@ -152,7 +158,7 @@ export const ExpensesWrapper = () => {
         />
       </Header>
 
-      <Outlet context={{ searchText, filterCategoryIds }} />
+      <Outlet context={{ searchText, filterCategoryIds, setDisplayedCount }} />
 
     </Wrapper >
   );

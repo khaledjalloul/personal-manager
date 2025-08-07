@@ -1,6 +1,5 @@
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import {
-  About,
   Home,
   DiaryWrapper,
   DailyDiary,
@@ -16,7 +15,10 @@ import {
   MonthlyExpenses,
   ExpensesDetails,
   ManageExpenses,
-  MonthlyDiary
+  MonthlyDiary,
+  ToDoWrapper,
+  GeneralToDo,
+  ToDoMilestones
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
@@ -68,6 +70,24 @@ export const Navigator = () => {
           ]
         },
         {
+          path: "/journal",
+          element: <Journal />,
+        },
+        {
+          path: "/todo",
+          element: <ToDoWrapper />,
+          children: [
+            {
+              path: "/todo",
+              element: <GeneralToDo />
+            },
+            {
+              path: "/todo/milestones",
+              element: <ToDoMilestones />
+            }
+          ]
+        },
+        {
           path: "/notes",
           element: <Notes />,
         },
@@ -90,14 +110,6 @@ export const Navigator = () => {
         {
           path: "/recipes",
           element: <Recipes />,
-        },
-        {
-          path: "/journal",
-          element: <Journal />,
-        },
-        {
-          path: "/about",
-          element: <About />,
         },
       ],
     },

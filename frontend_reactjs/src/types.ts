@@ -78,6 +78,26 @@ export type JournalSubEntry = {
   content: string;
 };
 
+export type ToDoMilestone = {
+  id: number;
+  date: Date;
+  description: string;
+};
+
+export enum ToDoTaskStatus {
+  Pending = "Pending",
+  Completed = "Completed",
+  NotCompleted = "NotCompleted"
+};
+
+export type ToDoTask = {
+  id: number;
+  milestoneId?: number;
+  date: Date;
+  content: string;
+  status: ToDoTaskStatus;
+};
+
 export type NoteCategory = {
   id: number;
   name: string;

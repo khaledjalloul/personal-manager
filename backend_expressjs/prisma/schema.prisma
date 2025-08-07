@@ -8,25 +8,27 @@ datasource db {
 }
 
 model User {
-  id               Int                @id @default(autoincrement())
-  name             String
-  email            String             @unique
-  isApproved       Boolean            @default(false)
-  hash             String
-  wallet           Float
-  fundKeywords     String[]
-  ExpensesCategory ExpensesCategory[]
-  Expense          Expense[]
-  Fund             Fund[]
-  DiaryEntry       DiaryEntry[]
-  JournalCategory  JournalCategory[]
-  JournalSection   JournalSection[]
-  JournalEntry     JournalEntry[]
-  NoteCategory     NoteCategory[]
-  Note             Note[]
-  PianoPiece       PianoPiece[]
-  Hike             Hike[]
-  VideoGame        VideoGame[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  isApproved        Boolean            @default(false)
+  hash              String
+  wallet            Float
+  fundKeywords      String[]
+  ExpensesCategory  ExpensesCategory[]
+  Expense           Expense[]
+  Fund              Fund[]
+  diaryEntries      DiaryEntry[]
+  journalCategories JournalCategory[]
+  journalSections   JournalSection[]
+  journalEntries    JournalEntry[]
+  noteCategories    NoteCategory[]
+  notes             Note[]
+  pianoPieces       PianoPiece[]
+  hikes             Hike[]
+  videoGames        VideoGame[]
+  toDoMilestones    ToDoMilestone[]
+  toDoTasks         ToDoTask[]
 }
 
 model ExpensesCategory {
@@ -117,6 +119,32 @@ model JournalSubEntry {
   content String
   entryId Int
   entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+}
+
+model ToDoMilestone {
+  id          Int        @id @default(autoincrement())
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime
+  description String
+  tasks       ToDoTask[]
+}
+
+enum ToDoTaskStatus {
+  Pending
+  Completed
+  NotCompleted
+}
+
+model ToDoTask {
+  id          Int            @id @default(autoincrement())
+  userId      Int
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestoneId Int?
+  milestone   ToDoMilestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  date        DateTime
+  content     String
+  status      ToDoTaskStatus @default(Pending)
 }
 
 model NoteCategory {

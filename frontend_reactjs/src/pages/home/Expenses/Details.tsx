@@ -12,9 +12,14 @@ import { useExpenses, useFunds } from "../../../api";
 import { ExpenseTableRow, FundTableRow } from "../../../components";
 import { useOutletContext } from "react-router-dom";
 import { ExpenseType } from "../../../types";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 export const ExpensesDetails = () => {
-  const { searchText, filterCategoryIds } = useOutletContext<{ searchText: string, filterCategoryIds: number[] }>();
+  const { searchText, filterCategoryIds, setDisplayedCount } = useOutletContext<{
+    searchText: string,
+    filterCategoryIds: number[],
+    setDisplayedCount: Dispatch<SetStateAction<number>>
+  }>();
 
   const { data: expenses } = useExpenses({
     type: ExpenseType.Auto,
@@ -38,6 +43,10 @@ export const ExpensesDetails = () => {
     }
   });
 
+  useEffect(() => {
+    setDisplayedCount(tableRows.length);
+  }, [tableRows.length]);
+
   return (
     <Box sx={{
       p: '32px',
@@ -58,7 +67,7 @@ export const ExpensesDetails = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Date ({tableRows.length})</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
               <TableCell sx={{ fontWeight: 'bold', textWrap: 'nowrap' }}>Description / Source</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Vendor</TableCell>

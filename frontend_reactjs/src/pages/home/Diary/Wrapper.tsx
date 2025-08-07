@@ -56,6 +56,10 @@ export const DiaryWrapper = () => {
           flexGrow: 1,
         }}
         >
+          <Typography variant="h5" sx={{ whiteSpace: 'nowrap', mr: { xs: 0, sm: 2 }, mb: { xs: 1, sm: 0 } }}>
+            Diary {searchText ? `(${isDaily ? dailyEntries?.length : monthlyDiary?.entries.length || 0})` : ""}
+          </Typography>
+
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <IconButton
               disabled={Boolean(searchText.trim())}
@@ -117,12 +121,6 @@ export const DiaryWrapper = () => {
           >
             {isDaily ? "Monthly Summary" : "Daily Entries"}
           </Button>
-
-          {searchText && (
-            <Typography ml={1}>
-              ({isDaily ? dailyEntries?.length : monthlyDiary?.entries.length} entries)
-            </Typography>
-          )}
         </Box>
 
         <TextField

@@ -13,6 +13,9 @@ import {
   JournalCategory,
   JournalSection,
   JournalEntry,
+  ToDoTask,
+  ToDoMilestone,
+  ToDoTaskStatus,
 } from '../types';
 import {
   user,
@@ -30,6 +33,8 @@ import {
   journalCategories,
   journalSections,
   journalEntries,
+  toDoTasks,
+  toDoMilestones,
 } from './data';
 import {
   CreateDiaryEntryRequestBody,
@@ -252,6 +257,33 @@ const journalHandlers = [
   }),
 ];
 
+// ############### To Do ###############
+
+const toDoHandlers = [
+  // Milestones
+  http.get<PathParams, DefaultBodyType, ToDoMilestone[]>('/todo/milestones', () => HttpResponse.json(toDoMilestones)),
+  // Tasks
+  http.get<PathParams, DefaultBodyType, ToDoTask[]>('/todo', ({ request }) => {
+    const url = new URL(request.url);
+    const milestoneId = url.searchParams.get('milestoneId');
+    const isArchived = url.searchParams.get('isArchived') === 'true';
+
+    let tasksToReturn = toDoTasks;
+    if (milestoneId)
+      tasksToReturn = toDoTasks.filter(task => task.milestoneId === parseInt(milestoneId));
+    else {
+      tasksToReturn = toDoTasks.filter(task => !task.milestoneId);
+
+      if (isArchived)
+        tasksToReturn = tasksToReturn.filter(task => (!isArchived || [ToDoTaskStatus.Completed, ToDoTaskStatus.NotCompleted].includes(task.status)));
+      else
+        tasksToReturn = tasksToReturn.filter(task => task.status === ToDoTaskStatus.Pending);
+    }
+
+    return HttpResponse.json(tasksToReturn);
+  }),
+];
+
 // ############### Notes ###############
 
 const noteHandlers = [
@@ -434,6 +466,7 @@ export const handlers = [
   ...expenseHandlers,
   ...diaryHandlers,
   ...journalHandlers,
+  ...toDoHandlers,
   ...noteHandlers,
   ...pianoHandlers,
   ...hikeHandlers,

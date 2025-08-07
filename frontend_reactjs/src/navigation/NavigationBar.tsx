@@ -21,6 +21,7 @@ const toolbarButtons = [
   { label: "Expenses", path: "/expenses" },
   { label: "Diary", path: "/diary" },
   { label: "Journal", path: "/journal" },
+  { label: "To Do", path: "/todo" },
   { label: "Notes", path: "/notes" },
   { label: "Piano Pieces", path: "/piano" },
   { label: "Hikes", path: "/hikes" },

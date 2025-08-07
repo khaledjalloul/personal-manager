@@ -117,6 +117,7 @@ export const Account = () => {
   const { data: user } = useCurrentUser();
 
   const { mutate: editUser, isPending: editUserLoading, error: editUserError } = useEditUser();
+  const { mutate: changePassword, isPending: changePasswordLoading, error: changePasswordError } = useEditUser();
   const { mutate: deleteUser, isPending: deleteUserLoading } = useDeleteUser();
 
   useEffect(() => {
@@ -128,7 +129,7 @@ export const Account = () => {
 
 
   const emailError = editUserError?.response?.status === HttpStatusCode.Conflict ? "Email is already in use." : "";
-  const passwordError = editUserError?.response?.status === HttpStatusCode.BadRequest ? "Incorrect password." : "";
+  const passwordError = changePasswordError?.response?.status === HttpStatusCode.BadRequest ? "Incorrect password." : "";
 
   return (
     <Wrapper>
@@ -187,11 +188,11 @@ export const Account = () => {
 
             <Button
               variant="contained"
-              onClick={() => editUser({
+              onClick={() => changePassword({
                 oldPassword: oldPassword.trim(),
                 newPassword: newPassword.trim()
               })}
-              loading={editUserLoading}
+              loading={changePasswordLoading}
             >
               Change Password
             </Button>

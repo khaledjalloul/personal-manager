@@ -12,14 +12,24 @@ import { useExpensesCategories, useMonthlyExpenses } from "../../../api";
 import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
 import { SearchTextHighlight } from "../../../components";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 export const MonthlyExpenses = () => {
-  const { searchText } = useOutletContext<{ searchText: string }>();
+  const { searchText, setDisplayedCount } = useOutletContext<{
+    searchText: string,
+    setDisplayedCount: Dispatch<SetStateAction<number>>
+  }>();
 
   const { data: expensesCategories } = useExpensesCategories();
   const { data: monthlyExpenses } = useMonthlyExpenses({
     searchText: searchText.trim(),
   });
+
+  useEffect(() => {
+    if (monthlyExpenses) {
+      setDisplayedCount(Object.keys(monthlyExpenses).length);
+    };
+  }, [monthlyExpenses]);
 
   if (!monthlyExpenses) return <div />;
   return (
@@ -27,7 +37,7 @@ export const MonthlyExpenses = () => {
       p: '32px',
       pt: 0,
       display: 'flex',
-      overflowY: {xs: 'visible', sm: 'hidden'},
+      overflowY: { xs: 'visible', sm: 'hidden' },
     }}>
       <TableContainer component={Paper} >
         <Table
