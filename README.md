@@ -1,6 +1,6 @@
 # Personal Manager
 
-Web app to manage expenses, notes, and other personal items to keep track off.
+Web app to manage expenses, notes, and other collections using ReactJS and ExpressJS.
 
 ## Development
 
@@ -28,9 +28,11 @@ npm start
 
 ## Deployment
 
-- Frontend: Hosted on [GitHub pages](https://khaledjalloul.github.io/personal-manager).
-  - Trigger rebuild using `npm run deploy`.
-- Backend: Hosted on [Heroku](https://www.heroku.com/).
-  - Use `npx prisma migrate deploy` instead of `dev` during configuration or if the database models change.
+Frontend:
+- Trigger rebuild using `npm run deploy`.
+
+Backend:
   - Rebuild is automatically triggered on commit.
-- PostgreSQL Database: Hosted on [Heroku](https://www.heroku.com/).
+
+PostgreSQL Database:
+  - Use `npx prisma migrate deploy` instead of `dev` during initial configuration or if the database models change.

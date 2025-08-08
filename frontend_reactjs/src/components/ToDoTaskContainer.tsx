@@ -72,7 +72,7 @@ export const ToDoTaskContainer = ({
         gap: 1,
         flexGrow: 1,
       }}
-      onDoubleClick={() => setIsEditing(true)}
+      onDoubleClick={editable ? () => setIsEditing(true) : undefined}
     >
 
       {!isEditing && (

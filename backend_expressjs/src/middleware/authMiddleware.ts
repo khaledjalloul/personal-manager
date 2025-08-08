@@ -18,6 +18,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     // Check if user exists in the database
     const user = await prisma.user.findUnique({ where: { id: payload.id } });
     if (!user) return res.status(401).json({ message: 'User not found' });
+    if (!user.isApproved) return res.status(401).json({ message: 'User not approved' });
 
     req.user = user;
     next();
