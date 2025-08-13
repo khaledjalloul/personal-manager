@@ -25,12 +25,15 @@ import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import dayjs from "dayjs";
 import { useCtrlS, useKeybinding, UserContext } from "../../utils";
+import { useLocation } from "react-router-dom";
 
 
 export const Notes = () => {
 
   const { palette } = useTheme();
   const { userData, setUserData } = useContext(UserContext);
+  const { state } = useLocation();
+  const { routedNoteId } = state as { routedNoteId?: number } || { routedNoteId: undefined };
 
   const [searchText, setSearchText] = useState("");
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
@@ -50,6 +53,7 @@ export const Notes = () => {
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
 
+  const routedNoteIdRef = useRef(routedNoteId);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +67,13 @@ export const Notes = () => {
       categoryId: selectedNoteCategory?.id,
     });
   };
+
+  useCtrlS(save);
+  useKeybinding("e", () => setIsEditing(!isEditing));
+  useKeybinding("d", () => {
+    if (selectedNote)
+      setConfirmDeleteOpen(true);
+  });
 
   useEffect(() => {
     if (selectedNote) {
@@ -85,13 +96,6 @@ export const Notes = () => {
       previewRef.current.scrollTop = 0;
   }, [selectedNote?.id]);
 
-  useCtrlS(save);
-  useKeybinding("e", () => setIsEditing(!isEditing));
-  useKeybinding("d", () => {
-    if (selectedNote)
-      setConfirmDeleteOpen(true);
-  });
-
   useEffect(() => {
     if (isEditing && editorRef.current)
       editorRef.current.scrollTop = editorScrollValue;
@@ -102,7 +106,12 @@ export const Notes = () => {
 
   useEffect(() => {
     if (notes) {
-      if (!searchText.trim() && userData && userData.lastOpenedNoteId) {
+      if (routedNoteIdRef.current) {
+        const routedNote = notes.find(note => note.id === routedNoteIdRef.current);
+        setSelectedNote(routedNote);
+        routedNoteIdRef.current = undefined;
+      }
+      else if (!searchText.trim() && userData && userData.lastOpenedNoteId) {
         const lastOpenNote = notes.find(note => note.id === userData.lastOpenedNoteId);
         if (lastOpenNote)
           setSelectedNote(lastOpenNote);

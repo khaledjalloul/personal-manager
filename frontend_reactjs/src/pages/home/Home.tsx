@@ -193,7 +193,7 @@ const NewNoteContainer = () => {
 
   const { data: noteCategories } = useNoteCategories({ searchText: "" });
 
-  const { mutate: createNote, isPending: createNoteLoading, isSuccess: createNoteSuccess } = useCreateNote();
+  const { mutate: createNote, isPending: createNoteLoading, isSuccess: createNoteSuccess, data: createNoteData } = useCreateNote();
 
   const saveNote = () => {
     if (!noteTitle.trim() || !noteContent.trim() || !selectedNoteCategory) return;
@@ -219,7 +219,7 @@ const NewNoteContainer = () => {
       setNoteTitle("");
       setNoteContent("");
       setSelectedNoteCategory(noteCategories?.[0]);
-      navigate('/notes');
+      navigate('/notes', { state: { routedNoteId: createNoteData.id } });
     }
   }, [createNoteSuccess]);
 
