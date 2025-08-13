@@ -114,7 +114,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         data.toDoTasks = await prisma.toDoTask.findMany({
           where: { userId, milestone: null },
           omit: { id: true, userId: true, milestoneId: true },
-          orderBy: { date: 'asc' }
+          orderBy: { dateCreated: 'asc' }
         });
         break;
 

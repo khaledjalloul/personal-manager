@@ -7,7 +7,8 @@ import { useOutletContext } from "react-router-dom";
 
 const emptyTask: ToDoTask = {
   id: -1,
-  date: new Date(),
+  dateCreated: new Date(),
+  dateModified: new Date(),
   content: "",
   status: ToDoTaskStatus.Pending
 };

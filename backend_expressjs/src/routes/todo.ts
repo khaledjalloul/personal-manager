@@ -96,7 +96,7 @@ router.get('/', async (req: Request, res: Response) => {
         status: { in: statusesWhere },
         content: { contains: searchText, mode: "insensitive" }
       },
-      orderBy: { date: 'desc' }
+      orderBy: { dateModified: 'desc' }
     });
   }
   res.json(tasks);
@@ -107,7 +107,8 @@ router.post('/', async (req: Request, res: Response) => {
   const task = await prisma.toDoTask.create({
     data: {
       user: { connect: { id: req.user.id } },
-      date,
+      dateCreated: date,
+      dateModified: date,
       content,
       milestone: milestoneId !== undefined ? { connect: { id: milestoneId } } : undefined,
     },
@@ -121,7 +122,7 @@ router.post('/:id', async (req: Request, res: Response) => {
   const task = await prisma.toDoTask.update({
     where: { id: taskId },
     data: {
-      date,
+      dateModified: date,
       content,
       status
     },

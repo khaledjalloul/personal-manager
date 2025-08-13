@@ -1,8 +1,8 @@
 {
-    "dockerComposeFile": [
-        "compose.yaml"
-    ],
-    "service": "app",
+    "name": "Personal Manager",
+    "dockerComposeFile": "compose.yaml",
+    "service": "personal-manager",
+    "workspaceFolder": "/workspaces/personal-manager",
     "postCreateCommand": "bash .devcontainer/post_create.bash",
     "customizations": {
         "vscode": {
@@ -13,11 +13,12 @@
                 "prisma.prisma",
                 // GitLens
                 "eamodio.gitlens",
-                // Misc
+                // Yaml
                 "redhat.vscode-yaml",
+                // XML
                 "redhat.vscode-xml",
-                "yzhang.markdown-all-in-one",
-                "foxundermoon.shell-format"
+                // Markdown
+                "yzhang.markdown-all-in-one"
             ],
             "settings": {
                 "gitlens.codeLens.authors.enabled": false,
@@ -25,5 +26,4 @@
             }
         }
     },
-    "workspaceFolder": "/workspaces/personal-manager"
 }

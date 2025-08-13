@@ -93,7 +93,8 @@ export enum ToDoTaskStatus {
 export type ToDoTask = {
   id: number;
   milestoneId?: number;
-  date: Date;
+  dateCreated: Date;
+  dateModified: Date;
   content: string;
   status: ToDoTaskStatus;
 };

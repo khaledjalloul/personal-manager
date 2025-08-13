@@ -13,6 +13,7 @@ const dataTypes: {
   expenses: "Expenses",
   diary: "Diary",
   journal: "Journal",
+  todo: "To Do",
   notes: "Notes",
   piano: "Piano Pieces",
   hikes: "Hikes",

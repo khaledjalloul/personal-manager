@@ -30,6 +30,10 @@ export const useToDoTasks = (params: GetToDoTasksRequestParams) =>
     queryKey: [ENDPOINT, params],
     queryFn: queryFn(params),
     select: (data) =>
-      data.map((task) => ({ ...task, monthLearned: task.date && new Date(task.date) })),
+      data.map((task) => ({
+        ...task,
+        dateCreated: task.dateCreated && new Date(task.dateCreated),
+        dateModified: task.dateModified && new Date(task.dateModified)
+      })),
     placeholderData: keepPreviousData,
   });

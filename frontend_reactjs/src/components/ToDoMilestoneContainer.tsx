@@ -13,7 +13,8 @@ import { ConfirmDeleteDialog } from "./modals";
 
 const emptyTask: ToDoTask = {
   id: -1,
-  date: new Date(),
+  dateCreated: new Date(),
+  dateModified: new Date(),
   content: "",
   status: ToDoTaskStatus.Pending
 };
@@ -172,7 +173,7 @@ export const ToDoMilestoneContainer = ({
       >
         {isAddingTask && (
           <ToDoTaskContainer
-            task={{ ...emptyTask, milestoneId: milestone.id, date: milestone.date }}
+            task={{ ...emptyTask, milestoneId: milestone.id, dateCreated: milestone.date, dateModified: milestone.date }}
             searchText={searchText}
             isAddingTask={isAddingTask}
             setIsAddingTask={setIsAddingTask}

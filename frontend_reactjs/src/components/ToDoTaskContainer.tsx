@@ -1,7 +1,7 @@
 import { Box, IconButton, TextField, Typography } from "@mui/material"
 import { ToDoTask, ToDoTaskStatus } from "../types";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { CheckBox, CheckBoxOutlineBlank, Clear, Delete, DisabledByDefault, Edit, Save } from "@mui/icons-material";
+import { CheckBox, CheckBoxOutlineBlank, Clear, Delete, DisabledByDefault, Edit, KeyboardDoubleArrowRight, Save } from "@mui/icons-material";
 import { SearchTextHighlight } from "./SearchTextHighlight";
 import { useCreateToDoTask, useDeleteToDoTask, useEditToDoTask } from "../api";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -24,7 +24,7 @@ export const ToDoTaskContainer = ({
   editable?: boolean;
 }) => {
 
-  const [date, setDate] = useState(task.date && dayjs(task.date));
+  const [date, setDate] = useState(task.dateModified && dayjs(task.dateModified));
   const [content, setContent] = useState(task.content);
   const [status, setStatus] = useState(task.status);
   const [isEditing, setIsEditing] = useState(isAddingTask);
@@ -95,8 +95,8 @@ export const ToDoTaskContainer = ({
             setStatus(newStatus);
 
             setTimeout(() => {
-              if (newStatus === statusRef.current)
-                editTask({ id: task.id, status: newStatus });
+              if (newStatus === statusRef.current && newStatus != task.status)
+                editTask({ id: task.id, status: newStatus, date: new Date() });
             }, 3000);
           }}
         >
@@ -150,6 +150,27 @@ export const ToDoTaskContainer = ({
             </IconButton>
           </Box>
         )
+      )}
+
+      {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
+        <Box
+          sx={{
+            border: 'solid 1px',
+            borderColor: 'grey.700',
+            borderRadius: 2,
+            p: 1,
+            pl: 2,
+            pr: 2,
+          }}
+        >
+          <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+            {dayjs(task.dateCreated).format("DD.MM.YYYY")}
+          </Typography>
+        </Box>
+      )}
+
+      {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
+        <KeyboardDoubleArrowRight sx={{ color: "text.primary" }} />
       )}
 
       {!task.milestoneId && (

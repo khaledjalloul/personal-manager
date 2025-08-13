@@ -205,39 +205,45 @@ export const toDoTasks: ToDoTask[] = [
     {
         id: 1,
         content: 'Buy groceries',
-        date: new Date("2025-07-01"),
+        dateCreated: new Date("2025-07-01"),
+        dateModified: new Date("2025-07-01"),
         status: ToDoTaskStatus.Pending
     },
     {
         id: 2,
         content: 'Clean the house',
-        date: new Date("2025-07-02"),
+        dateCreated: new Date("2025-07-02"),
+        dateModified: new Date("2025-07-02"),
         status: ToDoTaskStatus.Completed
     },
     {
         id: 3,
         content: 'Prepare presentation for the meeting',
-        date: new Date("2025-07-03"),
+        dateCreated: new Date("2025-07-03"),
+        dateModified: new Date("2025-07-03"),
         status: ToDoTaskStatus.NotCompleted
     },
     {
         id: 4,
         content: 'Buy a vacuum cleaner',
-        date: toDoMilestones[0].date,
+        dateCreated: toDoMilestones[0].date,
+        dateModified: toDoMilestones[0].date,
         status: ToDoTaskStatus.NotCompleted,
         milestoneId: 1
     },
     {
         id: 5,
         content: 'Attend team meeting',
-        date: toDoMilestones[1].date,
+        dateCreated: toDoMilestones[1].date,
+        dateModified: toDoMilestones[1].date,
         status: ToDoTaskStatus.Completed,
         milestoneId: 2
     },
     {
         id: 6,
         content: 'Submit project proposal',
-        date: toDoMilestones[1].date,
+        dateCreated: toDoMilestones[1].date,
+        dateModified: toDoMilestones[1].date,
         status: ToDoTaskStatus.Pending,
         milestoneId: 2
     }

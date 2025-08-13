@@ -137,14 +137,15 @@ enum ToDoTaskStatus {
 }
 
 model ToDoTask {
-  id          Int            @id @default(autoincrement())
-  userId      Int
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  milestoneId Int?
-  milestone   ToDoMilestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
-  date        DateTime
-  content     String
-  status      ToDoTaskStatus @default(Pending)
+  id           Int            @id @default(autoincrement())
+  userId       Int
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestoneId  Int?
+  milestone    ToDoMilestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  dateCreated  DateTime
+  dateModified DateTime
+  content      String
+  status       ToDoTaskStatus @default(Pending)
 }
 
 model NoteCategory {

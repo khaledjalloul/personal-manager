@@ -1,16 +1,20 @@
 services:
-  app:
+  personal-manager:
+    image: personal-manager
     build:
       context: ..
       dockerfile: ./.devcontainer/Dockerfile
     ports:
       - "3000:3000"
       - "3007:3007"
-    volumes:
-      - ..:/workspaces/personal-manager
     depends_on:
       - postgres
     command: bash -c "while sleep 1000; do :; done"
+    volumes:
+      # Bind source code
+      - type: bind
+        source: ..
+        target: /workspaces/personal-manager
 
   postgres:
     image: postgres:15
@@ -22,7 +26,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - personal-manager-postgres:/var/lib/postgresql/data
+      - type: volume
+        source: personal-manager-postgres
+        target: /var/lib/postgresql/data
 
 volumes:
   personal-manager-postgres:
+    name: personal-manager-postgres
