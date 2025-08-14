@@ -15,11 +15,12 @@ import {
   Clear,
   CreateNewFolder,
   Delete,
+  Download,
   Save,
   Visibility,
   VisibilityOff
 } from "@mui/icons-material";
-import { useDeleteNote, useEditNote, useNoteCategories, useNotes } from "../../api";
+import { useDeleteNote, useDownloadNote, useEditNote, useNoteCategories, useNotes } from "../../api";
 import { addSearchTextHighlight, ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -52,6 +53,7 @@ export const Notes = () => {
 
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
+  const { mutate: downloadNote, isPending: downloadNoteLoading } = useDownloadNote();
 
   const routedNoteIdRef = useRef(routedNoteId);
   const editorRef = useRef<HTMLTextAreaElement>(null);
@@ -256,6 +258,15 @@ export const Notes = () => {
 
               <IconButton
                 sx={{ display: { xs: 'flex', sm: 'none' } }}
+                disabled={!selectedNote}
+                loading={downloadNoteLoading}
+                onClick={selectedNote ? () => downloadNote({ id: selectedNote.id, title: selectedNote.title }) : undefined}
+              >
+                <Download fontSize="small" />
+              </IconButton>
+
+              <IconButton
+                sx={{ display: { xs: 'flex', sm: 'none' } }}
                 color="error"
                 disabled={!selectedNote}
                 loading={deleteNoteLoading}
@@ -307,6 +318,15 @@ export const Notes = () => {
               onClick={save}
             >
               <Save />
+            </IconButton>
+
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'flex' }, ml: -1 }}
+              disabled={!selectedNote}
+              loading={downloadNoteLoading}
+              onClick={selectedNote ? () => downloadNote({ id: selectedNote.id, title: selectedNote.title }) : undefined}
+            >
+              <Download fontSize="small" />
             </IconButton>
 
             <IconButton

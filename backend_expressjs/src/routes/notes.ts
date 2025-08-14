@@ -99,6 +99,22 @@ router.get('/', async (req: Request, res: Response) => {
   res.json(notes);
 });
 
+router.get('/download/:id', async (req: Request, res: Response) => {
+  const note = await prisma.note.findUnique({
+    where: { id: parseInt(req.params.id) },
+  });
+
+  if (!note) {
+    return res.status(404).json({ message: 'Note not found' });
+  }
+
+  const fileName = `${note.title}.md`;
+
+  res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(note.content);
+})
+
 router.post('/', async (req: Request, res: Response) => {
   const { title, content, categoryId } = req.body;
   const newDate = new Date();
