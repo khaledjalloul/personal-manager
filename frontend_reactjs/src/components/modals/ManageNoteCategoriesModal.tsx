@@ -19,7 +19,7 @@ const CategoryCard = ({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
-  const { mutate: deleteCategory, isPending: deletePending, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
+  const { mutate: deleteCategory, isPending: deleteLoading, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
 
   const save = () => {
     editCategory({
@@ -55,7 +55,7 @@ const CategoryCard = ({
                 <IconButton
                   size="small"
                   color="error"
-                  loading={deletePending}
+                  loading={deleteLoading}
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
                   <Delete fontSize="small" />

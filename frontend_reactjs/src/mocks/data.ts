@@ -21,6 +21,7 @@ import {
     ToDoMilestone,
     ToDoTaskStatus,
     ToDoTask,
+    CalendarEntry,
 } from '../types';
 
 // ############### Users ###############
@@ -185,6 +186,27 @@ export const journalEntries: JournalEntry[] = [
     { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation', subEntries: [] },
     { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.', subEntries: [] }
 ];
+
+// ############### Calendar ###############
+
+export const calendarEntries: CalendarEntry[] = [
+    {
+        id: 1,
+        title: 'Doctor Appointment',
+        description: 'Annual check-up',
+        location: 'Health Clinic',
+        startDate: dayjs().minute(30).second(0).add(1, 'hour').toDate(),
+        endDate: dayjs().minute(30).second(0).add(2, 'hour').toDate()
+    },
+    {
+        id: 2,
+        title: 'Team Meeting',
+        description: 'Weekly team sync-up',
+        location: 'Zoom',
+        startDate: dayjs().minute(0).second(0).subtract(1, 'day').subtract(2, 'hour').toDate(),
+        endDate: dayjs().minute(0).second(0).subtract(1, 'day').add(1, 'hour').toDate()
+    }
+]
 
 // ############### To Do ###############
 

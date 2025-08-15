@@ -18,7 +18,8 @@ import {
   MonthlyDiary,
   ToDoWrapper,
   GeneralToDo,
-  ToDoMilestones
+  ToDoMilestones,
+  Calendar
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
@@ -71,7 +72,11 @@ export const Navigator = () => {
         },
         {
           path: "/journal",
-          element: <Journal />,
+          element: <Journal />
+        },
+        {
+          path: "/calendar",
+          element: <Calendar />
         },
         {
           path: "/todo",

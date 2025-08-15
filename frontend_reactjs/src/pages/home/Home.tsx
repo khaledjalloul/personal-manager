@@ -328,7 +328,7 @@ const NewNoteContainer = () => {
   );
 }
 
-var today = dayjs(new Date())
+var today = dayjs()
 today = dayjs(new Date(today.year(), today.month(), today.date(), 12));
 
 export const Home = () => {

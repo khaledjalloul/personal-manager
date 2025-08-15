@@ -248,7 +248,7 @@ export const VideoGameCard = ({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={firstPlayed}
-                  onChange={(newValue) => setFirstPlayed(newValue ?? dayjs(new Date()))}
+                  onChange={(newValue) => setFirstPlayed(newValue ?? dayjs())}
                   enableAccessibleFieldDOMStructure={false}
                   format="DD.MM.YYYY"
                   slotProps={{

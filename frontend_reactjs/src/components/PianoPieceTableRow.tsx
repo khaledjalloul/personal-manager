@@ -157,7 +157,7 @@ export const PianoPieceTableRow = ({
                   views={["year", "month"]}
                   openTo="month"
                   value={monthLearned ?? null}
-                  onChange={(newValue) => setMonthLearned(newValue ?? dayjs(new Date()))}
+                  onChange={(newValue) => setMonthLearned(newValue ?? dayjs())}
                   enableAccessibleFieldDOMStructure={false}
                   format="MMMM YYYY"
                   slotProps={{

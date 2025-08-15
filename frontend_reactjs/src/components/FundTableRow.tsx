@@ -86,7 +86,7 @@ export const FundTableRow = ({
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
 							<DatePicker
 								value={date}
-								onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
+								onChange={(newValue) => setDate(newValue ?? dayjs())}
 								enableAccessibleFieldDOMStructure={false}
 								format="DD.MM.YYYY"
 								slotProps={{

@@ -3,6 +3,7 @@ export * from './users';
 export * from './expenses';
 export * from './diary';
 export * from './journal';
+export * from './calendar';
 export * from './todo';
 export * from './notes';
 export * from "./piano";

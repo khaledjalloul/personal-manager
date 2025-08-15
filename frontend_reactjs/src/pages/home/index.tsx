@@ -2,6 +2,7 @@ export * from "./Home";
 export * from "./Expenses"
 export * from "./Diary";
 export * from "./Journal";
+export * from "./Calendar";
 export * from "./ToDo";
 export * from "./Notes";
 export * from "./Piano";

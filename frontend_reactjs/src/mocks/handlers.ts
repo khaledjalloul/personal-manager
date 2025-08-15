@@ -16,6 +16,7 @@ import {
   ToDoTask,
   ToDoMilestone,
   ToDoTaskStatus,
+  CalendarEntry,
 } from '../types';
 import {
   user,
@@ -35,6 +36,7 @@ import {
   journalEntries,
   toDoTasks,
   toDoMilestones,
+  calendarEntries,
 } from './data';
 import {
   CreateDiaryEntryRequestBody,
@@ -66,6 +68,7 @@ import {
   GetExpensesStatisticsResponse,
   GetMonthlyExpensesResponse
 } from '../api';
+import dayjs from 'dayjs';
 
 // ############### Auth ###############
 
@@ -255,6 +258,12 @@ const journalHandlers = [
     }
     return HttpResponse.json(entriesToReturn);
   }),
+];
+
+// ############### Calendar ###############
+
+const calendarHandlers = [
+  http.get<PathParams, DefaultBodyType, CalendarEntry[]>('/calendar', () => HttpResponse.json(calendarEntries))
 ];
 
 // ############### To Do ###############
@@ -466,6 +475,7 @@ export const handlers = [
   ...expenseHandlers,
   ...diaryHandlers,
   ...journalHandlers,
+  ...calendarHandlers,
   ...toDoHandlers,
   ...noteHandlers,
   ...pianoHandlers,

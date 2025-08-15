@@ -194,7 +194,7 @@ export const ToDoTaskContainer = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={date ?? null}
-              onChange={(newValue) => setDate(newValue ?? dayjs(new Date()))}
+              onChange={(newValue) => setDate(newValue ?? dayjs())}
               enableAccessibleFieldDOMStructure={false}
               format="MMM DD"
               slotProps={{

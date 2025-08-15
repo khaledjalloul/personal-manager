@@ -78,6 +78,15 @@ export type JournalSubEntry = {
   content: string;
 };
 
+export type CalendarEntry = {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  startDate: Date;
+  endDate: Date;
+}
+
 export type ToDoMilestone = {
   id: number;
   date: Date;

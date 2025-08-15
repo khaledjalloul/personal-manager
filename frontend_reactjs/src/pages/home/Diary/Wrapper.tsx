@@ -21,7 +21,7 @@ export const DiaryWrapper = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(new Date()));
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [searchText, setSearchText] = useState("");
 
   const { data: dailyEntries } = useDailyDiaryEntries({
@@ -76,7 +76,7 @@ export const DiaryWrapper = () => {
                 views={isDaily ? ["year", "month"] : ["year"]}
                 openTo={isDaily ? "month" : "year"}
                 value={selectedDate}
-                onChange={(newValue) => setSelectedDate(newValue ?? dayjs(new Date()))}
+                onChange={(newValue) => setSelectedDate(newValue ?? dayjs())}
                 enableAccessibleFieldDOMStructure={false}
                 format={isDaily ? "MMMM YYYY" : "YYYY"}
                 disabled={Boolean(searchText.trim())}
@@ -107,8 +107,8 @@ export const DiaryWrapper = () => {
               width: { xs: 'auto', sm: 105 },
               textWrap: 'nowrap',
             }}
-            onClick={() => setSelectedDate(dayjs(new Date()))}
-            disabled={Boolean(searchText.trim()) || dayjs(new Date()).isSame(selectedDate, 'month')}
+            onClick={() => setSelectedDate(dayjs())}
+            disabled={Boolean(searchText.trim()) || dayjs().isSame(selectedDate, 'month')}
           >
             This {isDaily ? "Month" : "Year"}
           </Button>
