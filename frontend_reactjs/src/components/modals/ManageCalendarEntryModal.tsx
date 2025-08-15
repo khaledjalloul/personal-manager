@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useCreateCalendarEntry, useDeleteCalendarEntry, useEditCalendarEntry } from "../../api";
 import { CalendarEntry } from "../../types";
-import { useCtrlS } from "../../utils";
+import { useCtrlS, useKeybinding } from "../../utils";
 import {
   Clear,
   Delete,
@@ -48,13 +48,16 @@ export const ManageCalendarEntryModal = ({
   const { mutate: deleteEntry, isPending: deleteLoading, isSuccess: deleteSuccess } = useDeleteCalendarEntry();
 
   const save = () => {
+    if (!title.trim() || !startDate || !endDate) return;
+
     if (isNew)
       createEntry({
         title: title.trim(),
         description: description.trim(),
         location: location.trim(),
         startDate: startDate.toDate(),
-        endDate: endDate.toDate()
+        endDate: endDate.toDate(),
+        repeatUntilDate: repeatUntilDate?.toDate()
       });
     else
       editEntry({
@@ -68,6 +71,14 @@ export const ManageCalendarEntryModal = ({
   };
 
   useCtrlS(save);
+  useKeybinding("d", () => {
+    setConfirmDeleteOpen(true);
+  });
+
+  useEffect(() => {
+    if (repeatUntilDate)
+      setRepeatUntilDate(oldDate => oldDate?.hour(endDate.hour()).minute(endDate.minute()).second(endDate.second()));
+  }, [endDate]);
 
   useEffect(() => {
     if (createSuccess || editSuccess || deleteSuccess) setIsOpen(false);
@@ -96,7 +107,7 @@ export const ManageCalendarEntryModal = ({
               <TextField
                 variant="standard"
                 value={description}
-                placeholder="Description"
+                placeholder="Description (Optional)"
                 sx={{ width: '100%' }}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -107,7 +118,7 @@ export const ManageCalendarEntryModal = ({
               <TextField
                 variant="standard"
                 value={location}
-                placeholder="Location"
+                placeholder="Location (Optional)"
                 sx={{ width: '100%' }}
                 onChange={(e) => setLocation(e.target.value)}
               />
@@ -167,7 +178,8 @@ export const ManageCalendarEntryModal = ({
                 <Repeat sx={{ color: 'text.primary' }} />
                 <DatePicker
                   value={repeatUntilDate ?? null}
-                  onChange={(newValue) => setRepeatUntilDate(newValue ?? dayjs())}
+                  onChange={(newValue) =>
+                    setRepeatUntilDate((newValue ?? dayjs()).hour(endDate.hour()).minute(endDate.minute()).second(endDate.second()))}
                   enableAccessibleFieldDOMStructure={false}
                   format={"dddd, MMMM DD, YYYY"}
                   slotProps={{
@@ -190,6 +202,7 @@ export const ManageCalendarEntryModal = ({
               <IconButton
                 color="success"
                 loading={createLoading || editLoading}
+                disabled={!title.trim() || !startDate || !endDate}
                 onClick={save}
               >
                 <Save />

@@ -11,6 +11,7 @@ export type CreateCalendarEntryRequestBody = {
   location: string;
   startDate: Date;
   endDate: Date;
+  repeatUntilDate?: Date;
 };
 
 const mutationFn = async (data: CreateCalendarEntryRequestBody) => {
@@ -26,7 +27,7 @@ const mutationFn = async (data: CreateCalendarEntryRequestBody) => {
 export const useCreateCalendarEntry = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<CalendarEntry, AxiosError<{ message: string }>, CreateCalendarEntryRequestBody>({
+  return useMutation<CalendarEntry[], AxiosError<{ message: string }>, CreateCalendarEntryRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

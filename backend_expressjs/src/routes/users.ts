@@ -7,7 +7,8 @@ import {
   PianoPiece,
   VideoGame,
   JournalSubEntry,
-  ToDoTask
+  ToDoTask,
+  CalendarEntry
 } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import multer from "multer";
@@ -24,7 +25,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
   const { dataType } = req.params
 
   const dataTypes = dataType === 'all' ?
-    ['expenses', 'diary', 'journal', 'notes', 'piano', 'hikes', 'video-games'] :
+    ['expenses', 'diary', 'journal', 'calendar', 'to-do', 'notes', 'piano', 'hikes', 'video-games'] :
     [dataType];
   let data: any = {};
 
@@ -99,8 +100,17 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true, sectionId: true },
           orderBy: { date: 'asc' }
         });
+        break;
 
-      case 'todo':
+      case 'calendar':
+        data.calendarEntries = await prisma.calendarEntry.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { startDate: 'asc' }
+        });
+        break;
+
+      case 'to-do':
         data.toDoMilestones = await prisma.toDoMilestone.findMany({
           where: { userId },
           omit: { id: true, userId: true },
@@ -189,7 +199,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   }
 
   const dataTypes = dataType === 'all'
-    ? ['expenses', 'diary', 'journal', 'todo', 'notes', 'piano', 'hikes', 'video-games']
+    ? ['expenses', 'diary', 'journal', 'calendar', 'to-do', 'notes', 'piano', 'hikes', 'video-games']
     : [dataType];
 
 
@@ -201,7 +211,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           !inputData.uncategorizedExpenses ||
           !inputData.funds ||
           !inputData.fundKeywords ||
-          !inputData.wallet)
+          inputData.wallet === undefined)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
       case 'diary':
@@ -212,13 +222,17 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         if (!inputData.journalCategories || !inputData.uncategorizedJournalEntries)
           return res.status(400).json({ error: "Invalid journal data" });
         break;
+      case 'calendar':
+        if (!inputData.calendarEntries)
+          return res.status(400).json({ error: "Invalid calendar data" });
+        break;
+      case 'to-do':
+        if (!inputData.toDoMilestones || !inputData.toDoTasks)
+          return res.status(400).json({ error: "Invalid todo data" });
+        break;
       case 'notes':
         if (!inputData.noteCategories || !inputData.uncategorizedNotes)
           return res.status(400).json({ error: "Invalid notes data" });
-        break;
-      case 'todo':
-        if (!inputData.toDoMilestones || !inputData.toDoTasks)
-          return res.status(400).json({ error: "Invalid todo data" });
         break;
       case 'piano':
         if (!inputData.pianoPieces)
@@ -332,7 +346,14 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         }
         break;
 
-      case 'todo':
+      case 'calendar':
+        await prisma.calendarEntry.deleteMany({ where: { userId } });
+        await prisma.calendarEntry.createMany({
+          data: inputData.calendarEntries.map((e: CalendarEntry) => ({ ...e, userId })),
+        });
+        break;
+
+      case 'to-do':
         await prisma.toDoTask.deleteMany({ where: { userId } });
         await prisma.toDoMilestone.deleteMany({ where: { userId } });
 

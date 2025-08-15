@@ -48,7 +48,7 @@ export const Calendar = () => {
       id: entry.id.toString(),
       start: entry.startDate,
       end: entry.endDate,
-      title: `${entry.title} - ${entry.description}`,
+      title: `${entry.title}${entry.description ? ` - ${entry.description}` : ''}${entry.location ? ` (${entry.location})` : ''}`,
     })) ?? [];
   }, [calendarEntries]);
 
@@ -123,7 +123,7 @@ export const Calendar = () => {
             minWidth: { xs: 0, lg: "35vw" },
           }}
           label="Search calendar"
-          placeholder="TODO"
+          placeholder="Title, description, location"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           slotProps={{
@@ -216,6 +216,7 @@ height: 100%;
 
  & .fc-timegrid-slot{
   color: ${({ theme }) => theme.palette.text.primary};
+  font-size: ${({ theme }) => theme.typography.caption.fontSize};
  }
 
  & .fc-scrollgrid-section-header{

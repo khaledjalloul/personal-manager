@@ -8,27 +8,28 @@ datasource db {
 }
 
 model User {
-  id                Int                @id @default(autoincrement())
-  name              String
-  email             String             @unique
-  isApproved        Boolean            @default(false)
-  hash              String
-  wallet            Float
-  fundKeywords      String[]
-  ExpensesCategory  ExpensesCategory[]
-  Expense           Expense[]
-  Fund              Fund[]
-  diaryEntries      DiaryEntry[]
-  journalCategories JournalCategory[]
-  journalSections   JournalSection[]
-  journalEntries    JournalEntry[]
-  noteCategories    NoteCategory[]
-  notes             Note[]
-  pianoPieces       PianoPiece[]
-  hikes             Hike[]
-  videoGames        VideoGame[]
-  toDoMilestones    ToDoMilestone[]
-  toDoTasks         ToDoTask[]
+  id                 Int                @id @default(autoincrement())
+  name               String
+  email              String             @unique
+  isApproved         Boolean            @default(false)
+  hash               String
+  wallet             Float
+  fundKeywords       String[]
+  expensesCategories ExpensesCategory[]
+  expenses           Expense[]
+  funds              Fund[]
+  diaryEntries       DiaryEntry[]
+  journalCategories  JournalCategory[]
+  journalSections    JournalSection[]
+  journalEntries     JournalEntry[]
+  calendarEntries    CalendarEntry[]
+  toDoMilestones     ToDoMilestone[]
+  toDoTasks          ToDoTask[]
+  noteCategories     NoteCategory[]
+  notes              Note[]
+  pianoPieces        PianoPiece[]
+  hikes              Hike[]
+  videoGames         VideoGame[]
 }
 
 model ExpensesCategory {
@@ -119,6 +120,17 @@ model JournalSubEntry {
   content String
   entryId Int
   entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+}
+
+model CalendarEntry {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  location    String
+  startDate   DateTime
+  endDate     DateTime
 }
 
 model ToDoMilestone {
