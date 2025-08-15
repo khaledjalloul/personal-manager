@@ -25,7 +25,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
   const { dataType } = req.params
 
   const dataTypes = dataType === 'all' ?
-    ['expenses', 'diary', 'journal', 'calendar', 'to-do', 'notes', 'piano', 'hikes', 'video-games'] :
+    ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'hikes', 'video-games'] :
     [dataType];
   let data: any = {};
 
@@ -61,6 +61,14 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         })
         data.fundKeywords = user?.fundKeywords.sort();
         data.wallet = user?.wallet;
+        break;
+
+      case 'calendar':
+        data.calendarEntries = await prisma.calendarEntry.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { startDate: 'asc' }
+        });
         break;
 
       case 'diary':
@@ -99,14 +107,6 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           where: { userId, section: null },
           omit: { id: true, userId: true, sectionId: true },
           orderBy: { date: 'asc' }
-        });
-        break;
-
-      case 'calendar':
-        data.calendarEntries = await prisma.calendarEntry.findMany({
-          where: { userId },
-          omit: { id: true, userId: true },
-          orderBy: { startDate: 'asc' }
         });
         break;
 
@@ -199,7 +199,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   }
 
   const dataTypes = dataType === 'all'
-    ? ['expenses', 'diary', 'journal', 'calendar', 'to-do', 'notes', 'piano', 'hikes', 'video-games']
+    ? ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'hikes', 'video-games']
     : [dataType];
 
 
@@ -214,6 +214,10 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           inputData.wallet === undefined)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
+      case 'calendar':
+        if (!inputData.calendarEntries)
+          return res.status(400).json({ error: "Invalid calendar data" });
+        break;
       case 'diary':
         if (!inputData.diary)
           return res.status(400).json({ error: "Invalid diary data" });
@@ -221,10 +225,6 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
       case 'journal':
         if (!inputData.journalCategories || !inputData.uncategorizedJournalEntries)
           return res.status(400).json({ error: "Invalid journal data" });
-        break;
-      case 'calendar':
-        if (!inputData.calendarEntries)
-          return res.status(400).json({ error: "Invalid calendar data" });
         break;
       case 'to-do':
         if (!inputData.toDoMilestones || !inputData.toDoTasks)
@@ -288,6 +288,13 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         })
         break;
 
+      case 'calendar':
+        await prisma.calendarEntry.deleteMany({ where: { userId } });
+        await prisma.calendarEntry.createMany({
+          data: inputData.calendarEntries.map((e: CalendarEntry) => ({ ...e, userId })),
+        });
+        break;
+
       case 'diary':
         await prisma.diaryEntry.deleteMany({ where: { userId } });
         await prisma.diaryEntry.createMany({
@@ -344,13 +351,6 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             });
           }
         }
-        break;
-
-      case 'calendar':
-        await prisma.calendarEntry.deleteMany({ where: { userId } });
-        await prisma.calendarEntry.createMany({
-          data: inputData.calendarEntries.map((e: CalendarEntry) => ({ ...e, userId })),
-        });
         break;
 
       case 'to-do':

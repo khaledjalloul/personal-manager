@@ -29,9 +29,9 @@ app.use('/auth', authRoutes);
 // Protected
 app.use('/users', authMiddleware, usersRoutes);
 app.use('/expenses', authMiddleware, expensesRoutes);
+app.use('/calendar', authMiddleware, calendarRoutes);
 app.use('/diary', authMiddleware, diaryRoutes);
 app.use('/journal', authMiddleware, journalRoutes);
-app.use('/calendar', authMiddleware, calendarRoutes);
 app.use('/todo', authMiddleware, toDoRoutes);
 app.use('/notes', authMiddleware, notesRoutes);
 app.use('/piano', authMiddleware, pianoRoutes);

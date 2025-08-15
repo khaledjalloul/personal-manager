@@ -19,9 +19,9 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 const toolbarButtons = [
   { label: "Home", path: "/", },
   { label: "Expenses", path: "/expenses" },
+  { label: "Calendar", path: "/calendar" },
   { label: "Diary", path: "/diary" },
   { label: "Journal", path: "/journal" },
-  { label: "Calendar", path: "/calendar" },
   { label: "To Do", path: "/todo" },
   { label: "Notes", path: "/notes" },
   { label: "Piano Pieces", path: "/piano" },

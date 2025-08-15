@@ -149,7 +149,7 @@ export const Calendar = () => {
 
       <GlobalCalendarStyle />
 
-      <CalendarWrapper>
+      <CalendarWrapper isBreakpointSm={isBreakpointSm}>
         <FullCalendar
           ref={calendarRef}
           plugins={[timeGridPlugin, interactionPlugin, momentPlugin]}
@@ -162,7 +162,7 @@ export const Calendar = () => {
             "dddd, MMMM DD"
           }
           slotMinTime={{ hours: 6 }}
-          height="100%"
+          height={isBreakpointSm ? "auto" : "100%"}
           firstDay={1}
           nowIndicator
           expandRows
@@ -217,11 +217,15 @@ const Header = styled(Box)`
   display: flex;
 `;
 
-const CalendarWrapper = styled(Box)`
-height: 100%;
+const CalendarWrapper = styled(Box) <{ isBreakpointSm: boolean }>`
+  height: ${({ isBreakpointSm }) => isBreakpointSm ? "auto" : "100%"};
 
  & * {
   font-family: ${({ theme }) => theme.typography.fontFamily};
+ }
+
+  & .fc-scrollgrid-section-sticky > * {
+  background: transparent;
  }
 
  & .fc-timegrid-slot{

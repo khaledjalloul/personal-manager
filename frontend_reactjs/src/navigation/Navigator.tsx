@@ -71,12 +71,12 @@ export const Navigator = () => {
           ]
         },
         {
-          path: "/journal",
-          element: <Journal />
-        },
-        {
           path: "/calendar",
           element: <Calendar />
+        },
+        {
+          path: "/journal",
+          element: <Journal />
         },
         {
           path: "/todo",
