@@ -128,7 +128,10 @@ export const ManageCalendarEntryModal = ({
               <Today sx={{ color: 'text.primary' }} />
               <DatePicker
                 value={startDate}
-                onChange={(newValue) => setStartDate(newValue ?? dayjs())}
+                onChange={(newValue) => {
+                  setStartDate((newValue ?? dayjs()).hour(startDate.hour()).minute(startDate.minute()).second(startDate.second()));
+                  setEndDate((newValue ?? dayjs()).hour(endDate.hour()).minute(endDate.minute()).second(endDate.second()));
+                }}
                 enableAccessibleFieldDOMStructure={false}
                 format={"dddd, MMMM DD, YYYY"}
                 slotProps={{
@@ -142,35 +145,43 @@ export const ManageCalendarEntryModal = ({
               />
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Schedule sx={{ color: 'text.primary' }} />
-              <MobileTimePicker
-                value={startDate}
-                onChange={(newValue) => setStartDate(newValue ?? dayjs())}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    variant: "standard",
-                    placeholder: "Start Time",
-                  }
-                }}
-              />
+            <Box sx={{
+              display: "flex",
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: "center",
+              gap: 2
+            }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Schedule sx={{ color: 'text.primary' }} />
+                <MobileTimePicker
+                  value={startDate}
+                  onChange={(newValue) => setStartDate(newValue ?? dayjs())}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      variant: "standard",
+                      placeholder: "Start Time",
+                    }
+                  }}
+                />
+              </Box>
 
-              <KeyboardDoubleArrowRight
-                sx={{ color: "text.primary" }}
-                fontSize="small" />
-
-              <MobileTimePicker
-                value={endDate}
-                onChange={(newValue) => setEndDate(newValue ?? dayjs())}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    variant: "standard",
-                    placeholder: "End Time",
-                  }
-                }}
-              />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <KeyboardDoubleArrowRight
+                  sx={{ color: "text.primary" }}
+                  fontSize="small" />
+                <MobileTimePicker
+                  value={endDate}
+                  onChange={(newValue) => setEndDate(newValue ?? dayjs())}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      variant: "standard",
+                      placeholder: "End Time",
+                    }
+                  }}
+                />
+              </Box>
             </Box>
 
             {isNew && (

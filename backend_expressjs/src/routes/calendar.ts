@@ -7,11 +7,15 @@ import { CalendarEntry } from '@prisma/client';
 const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const date = (req.query.date as string) ? new Date(req.query.date as string) : new Date();
   const searchText = (req.query.searchText as string) ?? "";
 
-  const startOfWeek = dayjs(date).startOf('week').startOf('day');
-  const endOfWeek = dayjs(date).endOf('week').endOf('day');
+  const date = (req.query.date as string) ? new Date(req.query.date as string) : new Date();
+  var fixedDate = dayjs(date);
+  // Fix the date to ensure that the week starts on a Monday not a Sunday
+  if (fixedDate.day() === 0) // 0 = Sunday
+    fixedDate = fixedDate.subtract(1, 'day');
+  const startOfWeek = dayjs(fixedDate).startOf('week').add(1, 'day').startOf('day');
+  const endOfWeek = dayjs(fixedDate).endOf('week').add(1, 'day').endOf('day');
 
   const calendarEntries = await prisma.calendarEntry.findMany({
     where: {
@@ -40,7 +44,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const repeatUntilDate = req.body.repeatUntilDate || req.body.endDate;
 
-  const untilDate = dayjs(repeatUntilDate);
+  const untilDate = dayjs(repeatUntilDate).add(2, 'hour'); // Accomodate for possible timezone changes
   const newEntries: Omit<CalendarEntry, 'id'>[] = [];
   let currentStartDate = dayjs(req.body.startDate);
   let currentEndDate = dayjs(req.body.endDate);

@@ -5,6 +5,8 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import styled, { createGlobalStyle } from "styled-components";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -17,6 +19,7 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventInput } from "@fullcalendar/core";
+import momentPlugin from '@fullcalendar/moment';
 import { useCalendarEntries } from "../../api";
 import { ManageCalendarEntryModal } from "../../components";
 import { CalendarEntry } from "../../types";
@@ -35,7 +38,6 @@ export const Calendar = () => {
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [searchText, setSearchText] = useState<string>("");
-  const [disabled, setDisabled] = useState<boolean>(false);
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
 
   const { data: calendarEntries } = useCalendarEntries({
@@ -53,6 +55,9 @@ export const Calendar = () => {
   }, [calendarEntries]);
 
   const calendarRef = useRef<FullCalendar>(null);
+
+  const theme = useTheme();
+  const isBreakpointSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -86,7 +91,7 @@ export const Calendar = () => {
               value={selectedDate}
               onChange={(newValue) => setSelectedDate(newValue ?? dayjs())}
               enableAccessibleFieldDOMStructure={false}
-              format={"DD.MM.YYYY"}
+              format={"dddd, MMMM DD, YYYY"}
               slotProps={{
                 textField: {
                   size: "small",
@@ -114,7 +119,7 @@ export const Calendar = () => {
           disabled={dayjs().isSame(selectedDate, 'week')}
           onClick={() => setSelectedDate(dayjs())}
         >
-          Today
+          This Week
         </Button>
 
         <TextField
@@ -147,19 +152,24 @@ export const Calendar = () => {
       <CalendarWrapper>
         <FullCalendar
           ref={calendarRef}
-          plugins={[timeGridPlugin, interactionPlugin]}
+          plugins={[timeGridPlugin, interactionPlugin, momentPlugin]}
           headerToolbar={false}
           allDaySlot={false}
-          slotLabelFormat={{ hour: 'numeric', minute: '2-digit', hourCycle: 'h24' }}
+          slotLabelFormat={"h A"}
+          eventTimeFormat={"h:mm A"}
+          dayHeaderFormat={isBreakpointSm ?
+            "dd DD.MM" :
+            "dddd, MMMM DD"
+          }
           slotMinTime={{ hours: 6 }}
           height="100%"
           firstDay={1}
           nowIndicator
           expandRows
           snapDuration={{ minutes: 15 }}
-          editable={!disabled}
-          selectable={!disabled}
-          selectMirror={!disabled}
+          editable
+          selectable
+          selectMirror
           events={events}
           select={(newEvent) => {
             setModalEntry({
@@ -227,14 +237,13 @@ height: 100%;
 const GlobalCalendarStyle = createGlobalStyle`
 :root {
   --fc-small-font-size: ${({ theme }) => theme.typography.body2.fontSize};
-  --fc-border-color: ${({ theme }) => theme.palette.grey[700]};
+  --fc-border-color: ${({ theme }) => theme.palette.grey[800]};
 
-  --fc-event-bg-color: ${({ theme }) => theme.palette.primary.main};
-  --fc-page-bg-color: ${({ theme }) => theme.palette.grey[500]}; // Event border
+  --fc-event-bg-color: ${({ theme }) => theme.palette.primary.dark};
+  --fc-page-bg-color: ${({ theme }) => theme.palette.grey[700]}; // Event border
   --fc-event-text-color: ${({ theme }) => theme.palette.primary.contrastText};
 
   --fc-today-bg-color: ${({ theme }) => theme.palette.primary.light};
-  /* --fc-now-indicator-color: ${({ theme }) => theme.palette.primary.main}; */
-  --fc-now-indicator-color: orange;
+  --fc-now-indicator-color: ${({ theme }) => theme.palette.warning.main};
 }
 `
