@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import styled from "styled-components";
 import { ExpensesStatisticsCard, ToDoTaskContainer } from "../../components";
 import {
@@ -94,7 +94,6 @@ const DiaryContainer = () => {
     else
       editDiaryEntry({
         id: todaysDiaryEntry.id,
-        date: todaysDiaryEntry.date,
         content: diaryContent.trim(),
         workContent: diaryWorkContent.trim(),
       })
@@ -333,6 +332,9 @@ today = dayjs(new Date(today.year(), today.month(), today.date(), 12));
 
 export const Home = () => {
 
+  const theme = useTheme();
+  const isBreakpointLg = useMediaQuery(theme.breakpoints.down("lg"));
+
   const { data: expensesStatistics } = useExpensesStatistics();
   const { data: toDoTasks } = useToDoTasks({
     isArchived: false,
@@ -424,13 +426,14 @@ export const Home = () => {
             <Grid
               size={{ xs: 12, xl: 6 }}
               sx={{ display: { xs: 'none', lg: 'flex' } }}>
-              <NewNoteContainer />
+              {/* Disabling element to avoid duplicate mutations  */}
+              {!isBreakpointLg && <NewNoteContainer />}
             </Grid>
 
             <Grid
               size={12}
               sx={{ display: { xs: 'flex', lg: 'none' } }}>
-              <DiaryContainer />
+              {isBreakpointLg && <DiaryContainer />}
             </Grid>
           </Grid>
         </Grid>
@@ -438,13 +441,13 @@ export const Home = () => {
         <Grid
           size={4}
           sx={{ display: { xs: 'none', lg: 'flex' } }}>
-          <DiaryContainer />
+          {!isBreakpointLg && <DiaryContainer />}
         </Grid>
 
         <Grid
           size={12}
           sx={{ display: { xs: 'flex', lg: 'none' } }}>
-          <NewNoteContainer />
+          {isBreakpointLg && <NewNoteContainer />}
         </Grid>
 
       </Grid>

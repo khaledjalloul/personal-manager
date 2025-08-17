@@ -32,4 +32,5 @@ services:
 
 volumes:
   personal-manager-postgres:
+    # Override default compose volume name
     name: personal-manager-postgres

@@ -39,7 +39,6 @@ export const DiaryEntryContainer = ({
     else
       editEntry({
         id: entry.id,
-        date: entry.date,
         content: content.trim(),
         workContent: workContent.trim(),
       })

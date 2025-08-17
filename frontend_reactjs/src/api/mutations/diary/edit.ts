@@ -7,7 +7,6 @@ const ENDPOINT = "diary";
 
 export type EditDiaryEntryRequestBody = {
   id: number;
-  date?: Date;
   content?: string;
   workContent?: string;
 };

@@ -107,7 +107,6 @@ router.post('/:id', async (req: Request, res: Response) => {
   const updatedEntry = await prisma.diaryEntry.update({
     where: { id: entryId },
     data: {
-      ...(date && { date: new Date(date) }),
       content,
       workContent
     },
