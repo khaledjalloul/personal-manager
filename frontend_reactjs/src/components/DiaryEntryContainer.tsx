@@ -1,20 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DiaryEntry, DiaryEntryType } from "../types";
 import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
-import { Clear, Edit, Save } from "@mui/icons-material";
-import dayjs from "dayjs";
+import { Clear, Edit, Save, Today } from "@mui/icons-material";
+import dayjs, { Dayjs } from "dayjs";
 import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 import { useCtrlS } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+import { useNavigate } from "react-router-dom";
 
 export const DiaryEntryContainer = ({
   entry,
   searchText,
+  selectedDate,
+  dataFetched
 }: {
   entry: DiaryEntry
   searchText: string
+  selectedDate: Dayjs
+  dataFetched: boolean
 }) => {
 
+  const navigate = useNavigate();
   const { palette } = useTheme();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -46,12 +52,19 @@ export const DiaryEntryContainer = ({
 
   useCtrlS(save);
 
+  const entryRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (dataFetched && selectedDate.isSame(entry.date, 'day'))
+      entryRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [dataFetched, selectedDate]);
+
   useEffect(() => {
     if (createSuccess || editSuccess) setIsEditing(false);
   }, [createSuccess, editSuccess]);
 
   return (
-    <Grid container onDoubleClick={() => setIsEditing(true)}>
+    <Grid ref={entryRef} container onDoubleClick={() => setIsEditing(true)}>
       <Grid size={{ xs: 12, md: 2, xl: 1.5 }} sx={{ display: 'flex' }}>
         <Box sx={{
           flexGrow: 1,
@@ -90,28 +103,41 @@ export const DiaryEntryContainer = ({
                 {dayjs(entry.date).format("YYYY")}
               </Typography>
             )}
-
           </Box>
 
           {!isEditing ? (
-            <IconButton
-              onClick={() => setIsEditing(true)}>
-              <Edit fontSize="small" />
-            </IconButton>
-          ) : (
-            <Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'row', md: 'column', lg: 'row' },
+              }}
+            >
               <IconButton
-                size="small"
+                onClick={() => navigate("/calendar", { state: { routedDate: entry.date } })}>
+                <Today fontSize="small" />
+              </IconButton>
+              <IconButton
+                onClick={() => setIsEditing(true)}>
+                <Edit fontSize="small" />
+              </IconButton>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'row', md: 'column', lg: 'row' },
+              }}
+            >
+              <IconButton
                 color="success"
                 loading={createLoading || editLoading}
                 onClick={save}
-                sx={{ mr: { xs: 3, md: 0 } }}
+                sx={{ mr: { xs: 3, md: 0 } }} // Safe margin to avoid pressing cancel by mistake while on mobile
               >
                 <Save fontSize="small" />
               </IconButton>
 
               <IconButton
-                size="small"
                 onClick={() => {
                   setContent(entry.content);
                   setWorkContent(entry.workContent);

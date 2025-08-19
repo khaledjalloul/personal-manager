@@ -10,7 +10,7 @@ export const DailyDiary = () => {
 
   const { searchText, selectedDate } = useOutletContext<{ searchText: string, selectedDate: Dayjs }>();
 
-  const { data: diaryEntries } = useDailyDiaryEntries({
+  const { data: diaryEntries, isFetched } = useDailyDiaryEntries({
     year: selectedDate.year(),
     month: selectedDate.month(),
     searchText: encodeURIComponent(searchText), // Intentionally untrimmed to search for words with spaces
@@ -54,7 +54,13 @@ export const DailyDiary = () => {
         <Typography align="center" mt={7}>No diary entries.</Typography>
       )}
       {displayedEntries?.map((entry) => (
-        <DiaryEntryContainer key={entry.id} entry={entry} searchText={searchText} />
+        <DiaryEntryContainer
+          key={entry.id}
+          entry={entry}
+          searchText={searchText}
+          selectedDate={selectedDate}
+          dataFetched={isFetched}
+        />
       ))}
     </Box>
   );

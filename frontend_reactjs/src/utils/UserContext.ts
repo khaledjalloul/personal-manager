@@ -7,6 +7,8 @@ export type UserData = {
   token: string;
   lastOpenedNoteId?: number;
   lastOpenedJournalCategoryId?: number;
+  lastSelectedCalendarDate?: Date;
+  lastSelectedDiaryDate?: Date;
 } | null;
 
 export const UserContext = createContext<{

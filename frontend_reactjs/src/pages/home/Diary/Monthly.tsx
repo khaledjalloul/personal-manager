@@ -10,7 +10,7 @@ export const MonthlyDiary = () => {
 
   const { searchText, selectedDate } = useOutletContext<{ searchText: string, selectedDate: Dayjs }>();
 
-  const { data: monthlyDiary } = useMonthlyDiaryEntries({
+  const { data: monthlyDiary, isFetched } = useMonthlyDiaryEntries({
     year: selectedDate.year(),
     searchText: searchText.trim(),
   });
@@ -47,7 +47,13 @@ export const MonthlyDiary = () => {
         <Typography align="center" mt={7}>No monthly diary entries.</Typography>
       )}
       {displayedEntries?.map((entry) => (
-        <DiaryEntryContainer key={entry.id} entry={entry} searchText={searchText} />
+        <DiaryEntryContainer
+          key={entry.id}
+          entry={entry}
+          searchText={searchText}
+          selectedDate={selectedDate}
+          dataFetched={isFetched}
+        />
       ))}
     </Box>
   );

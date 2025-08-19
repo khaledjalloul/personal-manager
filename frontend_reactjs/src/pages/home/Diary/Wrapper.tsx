@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Clear, Today, ViewList } from "@mui/icons-material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,13 +15,17 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDailyDiaryEntries, useMonthlyDiaryEntries } from "../../../api";
+import { UserContext } from "../../../utils";
 
 export const DiaryWrapper = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { userData, setUserData } = useContext(UserContext);
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
+  const { routedDate } = location.state as { routedDate?: Date } || { routedDate: undefined };
+
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedDiaryDate));
   const [searchText, setSearchText] = useState("");
 
   const { data: dailyEntries } = useDailyDiaryEntries({
@@ -35,6 +39,14 @@ export const DiaryWrapper = () => {
   });
 
   const isDaily = location.pathname === "/diary";
+
+  useEffect(() => {
+    if (userData)
+      setUserData({
+        ...userData,
+        lastSelectedDiaryDate: selectedDate.toDate(),
+      });
+  }, [selectedDate]);
 
   return (
     <Wrapper>
@@ -64,7 +76,7 @@ export const DiaryWrapper = () => {
             <IconButton
               disabled={Boolean(searchText.trim())}
               onClick={() => setSelectedDate(
-                isDaily ? selectedDate.subtract(1, 'month') : selectedDate.subtract(1, 'year')
+                isDaily ? selectedDate.date(1).subtract(1, 'month') : selectedDate.month(1).date(1).subtract(1, 'year')
               )}
             >
               <ArrowLeft />
@@ -93,7 +105,7 @@ export const DiaryWrapper = () => {
             <IconButton
               disabled={Boolean(searchText.trim())}
               onClick={() => setSelectedDate(
-                isDaily ? selectedDate.add(1, 'month') : selectedDate.add(1, 'year')
+                isDaily ? selectedDate.date(1).add(1, 'month') : selectedDate.month(1).date(1).add(1, 'year')
               )}
             >
               <ArrowRight />
@@ -108,9 +120,9 @@ export const DiaryWrapper = () => {
               textWrap: 'nowrap',
             }}
             onClick={() => setSelectedDate(dayjs())}
-            disabled={Boolean(searchText.trim()) || dayjs().isSame(selectedDate, 'month')}
+            disabled={Boolean(searchText.trim()) || dayjs().isSame(selectedDate, 'day')}
           >
-            This {isDaily ? "Month" : "Year"}
+            {isDaily ? "Today" : "This Year"}
           </Button>
 
           <Button

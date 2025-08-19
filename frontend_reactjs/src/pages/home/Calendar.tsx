@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import styled, { createGlobalStyle } from "styled-components";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeft, ArrowRight, Clear } from "@mui/icons-material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -23,6 +23,8 @@ import momentPlugin from '@fullcalendar/moment';
 import { useCalendarEntries } from "../../api";
 import { ManageCalendarEntryModal } from "../../components";
 import { CalendarEntry } from "../../types";
+import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../../utils";
 
 
 const emptyEntry: CalendarEntry = {
@@ -36,7 +38,13 @@ const emptyEntry: CalendarEntry = {
 
 export const Calendar = () => {
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const { userData, setUserData } = useContext(UserContext);
+
+  const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
+
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate));
   const [searchText, setSearchText] = useState<string>("");
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
 
@@ -60,9 +68,15 @@ export const Calendar = () => {
   const isBreakpointSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    if (calendarRef.current) {
+    if (calendarRef.current)
       calendarRef.current.getApi().gotoDate(selectedDate.toDate());
-    }
+
+    if (userData)
+      setUserData({
+        ...userData,
+        lastSelectedCalendarDate: selectedDate.toDate(),
+      });
+
   }, [selectedDate]);
 
   return (
@@ -116,10 +130,10 @@ export const Calendar = () => {
             width: { xs: 'auto', sm: 105 },
             textWrap: 'nowrap',
           }}
-          disabled={dayjs().isSame(selectedDate, 'week')}
+          disabled={dayjs().isSame(selectedDate, 'day')}
           onClick={() => setSelectedDate(dayjs())}
         >
-          This Week
+          Today
         </Button>
 
         <TextField
@@ -157,10 +171,36 @@ export const Calendar = () => {
           allDaySlot={false}
           slotLabelFormat={"h A"}
           eventTimeFormat={"h:mm A"}
-          dayHeaderFormat={isBreakpointSm ?
-            "dd DD.MM" :
-            "dddd, MMMM DD"
-          }
+          dayHeaderContent={({ date }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column-reverse', sm: 'row' },
+                alignItems: 'center',
+                gap: { xs: 0.5, md: 1 },
+                pb: { xs: 0.5, sm: 0 },
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                navigate("/diary", { state: { routedDate: date } });
+                setSelectedDate(dayjs(date));
+              }}
+            >
+              {selectedDate.isSame(date, 'day') && (
+                <Box sx={{
+                  backgroundColor: "primary.main",
+                  width: 8,
+                  height: 8,
+                  borderRadius: 1,
+                }} />
+              )}
+              <Typography variant="body2">
+                {dayjs(date).format(isBreakpointSm ?
+                  "dd DD.MM" :
+                  "dddd, MMMM DD")}
+              </Typography>
+            </Box>
+          )}
           slotMinTime={{ hours: 6 }}
           height={isBreakpointSm ? "auto" : "100%"}
           firstDay={1}
