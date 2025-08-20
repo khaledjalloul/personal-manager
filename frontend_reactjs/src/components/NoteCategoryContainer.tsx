@@ -1,9 +1,18 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Note, NoteCategory } from "../types";
-import { useCreateNote, useNotes } from "../api";
+import { useNotes } from "../api";
 import { Box, IconButton, Typography } from "@mui/material";
 import { Add, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+
+const emptyNote: Note = {
+  id: -1,
+  title: "",
+  content: "",
+  dateCreated: new Date(),
+  dateModified: new Date(),
+  tags: [],
+};
 
 export const NoteCategoryContainer = ({
   category,
@@ -23,7 +32,6 @@ export const NoteCategoryContainer = ({
     categoryId: category.id,
     searchText: searchText.trim(),
   });
-  const { mutate: createNote, isPending: createNoteLoading } = useCreateNote();
 
   const hidden = category.id === -1 &&
     !searchText.trim() && notes?.length === 0;
@@ -54,18 +62,9 @@ export const NoteCategoryContainer = ({
           {category.id !== -1 && (
             <IconButton
               size="small"
-              loading={createNoteLoading}
               onClick={(e) => {
                 e.stopPropagation();
-                const newDate = new Date();
-                createNote({
-                  categoryId: category.id,
-                  dateCreated: newDate,
-                  dateModified: newDate,
-                  title: "New Note",
-                  content: "",
-                  tags: []
-                })
+                setSelectedNote({ ...emptyNote, category });
               }}>
               <Add fontSize="small" />
             </IconButton>

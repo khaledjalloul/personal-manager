@@ -20,7 +20,7 @@ import {
   Visibility,
   VisibilityOff
 } from "@mui/icons-material";
-import { useDeleteNote, useDownloadNote, useEditNote, useNoteCategories, useNotes } from "../../api";
+import { useCreateNote, useDeleteNote, useDownloadNote, useEditNote, useNoteCategories, useNotes } from "../../api";
 import { addSearchTextHighlight, ConfirmDeleteDialog, ManageNoteCategoriesModal, NoteCategoryContainer } from "../../components";
 import { Note, NoteCategory } from "../../types";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -51,6 +51,7 @@ export const Notes = () => {
   const { data: allNoteCategories } = useNoteCategories({ searchText: "" });
   const { data: noteCategories } = useNoteCategories({ searchText: searchText.trim() });
 
+  const { mutate: createNote, isPending: createNoteLoading, isSuccess: createSuccess, data: createResult } = useCreateNote();
   const { mutate: editNote, isPending: editNoteLoading } = useEditNote();
   const { mutate: deleteNote, isPending: deleteNoteLoading, isSuccess: deleteSuccess } = useDeleteNote();
   const { mutate: downloadNote, isPending: downloadNoteLoading } = useDownloadNote();
@@ -61,13 +62,25 @@ export const Notes = () => {
 
   const save = () => {
     if (!selectedNote || isCategoriesModalOpen || !selectedNoteTitle.trim()) return;
-    editNote({
-      id: selectedNote.id,
-      title: selectedNoteTitle.trim(),
-      content: selectedNoteContent,
-      dateModified: new Date(),
-      categoryId: selectedNoteCategory?.id,
-    });
+
+    const newDate = new Date();
+    if (selectedNote.id === -1 && selectedNoteCategory)
+      createNote({
+        categoryId: selectedNoteCategory.id,
+        title: selectedNoteTitle.trim(),
+        content: selectedNoteContent.trim(),
+        tags: selectedNote.tags,
+        dateCreated: newDate,
+        dateModified: newDate,
+      })
+    if (selectedNote.id !== -1)
+      editNote({
+        id: selectedNote.id,
+        title: selectedNoteTitle.trim(),
+        content: selectedNoteContent,
+        dateModified: new Date(),
+        categoryId: selectedNoteCategory?.id,
+      });
   };
 
   useCtrlS(save);
@@ -89,6 +102,9 @@ export const Notes = () => {
       setSelectedNoteCategory(undefined);
       setSelectedNoteContent("");
     }
+
+    if (selectedNote?.id === -1)
+      setIsEditing(true);
 
     setEditorScrollValue(0);
     setPreviewScrollValue(0);
@@ -123,6 +139,12 @@ export const Notes = () => {
       }
     }
   }, [JSON.stringify(notes), searchText]);
+
+  useEffect(() => {
+    if (createSuccess && createResult) {
+      setSelectedNote(createResult);
+    }
+  }, [createSuccess]);
 
   useEffect(() => {
     if (deleteSuccess && selectedNote)
@@ -314,7 +336,7 @@ export const Notes = () => {
               sx={{ ml: 'auto', display: { xs: 'none', sm: 'flex' } }}
               color="success"
               disabled={!selectedNote || !selectedNoteTitle.trim()}
-              loading={editNoteLoading}
+              loading={createNoteLoading || editNoteLoading}
               onClick={save}
             >
               <Save />
