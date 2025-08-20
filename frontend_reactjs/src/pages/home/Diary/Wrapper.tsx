@@ -31,11 +31,14 @@ export const DiaryWrapper = () => {
   const { data: dailyEntries } = useDailyDiaryEntries({
     year: selectedDate.year(),
     month: selectedDate.month(),
-    searchText: encodeURIComponent(searchText),
+    // Only consider search text with 3 or more characters to avoid rapid frontend update and freezing
+    // Encoded search text to allow special characters
+    // Intentionally untrimmed to search for words with spaces
+    searchText: searchText.length >= 3 ? encodeURIComponent(searchText) : "",
   });
   const { data: monthlyDiary } = useMonthlyDiaryEntries({
     year: selectedDate.year(),
-    searchText: searchText.trim(),
+    searchText: searchText.trim().length >= 3 ? searchText.trim() : "",
   });
 
   const isDaily = location.pathname === "/diary";

@@ -38,34 +38,47 @@ const emptyEntry: CalendarEntry = {
 
 export const Calendar = () => {
 
+  const theme = useTheme();
   const navigate = useNavigate();
   const { state } = useLocation();
   const { userData, setUserData } = useContext(UserContext);
+  const isBreakpointSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate));
   const [searchText, setSearchText] = useState<string>("");
+  const [searchIndex, setSearchIndex] = useState<number>(0);
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
 
   const { data: calendarEntries } = useCalendarEntries({
     date: selectedDate.toDate(),
-    searchText: searchText.trim()
+    // Only consider search text with 3 or more characters to avoid rapid frontend update and freezing
+    searchText: searchText.trim().length >= 3 ? searchText.trim() : "",
   });
 
+  const calendarRef = useRef<FullCalendar>(null);
+  const isSearchMode = searchText.trim().length >= 3;
+
   const events = useMemo((): EventInput[] => {
-    return calendarEntries?.map(entry => ({
+    return calendarEntries?.map((entry, index) => ({
       id: entry.id.toString(),
       start: entry.startDate,
       end: entry.endDate,
       title: `${entry.title}${entry.description ? ` - ${entry.description}` : ''}${entry.location ? ` (${entry.location})` : ''}`,
+      color: isSearchMode && index === searchIndex ? theme.palette.warning.dark : ""
     })) ?? [];
-  }, [calendarEntries]);
+  }, [calendarEntries, isSearchMode]);
 
-  const calendarRef = useRef<FullCalendar>(null);
-
-  const theme = useTheme();
-  const isBreakpointSm = useMediaQuery(theme.breakpoints.down("sm"));
+  useEffect(() => {
+    if (isSearchMode && calendarEntries) {
+      setSearchIndex(0);
+      if (calendarEntries.length > 0) {
+        const firstDate = dayjs(calendarEntries[0].startDate);
+        setSelectedDate(firstDate);
+      }
+    }
+  }, [JSON.stringify(calendarEntries), isSearchMode]);
 
   useEffect(() => {
     if (calendarRef.current)
@@ -92,36 +105,67 @@ export const Calendar = () => {
           Calendar
         </Typography>
 
+        {!isSearchMode ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton
+              onClick={() => setSelectedDate(selectedDate.subtract(1, 'week'))}
+            >
+              <ArrowLeft />
+            </IconButton>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton
-            onClick={() => setSelectedDate(selectedDate.subtract(1, 'week'))}
-          >
-            <ArrowLeft />
-          </IconButton>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue ?? dayjs())}
+                enableAccessibleFieldDOMStructure={false}
+                format={"dddd, MMMM DD, YYYY"}
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    placeholder: "Date",
+                  }
+                }}
+                sx={{ flexGrow: 1 }}
+              />
+            </LocalizationProvider>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue ?? dayjs())}
-              enableAccessibleFieldDOMStructure={false}
-              format={"dddd, MMMM DD, YYYY"}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  placeholder: "Date",
-                }
+            <IconButton
+              onClick={() => setSelectedDate(selectedDate.add(1, 'week'))}
+            >
+              <ArrowRight />
+            </IconButton>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton
+              disabled={!calendarEntries || calendarEntries.length === 0}
+              onClick={() => {
+                if (!calendarEntries) return;
+                const newIndex = searchIndex === 0 ? calendarEntries.length - 1 : searchIndex - 1;
+                setSearchIndex(newIndex);
+                setSelectedDate(dayjs(calendarEntries[newIndex].startDate));
               }}
-              sx={{ flexGrow: 1 }}
-            />
-          </LocalizationProvider>
+            >
+              <ArrowLeft />
+            </IconButton>
 
-          <IconButton
-            onClick={() => setSelectedDate(selectedDate.add(1, 'week'))}
-          >
-            <ArrowRight />
-          </IconButton>
-        </Box>
+            <Typography>
+              {calendarEntries && calendarEntries.length > 0 ? searchIndex + 1 : 0} / {calendarEntries?.length} search entries
+            </Typography>
+
+            <IconButton
+              disabled={!calendarEntries || calendarEntries.length === 0}
+              onClick={() => {
+                if (!calendarEntries) return;
+                const newIndex = searchIndex === calendarEntries.length - 1 ? 0 : searchIndex + 1;
+                setSearchIndex(newIndex);
+                setSelectedDate(dayjs(calendarEntries[newIndex].startDate));
+              }}
+            >
+              <ArrowRight />
+            </IconButton>
+          </Box>
+        )}
 
         <Button
           variant="contained"

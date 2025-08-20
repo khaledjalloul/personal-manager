@@ -89,16 +89,16 @@ export const DiaryEntryContainer = ({
             <Typography sx={{ fontSize: { xs: 14, lg: 16 } }}>
               {dayjs(entry.date).format(
                 isDaily ?
-                  (searchText ? "DD.MM.YYYY" : "dddd") :
+                  (searchText.length >= 3 ? "DD.MM.YYYY" : "dddd") :
                   "MMMM"
               )}
             </Typography>
-            {isDaily && !searchText && (
+            {isDaily && searchText.length < 3 && (
               <Typography variant="h5">
                 {dayjs(entry.date).format("DD")}
               </Typography>
             )}
-            {!isDaily && searchText && (
+            {!isDaily && searchText.length >= 3 && (
               <Typography variant="body2">
                 {dayjs(entry.date).format("YYYY")}
               </Typography>

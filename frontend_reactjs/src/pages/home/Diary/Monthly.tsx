@@ -12,7 +12,7 @@ export const MonthlyDiary = () => {
 
   const { data: monthlyDiary, isFetched } = useMonthlyDiaryEntries({
     year: selectedDate.year(),
-    searchText: searchText.trim(),
+    searchText: searchText.trim().length >= 3 ? searchText.trim() : "",
   });
 
   const displayedEntries: DiaryEntry[] | undefined = useMemo(() =>

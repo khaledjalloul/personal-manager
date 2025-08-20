@@ -13,11 +13,14 @@ export const DailyDiary = () => {
   const { data: diaryEntries, isFetched } = useDailyDiaryEntries({
     year: selectedDate.year(),
     month: selectedDate.month(),
-    searchText: encodeURIComponent(searchText), // Intentionally untrimmed to search for words with spaces
+    // Only consider search text with 3 or more characters to avoid rapid frontend update and freezing
+    // Encoded search text to allow special characters
+    // Intentionally untrimmed to search for words with spaces
+    searchText: searchText.length >= 3 ? encodeURIComponent(searchText) : "",
   });
 
   const displayedEntries: DiaryEntry[] | undefined = useMemo(() => {
-    if (searchText)
+    if (searchText.length >= 3)
       return diaryEntries;
 
     const lastDayOfMonth = new Date(selectedDate.year(), selectedDate.month() + 1, 0);
