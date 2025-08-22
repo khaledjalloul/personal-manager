@@ -64,7 +64,7 @@ export const Notes = () => {
     if (!selectedNote || isCategoriesModalOpen || !selectedNoteTitle.trim()) return;
 
     const newDate = new Date();
-    if (selectedNote.id === -1 && selectedNoteCategory)
+    if (selectedNote.id < 0 && selectedNoteCategory)
       createNote({
         categoryId: selectedNoteCategory.id,
         title: selectedNoteTitle.trim(),
@@ -73,7 +73,7 @@ export const Notes = () => {
         dateCreated: newDate,
         dateModified: newDate,
       })
-    if (selectedNote.id !== -1)
+    if (selectedNote.id >= 0)
       editNote({
         id: selectedNote.id,
         title: selectedNoteTitle.trim(),
@@ -103,7 +103,7 @@ export const Notes = () => {
       setSelectedNoteContent("");
     }
 
-    if (selectedNote?.id === -1)
+    if (selectedNote && selectedNote.id < 0)
       setIsEditing(true);
 
     setEditorScrollValue(0);

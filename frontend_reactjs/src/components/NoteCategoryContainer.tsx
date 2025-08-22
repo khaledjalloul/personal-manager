@@ -64,7 +64,7 @@ export const NoteCategoryContainer = ({
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedNote({ ...emptyNote, category });
+                setSelectedNote({ ...emptyNote, id: -category.id, category });
               }}>
               <Add fontSize="small" />
             </IconButton>
