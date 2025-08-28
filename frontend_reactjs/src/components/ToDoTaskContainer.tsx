@@ -68,113 +68,103 @@ export const ToDoTaskContainer = ({
     <Box
       sx={{
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: { xs: !task.milestoneId ? 'column' : 'row', sm: 'row' },
+        alignItems: { xs: !task.milestoneId ? 'stretch' : 'center', sm: 'center' },
         gap: 1,
         flexGrow: 1,
       }}
       onDoubleClick={editable ? () => setIsEditing(true) : undefined}
     >
 
-      {!isEditing && (
-        <IconButton
-          loading={editTaskLoading}
-          onClick={() => {
-            let newStatus = status;
-            switch (status) {
-              case ToDoTaskStatus.Pending:
-                newStatus = ToDoTaskStatus.Completed;
-                break;
-              case ToDoTaskStatus.Completed:
-                newStatus = ToDoTaskStatus.NotCompleted;
-                break;
-              case ToDoTaskStatus.NotCompleted:
-                newStatus = ToDoTaskStatus.Pending;
-                break;
-            }
-            statusRef.current = newStatus;
-            setStatus(newStatus);
-
-            setTimeout(() => {
-              if (newStatus === statusRef.current && newStatus != task.status)
-                editTask({ id: task.id, status: newStatus, date: new Date() });
-            }, 3000);
-          }}
-        >
-          {status === ToDoTaskStatus.Completed ? (
-            <CheckBox color="success" />
-          ) : status === ToDoTaskStatus.NotCompleted ? (
-            <DisabledByDefault color="error" />
-          ) : (
-            <CheckBoxOutlineBlank color="action" />
-          )}
-        </IconButton>
-      )
-      }
-
-      {editable && (
-        !isEditing ? (
-          <IconButton onClick={() => setIsEditing(true)}>
-            <Edit fontSize="small" />
-          </IconButton>
-        ) : (
-          <Box>
-            <IconButton
-              onClick={save}
-              loading={createTaskLoading || editTaskLoading}
-              disabled={!content.trim() || !date}
-              color="success"
-            >
-              <Save fontSize="small" />
-            </IconButton>
-
-            {!isAddingTask && (
-              <IconButton
-                onClick={() => setConfirmDeleteOpen(true)}
-                loading={deleteTaskLoading}
-                color="error"
-              >
-                <Delete fontSize="small" />
-              </IconButton>
-            )}
-
-            <IconButton onClick={() => {
-              if (!isAddingTask) {
-                setContent(task.content);
-                setStatus(task.status);
-                setIsEditing(false);
-              } else {
-                setIsAddingTask(false);
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        {!isEditing && (
+          <IconButton
+            loading={editTaskLoading}
+            onClick={() => {
+              let newStatus = status;
+              switch (status) {
+                case ToDoTaskStatus.Pending:
+                  newStatus = ToDoTaskStatus.Completed;
+                  break;
+                case ToDoTaskStatus.Completed:
+                  newStatus = ToDoTaskStatus.NotCompleted;
+                  break;
+                case ToDoTaskStatus.NotCompleted:
+                  newStatus = ToDoTaskStatus.Pending;
+                  break;
               }
-            }}>
-              <Clear fontSize="small" />
-            </IconButton>
-          </Box>
+              statusRef.current = newStatus;
+              setStatus(newStatus);
+
+              setTimeout(() => {
+                if (newStatus === statusRef.current && newStatus != task.status)
+                  editTask({ id: task.id, status: newStatus, date: new Date() });
+              }, 3000);
+            }}
+          >
+            {status === ToDoTaskStatus.Completed ? (
+              <CheckBox color="success" />
+            ) : status === ToDoTaskStatus.NotCompleted ? (
+              <DisabledByDefault color="error" />
+            ) : (
+              <CheckBoxOutlineBlank color="action" />
+            )}
+          </IconButton>
         )
-      )}
+        }
 
-      {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
-        <Box
-          sx={{
-            border: 'solid 1px',
-            borderColor: 'grey.700',
-            borderRadius: 2,
-            p: 1,
-            pl: 2,
-            pr: 2,
-          }}
-        >
-          <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
-            {dayjs(task.dateCreated).format("DD.MM.YYYY")}
-          </Typography>
-        </Box>
-      )}
+        {editable && (
+          !isEditing ? (
+            <IconButton onClick={() => setIsEditing(true)}>
+              <Edit fontSize="small" />
+            </IconButton>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <IconButton
+                onClick={save}
+                loading={createTaskLoading || editTaskLoading}
+                disabled={!content.trim() || !date}
+                color="success"
+              >
+                <Save fontSize="small" />
+              </IconButton>
 
-      {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
-        <KeyboardDoubleArrowRight sx={{ color: "text.primary" }} />
-      )}
+              {!isAddingTask && (
+                <IconButton
+                  onClick={() => setConfirmDeleteOpen(true)}
+                  loading={deleteTaskLoading}
+                  color="error"
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              )}
 
-      {!task.milestoneId && (
-        !isEditing ? (
+              <IconButton onClick={() => {
+                if (!isAddingTask) {
+                  setContent(task.content);
+                  setStatus(task.status);
+                  setIsEditing(false);
+                } else {
+                  setIsAddingTask(false);
+                }
+              }}>
+                <Clear fontSize="small" />
+              </IconButton>
+            </Box>
+          )
+        )}
+
+        {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
           <Box
             sx={{
               border: 'solid 1px',
@@ -183,33 +173,60 @@ export const ToDoTaskContainer = ({
               p: 1,
               pl: 2,
               pr: 2,
-              mr: 1
             }}
           >
             <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
-              {date.format(task.status === ToDoTaskStatus.Pending ? "MMM DD" : "DD.MM.YYYY")}
+              {dayjs(task.dateCreated).format("DD.MM.YYYY")}
             </Typography>
           </Box>
-        ) : (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={date ?? null}
-              onChange={(newValue) => setDate(newValue ?? dayjs())}
-              enableAccessibleFieldDOMStructure={false}
-              format="MMM DD"
-              slotProps={{
-                textField: {
-                  size: "small",
-                  placeholder: "Date",
-                }
-              }}
+        )}
+
+        {!task.milestoneId && !isEditing && task.status !== ToDoTaskStatus.Pending && (
+          <KeyboardDoubleArrowRight sx={{ color: "text.primary" }} />
+        )}
+
+        {!task.milestoneId && (
+          !isEditing ? (
+            <Box
               sx={{
-                mr: 1
+                border: 'solid 1px',
+                borderColor: 'grey.700',
+                borderRadius: 2,
+                flexGrow: 1,
+                p: 1,
+                pl: 2,
+                pr: 2,
+                mr: { xs: !task.milestoneId ? 0 : 1, sm: 1 },
+                ml: 1
               }}
-            />
-          </LocalizationProvider>
-        )
-      )}
+            >
+              <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+                {date.format(task.status === ToDoTaskStatus.Pending ? "MMM DD" : "DD.MM.YYYY")}
+              </Typography>
+            </Box>
+          ) : (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={date ?? null}
+                onChange={(newValue) => setDate(newValue ?? dayjs())}
+                enableAccessibleFieldDOMStructure={false}
+                format="MMM DD"
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    placeholder: "Date",
+                  }
+                }}
+                sx={{
+                  mr: { xs: !task.milestoneId ? 0 : 1, sm: 1 },
+                  ml: 1,
+                  flexGrow: 1
+                }}
+              />
+            </LocalizationProvider>
+          )
+        )}
+      </Box>
 
       {
         !isEditing ? (
@@ -234,6 +251,6 @@ export const ToDoTaskContainer = ({
         itemName={`task: ${task.content}`}
         deleteFn={() => deleteTask({ id: task.id })}
       />
-    </Box >
+    </Box>
   )
 };

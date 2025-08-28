@@ -46,7 +46,7 @@ export const GeneralToDo = () => {
       pt: 0,
       display: 'flex',
       flexDirection: 'column',
-      gap: 1
+      gap: { xs: 2, sm: 1 }
     }}>
       {!isAddingTask && toDoTasks?.length === 0 && (
         <Typography align="center" mt={7}>No tasks.</Typography>

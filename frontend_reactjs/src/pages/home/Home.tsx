@@ -403,7 +403,7 @@ export const Home = () => {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 1,
+                  gap: { xs: 2, sm: 1 },
                   mt: 1,
                   overflowY: 'auto',
                 }}
