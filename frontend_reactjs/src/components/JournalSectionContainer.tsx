@@ -2,7 +2,7 @@ import { Box, IconButton, TextField, Typography } from "@mui/material"
 import { JournalEntry, JournalSection } from "../types";
 import { useDeleteJournalSection, useEditJournalSection, useJournalEntries } from "../api";
 import { JournalEntryContainer } from "./JournalEntryContainer";
-import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
+import { Add, Clear, Delete, Edit, ExpandLess, ExpandMore, Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useCtrlS } from "../utils";
 import { ConfirmDeleteDialog } from "./modals";
@@ -25,13 +25,16 @@ const emptyEntry: JournalEntry = {
 
 export const JournalSectionContainer = ({
   section,
-  searchText
+  searchText,
+  allSectionsCollapsed
 }: {
   section: JournalSection
   searchText: string
+  allSectionsCollapsed: boolean
 }) => {
 
   const [isEditingSection, setIsEditingSection] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [sectionName, setSectionName] = useState(section.name);
   const [isAddingEntry, setIsAddingEntry] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -58,6 +61,10 @@ export const JournalSectionContainer = ({
   useEffect(() => {
     if (editSectionSuccess) setIsEditingSection(false);
   }, [editSectionSuccess]);
+
+  useEffect(() => {
+    setIsCollapsed(allSectionsCollapsed);
+  }, [allSectionsCollapsed]);
 
   return (
     <Box>
@@ -87,6 +94,12 @@ export const JournalSectionContainer = ({
               <Add fontSize="small" />
             </IconButton>
           )}
+
+          <IconButton
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? <ExpandMore fontSize="small" /> : <ExpandLess fontSize="small" />}
+          </IconButton>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -126,7 +139,7 @@ export const JournalSectionContainer = ({
       )}
 
       <Box sx={{
-        display: 'flex',
+        display: isCollapsed ? 'none' : 'flex',
         flexDirection: 'column',
         gap: { xs: 3, lg: 1 }
       }}>

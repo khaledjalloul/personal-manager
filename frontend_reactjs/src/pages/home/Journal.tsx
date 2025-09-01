@@ -13,6 +13,8 @@ import {
   Clear,
   Delete,
   Edit,
+  ExpandLess,
+  ExpandMore,
   Save
 } from "@mui/icons-material";
 import {
@@ -85,6 +87,7 @@ export const Journal = () => {
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [allSectionsCollapsed, setAllSectionsCollapsed] = useState(false);
 
   const { data: categories } = useJournalCategories({ searchText: searchText.trim() });
   const { data: sectionsRaw } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
@@ -307,6 +310,14 @@ export const Journal = () => {
                   <Add />
                 </IconButton>
               )}
+
+              {selectedCategory && (
+                <IconButton
+                  onClick={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
+                >
+                  {allSectionsCollapsed ? <ExpandMore /> : <ExpandLess />}
+                </IconButton>
+              )}
             </Box>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -382,6 +393,7 @@ export const Journal = () => {
               key={section.id}
               section={section}
               searchText={searchText}
+              allSectionsCollapsed={allSectionsCollapsed}
             />
           ))}
         </Grid>
