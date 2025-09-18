@@ -46,7 +46,8 @@ export const Calendar = () => {
 
   const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate));
+  const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate).startOf('week').add(1, 'day'));
+  const setSelectedDate = (date: Dayjs) => setSelectedDateOg(date.startOf('week').add(1, 'day'));
   const [searchText, setSearchText] = useState<string>("");
   const [searchIndex, setSearchIndex] = useState<number>(0);
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
@@ -118,7 +119,7 @@ export const Calendar = () => {
                 value={selectedDate}
                 onChange={(newValue) => setSelectedDate(newValue ?? dayjs())}
                 enableAccessibleFieldDOMStructure={false}
-                format={"dddd, MMMM DD, YYYY"}
+                format={"MMMM DD, YYYY"}
                 slotProps={{
                   textField: {
                     size: "small",
@@ -230,7 +231,7 @@ export const Calendar = () => {
                 setSelectedDate(dayjs(date));
               }}
             >
-              {selectedDate.isSame(date, 'day') && (
+              {dayjs().isSame(date, 'day') && (
                 <Box sx={{
                   backgroundColor: "primary.main",
                   width: 8,
