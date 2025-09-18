@@ -1,12 +1,13 @@
 services:
   personal-manager:
-    image: personal-manager
+    image: khaledjalloul/personal-manager
     build:
       context: ..
-      dockerfile: ./.devcontainer/Dockerfile
+      dockerfile: .devcontainer/Dockerfile
     ports:
       - "3000:3000"
       - "3007:3007"
+    container_name: personal-manager
     depends_on:
       - postgres
     command: bash -c "while sleep 1000; do :; done"

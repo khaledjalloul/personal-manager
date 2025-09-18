@@ -4,6 +4,7 @@
     "service": "personal-manager",
     "workspaceFolder": "/workspaces/personal-manager",
     "postCreateCommand": "bash .devcontainer/post_create.bash",
+    "initializeCommand": "docker compose -f .devcontainer/compose.yaml down",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -11,19 +12,23 @@
                 "styled-components.vscode-styled-components",
                 // ExpressJS
                 "prisma.prisma",
-                // GitLens
-                "eamodio.gitlens",
                 // Yaml
                 "redhat.vscode-yaml",
                 // XML
                 "redhat.vscode-xml",
                 // Markdown
-                "yzhang.markdown-all-in-one"
+                "yzhang.markdown-all-in-one",
+                // Docker
+                "ms-azuretools.vscode-docker",
+                // GitLens
+                "eamodio.gitlens",
+                // Shell Formatter
+                "foxundermoon.shell-format"
             ],
             "settings": {
                 "gitlens.codeLens.authors.enabled": false,
                 "gitlens.codeLens.recentChange.enabled": false
             }
         }
-    },
+    }
 }
