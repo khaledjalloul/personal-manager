@@ -29,10 +29,12 @@ npm start
 ## Deployment
 
 Frontend:
-- Trigger rebuild using `npm run deploy`.
+  - Set the `REACT_APP_API_URL` in `frontend_reactjs/.env.local` to the deployed one.
+  - Trigger rebuild using `npm run deploy`.
 
 Backend:
   - Rebuild is automatically triggered on commit.
 
-PostgreSQL Database:
-  - Use `npx prisma migrate deploy` instead of `dev` during initial configuration or if the database models change.
+PostgreSQL Database (During initial configuration or if the database models change):
+  - Set the `DATABASE_URL` variable in `backend_expressjs/.env` to the deployed one.
+  - Use `npx prisma migrate deploy` instead of `dev` .

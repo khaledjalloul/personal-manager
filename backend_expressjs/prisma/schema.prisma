@@ -198,6 +198,7 @@ model PianoPiece {
   status        PianoPieceStatus
   sheetMusicUrl String
   youtubeUrl    String
+  isFavorite    Boolean
   monthLearned  DateTime?
 }
 

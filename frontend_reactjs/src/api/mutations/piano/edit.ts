@@ -11,9 +11,10 @@ export type EditPianoPieceRequestBody = {
   origin?: string;
   composer?: string;
   status?: PianoPieceStatus;
-  monthLearned?: Date;
+  monthLearned?: Date | null;
   sheetMusicUrl?: string;
   youtubeUrl?: string;
+  isFavorite?: boolean;
 };
 
 const mutationFn = async (data: EditPianoPieceRequestBody) => {

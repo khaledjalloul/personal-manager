@@ -175,10 +175,10 @@ export const Calendar = () => {
             width: { xs: 'auto', sm: 105 },
             textWrap: 'nowrap',
           }}
-          disabled={dayjs().isSame(selectedDate, 'day')}
+          disabled={dayjs().isSame(selectedDate, 'week')}
           onClick={() => setSelectedDate(dayjs())}
         >
-          Today
+          This Week
         </Button>
 
         <TextField

@@ -16,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
         { composer: { contains: searchText, mode: 'insensitive' } },
       ]
     },
-    orderBy: { monthLearned: 'asc' },
+    orderBy: [{ isFavorite: 'desc' }, { monthLearned: 'desc' }],
   });
   res.json(pianoPieces);
 });
@@ -32,7 +32,8 @@ router.post('/', async (req: Request, res: Response) => {
       status: data.status,
       monthLearned: data.monthLearned ? new Date(data.monthLearned) : null,
       sheetMusicUrl: data.sheetMusicUrl,
-      youtubeUrl: data.youtubeUrl
+      youtubeUrl: data.youtubeUrl,
+      isFavorite: data.isFavorite,
     },
   });
   res.json(newPianoPiece);
@@ -48,9 +49,10 @@ router.post('/:id', async (req: Request, res: Response) => {
       composer: data.composer,
       origin: data.origin,
       status: data.status,
-      monthLearned: data.monthLearned ? new Date(data.monthLearned) : null,
+      monthLearned: data.monthLearned,
       sheetMusicUrl: data.sheetMusicUrl,
-      youtubeUrl: data.youtubeUrl
+      youtubeUrl: data.youtubeUrl,
+      isFavorite: data.isFavorite,
     }
   });
   res.json(updatedPiece);

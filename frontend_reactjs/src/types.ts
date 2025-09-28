@@ -138,6 +138,7 @@ export type PianoPiece = {
   status: PianoPieceStatus;
   sheetMusicUrl: string;
   youtubeUrl: string;
+  isFavorite: boolean;
   monthLearned?: Date;
 };
 

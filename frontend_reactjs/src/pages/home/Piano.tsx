@@ -27,7 +27,8 @@ const emptyPiece: PianoPiece = {
   composer: "",
   status: PianoPieceStatus.Planned,
   sheetMusicUrl: "",
-  youtubeUrl: ""
+  youtubeUrl: "",
+  isFavorite: false,
 }
 
 export const Piano = () => {
@@ -96,6 +97,7 @@ export const Piano = () => {
         >
           <TableHead>
             <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Origin</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Composer</TableCell>

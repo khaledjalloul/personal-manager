@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import { PianoPiece, PianoPieceStatus } from "../types";
-import { Clear, Delete, Edit, PictureAsPdf, Save, YouTube } from "@mui/icons-material";
+import { Clear, Delete, Edit, PictureAsPdf, Save, Star, StarOutlineOutlined, YouTube } from "@mui/icons-material";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -62,7 +62,7 @@ export const PianoPieceTableRow = ({
         origin: origin.trim(),
         composer: composer.trim(),
         status,
-        monthLearned: monthLearned && monthLearned.toDate(),
+        monthLearned: monthLearned ? monthLearned.toDate() : null,
         youtubeUrl: youtubeUrl.trim(),
         sheetMusicUrl: sheetMusicUrl.trim()
       });
@@ -72,9 +72,10 @@ export const PianoPieceTableRow = ({
         origin: origin.trim(),
         composer: composer.trim(),
         status,
-        monthLearned: monthLearned && monthLearned.toDate(),
+        monthLearned: monthLearned ? monthLearned.toDate() : null,
         youtubeUrl: youtubeUrl.trim(),
-        sheetMusicUrl: sheetMusicUrl.trim()
+        sheetMusicUrl: sheetMusicUrl.trim(),
+        isFavorite: false,
       });
   };
 
@@ -98,6 +99,20 @@ export const PianoPieceTableRow = ({
         }}
         onDoubleClick={() => setIsEditing(true)}
       >
+
+        <TableCell sx={{ width: 3 }}>
+          {!isEditing && <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton size="small" onClick={() => {
+              editPiece({
+                id: pianoPiece.id,
+                isFavorite: !pianoPiece.isFavorite,
+              });
+            }}>
+              {pianoPiece.isFavorite ? <Star fontSize="small" sx={{ color: 'yellow' }} /> : <StarOutlineOutlined fontSize="small" />}
+            </IconButton>
+          </Box>}
+        </TableCell>
+
         <TableCell sx={{ fontWeight: 'bold' }}>
           {!isEditing ? <SearchTextHighlight text={name} searchText={searchText.trim()} /> :
             <TextField

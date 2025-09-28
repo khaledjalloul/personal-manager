@@ -381,7 +381,8 @@ const pianoHandlers = [
     const requestBody = await request.clone().json() as CreatePianoPieceRequestBody;
     const newPianoPiece: PianoPiece = {
       id: pianoPieces.length > 0 ? Math.max(...pianoPieces.map(piece => piece.id)) + 1 : 0,
-      ...requestBody
+      ...requestBody,
+      monthLearned: requestBody.monthLearned ? dayjs(requestBody.monthLearned).toDate() : undefined
     }
     pianoPieces.push(newPianoPiece);
     return HttpResponse.json(newPianoPiece);
@@ -391,7 +392,11 @@ const pianoHandlers = [
     const pieceId = parseInt(params.id as string);
     const existingIndex = pianoPieces.findIndex(piece => piece.id === pieceId);
     if (existingIndex !== -1) {
-      pianoPieces[existingIndex] = { ...pianoPieces[existingIndex], ...requestBody };
+      pianoPieces[existingIndex] = {
+        ...pianoPieces[existingIndex],
+        ...requestBody,
+        monthLearned: requestBody.monthLearned ? dayjs(requestBody.monthLearned).toDate() : undefined
+      };
       return HttpResponse.json(pianoPieces[existingIndex]);
     }
   }),

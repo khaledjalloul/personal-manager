@@ -348,7 +348,8 @@ export const pianoPieces: PianoPiece[] = [
         status: PianoPieceStatus.Learned,
         monthLearned: new Date("2025-01-01"),
         sheetMusicUrl: 'https://example.com/fur-elise-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo',
+        isFavorite: false
     },
     {
         id: 2,
@@ -358,7 +359,8 @@ export const pianoPieces: PianoPiece[] = [
         status: PianoPieceStatus.Learning,
         monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/clair-de-lune-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4'
+        youtubeUrl: 'https://www.youtube.com/watch?v=CvFH_9DNRC4',
+        isFavorite: false
     },
     {
         id: 3,
@@ -368,7 +370,8 @@ export const pianoPieces: PianoPiece[] = [
         status: PianoPieceStatus.Planned,
         monthLearned: undefined,
         sheetMusicUrl: 'https://example.com/moonlight-sonata-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo',
+        isFavorite: true
     },
     {
         id: 4,
@@ -378,7 +381,8 @@ export const pianoPieces: PianoPiece[] = [
         status: PianoPieceStatus.Learned_Forgotten,
         monthLearned: new Date("2025-04-01"),
         sheetMusicUrl: 'https://example.com/prelude-in-c-major-sheet-music',
-        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo'
+        youtubeUrl: 'https://www.youtube.com/watch?v=4Tr0otuiQuo',
+        isFavorite: false
     }
 ];
 
