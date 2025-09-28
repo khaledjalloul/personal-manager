@@ -6,6 +6,13 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
+  const orderBy = (req.query.orderBy as string) ?? "isFavorite";
+  const orderDirection = (req.query.orderDirection as string) ?? "desc";
+
+  const orderList = [{ [orderBy]: orderDirection }];
+  if (orderBy !== 'monthLearned') {
+    orderList.push({ monthLearned: 'asc' });
+  }
 
   const pianoPieces = await prisma.pianoPiece.findMany({
     where: {
@@ -16,7 +23,7 @@ router.get('/', async (req: Request, res: Response) => {
         { composer: { contains: searchText, mode: 'insensitive' } },
       ]
     },
-    orderBy: [{ isFavorite: 'desc' }, { monthLearned: 'desc' }],
+    orderBy: orderList,
   });
   res.json(pianoPieces);
 });

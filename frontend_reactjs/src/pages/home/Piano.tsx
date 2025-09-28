@@ -9,12 +9,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import { useState } from "react";
-import { Add, Clear } from "@mui/icons-material";
+import { Add, Clear, StarOutlineOutlined } from "@mui/icons-material";
 import { usePianoPieces } from "../../api";
 import { PianoPieceTableRow } from "../../components";
 import { PianoPiece, PianoPieceStatus } from "../../types";
@@ -35,10 +36,22 @@ export const Piano = () => {
 
   const [searchText, setSearchText] = useState("");
   const [isAddingPiece, setIsAddingPiece] = useState(false);
+  const [orderBy, setOrderBy] = useState<keyof PianoPiece>('isFavorite');
+  const [orderDirection, setOrderDirection] = useState<'asc' | 'desc'>('desc');
 
   const { data: pianoPieces } = usePianoPieces({
     searchText: searchText.trim(),
+    orderBy,
+    orderDirection
   });
+
+  const handleSortClick = (field: keyof PianoPiece) => {
+    if (orderBy === field) {
+      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setOrderBy(field);
+    }
+  };
 
   return (
     <Wrapper sx={{ height: { xs: 'auto', sm: '100%' } }}>
@@ -97,12 +110,60 @@ export const Piano = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Origin</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Composer</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Month Learned</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'isFavorite'}
+                  onClick={() => handleSortClick('isFavorite')}
+                  direction={orderDirection}
+                >
+                  <StarOutlineOutlined fontSize="small" />
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'name'}
+                  onClick={() => handleSortClick('name')}
+                  direction={orderDirection}
+                >
+                  Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'origin'}
+                  onClick={() => handleSortClick('origin')}
+                  direction={orderDirection}
+                >
+                  Origin
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'composer'}
+                  onClick={() => handleSortClick('composer')}
+                  direction={orderDirection}
+                >
+                  Composer
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'status'}
+                  onClick={() => handleSortClick('status')}
+                  direction={orderDirection}
+                >
+                  Status
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>
+                <TableSortLabel
+                  active={orderBy === 'monthLearned'}
+                  onClick={() => handleSortClick('monthLearned')}
+                  direction={orderDirection}
+                >
+                  Month Learned
+                </TableSortLabel>
+              </TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Links</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>

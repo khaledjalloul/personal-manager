@@ -6,6 +6,8 @@ const ENDPOINT = "piano";
 
 export type GetPianoPiecesRequestParams = {
   searchText: string;
+  orderBy: string;
+  orderDirection: 'asc' | 'desc';
 };
 
 const queryFn = (params: GetPianoPiecesRequestParams) => async () => {
