@@ -343,6 +343,23 @@ export const VideoGameCard = ({
               />
             </Grid>
           )}
+
+          {isEditing && (
+            <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
+              <TextField
+                variant="standard"
+                placeholder="Cover Image URL"
+                value={coverImage}
+                sx={{ flexGrow: 1 }}
+                onChange={(e) => setCoverImage(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: <InputAdornment position="start"><AddPhotoAlternate /></InputAdornment>,
+                  }
+                }}
+              />
+            </Grid>
+          )}
         </Grid>
       </ContentBox>
       <ConfirmDeleteDialog
