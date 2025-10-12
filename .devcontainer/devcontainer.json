@@ -2,7 +2,7 @@
     "name": "Personal Manager",
     "dockerComposeFile": "compose.yaml",
     "service": "personal-manager",
-    "workspaceFolder": "/workspaces/personal-manager",
+    "workspaceFolder": "/workspace/personal-manager",
     "postCreateCommand": "bash .devcontainer/post_create.bash",
     "initializeCommand": "docker compose -f .devcontainer/compose.yaml down",
     "customizations": {

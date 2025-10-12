@@ -47,7 +47,7 @@ export const Calendar = () => {
   const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
 
   const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate).startOf('week').add(1, 'day'));
-  const setSelectedDate = (date: Dayjs) => setSelectedDateOg(date.startOf('week').add(1, 'day'));
+  const setSelectedDate = (date: Dayjs) => setSelectedDateOg(date.subtract(1, 'day').startOf('week').add(1, 'day'));
   const [searchText, setSearchText] = useState<string>("");
   const [searchIndex, setSearchIndex] = useState<number>(0);
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
@@ -175,7 +175,7 @@ export const Calendar = () => {
             width: { xs: 'auto', sm: 105 },
             textWrap: 'nowrap',
           }}
-          disabled={dayjs().isSame(selectedDate, 'week')}
+          disabled={dayjs().subtract(1, 'day').isSame(selectedDate, 'week')}
           onClick={() => setSelectedDate(dayjs())}
         >
           This Week

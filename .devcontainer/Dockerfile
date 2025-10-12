@@ -17,4 +17,4 @@ RUN apt install -y \
 
 USER vscode
 
-WORKDIR /workspaces/personal-manager
+WORKDIR /workspace/personal-manager

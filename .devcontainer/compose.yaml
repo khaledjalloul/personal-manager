@@ -15,7 +15,7 @@ services:
       # Bind source code
       - type: bind
         source: ..
-        target: /workspaces/personal-manager
+        target: /workspace/personal-manager
 
   postgres:
     image: postgres:15
