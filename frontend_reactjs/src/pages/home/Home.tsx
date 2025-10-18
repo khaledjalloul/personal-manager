@@ -1,12 +1,11 @@
-import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useTheme } from "@mui/material";
 import styled from "styled-components";
-import { ExpensesStatisticsCard, ToDoTaskContainer } from "../../components";
+import { ToDoTaskContainer, Calendar } from "../../components";
 import {
   useCreateDiaryEntry,
   useCreateNote,
   useDailyDiaryEntries,
   useEditDiaryEntry,
-  useExpensesStatistics,
   useNoteCategories,
   useToDoTasks
 } from "../../api";
@@ -108,6 +107,7 @@ const DiaryContainer = () => {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
+        height: '100%'
       }}
     >
       <NavigationTitle title="Diary" link="/diary" />
@@ -333,9 +333,7 @@ today = dayjs(new Date(today.year(), today.month(), today.date(), 12));
 export const Home = () => {
 
   const theme = useTheme();
-  const isBreakpointLg = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const { data: expensesStatistics } = useExpensesStatistics();
   const { data: toDoTasks } = useToDoTasks({
     isArchived: false,
     searchText: "",
@@ -349,109 +347,68 @@ export const Home = () => {
         sx={{ flexGrow: 1, height: { xs: 'auto', xl: '100%' } }}
       >
         <Grid
-          size={{ xs: 12, lg: 8 }}
+          size={{ xs: 12, lg: 4 }}
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            gap: { xs: 6, lg: 4 },
+            gap: 2,
             height: { xs: 'auto', xl: '100%' },
+            minHeight: '730px',
           }}
         >
+          <NavigationTitle title="Calendar" link="/calendar" />
+
+          <Calendar
+            selectedDate={dayjs()}
+            setSelectedDate={() => { }}
+            searchText=""
+            searchIndex={0}
+            isHomePage
+          />
+        </Grid>
+
+        <Grid
+          size={{ xs: 12, lg: 4 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            height: { xs: 'auto', xl: '100%' },
+          }}>
+          <NavigationTitle title="To Do" link="/todo" />
+
           <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 2,
+              gap: { xs: 2, sm: 1 },
+              mb: 3,
+              overflowY: 'auto',
             }}
           >
-            <NavigationTitle title="Expenses" link="/expenses" />
-
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
-                <ExpensesStatisticsCard
-                  title="Total Spent This Month"
-                  value={expensesStatistics?.totalExpensesThisMonth}
-                  color="primary.dark"
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
-                <ExpensesStatisticsCard
-                  title="Average Expenses Per Month"
-                  value={expensesStatistics?.monthlyAverageExpenses}
-                  color="warning.dark"
-                />
-              </Grid>
-            </Grid>
+            {toDoTasks?.length === 0 && (
+              <Typography align="center" mt={3} mb={3}>No tasks.</Typography>
+            )}
+            {toDoTasks?.map((task) => (
+              <ToDoTaskContainer
+                key={task.id}
+                task={task}
+                searchText=""
+                isAddingTask={false}
+                setIsAddingTask={() => { }}
+              />
+            ))}
           </Box>
 
-          <Grid
-            container
-            spacing={{ xs: 6, lg: 4 }}
-            sx={{ flexGrow: 1, overflowY: { xs: 'unset', xl: 'hidden' } }}>
-            <Grid
-              size={{ xs: 12, xl: 6 }}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                height: { xs: 'auto', xl: '100%' },
-              }}>
-              <NavigationTitle title="To Do" link="/todo" />
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: { xs: 2, sm: 1 },
-                  mt: 1,
-                  overflowY: 'auto',
-                }}
-              >
-                {toDoTasks?.length === 0 && (
-                  <Typography align="center" mt={3} mb={3}>No tasks.</Typography>
-                )}
-                {toDoTasks?.map((task) => (
-                  <ToDoTaskContainer
-                    key={task.id}
-                    task={task}
-                    searchText=""
-                    isAddingTask={false}
-                    setIsAddingTask={() => { }}
-                  />
-                ))}
-              </Box>
-            </Grid>
-
-            <Grid
-              size={{ xs: 12, xl: 6 }}
-              sx={{ display: { xs: 'none', lg: 'flex' } }}>
-              {/* Disabling element to avoid duplicate mutations  */}
-              {!isBreakpointLg && <NewNoteContainer />}
-            </Grid>
-
-            <Grid
-              size={12}
-              sx={{ display: { xs: 'flex', lg: 'none' } }}>
-              {isBreakpointLg && <DiaryContainer />}
-            </Grid>
-          </Grid>
+          <NewNoteContainer />
         </Grid>
 
-        <Grid
-          size={4}
-          sx={{ display: { xs: 'none', lg: 'flex' } }}>
-          {!isBreakpointLg && <DiaryContainer />}
-        </Grid>
-
-        <Grid
-          size={12}
-          sx={{ display: { xs: 'flex', lg: 'none' } }}>
-          {isBreakpointLg && <NewNoteContainer />}
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <DiaryContainer />
         </Grid>
 
       </Grid>
-    </Wrapper>
+    </Wrapper >
   );
 };
 
