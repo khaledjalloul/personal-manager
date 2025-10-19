@@ -121,7 +121,6 @@ export const Calendar = ({
         )}
         slotMinTime={{ hours: 6 }}
         height={isBreakpointSm ? "auto" : "100%"}
-        // firstDay={1}
         nowIndicator
         expandRows
         snapDuration={{ minutes: 15 }}
@@ -129,19 +128,19 @@ export const Calendar = ({
         selectable={isHomePage ? false : true}
         selectMirror
         events={events}
-        select={(newEvent) => {
+        select={isHomePage ? undefined : (newEvent) => {
           setModalEntry({
             ...emptyEntry,
             startDate: newEvent.start,
             endDate: newEvent.end
           })
         }}
-        eventChange={({ event }) => {
+        eventChange={isHomePage ? undefined : ({ event }) => {
           const entry = calendarEntries?.find(e => e.id === parseInt(event.id));
           if (entry && event.start && event.end)
             setModalEntry({ ...entry, startDate: event.start, endDate: event.end });
         }}
-        eventClick={({ event }) => {
+        eventClick={isHomePage ? undefined : ({ event }) => {
           const entry = calendarEntries?.find(e => e.id === parseInt(event.id));
           if (entry)
             setModalEntry(entry);
