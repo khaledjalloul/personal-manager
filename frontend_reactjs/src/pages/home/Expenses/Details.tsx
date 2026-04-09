@@ -22,7 +22,7 @@ export const ExpensesDetails = () => {
   }>();
 
   const { data: expenses } = useExpenses({
-    type: ExpenseType.Auto,
+    type: "All",
     searchText: searchText.trim(),
     filterCategoryIds
   });

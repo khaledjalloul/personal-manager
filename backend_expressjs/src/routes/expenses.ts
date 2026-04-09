@@ -22,7 +22,7 @@ router.get('/funds', async (req: Request, res: Response) => {
   const funds = await prisma.fund.findMany({
     where: {
       userId: req.user.id,
-      type: type === 'all' ? undefined : type as ExpenseType,
+      type: type === 'All' ? undefined : type as ExpenseType,
       source: { contains: searchText, mode: 'insensitive' }
     },
     orderBy: { date: 'desc' },
@@ -352,13 +352,25 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
               entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
             )
           );
+
+          var bookingTextArr = entry.bookingText.split(":").map(s => s.trim());
+          if (bookingTextArr.length === 1) {
+            bookingTextArr = entry.bookingText.split(",").map(s => s.trim());
+            if (bookingTextArr.length === 1) {
+              bookingTextArr.push("");
+            }
+          }
+
+          const description = bookingTextArr.slice(0, -1).join(", ");
+          const vendor = bookingTextArr[bookingTextArr.length - 1] || "";
           const amount = entry.debitCHF || -entry.creditCHF || 0;
+
           expenses.push({
             userId: req.user.id,
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
             categoryId: (amount !== 0 && category) ? category.id : null,
-            description: entry.bookingText,
-            vendor: entry.paymentPurpose,
+            description,
+            vendor,
             amount,
             type: ExpenseType.Auto,
             tags: []
@@ -404,7 +416,7 @@ router.get('/', async (req: Request, res: Response) => {
     await prisma.expense.findMany({
       where: {
         userId: req.user.id,
-        type: type === 'all' ? undefined : type as ExpenseType,
+        type: type === 'All' ? undefined : type as ExpenseType,
         category: null,
         OR: [
           { description: { contains: searchText, mode: 'insensitive' } },
@@ -420,7 +432,7 @@ router.get('/', async (req: Request, res: Response) => {
   const expenses = await prisma.expense.findMany({
     where: {
       userId: req.user.id,
-      type: type === 'all' ? undefined : type as ExpenseType,
+      type: type === 'All' ? undefined : type as ExpenseType,
       categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
       OR: [
         { description: { contains: searchText, mode: 'insensitive' } },
