@@ -43,8 +43,9 @@ model ExpensesCategory {
 }
 
 enum ExpenseType {
-  Manual
-  Auto
+  Bank_Auto
+  Bank_Manual
+  Cash
 }
 
 model Expense {

@@ -39,7 +39,7 @@ const emptyFund: Fund = {
   date: new Date(),
   source: "",
   amount: 0,
-  type: ExpenseType.Manual
+  type: ExpenseType.Bank_Manual
 }
 
 const emptyCategory: ExpensesCategory = {
@@ -55,7 +55,7 @@ const emptyExpense: Expense = {
   category: emptyCategory,
   description: "",
   vendor: "",
-  type: ExpenseType.Manual,
+  type: ExpenseType.Bank_Manual,
   amount: 0,
   tags: [],
 }
@@ -71,21 +71,21 @@ export const ManageExpenses = () => {
   const { data: user } = useCurrentUser();
   const { data: categories } = useExpensesCategories();
   const { data: autoExpenses } = useExpenses({
-    type: ExpenseType.Auto,
+    types: [ExpenseType.Bank_Auto],
     searchText: "",
     filterCategoryIds: [-1] // all
   });
   const { data: manualExpenses } = useExpenses({
-    type: ExpenseType.Manual,
+    types: [ExpenseType.Bank_Manual, ExpenseType.Cash],
     searchText: searchText.trim(),
     filterCategoryIds: [-1] // all
   });
   const { data: autoFunds } = useFunds({
-    type: ExpenseType.Auto,
+    types: [ExpenseType.Bank_Auto],
     searchText: "",
   });
   const { data: manualFunds } = useFunds({
-    type: ExpenseType.Manual,
+    types: [ExpenseType.Bank_Manual, ExpenseType.Cash],
     searchText: searchText.trim(),
   });
 

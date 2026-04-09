@@ -1,4 +1,7 @@
 import {
+  Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -42,6 +45,7 @@ export const ExpenseTableRow = ({
   const [description, setDescription] = useState(expense.description);
   const [vendor, setVendor] = useState(expense.vendor);
   const [amount, setAmount] = useState(expense.amount);
+  const [type, setType] = useState(expense.type);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: expensesCategories } = useExpensesCategories();
@@ -60,6 +64,7 @@ export const ExpenseTableRow = ({
         description: description.trim(),
         vendor: vendor.trim(),
         amount,
+        type
       });
     else if (setIsAddingExpense)
       createExpense({
@@ -69,7 +74,7 @@ export const ExpenseTableRow = ({
         vendor: vendor.trim(),
         amount,
         tags: [],
-        type: ExpenseType.Manual
+        type
       });
   };
 
@@ -112,6 +117,7 @@ export const ExpenseTableRow = ({
                     placeholder: "Date",
                   }
                 }}
+                sx={{ minWidth: 130 }}
               />
             </LocalizationProvider>
           }
@@ -177,25 +183,42 @@ export const ExpenseTableRow = ({
         </TableCell>
 
         <TableCell>
-          {!isEditing ? (
-            !editable ?
-              (amount >= 0 ? `-${Math.abs(amount).toFixed(2)}` : `+${Math.abs(amount).toFixed(2)}`) :
-              amount.toFixed(2)
-          ) :
-            <TextField
-              variant="standard"
-              placeholder="Amount"
-              value={amount.toFixed(2)}
-              onChange={(e) => {
-                const newAmount = parseFloat(e.target.value);
-                setAmount(isNaN(newAmount) ? amount : newAmount);
-              }}
-              slotProps={{
-                input: {
-                  endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+          {!isEditing ?
+            <Typography variant="body2">
+              {!editable ?
+                (amount >= 0 ? `-${Math.abs(amount).toFixed(2)}` : `+${Math.abs(amount).toFixed(2)}`) :
+                amount.toFixed(2)}
+              {type === ExpenseType.Cash && " (Cash)"}
+            </Typography>
+            :
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
+              <TextField
+                variant="standard"
+                placeholder="Amount"
+                value={amount.toFixed(2)}
+                onChange={(e) => {
+                  const newAmount = parseFloat(e.target.value);
+                  setAmount(isNaN(newAmount) ? amount : newAmount);
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+                  }
+                }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    sx={{ p: 0, pr: 0.5 }}
+                    checked={type === ExpenseType.Cash}
+                    onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
+                  />
                 }
-              }}
-            />
+                label={<Typography variant="body2">Cash</Typography>}
+                sx={{ m: 0, ml: 1 }}
+              />
+            </Box>
           }
         </TableCell>
 

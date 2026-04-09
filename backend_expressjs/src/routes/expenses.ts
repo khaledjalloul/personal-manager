@@ -16,13 +16,14 @@ dayjs.extend(customParseFormat);
 // Funds
 
 router.get('/funds', async (req: Request, res: Response) => {
-  const { type } = req.query;
+  const { types: typesStr } = req.query;
+  const types = typesStr ? (typesStr as string).split(",") as ExpenseType[] : undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
   const funds = await prisma.fund.findMany({
     where: {
       userId: req.user.id,
-      type: type === 'All' ? undefined : type as ExpenseType,
+      type: types ? { in: types } : undefined, // Get all if not specified
       source: { contains: searchText, mode: 'insensitive' }
     },
     orderBy: { date: 'desc' },
@@ -160,9 +161,9 @@ router.get('/monthly', async (req: Request, res: Response) => {
 router.get('/statistics', async (req: Request, res: Response) => {
   const statistics: {
     monthlyAverageExpenses: number;
-    totalExpenses: number;
     totalExpensesThisMonth: number;
-    totalFunds: number;
+    totalBankExpenses: number;
+    totalBankFunds: number;
     categories: {
       [category: string]: {
         monthlyAverage: number;
@@ -178,9 +179,9 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
   } = {
     monthlyAverageExpenses: 0,
-    totalExpenses: 0,
     totalExpensesThisMonth: 0,
-    totalFunds: 0,
+    totalBankExpenses: 0,
+    totalBankFunds: 0,
     categories: {},
     months: {}
   };
@@ -199,7 +200,7 @@ router.get('/statistics', async (req: Request, res: Response) => {
   const today = new Date();
   const thisMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 
-  for (var { date, category, amount } of expenses) {
+  for (var { date, category, amount, type } of expenses) {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!category)
@@ -215,14 +216,17 @@ router.get('/statistics', async (req: Request, res: Response) => {
 
     statistics.categories[category.name].total += amount;
     statistics.months[month].expenses += amount;
-    statistics.totalExpenses += amount;
+
+    if (type === ExpenseType.Bank_Auto || type === ExpenseType.Bank_Manual) {
+      statistics.totalBankExpenses += amount;
+    }
 
     if (month === thisMonth) {
       statistics.totalExpensesThisMonth += amount;
     }
   }
 
-  for (const { date, amount } of funds) {
+  for (const { date, amount, type } of funds) {
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!statistics.months[month]) {
@@ -230,7 +234,10 @@ router.get('/statistics', async (req: Request, res: Response) => {
     }
 
     statistics.months[month].funds += amount;
-    statistics.totalFunds += amount;
+
+    if (type === ExpenseType.Bank_Auto || type === ExpenseType.Bank_Manual) {
+      statistics.totalBankFunds += amount;
+    }
   }
 
   const numMonths = Object.keys(statistics.months).length;
@@ -343,7 +350,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
             date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
             source: entry.bookingText,
             amount,
-            type: ExpenseType.Auto,
+            type: ExpenseType.Bank_Auto,
             userId: req.user.id
           })
         } else {
@@ -372,7 +379,7 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
             description,
             vendor,
             amount,
-            type: ExpenseType.Auto,
+            type: ExpenseType.Bank_Auto,
             tags: []
           });
         }
@@ -392,13 +399,13 @@ router.delete("/auto", async (req: Request, res: Response) => {
   await prisma.expense.deleteMany({
     where: {
       userId: req.user.id,
-      type: ExpenseType.Auto
+      type: ExpenseType.Bank_Auto
     }
   });
   await prisma.fund.deleteMany({
     where: {
       userId: req.user.id,
-      type: ExpenseType.Auto
+      type: ExpenseType.Bank_Auto
     }
   })
   res.json({ message: 'Automated expenses deleted successfully' });
@@ -408,7 +415,8 @@ router.delete("/auto", async (req: Request, res: Response) => {
 // TODO: Handle cash expenses (separate from bank balance calculation, but still part of statistics)
 
 router.get('/', async (req: Request, res: Response) => {
-  const { type } = req.query;
+  const { types: typesStr } = req.query;
+  const types = typesStr ? (typesStr as string).split(",") as ExpenseType[] : undefined;
   const searchText = (req.query.searchText as string ?? '').trim();
   const filterCategoryIds = (req.query.filterCategoryIds as string ?? "-1").split(",").map(Number);
 
@@ -416,7 +424,7 @@ router.get('/', async (req: Request, res: Response) => {
     await prisma.expense.findMany({
       where: {
         userId: req.user.id,
-        type: type === 'All' ? undefined : type as ExpenseType,
+        type: types ? { in: types } : undefined, // Get all if not specified
         category: null,
         OR: [
           { description: { contains: searchText, mode: 'insensitive' } },
@@ -432,7 +440,7 @@ router.get('/', async (req: Request, res: Response) => {
   const expenses = await prisma.expense.findMany({
     where: {
       userId: req.user.id,
-      type: type === 'All' ? undefined : type as ExpenseType,
+      type: { in: types },
       categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
       OR: [
         { description: { contains: searchText, mode: 'insensitive' } },

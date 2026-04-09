@@ -5,7 +5,7 @@ import client from "../../client";
 const ENDPOINT = "expenses";
 
 export type GetExpensesRequestParams = {
-  type: ExpenseType | "All";
+  types?: ExpenseType[];
   searchText: string;
   filterCategoryIds: number[];
 };

@@ -1,4 +1,7 @@
 import {
+	Box,
+	Checkbox,
+	FormControlLabel,
 	IconButton,
 	InputAdornment,
 	TableCell,
@@ -38,6 +41,7 @@ export const FundTableRow = ({
 	const [date, setDate] = useState(dayjs(fund.date));
 	const [source, setSource] = useState(fund.source);
 	const [amount, setAmount] = useState(fund.amount);
+	const [type, setType] = useState(fund.type);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
 	const { mutate: createFund, isPending: createLoading, isSuccess: createSuccess } = useCreateFund();
@@ -52,13 +56,14 @@ export const FundTableRow = ({
 				date: date.toDate(),
 				source: source.trim(),
 				amount,
+				type
 			});
 		else if (setIsAddingFund)
 			createFund({
 				date: date.toDate(),
 				source: source.trim(),
 				amount,
-				type: ExpenseType.Manual
+				type
 			});
 	};
 
@@ -96,6 +101,7 @@ export const FundTableRow = ({
 										placeholder: "Date",
 									}
 								}}
+								sx={{ minWidth: 130 }}
 							/>
 						</LocalizationProvider>
 					}
@@ -132,21 +138,36 @@ export const FundTableRow = ({
 								(amount >= 0 ? `+${Math.abs(amount).toFixed(2)}` : `-${Math.abs(amount).toFixed(2)}`) :
 								amount.toFixed(2)
 							}
+							{type === ExpenseType.Cash && " (Cash)"}
 						</Typography> :
-						<TextField
-							variant="standard"
-							placeholder="Amount"
-							value={amount.toFixed(2)}
-							onChange={(e) => {
-								const newAmount = parseFloat(e.target.value);
-								setAmount(isNaN(newAmount) ? amount : newAmount);
-							}}
-							slotProps={{
-								input: {
-									endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+						<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
+							<TextField
+								variant="standard"
+								placeholder="Amount"
+								value={amount.toFixed(2)}
+								onChange={(e) => {
+									const newAmount = parseFloat(e.target.value);
+									setAmount(isNaN(newAmount) ? amount : newAmount);
+								}}
+								slotProps={{
+									input: {
+										endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+									}
+								}}
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										size="small"
+										sx={{ p: 0, pr: 0.5 }}
+										checked={type === ExpenseType.Cash}
+										onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
+									/>
 								}
-							}}
-						/>
+								label={<Typography variant="body2">Cash</Typography>}
+								sx={{ m: 0, ml: 1 }}
+							/>
+						</Box>
 					}
 				</TableCell>
 

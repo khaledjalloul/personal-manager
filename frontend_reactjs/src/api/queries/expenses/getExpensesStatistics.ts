@@ -5,9 +5,9 @@ const ENDPOINT = "expenses/statistics";
 
 export type GetExpensesStatisticsResponse = {
   monthlyAverageExpenses: number;
-  totalExpenses: number;
   totalExpensesThisMonth: number;
-  totalFunds: number;
+  totalBankExpenses: number;
+  totalBankFunds: number;
   categories: {
     [category: string]: {
       monthlyAverage: number;

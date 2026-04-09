@@ -52,7 +52,7 @@ export const expenses: Expense[] = [
         vendor: 'Cafe XYZ',
         amount: 15.99,
         tags: ['lunch', 'cafe'],
-        type: ExpenseType.Manual
+        type: ExpenseType.Bank_Manual
     },
     {
         id: 2,
@@ -62,7 +62,7 @@ export const expenses: Expense[] = [
         vendor: 'City Bus',
         amount: 2.50,
         tags: ['transport', 'bus'],
-        type: ExpenseType.Auto
+        type: ExpenseType.Bank_Auto
     },
     {
         id: 3,
@@ -72,7 +72,7 @@ export const expenses: Expense[] = [
         vendor: 'Cinema ABC',
         amount: 12.00,
         tags: ['movie', 'entertainment'],
-        type: ExpenseType.Manual
+        type: ExpenseType.Bank_Manual
     },
     {
         id: 4,
@@ -82,7 +82,7 @@ export const expenses: Expense[] = [
         vendor: 'Power Company',
         amount: 45.00,
         tags: ['utilities', 'electricity'],
-        type: ExpenseType.Auto
+        type: ExpenseType.Bank_Auto
     }
 ];
 
@@ -92,22 +92,22 @@ export const funds: Fund[] = [
         date: new Date("2025-01-01"),
         source: 'Salary',
         amount: 3000.00,
-        type: ExpenseType.Auto
+        type: ExpenseType.Bank_Auto
     },
     {
         id: 2,
         date: new Date("2025-02-01"),
         source: 'Freelance Work',
         amount: 1500.00,
-        type: ExpenseType.Manual
+        type: ExpenseType.Cash
     }
 ];
 
 export const expensesStatistics: GetExpensesStatisticsResponse = {
-    totalExpenses: 75.49,
     totalExpensesThisMonth: 28.49,
     monthlyAverageExpenses: 50.00,
-    totalFunds: 4500.00,
+    totalBankExpenses: 75.49,
+    totalBankFunds: 4500.00,
     categories: {
         [expensesCategories[0].name]: { monthlyAverage: 20.00, total: 60.00 },
         [expensesCategories[1].name]: { monthlyAverage: 10.00, total: 30.00 },

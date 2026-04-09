@@ -15,8 +15,9 @@ export type ExpensesCategory = {
 };
 
 export enum ExpenseType {
-  Manual = "Manual",
-  Auto = "Auto"
+  Bank_Auto = "Bank_Auto",
+  Bank_Manual = "Bank_Manual",
+  Cash = "Cash",
 }
 
 export type Expense = {
