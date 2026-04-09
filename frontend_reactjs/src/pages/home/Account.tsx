@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { Check, Download, Upload } from "@mui/icons-material";
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, TextField, Switch, Typography } from "@mui/material";
 import { useBackupData, useCurrentUser, useDeleteUser, useEditUser, useRestoreData } from "../../api";
 import { Fragment } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ConfirmDeleteDialog, ConfirmRestoreDialog } from "../../components";
 import { HttpStatusCode } from "axios";
+import { UserContext } from "../../utils";
 
 const dataTypes: {
   [key: string]: string;
@@ -110,6 +111,8 @@ const RestoreButton = ({
 
 export const Account = () => {
 
+  const { userData, setUserData } = useContext(UserContext);
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -198,6 +201,19 @@ export const Account = () => {
             >
               Change Password
             </Button>
+
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="body1" mt={2} textAlign={"center"}>
+                Show Private Content
+              </Typography>
+
+              <Switch
+                checked={userData?.showPrivateContent ?? false}
+                onChange={userData ? (e) =>
+                  setUserData({ ...userData, showPrivateContent: e.target.checked })
+                  : undefined}
+              />
+            </Box>
 
             <Typography variant="body1" mt={2} textAlign={"center"}>
               Delete Account

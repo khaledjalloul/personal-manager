@@ -16,12 +16,10 @@ import styled from "styled-components";
 import { ThemeContext, UserContext } from "../utils";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
-const toolbarButtons = [
+var toolbarButtons = [
   { label: "Home", path: "/", },
   { label: "Expenses", path: "/expenses" },
   { label: "Calendar", path: "/calendar" },
-  { label: "Diary", path: "/diary" },
-  { label: "Journal", path: "/journal" },
   { label: "To Do", path: "/todo" },
   { label: "Notes", path: "/notes" },
   { label: "Piano Pieces", path: "/piano" },
@@ -34,11 +32,17 @@ export const NavigationBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { setUserData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
   const { themeData, setThemeData } = useContext(ThemeContext);
 
   const [accountMenuAnchor, setAccountMenuAnchor] = useState<null | HTMLElement>(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState<null | HTMLElement>(null);
+
+  if (userData?.showPrivateContent) {
+    if (!toolbarButtons.some(button => button.path === "/diary"))
+      toolbarButtons.splice(3, 0, { label: "Diary", path: "/diary" }, { label: "Journal", path: "/journal" });
+  } else
+    toolbarButtons = toolbarButtons.filter(button => button.path !== "/diary" && button.path !== "/journal");
 
   return (
     <Box display={"flex"} minHeight={"100vh"} bgcolor={"background.default"}>

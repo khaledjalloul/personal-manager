@@ -33,7 +33,6 @@ export const user: User = {
     isApproved: true,
     wallet: 1000.00,
     fundKeywords: ["salary"],
-    token: 'fake-jwt-token'
 };
 
 // ############### Expenses ###############

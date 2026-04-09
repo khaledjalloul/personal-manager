@@ -10,9 +10,6 @@ type Request = {
 };
 
 type Response = {
-  userId: number;
-  name: string;
-  email: string;
   token: string;
 };
 

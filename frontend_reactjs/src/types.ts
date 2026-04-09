@@ -5,7 +5,6 @@ export type User = {
   isApproved: boolean;
   wallet: number;
   fundKeywords: string[];
-  token?: string;
 };
 
 export type ExpensesCategory = {
