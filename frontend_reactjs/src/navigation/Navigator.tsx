@@ -23,8 +23,12 @@ import {
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
+import { useContext } from "react";
+import { UserContext } from "../utils";
 
 export const Navigator = () => {
+  const { userData } = useContext(UserContext);
+
   const router = createHashRouter([
     {
       path: "/",
@@ -57,6 +61,10 @@ export const Navigator = () => {
           ]
         },
         {
+          path: "/calendar",
+          element: <Calendar />
+        },
+        userData?.showPrivateContent ? {
           path: "/diary",
           element: <DiaryWrapper />,
           children: [
@@ -69,15 +77,11 @@ export const Navigator = () => {
               element: <MonthlyDiary />
             }
           ]
-        },
-        {
-          path: "/calendar",
-          element: <Calendar />
-        },
-        {
+        } : {},
+        userData?.showPrivateContent ? {
           path: "/journal",
           element: <Journal />
-        },
+        } : {},
         {
           path: "/todo",
           element: <ToDoWrapper />,

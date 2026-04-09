@@ -12,9 +12,9 @@ import {
 import { ChevronRight, Save } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { DiaryEntry, DiaryEntryType, NoteCategory } from "../../types";
-import { useCtrlS } from "../../utils";
+import { useCtrlS, UserContext } from "../../utils";
 
 const NavigationTitle = ({
   title,
@@ -332,7 +332,7 @@ today = dayjs(new Date(today.year(), today.month(), today.date(), 12));
 
 export const Home = () => {
 
-  const theme = useTheme();
+  const { userData } = useContext(UserContext);
 
   const { data: toDoTasks } = useToDoTasks({
     isArchived: false,
@@ -347,7 +347,7 @@ export const Home = () => {
         sx={{ flexGrow: 1, height: { xs: 'auto', xl: '100%' } }}
       >
         <Grid
-          size={{ xs: 12, lg: 4 }}
+          size={{ xs: 12, lg: userData?.showPrivateContent ? 4 : 6 }}
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -368,7 +368,7 @@ export const Home = () => {
         </Grid>
 
         <Grid
-          size={{ xs: 12, lg: 4 }}
+          size={{ xs: 12, lg: userData?.showPrivateContent ? 4 : 6 }}
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -403,9 +403,11 @@ export const Home = () => {
           <NewNoteContainer />
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <DiaryContainer />
-        </Grid>
+        {userData?.showPrivateContent &&
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <DiaryContainer />
+          </Grid>
+        }
 
       </Grid>
     </Wrapper >

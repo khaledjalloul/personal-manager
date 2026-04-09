@@ -202,8 +202,14 @@ export const Account = () => {
               Change Password
             </Button>
 
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="body1" mt={2} textAlign={"center"}>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: 2
+            }}>
+              <Typography variant="body1" textAlign={"center"}>
                 Show Private Content
               </Typography>
 
@@ -215,15 +221,12 @@ export const Account = () => {
               />
             </Box>
 
-            <Typography variant="body1" mt={2} textAlign={"center"}>
-              Delete Account
-            </Typography>
-
             <Button
               variant="outlined"
               color="error"
               onClick={() => setConfirmDeleteDialogOpen(true)}
               loading={deleteUserLoading}
+              sx={{ mt: 2 }}
             >
               Delete Account
             </Button>
