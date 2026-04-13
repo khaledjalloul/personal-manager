@@ -7,6 +7,8 @@ const ENDPOINT = "expenses/funds";
 export type GetFundsRequestParams = {
   types?: ExpenseType[];
   searchText: string;
+  dateFrom?: Date;
+  dateTo?: Date;
 };
 
 const queryFn = (params: GetFundsRequestParams) => async () => {

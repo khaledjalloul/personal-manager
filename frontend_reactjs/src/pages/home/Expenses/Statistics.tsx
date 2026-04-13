@@ -30,6 +30,7 @@ import { Doughnut, Line } from 'react-chartjs-2';
 import { ThemeContext } from "../../../utils";
 import { ExpensesStatisticsCard } from "../../../components";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -45,6 +46,8 @@ ChartJS.register(
 export const ExpensesStatistics = () => {
   const { palette } = useTheme();
   const { themeData } = useContext(ThemeContext);
+
+  const navigate = useNavigate();
 
   const [overTimeType, setOverTimeType] = useState("both");
 
@@ -301,11 +304,29 @@ export const ExpensesStatistics = () => {
                     backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
                   }}
                 >
-                  <TableCell>
+                  <TableCell
+                    sx={{ cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+                    onClick={() => navigate("/expenses/details", {
+                      state: {
+                        routedDateFrom: dayjs(month).startOf('month').startOf('day').toDate(),
+                        routedDateTo: dayjs(month).endOf('month').endOf('day').toDate(),
+                        routedFilterCategoryIds: [-1],
+                      }
+                    })}>
                     {dayjs(month).format("MMMM YYYY")}
                   </TableCell>
                   {expensesCategories?.map((category) => (
-                    <TableCell key={category.id}>
+                    <TableCell
+                      key={category.id}
+                      sx={{ cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+                      onClick={() => navigate("/expenses/details", {
+                        state: {
+                          routedDateFrom: dayjs(month).startOf('month').startOf('day').toDate(),
+                          routedDateTo: dayjs(month).endOf('month').endOf('day').toDate(),
+                          routedFilterCategoryIds: [category.id],
+                        }
+                      })}
+                    >
                       {monthlyExpenses[month][category.name]?.toFixed(2)} CHF
                     </TableCell>
                   ))}

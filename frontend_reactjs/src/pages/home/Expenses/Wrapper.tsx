@@ -11,17 +11,32 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useExpensesCategories } from "../../../api";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 export const ExpensesWrapper = () => {
   const location = useLocation();
+  const { routedDateFrom, routedDateTo, routedFilterCategoryIds } =
+    location.state as {
+      routedDateFrom?: Date,
+      routedDateTo?: Date,
+      routedFilterCategoryIds?: number[]
+    } || {
+      routedDateFrom: undefined,
+      routedDateTo: undefined,
+      routedFilterCategoryIds: undefined
+    };
 
   const [searchText, setSearchText] = useState("");
   const [filterCategoryIds, setFilterCategoryIds] = useState([-1]);
   const [displayedCount, setDisplayedCount] = useState(0);
+  const [dateFrom, setDateFrom] = useState<Dayjs>(dayjs("01.01.2023").startOf("day"));
+  const [dateTo, setDateTo] = useState<Dayjs>(dayjs().endOf("day"));
 
   const { data: categories } = useExpensesCategories();
 
@@ -31,6 +46,21 @@ export const ExpensesWrapper = () => {
     { id: -3, name: "Uncategorized" },
     ...(categories || [])
   ];
+
+  useEffect(() => {
+    if (routedDateFrom)
+      setDateFrom(dayjs(routedDateFrom));
+  }, [routedDateFrom]);
+
+  useEffect(() => {
+    if (routedDateTo)
+      setDateTo(dayjs(routedDateTo));
+  }, [routedDateTo]);
+
+  useEffect(() => {
+    if (routedFilterCategoryIds)
+      setFilterCategoryIds(routedFilterCategoryIds);
+  }, [routedFilterCategoryIds]);
 
   return (
     <Wrapper>
@@ -51,7 +81,8 @@ export const ExpensesWrapper = () => {
             flexDirection: { xs: 'column', sm: 'row' },
             alignItems: { xs: 'stretch', sm: 'center' },
             flexGrow: 1,
-            gap: { xs: 2, sm: 1 }
+            gap: { xs: 2, sm: 1 },
+            mr: { xs: 0, lg: 3, xl: 7 }
           }}
         >
           <NavLink to="/expenses">
@@ -77,10 +108,53 @@ export const ExpensesWrapper = () => {
           </NavLink>
         </Box>
 
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box sx={{
+            display: location.pathname === "/expenses/details" ? "flex" : "none",
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'stretch', sm: 'center' },
+            gap: { xs: 2, sm: 1 },
+            ml: { xs: 0, lg: "auto" },
+
+          }}>
+            <DatePicker
+              label={"From"}
+              views={["year", "month", "day"]}
+              openTo={"month"}
+              value={dateFrom}
+              onChange={(newValue) => setDateFrom(newValue ?? dayjs())}
+              enableAccessibleFieldDOMStructure={false}
+              format={"MMMM DD, YYYY"}
+              slotProps={{
+                textField: {
+                  size: "medium",
+                  placeholder: "Date",
+                }
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <DatePicker
+              label={"To"}
+              views={["year", "month", "day"]}
+              openTo={"month"}
+              value={dateTo}
+              onChange={(newValue) => setDateTo(newValue ?? dayjs())}
+              enableAccessibleFieldDOMStructure={false}
+              format={"MMMM DD, YYYY"}
+              slotProps={{
+                textField: {
+                  size: "medium",
+                  placeholder: "Date",
+                }
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+          </Box>
+        </LocalizationProvider>
+
         <Select
           value={filterCategoryIds}
           sx={{
-            ml: { xs: 0, lg: "auto" },
             display: location.pathname === "/expenses/details" ? "block" : "none"
           }}
           multiple
@@ -149,7 +223,13 @@ export const ExpensesWrapper = () => {
         />
       </Header>
 
-      <Outlet context={{ searchText, filterCategoryIds, setDisplayedCount }} />
+      <Outlet context={{
+        searchText,
+        dateFrom: dateFrom.toDate(),
+        dateTo: dateTo.toDate(),
+        filterCategoryIds,
+        setDisplayedCount
+      }} />
 
     </Wrapper >
   );

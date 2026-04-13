@@ -7,6 +7,8 @@ const ENDPOINT = "expenses";
 export type GetExpensesRequestParams = {
   types?: ExpenseType[];
   searchText: string;
+  dateFrom?: Date;
+  dateTo?: Date;
   filterCategoryIds: number[];
 };
 

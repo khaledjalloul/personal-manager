@@ -14,18 +14,24 @@ import { useOutletContext } from "react-router-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 
 export const ExpensesDetails = () => {
-  const { searchText, filterCategoryIds, setDisplayedCount } = useOutletContext<{
+  const { searchText, dateFrom, dateTo, filterCategoryIds, setDisplayedCount } = useOutletContext<{
     searchText: string,
+    dateFrom: Date,
+    dateTo: Date,
     filterCategoryIds: number[],
     setDisplayedCount: Dispatch<SetStateAction<number>>
   }>();
 
   const { data: expenses } = useExpenses({
     searchText: searchText.trim(),
+    dateFrom,
+    dateTo,
     filterCategoryIds
   });
   const { data: funds } = useFunds({
     searchText: searchText.trim(),
+    dateFrom,
+    dateTo,
   });
 
   const combinedData = [...expenses ?? [], ...funds ?? []].sort((a, b) => b.date.getTime() - a.date.getTime());

@@ -19,12 +19,18 @@ router.get('/funds', async (req: Request, res: Response) => {
   const { types: typesStr } = req.query;
   const types = typesStr ? (typesStr as string).split(",") as ExpenseType[] : undefined;
   const searchText = (req.query.searchText as string) ?? "";
+  const dateFrom = req.query.dateFrom ? new Date(req.query.dateFrom as string) : undefined;
+  const dateTo = req.query.dateTo ? new Date(req.query.dateTo as string) : undefined;
 
   const funds = await prisma.fund.findMany({
     where: {
       userId: req.user.id,
       type: types ? { in: types } : undefined, // Get all if not specified
-      source: { contains: searchText, mode: 'insensitive' }
+      source: { contains: searchText, mode: 'insensitive' },
+      date: {
+        gte: dateFrom,
+        lte: dateTo
+      },
     },
     orderBy: { date: 'desc' },
   });
@@ -149,10 +155,10 @@ router.get('/monthly', async (req: Request, res: Response) => {
       }
     }
 
-    if (expense.category)
+    if (expense.category) {
       monthlyExpenses[monthStr][expense.category.name] += expense.amount;
-
-    monthlyExpenses[monthStr].total += expense.amount;
+      monthlyExpenses[monthStr].total += expense.amount;
+    }
   });
 
   res.json(monthlyExpenses);
@@ -412,13 +418,14 @@ router.delete("/auto", async (req: Request, res: Response) => {
 });
 
 // Expenses
-// TODO: Handle cash expenses (separate from bank balance calculation, but still part of statistics)
 
 router.get('/', async (req: Request, res: Response) => {
   const { types: typesStr } = req.query;
   const types = typesStr ? (typesStr as string).split(",") as ExpenseType[] : undefined;
   const searchText = (req.query.searchText as string ?? '').trim();
   const filterCategoryIds = (req.query.filterCategoryIds as string ?? "-1").split(",").map(Number);
+  const dateFrom = req.query.dateFrom ? new Date(req.query.dateFrom as string) : undefined;
+  const dateTo = req.query.dateTo ? new Date(req.query.dateTo as string) : undefined;
 
   const unCategorizedxpenses = !filterCategoryIds.includes(-3) ? [] :
     await prisma.expense.findMany({
@@ -442,6 +449,10 @@ router.get('/', async (req: Request, res: Response) => {
       userId: req.user.id,
       type: { in: types },
       categoryId: filterCategoryIds.includes(-1) ? undefined : { in: filterCategoryIds },
+      date: {
+        gte: dateFrom,
+        lte: dateTo
+      },
       OR: [
         { description: { contains: searchText, mode: 'insensitive' } },
         { vendor: { contains: searchText, mode: 'insensitive' } },
