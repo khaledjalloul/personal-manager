@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useContext, useState } from "react";
-import { useCurrentUser, useExpensesCategories, useExpensesStatistics } from "../../../api";
+import { useCurrentUser, useExpensesCategories, useExpensesStatistics, useMonthlyExpenses } from "../../../api";
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
   CategoryScale,
@@ -29,6 +29,7 @@ import {
 import { Doughnut, Line } from 'react-chartjs-2';
 import { ThemeContext } from "../../../utils";
 import { ExpensesStatisticsCard } from "../../../components";
+import dayjs from "dayjs";
 
 ChartJS.register(
   CategoryScale,
@@ -50,6 +51,7 @@ export const ExpensesStatistics = () => {
   const { data: user } = useCurrentUser();
   const { data: expensesCategories } = useExpensesCategories();
   const { data: statistics } = useExpensesStatistics();
+  const { data: monthlyExpenses } = useMonthlyExpenses();
 
   if (!statistics || !user) return <div />
   return (
@@ -178,7 +180,7 @@ export const ExpensesStatistics = () => {
               maxHeight: '50vh',
             }}>
               <Typography variant="h5">
-                Total Expenses Per Category
+                Monthly Expenses Per Category
               </Typography>
 
               <Doughnut
@@ -187,7 +189,7 @@ export const ExpensesStatistics = () => {
                   datasets: [
                     {
                       label: 'Amount (CHF)',
-                      data: Object.values(statistics.categories).map(c => c.total),
+                      data: Object.values(statistics.categories).map(c => c.monthlyAverage),
                       backgroundColor: Object.keys(statistics.categories).map(c => expensesCategories?.find(cat => cat.name === c)?.color),
                     }
                   ],
@@ -214,11 +216,12 @@ export const ExpensesStatistics = () => {
         </Grid>
       </Box>
 
-      <Typography variant="h5">
-        Expenses per Month
-      </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
 
-      <Box>
+        <Typography variant="h5">
+          Category Totals
+        </Typography>
+
         <TableContainer component={Paper} sx={{ maxWidth: 'calc(100vw - 64px - 16px)' }}>
           <Table
             size="medium"
@@ -231,6 +234,7 @@ export const ExpensesStatistics = () => {
           >
             <TableHead>
               <TableRow>
+                <TableCell />
                 {Object.keys(statistics.categories).map((categoryName) => (
                   <TableCell key={categoryName} sx={{ fontWeight: 'bold' }}>
                     {categoryName}
@@ -241,6 +245,7 @@ export const ExpensesStatistics = () => {
             </TableHead>
             <TableBody>
               <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Per Month</TableCell>
                 {Object.values(statistics.categories).map((category, index) => (
                   <TableCell key={index}>
                     {category.monthlyAverage.toFixed(2)} CHF
@@ -248,11 +253,73 @@ export const ExpensesStatistics = () => {
                 ))}
                 <TableCell>{statistics.monthlyAverageExpenses.toFixed(2)} CHF</TableCell>
               </TableRow>
+
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                {Object.values(statistics.categories).map((category, index) => (
+                  <TableCell key={index}>
+                    {category.total.toFixed(2)} CHF
+                  </TableCell>
+                ))}
+                <TableCell>{statistics.monthlyAverageExpenses.toFixed(2)} CHF</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Typography variant="h5" sx={{ mt: 3 }}>
+          Monthly Expenses
+        </Typography>
+
+        <TableContainer component={Paper} sx={{ maxWidth: 'calc(100vw - 64px - 16px)' }}>
+          <Table
+            size="small"
+            stickyHeader
+            sx={{
+              '& th': {
+                backgroundColor: "primary.main",
+                color: "primary.contrastText"
+              }
+            }}
+          >
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "primary.light" }}>
+                <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
+                {expensesCategories?.map((category) => (
+                  <TableCell sx={{ fontWeight: 'bold' }} key={category.id}>
+                    {category.name}
+                  </TableCell>
+                ))}
+                <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {monthlyExpenses && Object.keys(monthlyExpenses).sort().reverse().map((month, index) => (
+                <TableRow
+                  key={month}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
+                  }}
+                >
+                  <TableCell>
+                    {dayjs(month).format("MMMM YYYY")}
+                  </TableCell>
+                  {expensesCategories?.map((category) => (
+                    <TableCell key={category.id}>
+                      {monthlyExpenses[month][category.name]?.toFixed(2)} CHF
+                    </TableCell>
+                  ))}
+                  <TableCell>
+                    {monthlyExpenses[month].total.toFixed(2)} CHF
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
-    </Wrapper >
+
+    </Wrapper>
   );
 };
 

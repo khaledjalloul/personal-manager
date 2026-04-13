@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import styled, { createGlobalStyle } from "styled-components";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -11,6 +11,7 @@ import { useCalendarEntries } from "../api"
 import { ManageCalendarEntryModal } from ".";
 import { CalendarEntry } from "../types";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../utils";
 
 const emptyEntry: CalendarEntry = {
   id: -1,
@@ -36,6 +37,7 @@ export const Calendar = ({
 }) => {
 
   const theme = useTheme();
+  const { userData } = useContext(UserContext);
   const isBreakpointSm = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
 
@@ -97,9 +99,9 @@ export const Calendar = ({
               alignItems: 'center',
               gap: { xs: 0.5, md: 1 },
               pb: { xs: 0.5, sm: 0 },
-              cursor: isHomePage ? 'default' : 'pointer'
+              cursor: isHomePage || !userData?.showPrivateContent ? 'default' : 'pointer'
             }}
-            onClick={isHomePage ? undefined : () => {
+            onClick={isHomePage || !userData?.showPrivateContent ? undefined : () => {
               navigate("/diary", { state: { routedDate: date } });
               setSelectedDate(dayjs(date));
             }}

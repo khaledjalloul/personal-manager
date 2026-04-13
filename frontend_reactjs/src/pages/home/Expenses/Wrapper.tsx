@@ -42,7 +42,7 @@ export const ExpensesWrapper = () => {
         }}
       >
         <Typography variant="h5" sx={{ whiteSpace: 'nowrap', mr: { xs: 0, sm: 2 } }}>
-          Expenses{(location.pathname.includes("monthly") || location.pathname.includes("details")) ? ` (${displayedCount})` : ""}
+          Expenses{(location.pathname.includes("details")) ? ` (${displayedCount})` : ""}
         </Typography>
 
         <Box
@@ -58,14 +58,6 @@ export const ExpensesWrapper = () => {
             <Button startIcon={<Insights />} variant={location.pathname === "/expenses" ? "contained" : "outlined"} fullWidth>
               Statistics
             </Button>
-          </NavLink>
-
-          <NavLink to="/expenses/monthly">
-            {({ isActive }) => (
-              <Button startIcon={<Today />} variant={isActive ? "contained" : "outlined"} fullWidth>
-                Monthly
-              </Button>
-            )}
           </NavLink>
 
           <NavLink to="/expenses/details">
@@ -136,9 +128,8 @@ export const ExpensesWrapper = () => {
           disabled={location.pathname === "/expenses"}
           label="Search expenses"
           placeholder={
-            location.pathname === "/expenses/monthly" ? "Month" :
-              location.pathname === "/expenses/details" ? "Category, description, source, vendor" :
-                "Category, description, source, vendor, keyword"
+            location.pathname === "/expenses/details" ? "Category, description, source, vendor" :
+              "Category, description, source, vendor, keyword"
           }
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}

@@ -12,7 +12,6 @@ import {
   ExpensesWrapper,
   Account,
   ExpensesStatistics,
-  MonthlyExpenses,
   ExpensesDetails,
   ManageExpenses,
   MonthlyDiary,
@@ -45,10 +44,6 @@ export const Navigator = () => {
             {
               path: "/expenses",
               element: <ExpensesStatistics />
-            },
-            {
-              path: "/expenses/monthly",
-              element: <MonthlyExpenses />
             },
             {
               path: "/expenses/details",

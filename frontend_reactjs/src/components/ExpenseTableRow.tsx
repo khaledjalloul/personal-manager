@@ -80,10 +80,10 @@ export const ExpenseTableRow = ({
 
   useCtrlS(save);
 
-  // Handle case where category is deleted to update the displayed state
+  // Handle case where category is deleted or renamed to update the displayed state
   useEffect(() => {
     setCategory(expense.category);
-  }, [expense.category?.id]);
+  }, [expense.category?.id, expense.category?.name]);
 
   useEffect(() => {
     if (createSuccess && setIsAddingExpense) setIsAddingExpense(false);

@@ -3,9 +3,6 @@ import client from "../../client";
 
 const ENDPOINT = "expenses/monthly";
 
-export type GetMonthlyExpensesRequestParams = {
-  searchText: string;
-};
 
 export type GetMonthlyExpensesResponse = {
   [month: string]: {
@@ -14,14 +11,9 @@ export type GetMonthlyExpensesResponse = {
   };
 };
 
-const queryFn = (params: GetMonthlyExpensesRequestParams) => async () => {
-  const queryParams = Object.keys(params)
-    .filter((key) => params[key as keyof GetMonthlyExpensesRequestParams] !== undefined)
-    .map((key) => `${key}=${params[key as keyof GetMonthlyExpensesRequestParams]}`)
-    .join("&");
-
+const queryFn = async () => {
   return await client
-    .get(`/${ENDPOINT}?${queryParams}`)
+    .get(`/${ENDPOINT}`)
     .then((res) => res.data)
     .catch((err) => {
       console.error(`${ENDPOINT}-error`, err?.response?.data);
@@ -29,9 +21,9 @@ const queryFn = (params: GetMonthlyExpensesRequestParams) => async () => {
     });
 };
 
-export const useMonthlyExpenses = (params: GetMonthlyExpensesRequestParams) =>
+export const useMonthlyExpenses = () =>
   useQuery<GetMonthlyExpensesResponse>({
-    queryKey: [ENDPOINT, params],
-    queryFn: queryFn(params),
+    queryKey: [ENDPOINT],
+    queryFn,
     placeholderData: keepPreviousData,
   });
