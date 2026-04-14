@@ -103,11 +103,6 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           },
           orderBy: { name: 'asc' }
         });
-        // data.uncategorizedJournalEntries = await prisma.journalEntry.findMany({
-        //   where: { userId, section: null },
-        //   omit: { id: true, userId: true, sectionId: true },
-        //   orderBy: { date: 'asc' }
-        // });
         break;
 
       case 'to-do':
@@ -139,11 +134,6 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
             }
           },
           orderBy: { name: 'asc' }
-        });
-        data.uncategorizedNotes = await prisma.note.findMany({
-          where: { userId, categoryId: null },
-          omit: { id: true, userId: true, categoryId: true },
-          orderBy: { title: 'asc' }
         });
         break;
 
@@ -223,7 +213,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           return res.status(400).json({ error: "Invalid diary data" });
         break;
       case 'journal':
-        if (!inputData.journalCategories || !inputData.uncategorizedJournalEntries)
+        if (!inputData.journalCategories)
           return res.status(400).json({ error: "Invalid journal data" });
         break;
       case 'to-do':
@@ -231,7 +221,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           return res.status(400).json({ error: "Invalid todo data" });
         break;
       case 'notes':
-        if (!inputData.noteCategories || !inputData.uncategorizedNotes)
+        if (!inputData.noteCategories)
           return res.status(400).json({ error: "Invalid notes data" });
         break;
       case 'piano':
@@ -337,20 +327,6 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             }
           }
         }
-        // for (const entry of inputData.uncategorizedJournalEntries) {
-        //   const { subEntries, ...entryData } = entry;
-        //   const createdEntry = await prisma.journalEntry.create({
-        //     data: { ...entryData, userId },
-        //   });
-        //   if (subEntries && subEntries.length) {
-        //     await prisma.journalSubEntry.createMany({
-        //       data: subEntries.map((se: JournalSubEntry) => ({
-        //         content: se.content,
-        //         entryId: createdEntry.id
-        //       }))
-        //     });
-        //   }
-        // }
         break;
 
       case 'to-do':
@@ -396,9 +372,6 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             });
           }
         }
-        await prisma.note.createMany({
-          data: inputData.uncategorizedNotes.map((n: Note) => ({ ...n, userId })),
-        });
         break;
 
       case 'piano':

@@ -225,16 +225,6 @@ export const Notes = () => {
             border: `solid 1px ${palette.grey[700]}`,
             overflowY: 'auto',
           }}>
-            <NoteCategoryContainer
-              key={-1}
-              category={{
-                id: -1,
-                name: "Uncategorized",
-              }}
-              searchText={searchText}
-              selectedNote={selectedNote}
-              setSelectedNote={setSelectedNote}
-            />
             {noteCategories?.map((category) => (
               <NoteCategoryContainer
                 key={category.id}
@@ -316,15 +306,10 @@ export const Notes = () => {
               variant="standard"
               size="small"
               sx={{ minWidth: 150 }}
-              value={selectedNoteCategory?.id ?? -1}
+              value={selectedNoteCategory?.id ?? 0}
               onChange={(e) => setSelectedNoteCategory(allNoteCategories?.find(cat => cat.id === e.target.value))}
               disabled={!selectedNote}
             >
-              {!selectedNoteCategory && (
-                <MenuItem value={-1} disabled>
-                  {selectedNote ? <em>Uncategorized</em> : ""}
-                </MenuItem>
-              )}
               {allNoteCategories?.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}

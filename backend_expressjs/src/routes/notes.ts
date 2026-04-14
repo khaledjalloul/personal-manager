@@ -63,39 +63,24 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
 // Notes
 
 router.get('/', async (req: Request, res: Response) => {
-  const categoryId = req.query.categoryId as string | undefined;
+  const categoryIdStr = req.query.categoryId as string | undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
-  let notes;
-  if (categoryId) {
-    const categoryIdSearch = categoryId === "-1" ? null : parseInt(categoryId)
-    notes = await prisma.note.findMany({
-      where: {
-        userId: req.user.id,
-        categoryId: categoryIdSearch,
-        OR: [
-          { category: { name: { contains: searchText, mode: "insensitive" } } },
-          { title: { contains: searchText, mode: "insensitive" } },
-          { content: { contains: searchText, mode: "insensitive" } },
-        ]
-      },
-      include: { category: true },
-      orderBy: { title: 'asc' }
-    });
-  } else {
-    notes = await prisma.note.findMany({
-      where: {
-        userId: req.user.id,
-        OR: [
-          { category: { name: { contains: searchText, mode: "insensitive" } } },
-          { title: { contains: searchText, mode: "insensitive" } },
-          { content: { contains: searchText, mode: "insensitive" } },
-        ]
-      },
-      include: { category: true },
-      orderBy: [{ category: { name: 'asc' } }, { title: 'asc' }]
-    });
-  }
+  const categoryId = categoryIdStr ? parseInt(categoryIdStr) : undefined;
+  const notes = await prisma.note.findMany({
+    where: {
+      userId: req.user.id,
+      categoryId: categoryId,
+      OR: [
+        { category: { name: { contains: searchText, mode: "insensitive" } } },
+        { title: { contains: searchText, mode: "insensitive" } },
+        { content: { contains: searchText, mode: "insensitive" } },
+      ]
+    },
+    include: { category: true },
+    orderBy: [{ category: { name: 'asc' } }, { title: 'asc' }]
+  });
+
   res.json(notes);
 });
 
@@ -123,7 +108,7 @@ router.post('/', async (req: Request, res: Response) => {
       user: { connect: { id: req.user.id } },
       title,
       content,
-      category: categoryId !== undefined ? { connect: { id: categoryId } } : undefined,
+      category: { connect: { id: categoryId } },
       dateCreated: newDate,
       dateModified: newDate
     },
@@ -140,9 +125,7 @@ router.post('/:id', async (req: Request, res: Response) => {
     data: {
       title,
       content,
-      category: categoryId !== undefined
-        ? { connect: { id: categoryId } }
-        : { disconnect: true },
+      category: { connect: { id: categoryId } },
       dateModified: new Date()
     },
     include: { category: true }

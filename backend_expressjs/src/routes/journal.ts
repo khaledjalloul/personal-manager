@@ -246,7 +246,6 @@ router.delete('/sections/:id', async (req: Request, res: Response) => {
 
 // Journal Entries
 
-// TODO: Remove uncategorized entries logic and ensure all entries belong to a section
 router.get('/', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
   const sectionIdsStr = req.query.sectionIds as string | undefined ?? ""

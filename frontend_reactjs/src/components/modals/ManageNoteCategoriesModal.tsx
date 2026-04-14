@@ -2,7 +2,7 @@ import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
-import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories } from "../../api";
+import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories, useNotes } from "../../api";
 import { Note, NoteCategory } from "../../types";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useCtrlS } from "../../utils";
@@ -18,10 +18,12 @@ const CategoryCard = ({
   const [name, setName] = useState(category.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const { data: notesInCategory } = useNotes({ searchText: "", categoryId: category.id });
   const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
   const { mutate: deleteCategory, isPending: deleteLoading, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
 
   const save = () => {
+    if (!name.trim() || name.trim() === category.name) return;
     editCategory({
       id: category.id,
       name: name.trim()
@@ -49,6 +51,7 @@ const CategoryCard = ({
                   color="success"
                   loading={editLoading}
                   onClick={save}
+                  disabled={!name.trim() || name.trim() === category.name}
                 >
                   <Save fontSize="small" />
                 </IconButton>
@@ -57,9 +60,9 @@ const CategoryCard = ({
                   color="error"
                   loading={deleteLoading}
                   onClick={() => setConfirmDeleteOpen(true)}
+                  disabled={notesInCategory && notesInCategory.length > 0}
                 >
                   <Delete fontSize="small" />
-                  {/* TODO: Handle note delete disabled state */}
                 </IconButton>
               </Box>
             ),
