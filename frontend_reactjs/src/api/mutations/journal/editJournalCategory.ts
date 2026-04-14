@@ -8,6 +8,8 @@ const ENDPOINT = "journal/categories";
 export type EditJournalCategoryRequestBody = {
   id: number;
   name?: string;
+  order?: number;
+  color?: string;
 };
 
 const mutationFn = async (data: EditJournalCategoryRequestBody) => {
@@ -28,6 +30,9 @@ export const useEditJournalCategory = () => {
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["journal/sections"],
       });
     },
   });

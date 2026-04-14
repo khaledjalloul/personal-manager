@@ -59,6 +59,7 @@ const CategoryCard = ({
                   onClick={() => setConfirmDeleteOpen(true)}
                 >
                   <Delete fontSize="small" />
+                  {/* TODO: Handle note delete disabled state */}
                 </IconButton>
               </Box>
             ),

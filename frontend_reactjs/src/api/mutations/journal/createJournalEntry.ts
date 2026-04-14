@@ -6,7 +6,7 @@ import { JournalEntry } from "../../../types";
 const ENDPOINT = "journal";
 
 export type CreateJournalEntryRequestBody = {
-  sectionId: number;
+  sectionIds: number[];
   date: Date;
   content: string;
   subEntries: string[];
@@ -33,6 +33,9 @@ export const useCreateJournalEntry = () => {
       });
       queryClient.refetchQueries({
         queryKey: ["journal/categories"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["journal/sections"],
       });
     },
   });

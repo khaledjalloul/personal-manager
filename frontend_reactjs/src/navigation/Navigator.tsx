@@ -59,9 +59,9 @@ export const Navigator = () => {
           path: "/calendar",
           element: <Calendar />
         },
-        userData?.showPrivateContent ? {
+        {
           path: "/diary",
-          element: <DiaryWrapper />,
+          element: userData?.showPrivateContent ? <DiaryWrapper /> : <PageNotFound />,
           children: [
             {
               path: "/diary",
@@ -72,11 +72,11 @@ export const Navigator = () => {
               element: <MonthlyDiary />
             }
           ]
-        } : {},
-        userData?.showPrivateContent ? {
+        },
+        {
           path: "/journal",
-          element: <Journal />
-        } : {},
+          element: userData?.showPrivateContent ? <Journal /> : <PageNotFound />
+        },
         {
           path: "/todo",
           element: <ToDoWrapper />,
@@ -87,7 +87,7 @@ export const Navigator = () => {
             },
             {
               path: "/todo/milestones",
-              element: <ToDoMilestones />
+              element: userData?.showPrivateContent ? <ToDoMilestones /> : <PageNotFound />
             }
           ]
         },

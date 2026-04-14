@@ -1,174 +1,78 @@
 import {
   Box,
+  Checkbox,
   Grid,
   IconButton,
   InputAdornment,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Add,
+  ArrowDownward,
+  ArrowUpward,
+  CheckBox,
   Clear,
-  Delete,
-  Edit,
-  ExpandLess,
-  ExpandMore,
-  Save
+  CreateNewFolder,
 } from "@mui/icons-material";
-import {
-  useCreateJournalCategory,
-  useCreateJournalSection,
-  useDeleteJournalCategory,
-  useEditJournalCategory,
-  useJournalCategories,
-  useJournalEntries,
-  useJournalSections
-} from "../../api";
-import { JournalCategory, JournalSection } from "../../types";
-import { useCtrlS, UserContext } from "../../utils";
-import { ConfirmDeleteDialog, JournalSectionContainer, SearchTextHighlight } from "../../components";
+import { useJournalCategories, useJournalEntries, useJournalSections } from "../../api";
+import { JournalEntry, JournalSection } from "../../types";
+import { JournalCategoryContainer, JournalEntryContainer, ManageJournalCategoriesModal } from "../../components";
+import { UserContext } from "../../utils";
 
-const uncategorizedCategory: JournalCategory = {
+
+const emptyEntry: JournalEntry = {
   id: -1,
-  name: "Uncategorized",
+  date: new Date(),
+  content: "",
+  subEntries: [],
+  sections: []
 };
 
-const uncategorizedSection: JournalSection = {
-  id: -1,
-  name: "All Uncategorized Entries",
-  category: uncategorizedCategory,
-};
-
-const CategoryBox = ({
-  category,
-  searchText,
-  selectedCategory,
-  setSelectedCategory
-}: {
-  category: JournalCategory;
-  searchText: string;
-  selectedCategory?: JournalCategory;
-  setSelectedCategory: Dispatch<SetStateAction<JournalCategory | undefined>>;
-}) => {
-  const totalEntryCount = category.sections?.reduce((acc, section) => acc + section.entries.length, 0) || 0;
-
-  return (
-    <Box
-      onClick={() => setSelectedCategory(category)}
-      sx={{
-        p: 1,
-        pl: 1.5,
-        cursor: 'pointer',
-        borderTopLeftRadius: '8px',
-        borderTopRightRadius: '8px',
-        alignItems: 'center',
-        backgroundColor: selectedCategory?.id === category.id ? "primary.light" : "background.default",
-        ":hover": selectedCategory?.id !== category.id ? { backgroundColor: "action.hover" } : {},
-      }}
-    >
-      <Typography variant="body1">
-        <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
-        {" "}({totalEntryCount})
-      </Typography>
-    </Box>
-  );
-}
 
 export const Journal = () => {
-
   const { userData, setUserData } = useContext(UserContext);
+  const theme = useTheme();
 
   const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<JournalCategory>();
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
-  const [isEditingCategory, setIsEditingCategory] = useState(false);
-  const [isAddingSection, setIsAddingSection] = useState(false);
-  const [newSectionName, setNewSectionName] = useState("");
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [allSectionsCollapsed, setAllSectionsCollapsed] = useState(false);
+  const [selectedSections, setSelectedSections] = useState<JournalSection[]>([]);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(userData?.journalSortOrder || "desc");
+  const [isAddingEntry, setIsAddingEntry] = useState(false);
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
 
-  const { data: categories } = useJournalCategories({ searchText: searchText.trim() });
-  const { data: sectionsRaw } = useJournalSections({ categoryId: selectedCategory?.id, searchText: searchText.trim() });
+  const searchTextQuery = searchText.trim().length >= 3 ? searchText.trim() : "";
+
+  const { data: categories } = useJournalCategories({ searchText: searchTextQuery });
+  const { data: allSections } = useJournalSections({ searchText: searchTextQuery });
   const { data: allEntries } = useJournalEntries({
-    searchText: searchText.trim()
+    searchText: searchTextQuery,
+    sectionIds: allSections ? allSections.map(s => s.id) : [],
+    sortOrder
   });
-  const { data: uncategorizedEntries } = useJournalEntries({
-    sectionId: -1,
-    searchText: searchText.trim()
+  const { data: journalEntries } = useJournalEntries({
+    searchText: searchTextQuery,
+    sectionIds: selectedSections.map(s => s.id),
+    sortOrder
   });
 
-  const sections: JournalSection[] | undefined = selectedCategory?.id === -1 ? [uncategorizedSection] : sectionsRaw;
-
-  const { mutate: createCategory, isPending: createCategoryLoading } = useCreateJournalCategory();
-  const { mutate: editCategory, isPending: editCategoryLoading, isSuccess: editCategorySuccess } = useEditJournalCategory();
-  const { mutate: deleteCategory, isPending: deleteCategoryLoading, isSuccess: deleteCategorySuccess } = useDeleteJournalCategory();
-  const { mutate: createSection, isPending: createSectionLoading, isSuccess: createSectionSuccess } = useCreateJournalSection();
-
-  const saveEditCategory = () => {
-    if (!selectedCategory || !isEditingCategory || !selectedCategoryName?.trim()) return;
-
-    editCategory({
-      id: selectedCategory.id,
-      name: selectedCategoryName.trim()
-    });
-  };
-
-  const saveCreateSection = () => {
-    if (!selectedCategory || !isAddingSection || !newSectionName.trim()) return;
-
-    createSection({
-      categoryId: selectedCategory.id,
-      name: newSectionName.trim()
-    });
-  };
-
-  useCtrlS(() => { saveEditCategory(); saveCreateSection(); });
+  useEffect(() => {
+    if (userData && allSections)
+      setUserData({ ...userData, lastSelectedJournalSectionIds: selectedSections.map(s => s.id), journalSortOrder: sortOrder });
+  }, [selectedSections, sortOrder]);
 
   useEffect(() => {
-    if (editCategorySuccess) setIsEditingCategory(false);
-  }, [editCategorySuccess]);
+    if (!allSections) return;
 
-  useEffect(() => {
-    if (deleteCategorySuccess) {
-      setSelectedCategory(undefined);
-      setIsEditingCategory(false);
+    if (searchTextQuery)
+      setSelectedSections(allSections);
+    else if (userData?.lastSelectedJournalSectionIds) {
+      const lastSelected = allSections.filter(s => userData.lastSelectedJournalSectionIds?.includes(s.id));
+      setSelectedSections(lastSelected);
     }
-  }, [deleteCategorySuccess]);
-
-  useEffect(() => {
-    if (createSectionSuccess) {
-      setIsAddingSection(false);
-      setNewSectionName("");
-    }
-  }, [createSectionSuccess]);
-
-  useEffect(() => {
-    setIsAddingSection(false);
-    if (selectedCategory) {
-      setSelectedCategoryName(selectedCategory.name);
-      if (userData)
-        setUserData({ ...userData, lastOpenedJournalCategoryId: selectedCategory.id });
-    } else {
-      setSelectedCategoryName("");
-    }
-  }, [selectedCategory?.id]);
-
-  useEffect(() => {
-    if (categories) {
-      const categoriesToSearch = uncategorizedEntries?.length ? [...categories, uncategorizedCategory] : categories;
-
-      if (!searchText.trim() && userData && userData.lastOpenedJournalCategoryId) {
-        const lastOpenCategory = categoriesToSearch.find(category => category.id === userData.lastOpenedJournalCategoryId);
-        if (lastOpenCategory)
-          setSelectedCategory(lastOpenCategory);
-      } else if (searchText.trim()) {
-        if (categoriesToSearch.length > 0) setSelectedCategory(categoriesToSearch[0]);
-        else setSelectedCategory(undefined);
-      }
-    }
-  }, [JSON.stringify(categories), JSON.stringify(uncategorizedEntries), searchText]);
+  }, [searchTextQuery, allSections]);
 
   return (
     <Wrapper>
@@ -183,9 +87,20 @@ export const Journal = () => {
           Journal ({allEntries?.length || 0})
         </Typography>
 
+        <IconButton onClick={() => setIsAddingEntry(true)}>
+          <Add />
+        </IconButton>
+
+        <IconButton
+          size="small"
+          sx={{ ml: { xs: 0, sm: 'auto' }, mr: 2 }}
+          onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+        >
+          {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+        </IconButton>
+
         <TextField
           sx={{
-            ml: { xs: 0, sm: 'auto' },
             minWidth: { xs: 0, sm: "35vw" },
           }}
           label="Search journal"
@@ -225,16 +140,21 @@ export const Journal = () => {
             pl: '32px',
             pb: { xs: 0, sm: '32px' },
             pr: { xs: '32px', sm: 0 },
+            maxHeight: { xs: 'auto', sm: '100%' },
           }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.6, gap: 1 }}>
             <Typography variant="h6" mr={1}>
               Categories
             </Typography>
-            <IconButton
+            <Checkbox
               size="small"
-              loading={createCategoryLoading}
-              onClick={() => createCategory({ name: "New Category" })}>
-              <Add />
+              sx={{ p: 0 }}
+              checked={selectedSections.length === allSections?.length}
+              onChange={(e) => setSelectedSections(e.target.checked && allSections ? allSections : [])}
+              checkedIcon={<CheckBox htmlColor={theme.palette.text.primary} />}
+            />
+            <IconButton size="small" onClick={() => setIsCategoriesModalOpen(true)}>
+              <CreateNewFolder />
             </IconButton>
           </Box>
 
@@ -245,25 +165,13 @@ export const Journal = () => {
             borderColor: 'grey.700',
             overflowY: 'auto',
           }}>
-            {uncategorizedEntries?.length ? (
-              <CategoryBox
-                key={-1}
-                category={{
-                  ...uncategorizedCategory,
-                  sections: [{ entries: uncategorizedEntries }]
-                }}
-                searchText={searchText}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            ) : null}
             {categories?.map((category) => (
-              <CategoryBox
+              <JournalCategoryContainer
                 key={category.id}
                 category={category}
-                searchText={searchText}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
+                searchText={searchTextQuery}
+                selectedSections={selectedSections}
+                setSelectedSections={setSelectedSections}
               />
             ))}
           </Box>
@@ -282,131 +190,31 @@ export const Journal = () => {
             overflowY: 'auto',
           }}
         >
-          {!isEditingCategory ? (
-            <Box
-              sx={{ display: 'flex', alignItems: 'center' }}
-              onDoubleClick={selectedCategory && selectedCategory.id !== -1 ? () => setIsEditingCategory(true) : undefined}
-            >
-              <Typography variant="h6">
-                {selectedCategoryName ?
-                  <SearchTextHighlight text={selectedCategoryName} searchText={searchText.trim()} />
-                  : "Select a category"
-                }
-              </Typography>
-
-              {selectedCategory && selectedCategory.id !== -1 && (
-                <IconButton
-                  sx={{ ml: 2 }}
-                  onClick={() => setIsEditingCategory(true)}
-                >
-                  <Edit />
-                </IconButton>
-              )}
-
-              {selectedCategory && selectedCategory.id !== -1 && (
-                <IconButton
-                  onClick={() => setIsAddingSection(true)}
-                >
-                  <Add />
-                </IconButton>
-              )}
-
-              {selectedCategory && (
-                <IconButton
-                  onClick={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
-                >
-                  {allSectionsCollapsed ? <ExpandMore /> : <ExpandLess />}
-                </IconButton>
-              )}
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField
-                label="Category Name"
-                variant="standard"
-                value={selectedCategoryName || ""}
-                onChange={(e) => setSelectedCategoryName(e.target.value)} />
-
-              <IconButton
-                sx={{ ml: 1 }}
-                color="success"
-                loading={editCategoryLoading}
-                disabled={!selectedCategoryName?.trim()}
-                onClick={saveEditCategory}
-              >
-                <Save />
-              </IconButton>
-
-              <IconButton
-                color="error"
-                loading={deleteCategoryLoading}
-                onClick={() => {
-                  if (selectedCategory)
-                    setConfirmDeleteOpen(true);
-                }}
-              >
-                <Delete />
-              </IconButton>
-
-              <IconButton
-                onClick={() => {
-                  setSelectedCategoryName(selectedCategory?.name);
-                  setIsEditingCategory(false);
-                }}
-              >
-                <Clear />
-              </IconButton>
-            </Box>
+          {isAddingEntry && (
+            <JournalEntryContainer
+              entry={emptyEntry}
+              searchText={searchTextQuery}
+              isAddingEntry={isAddingEntry}
+              setIsAddingEntry={setIsAddingEntry}
+            />
           )}
 
-          {isAddingSection && selectedCategory && (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField
-                label="New Section Name"
-                variant="standard"
-                value={newSectionName}
-                onChange={(e) => setNewSectionName(e.target.value)}
-              />
-              <IconButton
-                sx={{ ml: 1 }}
-                color="success"
-                loading={createSectionLoading}
-                disabled={!newSectionName.trim()}
-                onClick={saveCreateSection}
-              >
-                <Save fontSize="small" />
-              </IconButton>
-
-              <IconButton
-                onClick={() => {
-                  setIsAddingSection(false);
-                  setNewSectionName("");
-                }}
-              >
-                <Clear fontSize="small" />
-              </IconButton>
-            </Box>
-          )}
-
-          {sections?.map((section) => (
-            <JournalSectionContainer
-              key={section.id}
-              section={section}
-              searchText={searchText}
-              allSectionsCollapsed={allSectionsCollapsed}
+          {journalEntries?.map(entry => (
+            <JournalEntryContainer
+              key={entry.id}
+              entry={entry}
+              searchText={searchTextQuery}
+              isAddingEntry={false}
+              setIsAddingEntry={setIsAddingEntry}
             />
           ))}
         </Grid>
       </Grid>
 
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`journal category: ${selectedCategory?.name}`}
-        deleteFn={() => {
-          if (selectedCategory)
-            deleteCategory({ id: selectedCategory.id });
-        }}
+      <ManageJournalCategoriesModal
+        isOpen={isCategoriesModalOpen}
+        setIsOpen={setIsCategoriesModalOpen}
+        setSelectedSections={setSelectedSections}
       />
 
     </Wrapper >

@@ -8,14 +8,17 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Add, Clear, Today, ViewList } from "@mui/icons-material";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../utils";
 
 export const ToDoWrapper = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { userData } = useContext(UserContext);
 
   const [displayedCount, setDisplayedCount] = useState(0);
   const [isArchived, setisArchived] = useState(false);
@@ -53,14 +56,14 @@ export const ToDoWrapper = () => {
           flexGrow: 1,
         }}
         >
-          <Button
+          {userData?.showPrivateContent && <Button
             variant="outlined"
             startIcon={isGeneral ? <Today /> : <ViewList />}
             sx={{ whiteSpace: 'nowrap', flexGrow: { xs: 1, sm: 0 } }}
             onClick={() => navigate(isGeneral ? "/todo/milestones" : "/todo")}
           >
             {isGeneral ? "Milestones" : "General"}
-          </Button>
+          </Button>}
 
           {isGeneral && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

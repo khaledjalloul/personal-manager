@@ -5,8 +5,9 @@ import client from "../../client";
 const ENDPOINT = "journal";
 
 export type GetJournalEntriesRequestParams = {
-  sectionId?: number;
+  sectionIds: number[];
   searchText: string;
+  sortOrder: "asc" | "desc";
 };
 
 const queryFn = (params: GetJournalEntriesRequestParams) => async () => {

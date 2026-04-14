@@ -164,26 +164,26 @@ export const diaryEntries: DiaryEntry[] = [
 // ############### Journal ###############
 
 export const journalCategories: JournalCategory[] = [
-    { id: 1, name: 'Personal', sections: [{ entries: [{ id: 1 }, { id: 2 }, { id: 5 }] }] },
-    { id: 2, name: 'Work', sections: [{ entries: [{ id: 3 }, { id: 4 }] }] },
+    { id: 1, name: 'Personal', sections: [{ entries: [{ id: 1 }, { id: 2 }, { id: 5 }] }], order: 0, color: 'blue' },
+    { id: 2, name: 'Work', sections: [{ entries: [{ id: 3 }, { id: 4 }] }], order: 1, color: 'green' },
 ];
 
 export const journalSections: JournalSection[] = [
-    { id: 1, category: journalCategories[0], name: 'Reflections' },
-    { id: 2, category: journalCategories[0], name: 'Project Ideas' },
-    { id: 3, category: journalCategories[1], name: 'Meeting Notes' },
-    { id: 4, category: journalCategories[1], name: 'Task Lists' }
+    { id: 1, category: journalCategories[0], name: 'Reflections', order: 0 },
+    { id: 2, category: journalCategories[0], name: 'Project Ideas', order: 2 },
+    { id: 3, category: journalCategories[1], name: 'Meeting Notes', order: 1 },
+    { id: 4, category: journalCategories[1], name: 'Task Lists', order: 3 }
 ];
 
 export const journalEntries: JournalEntry[] = [
     {
-        id: 1, section: journalSections[0], date: new Date(), content: 'Good day.',
+        id: 1, sections: [journalSections[0]], date: new Date(), content: 'Good day.',
         subEntries: [{ id: 1, entryId: 1, content: 'sub 1' }, { id: 2, entryId: 1, content: 'sub 2' }]
     },
-    { id: 2, section: journalSections[1], date: new Date(), content: 'New project idea: a personal finance tracker.', subEntries: [] },
-    { id: 3, section: journalSections[2], date: new Date(), content: 'Meeting with the team went well.', subEntries: [] },
-    { id: 4, section: journalSections[3], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation', subEntries: [] },
-    { id: 5, section: journalSections[0], date: new Date(), content: 'Reflected on my goals for the year.', subEntries: [] }
+    { id: 2, sections: [journalSections[1], journalSections[3]], date: new Date(), content: 'New project idea: a personal finance tracker.', subEntries: [] },
+    { id: 3, sections: [journalSections[2]], date: new Date(), content: 'Meeting with the team went well.', subEntries: [] },
+    { id: 4, sections: [journalSections[3]], date: new Date(), content: 'Tasks for the week: 1. Finish project report 2. Prepare for presentation', subEntries: [] },
+    { id: 5, sections: [journalSections[0], journalSections[2]], date: new Date(), content: 'Reflected on my goals for the year.', subEntries: [] }
 ];
 
 // ############### Calendar ###############

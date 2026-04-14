@@ -7,6 +7,8 @@ const ENDPOINT = "journal";
 
 export type EditJournalEntryRequestBody = {
   id: number;
+  sectionIds?: number[];
+  sectionIdsToRemove?: number[];
   date?: Date;
   content?: string;
   subEntries?: string[];
@@ -30,6 +32,12 @@ export const useEditJournalEntry = () => {
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["journal/categories"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["journal/sections"],
       });
     },
   });

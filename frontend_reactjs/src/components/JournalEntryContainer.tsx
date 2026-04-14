@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { JournalEntry } from "../types";
-import { Box, Grid, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Grid, IconButton, MenuItem, Select, Typography, useTheme } from "@mui/material";
 import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
-import { useCreateJournalEntry, useDeleteJournalEntry, useEditJournalEntry } from "../api";
+import { useCreateJournalEntry, useDeleteJournalEntry, useEditJournalEntry, useJournalSections } from "../api";
 import { useCtrlS } from "../utils";
 import { ConfirmDeleteDialog } from "./modals";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -26,27 +26,32 @@ export const JournalEntryContainer = ({
 
   const [isEditing, setIsEditing] = useState(isAddingEntry);
   const [date, setDate] = useState(dayjs(entry.date));
+  const [sections, setSections] = useState(entry.sections);
   const [content, setContent] = useState(entry.content);
   const [subEntries, setSubEntries] = useState(entry.subEntries.map(se => se.content));
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { data: allSections } = useJournalSections({ searchText: "" });
 
   const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalEntry();
   const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditJournalEntry();
   const { mutate: deleteEntry, isPending: deleteLoading } = useDeleteJournalEntry();
 
   const save = () => {
-    if (!isEditing || !content.trim()) return;
+    if (!isEditing || !content.trim() || sections.length === 0) return;
 
     if (!isAddingEntry)
       editEntry({
         id: entry.id,
+        sectionIds: sections.map(s => s.id),
+        sectionIdsToRemove: entry.sections.map(s => s.id).filter(id => !sections.some(s => s.id === id)),
         date: date.toDate(),
         content: content.trim(),
         subEntries: subEntries.map(se => se.trim())
       });
-    else if (entry.section)
+    else if (sections.length)
       createEntry({
-        sectionId: entry.section.id,
+        sectionIds: sections.map(s => s.id),
         date: date.toDate(),
         content: content.trim(),
         subEntries: subEntries.map(se => se.trim())
@@ -80,15 +85,38 @@ export const JournalEntryContainer = ({
           border: `solid 1px ${palette.grey[700]}`
         }}>
           {!isEditing ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexGrow: 1 }}>
-              <Typography variant="body2">
-                {dayjs(entry.date).format("DD.MM.YYYY")}
-              </Typography>
+            <Box sx={{ flexGrow: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexGrow: 1 }}>
+                <Typography variant="body2">
+                  {dayjs(entry.date).format("DD.MM.YYYY")}
+                </Typography>
 
-              <IconButton
-                onClick={() => setIsEditing(true)}>
-                <Edit fontSize="small" />
-              </IconButton>
+                <IconButton
+                  onClick={() => setIsEditing(true)}>
+                  <Edit fontSize="small" />
+                </IconButton>
+              </Box>
+
+              <Box sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 0.5,
+                mt: 0.5,
+                mb: 0.5
+              }}>
+                {sections.map((section) => (
+                  <Box key={section.id} sx={{
+                    border: 'solid 1px transparent',
+                    backgroundColor: `${allSections?.find(s => s.id === section.id)?.category.color}60`,
+                    borderRadius: '32px',
+                    p: 0.25,
+                    pr: 1,
+                    pl: 1
+                  }}>
+                    <Typography variant="caption">{allSections?.find(s => s.id === section.id)?.category.name}: {allSections?.find(s => s.id === section.id)?.name}</Typography>
+                  </Box>
+                ))}
+              </Box>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, flexGrow: 1 }}>
@@ -108,6 +136,45 @@ export const JournalEntryContainer = ({
                 />
               </LocalizationProvider>
 
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignSelf: 'stretch' }}>
+                {sections.map((section) => (
+                  <Box key={section.id} sx={{
+                    border: 'solid 1px transparent',
+                    backgroundColor: `${allSections?.find(s => s.id === section.id)?.category.color}60`,
+                    borderRadius: '32px',
+                    p: 0.25,
+                    pr: 0.25,
+                    pl: 1
+                  }}>
+                    <Typography variant="caption">{allSections?.find(s => s.id === section.id)?.category.name}: {allSections?.find(s => s.id === section.id)?.name}</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => setSections(sections.filter(s => s.id !== section.id))}
+                    >
+                      <Clear sx={{ fontSize: '16px' }} />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
+
+              <Select
+                variant="outlined"
+                size="small"
+                value={-1}
+                sx={{ width: "100%" }}
+                onChange={(e) => {
+                  if (sections.some(s => s.id === e.target.value)) return;
+                  const newSection = allSections?.find(s => s.id === e.target.value);
+                  if (newSection) setSections([...sections, newSection]);
+                }}
+              >
+                {allSections?.filter(s => !sections.some(sec => sec.id === s.id)).map((section) => (
+                  <MenuItem key={section.id} value={section.id}>
+                    {section.category.name}: {section.name}
+                  </MenuItem>
+                ))}
+              </Select>
+
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <IconButton
                   onClick={() => setSubEntries([...subEntries, ""])}
@@ -118,7 +185,7 @@ export const JournalEntryContainer = ({
                 <IconButton
                   color="success"
                   loading={createLoading || editLoading}
-                  disabled={!content.trim()}
+                  disabled={!content.trim() || sections.length === 0}
                   onClick={save}
                 >
                   <Save fontSize="small" />
@@ -136,6 +203,7 @@ export const JournalEntryContainer = ({
                 <IconButton
                   onClick={() => {
                     if (!isAddingEntry) {
+                      setSections(entry.sections);
                       setDate(dayjs(entry.date));
                       setContent(entry.content);
                       setSubEntries(entry.subEntries.map(se => se.content));

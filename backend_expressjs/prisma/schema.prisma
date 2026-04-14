@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TODO: Update delete cascades and nullifications
+
 model User {
   id                 Int                @id @default(autoincrement())
   name               String
@@ -92,6 +94,8 @@ model JournalCategory {
   userId   Int
   user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   name     String
+  order    Int
+  color    String
   sections JournalSection[]
 }
 
@@ -102,6 +106,7 @@ model JournalSection {
   categoryId Int
   category   JournalCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   name       String
+  order      Int
   entries    JournalEntry[]
 }
 
@@ -109,8 +114,7 @@ model JournalEntry {
   id         Int               @id @default(autoincrement())
   userId     Int
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sectionId  Int?
-  section    JournalSection?   @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  sections   JournalSection[]
   date       DateTime
   content    String
   subEntries JournalSubEntry[]

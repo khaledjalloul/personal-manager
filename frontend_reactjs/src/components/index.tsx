@@ -10,7 +10,7 @@ export * from "./NoteCategoryContainer";
 export * from './DiaryEntryContainer';
 export * from './VideoGameCard';
 export * from './ExpensesCategoryCard';
-export * from './JournalSectionContainer';
+export * from './JournalCategoryContainer';
 export * from './JournalEntryContainer';
 export * from './SearchTextHighlight';
 export * from './ToDoTaskContainer';

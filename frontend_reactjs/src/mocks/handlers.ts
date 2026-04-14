@@ -247,14 +247,12 @@ const journalHandlers = [
   // Entries
   http.get<PathParams, DefaultBodyType, JournalEntry[]>('/journal', ({ request }) => {
     const url = new URL(request.url)
-    var sectionId = url.searchParams.get('sectionId') ?? "";
+    var sectionIds = url.searchParams.get('sectionIds') ?? "";
 
     var entriesToReturn = journalEntries;
-    if (sectionId) {
-      if (sectionId === "-1")
-        entriesToReturn = journalEntries.filter(entry => !entry.section);
-      else
-        entriesToReturn = journalEntries.filter(entry => entry.section?.id === parseInt(sectionId));
+    if (sectionIds) {
+      const ids = sectionIds.split(',').map(id => parseInt(id));
+      entriesToReturn = journalEntries.filter(entry => entry.sections.some(section => ids.includes(section.id)));
     }
     return HttpResponse.json(entriesToReturn);
   }),

@@ -13,10 +13,9 @@ router.get('/categories', async (req: Request, res: Response) => {
     where: {
       userId: req.user.id,
       OR: [
-        { name: { contains: searchText, mode: 'insensitive' } },
-        { sections: { some: { name: { contains: searchText, mode: 'insensitive' } } } },
         { sections: { some: { entries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } },
-        { sections: { some: { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } } } }
+        { sections: { some: { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } } } },
+        !searchText ? { id: { gt: 0 } } : {}
       ]
     },
     include: {
@@ -25,8 +24,6 @@ router.get('/categories', async (req: Request, res: Response) => {
           entries: {
             where: {
               OR: [
-                { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
-                { section: { name: { contains: searchText, mode: 'insensitive' } } },
                 { content: { contains: searchText, mode: 'insensitive' } },
                 { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
               ]
@@ -38,17 +35,22 @@ router.get('/categories', async (req: Request, res: Response) => {
         }
       }
     },
-    orderBy: { name: 'asc' },
+    orderBy: [
+      { order: 'asc' },
+      { name: 'asc' }
+    ],
   });
   res.json(categories);
 });
 
 router.post('/categories', async (req: Request, res: Response) => {
-  const { name } = req.body;
+  const { name, color } = req.body;
   const category = await prisma.journalCategory.create({
     data: {
       user: { connect: { id: req.user.id } },
-      name
+      name,
+      color,
+      order: await prisma.journalCategory.count({ where: { userId: req.user.id } })
     }
   });
   res.json(category);
@@ -56,10 +58,47 @@ router.post('/categories', async (req: Request, res: Response) => {
 
 router.post('/categories/:id', async (req: Request, res: Response) => {
   const categoryId = parseInt(req.params.id);
-  const { name } = req.body;
+  const { name, order, color } = req.body;
+
+  if (order !== undefined) {
+    const categoryToUpdate = await prisma.journalCategory.findUnique({ where: { id: categoryId } });
+
+    if (order < categoryToUpdate!.order) {
+      await prisma.journalCategory.updateMany({
+        where: {
+          userId: req.user.id,
+          order: {
+            gte: order,
+            lt: categoryToUpdate!.order
+          }
+        },
+        data: {
+          order: {
+            increment: 1
+          }
+        }
+      });
+    } else if (order > categoryToUpdate!.order) {
+      await prisma.journalCategory.updateMany({
+        where: {
+          userId: req.user.id,
+          order: {
+            gt: categoryToUpdate!.order,
+            lte: order
+          }
+        },
+        data: {
+          order: {
+            decrement: 1
+          }
+        }
+      });
+    }
+  }
+
   const category = await prisma.journalCategory.update({
     where: { id: categoryId },
-    data: { name }
+    data: { name, order, color }
   });
   res.json(category);
 });
@@ -67,7 +106,18 @@ router.post('/categories/:id', async (req: Request, res: Response) => {
 router.delete('/categories/:id', async (req: Request, res: Response) => {
   const categoryId = parseInt(req.params.id);
 
-  await prisma.journalCategory.delete({ where: { id: categoryId } });
+  const deletedCategory = await prisma.journalCategory.delete({ where: { id: categoryId } });
+
+  await prisma.journalCategory.updateMany({
+    where: {
+      userId: req.user.id,
+      order: { gt: deletedCategory.order }
+    },
+    data: {
+      order: { decrement: 1 }
+    }
+  });
+
   res.json({ message: 'Category deleted successfully' });
 });
 
@@ -77,19 +127,41 @@ router.get('/sections', async (req: Request, res: Response) => {
   const categoryId = req.query.categoryId as string | undefined;
   const searchText = (req.query.searchText as string) ?? "";
 
-  if (!categoryId) return res.json([]);
-
   const sections = await prisma.journalSection.findMany({
     where: {
-      categoryId: parseInt(categoryId),
+      categoryId: categoryId ? parseInt(categoryId) : undefined,
       OR: [
-        { category: { name: { contains: searchText, mode: 'insensitive' } } },
-        { name: { contains: searchText, mode: 'insensitive' } },
         { entries: { some: { content: { contains: searchText, mode: 'insensitive' } } } },
-        { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } }
+        { entries: { some: { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } } } },
+        !searchText ? { id: { gt: 0 } } : {}
       ]
     },
-    orderBy: { name: 'asc' },
+    include: {
+      _count: {
+        select: {
+          entries: {
+            where: {
+              OR: [
+                { content: { contains: searchText, mode: 'insensitive' } },
+                { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } },
+              ]
+            }
+          }
+        }
+      },
+      category: {
+        select: {
+          name: true,
+          color: true
+        }
+      }
+    },
+    orderBy: [
+      { category: { order: 'asc' } },
+      { category: { name: 'asc' } },
+      { order: 'asc' },
+      { name: 'asc' }
+    ],
   });
 
   res.json(sections);
@@ -101,6 +173,7 @@ router.post('/sections', async (req: Request, res: Response) => {
     data: {
       user: { connect: { id: req.user.id } },
       name,
+      order: await prisma.journalSection.count({ where: { userId: req.user.id } }),
       category: categoryId && { connect: { id: categoryId } }
     }
   });
@@ -109,10 +182,46 @@ router.post('/sections', async (req: Request, res: Response) => {
 
 router.post('/sections/:id', async (req: Request, res: Response) => {
   const sectionId = parseInt(req.params.id);
-  const { name } = req.body;
+  const { name, order } = req.body;
+
+  if (order !== undefined) {
+    const sectionToUpdate = await prisma.journalSection.findUnique({ where: { id: sectionId } });
+    if (order < sectionToUpdate!.order) {
+      await prisma.journalSection.updateMany({
+        where: {
+          userId: req.user.id,
+          order: {
+            gte: order,
+            lt: sectionToUpdate!.order
+          }
+        },
+        data: {
+          order: {
+            increment: 1
+          }
+        }
+      });
+    } else if (order > sectionToUpdate!.order) {
+      await prisma.journalSection.updateMany({
+        where: {
+          userId: req.user.id,
+          order: {
+            gt: sectionToUpdate!.order,
+            lte: order
+          }
+        },
+        data: {
+          order: {
+            decrement: 1
+          }
+        }
+      });
+    }
+  }
+
   const section = await prisma.journalSection.update({
     where: { id: sectionId },
-    data: { name }
+    data: { name, order }
   });
   res.json(section);
 });
@@ -120,64 +229,67 @@ router.post('/sections/:id', async (req: Request, res: Response) => {
 router.delete('/sections/:id', async (req: Request, res: Response) => {
   const sectionId = parseInt(req.params.id);
 
-  await prisma.journalSection.delete({ where: { id: sectionId } });
+  const deletedSection = await prisma.journalSection.delete({ where: { id: sectionId } });
+
+  await prisma.journalSection.updateMany({
+    where: {
+      userId: req.user.id,
+      order: { gt: deletedSection.order }
+    },
+    data: {
+      order: { decrement: 1 }
+    }
+  });
+
   res.json({ message: 'Section deleted successfully' });
 });
 
 // Journal Entries
 
+// TODO: Remove uncategorized entries logic and ensure all entries belong to a section
 router.get('/', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
-  const sectionId = req.query.sectionId as string | undefined;
+  const sectionIdsStr = req.query.sectionIds as string | undefined ?? ""
+  const sectionIds = sectionIdsStr === "" ? [] : sectionIdsStr.split(',').map(id => parseInt(id));
+  const sortOrder = (req.query.sortOrder as "asc" | "desc") ?? "asc";
 
-  let entries;
-  if (sectionId) {
-    const sectionIdSearch = sectionId === "-1" ? null : parseInt(sectionId)
-    entries = await prisma.journalEntry.findMany({
-      where: {
-        userId: req.user.id,
-        sectionId: sectionIdSearch,
-        OR: [
-          { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
-          { section: { name: { contains: searchText, mode: 'insensitive' } } },
-          { content: { contains: searchText, mode: 'insensitive' } },
-          { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
-        ]
+  const entries = await prisma.journalEntry.findMany({
+    where: {
+      userId: req.user.id,
+      sections: { some: { id: { in: sectionIds } } },
+      OR: [
+        { content: { contains: searchText, mode: 'insensitive' } },
+        { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
+      ]
+    },
+    include: {
+      subEntries: {
+        orderBy: { id: 'asc' },
       },
-      include: {
-        subEntries: {
-          orderBy: { id: 'asc' },
+      sections: {
+        select: {
+          id: true,
+          category: {
+            select: {
+              color: true
+            }
+          }
         },
-      },
-      orderBy: { date: 'asc' },
-    });
-  } else {
-    entries = await prisma.journalEntry.findMany({
-      where: {
-        userId: req.user.id,
-        OR: [
-          { section: { category: { name: { contains: searchText, mode: 'insensitive' } } } },
-          { section: { name: { contains: searchText, mode: 'insensitive' } } },
-          { content: { contains: searchText, mode: 'insensitive' } },
-          { subEntries: { some: { content: { contains: searchText, mode: 'insensitive' } } } }
+        orderBy: [
+          { order: 'asc' },
+          { name: 'asc' }
         ]
-      },
-      include: {
-        subEntries: {
-          orderBy: { id: 'asc' },
-        },
-      },
-      orderBy: { date: 'asc' },
-    });
-  }
+      }
+    },
+    orderBy: { date: sortOrder },
+  });
 
   res.json(entries);
 });
 
 router.post('/', async (req: Request, res: Response) => {
-  const { date, content, subEntries, sectionId } = req.body;
+  const { date, content, subEntries, sectionIds } = req.body;
 
-  // TODO: Create separate routes for sub-entries
   const entry = await prisma.journalEntry.create({
     data: {
       user: { connect: { id: req.user.id } },
@@ -190,7 +302,9 @@ router.post('/', async (req: Request, res: Response) => {
           }))
         }
       },
-      section: sectionId && { connect: { id: sectionId } }
+      sections: {
+        connect: sectionIds.map((id: number) => ({ id }))
+      }
     },
   });
   res.json(entry);
@@ -198,7 +312,7 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.post('/:id', async (req: Request, res: Response) => {
   const entryId = parseInt(req.params.id);
-  const { date, content, subEntries } = req.body;
+  const { date, content, subEntries, sectionIds, sectionIdsToRemove } = req.body;
 
   await prisma.journalSubEntry.deleteMany({
     where: { entryId }
@@ -216,6 +330,10 @@ router.post('/:id', async (req: Request, res: Response) => {
             content: subEntry
           }))
         }
+      },
+      sections: {
+        connect: sectionIds.map((id: number) => ({ id })),
+        disconnect: sectionIdsToRemove?.map((id: number) => ({ id }))
       }
     },
   });

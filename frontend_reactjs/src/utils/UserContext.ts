@@ -4,7 +4,8 @@ export type UserData = {
   token: string;
   showPrivateContent?: boolean;
   lastOpenedNoteId?: number;
-  lastOpenedJournalCategoryId?: number;
+  lastSelectedJournalSectionIds?: number[];
+  journalSortOrder?: "asc" | "desc";
   lastSelectedCalendarDate?: Date;
   lastSelectedDiaryDate?: Date;
 } | null;

@@ -7,6 +7,7 @@ const ENDPOINT = "journal/categories";
 
 export type CreateJournalCategoryRequestBody = {
   name: string;
+  color: string;
 };
 
 const mutationFn = async (data: CreateJournalCategoryRequestBody) => {

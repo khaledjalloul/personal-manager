@@ -118,6 +118,8 @@ export const Account = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
+  const [nameClickCounter, setNameClickCounter] = useState(0);
+  const [newPassClickCounter, setNewPassClickCounter] = useState(0);
 
   const { data: user } = useCurrentUser();
 
@@ -153,6 +155,7 @@ export const Account = () => {
               label="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onClick={() => setNameClickCounter(nameClickCounter => nameClickCounter + 1)}
             />
             <TextField
               label="Email"
@@ -189,6 +192,7 @@ export const Account = () => {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              onClick={() => setNewPassClickCounter(counter => counter + 1)}
             />
 
             <Button
@@ -203,7 +207,7 @@ export const Account = () => {
             </Button>
 
             <Box sx={{
-              display: 'flex',
+              display: userData?.showPrivateContent || (nameClickCounter == 3 && newPassClickCounter == 7) ? 'flex' : 'none',
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',

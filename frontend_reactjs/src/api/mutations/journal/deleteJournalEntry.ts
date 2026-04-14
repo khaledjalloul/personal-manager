@@ -27,6 +27,12 @@ export const useDeleteJournalEntry = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["journal/categories"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["journal/sections"],
+      });
     },
   });
 };

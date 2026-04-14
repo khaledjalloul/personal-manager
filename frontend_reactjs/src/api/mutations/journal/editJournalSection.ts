@@ -8,6 +8,7 @@ const ENDPOINT = "journal/sections";
 export type EditJournalSectionRequestBody = {
   id: number;
   name?: string;
+  order?: number;
 };
 
 const mutationFn = async (data: EditJournalSectionRequestBody) => {

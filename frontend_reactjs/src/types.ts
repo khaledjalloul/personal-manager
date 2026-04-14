@@ -55,18 +55,24 @@ export type DiaryEntry = {
 export type JournalCategory = {
   id: number;
   name: string;
+  order: number;
+  color: string;
   sections?: { entries: { id: number }[] }[];
 };
 
 export type JournalSection = {
   id: number;
   category: JournalCategory;
+  order: number;
   name: string;
+  _count?: {
+    entries: number;
+  }
 };
 
 export type JournalEntry = {
   id: number;
-  section?: JournalSection;
+  sections: JournalSection[];
   date: Date;
   content: string;
   subEntries: JournalSubEntry[];

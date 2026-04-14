@@ -89,7 +89,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
               orderBy: { name: 'asc' },
               include: {
                 entries: {
-                  omit: { id: true, userId: true, sectionId: true },
+                  omit: { id: true, userId: true },
                   orderBy: { date: 'asc' },
                   include: {
                     subEntries: {
@@ -103,11 +103,11 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           },
           orderBy: { name: 'asc' }
         });
-        data.uncategorizedJournalEntries = await prisma.journalEntry.findMany({
-          where: { userId, section: null },
-          omit: { id: true, userId: true, sectionId: true },
-          orderBy: { date: 'asc' }
-        });
+        // data.uncategorizedJournalEntries = await prisma.journalEntry.findMany({
+        //   where: { userId, section: null },
+        //   omit: { id: true, userId: true, sectionId: true },
+        //   orderBy: { date: 'asc' }
+        // });
         break;
 
       case 'to-do':
@@ -322,7 +322,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
                 for (const entry of entries) {
                   const { subEntries, ...entryData } = entry;
                   const createdEntry = await prisma.journalEntry.create({
-                    data: { ...entryData, userId, sectionId: createdSection.id },
+                    data: { ...entryData, userId, sections: { connect: { id: createdSection.id } } },
                   });
                   if (subEntries && subEntries.length) {
                     await prisma.journalSubEntry.createMany({
@@ -337,20 +337,20 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             }
           }
         }
-        for (const entry of inputData.uncategorizedJournalEntries) {
-          const { subEntries, ...entryData } = entry;
-          const createdEntry = await prisma.journalEntry.create({
-            data: { ...entryData, userId },
-          });
-          if (subEntries && subEntries.length) {
-            await prisma.journalSubEntry.createMany({
-              data: subEntries.map((se: JournalSubEntry) => ({
-                content: se.content,
-                entryId: createdEntry.id
-              }))
-            });
-          }
-        }
+        // for (const entry of inputData.uncategorizedJournalEntries) {
+        //   const { subEntries, ...entryData } = entry;
+        //   const createdEntry = await prisma.journalEntry.create({
+        //     data: { ...entryData, userId },
+        //   });
+        //   if (subEntries && subEntries.length) {
+        //     await prisma.journalSubEntry.createMany({
+        //       data: subEntries.map((se: JournalSubEntry) => ({
+        //         content: se.content,
+        //         entryId: createdEntry.id
+        //       }))
+        //     });
+        //   }
+        // }
         break;
 
       case 'to-do':
