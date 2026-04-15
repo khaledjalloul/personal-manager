@@ -20,6 +20,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Backup
 
+// TODO: Add new sports backup and restore
+
 router.get('/backup/:dataType', async (req: Request, res: Response) => {
   const userId = req.user.id;
   const { dataType } = req.params
@@ -85,11 +87,11 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true },
           include: {
             sections: {
-              omit: { id: true, userId: true, categoryId: true },
+              omit: { id: true, categoryId: true },
               orderBy: { name: 'asc' },
               include: {
                 entries: {
-                  omit: { id: true, userId: true },
+                  omit: { id: true },
                   orderBy: { date: 'asc' },
                   include: {
                     subEntries: {
@@ -129,7 +131,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           omit: { id: true, userId: true },
           include: {
             notes: {
-              omit: { id: true, userId: true, categoryId: true },
+              omit: { id: true, categoryId: true },
               orderBy: { title: 'asc' }
             }
           },
@@ -293,8 +295,8 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         break;
 
       case 'journal':
-        await prisma.journalEntry.deleteMany({ where: { userId } });
-        await prisma.journalSection.deleteMany({ where: { userId } });
+        await prisma.journalEntry.deleteMany({ where: { sections: { some: { category: { userId } } } } });
+        await prisma.journalSection.deleteMany({ where: { category: { userId } } });
         await prisma.journalCategory.deleteMany({ where: { userId } });
 
         for (const cat of inputData.journalCategories) {
@@ -306,13 +308,13 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
             for (const section of sections) {
               const { entries, ...sectionData } = section;
               const createdSection = await prisma.journalSection.create({
-                data: { ...sectionData, userId, categoryId: createdCat.id },
+                data: { ...sectionData, categoryId: createdCat.id },
               });
               if (entries && entries.length) {
                 for (const entry of entries) {
                   const { subEntries, ...entryData } = entry;
                   const createdEntry = await prisma.journalEntry.create({
-                    data: { ...entryData, userId, sections: { connect: { id: createdSection.id } } },
+                    data: { ...entryData, sections: { connect: { id: createdSection.id } } },
                   });
                   if (subEntries && subEntries.length) {
                     await prisma.journalSubEntry.createMany({
@@ -354,7 +356,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         break;
 
       case 'notes':
-        await prisma.note.deleteMany({ where: { userId } });
+        await prisma.note.deleteMany({ where: { category: { userId } } });
         await prisma.noteCategory.deleteMany({ where: { userId } });
 
         for (const cat of inputData.noteCategories) {
@@ -364,11 +366,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           });
           if (notes && notes.length) {
             await prisma.note.createMany({
-              data: notes.map((n: Note) => ({
-                ...n,
-                userId,
-                categoryId: createdCat.id
-              })),
+              data: notes.map((n: Note) => ({ ...n, categoryId: createdCat.id })),
             });
           }
         }

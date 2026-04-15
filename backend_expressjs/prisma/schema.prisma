@@ -20,17 +20,21 @@ model User {
   funds              Fund[]
   diaryEntries       DiaryEntry[]
   journalCategories  JournalCategory[]
-  journalSections    JournalSection[]
-  journalEntries     JournalEntry[]
   calendarEntries    CalendarEntry[]
   toDoMilestones     ToDoMilestone[]
   toDoTasks          ToDoTask[]
   noteCategories     NoteCategory[]
-  notes              Note[]
   pianoPieces        PianoPiece[]
   hikes              Hike[]
   videoGames         VideoGame[]
+  gymExerciseTypes   GymExerciseType[]
+  gymSessions        GymSession[]
+  swims              Swim[]
+  volleyballGames    VolleyballGame[]
+  runs               Run[]
 }
+
+// -------- Expenses --------
 
 model ExpensesCategory {
   id       Int       @id @default(autoincrement())
@@ -72,6 +76,8 @@ model Fund {
   type   ExpenseType
 }
 
+// -------- Diary --------
+
 enum DiaryEntryType {
   Daily
   Monthly
@@ -87,6 +93,8 @@ model DiaryEntry {
   type        DiaryEntryType
 }
 
+// -------- Journal --------
+
 model JournalCategory {
   id       Int              @id @default(autoincrement())
   userId   Int
@@ -99,8 +107,6 @@ model JournalCategory {
 
 model JournalSection {
   id         Int             @id @default(autoincrement())
-  userId     Int
-  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId Int
   category   JournalCategory @relation(fields: [categoryId], references: [id], onDelete: NoAction)
   name       String
@@ -110,8 +116,6 @@ model JournalSection {
 
 model JournalEntry {
   id         Int               @id @default(autoincrement())
-  userId     Int
-  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   sections   JournalSection[]
   date       DateTime
   content    String
@@ -125,6 +129,8 @@ model JournalSubEntry {
   entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }
 
+// -------- Calendar --------
+
 model CalendarEntry {
   id          Int      @id @default(autoincrement())
   userId      Int
@@ -135,6 +141,8 @@ model CalendarEntry {
   startDate   DateTime
   endDate     DateTime
 }
+
+// -------- To-Dos --------
 
 model ToDoMilestone {
   id          Int        @id @default(autoincrement())
@@ -163,6 +171,8 @@ model ToDoTask {
   status       ToDoTaskStatus @default(Pending)
 }
 
+// -------- Notes --------
+
 model NoteCategory {
   id     Int    @id @default(autoincrement())
   userId Int
@@ -173,8 +183,6 @@ model NoteCategory {
 
 model Note {
   id           Int          @id @default(autoincrement())
-  userId       Int
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   dateCreated  DateTime
   dateModified DateTime
   categoryId   Int
@@ -183,6 +191,8 @@ model Note {
   content      String
   tags         String[]
 }
+
+// -------- Piano --------
 
 enum PianoPieceStatus {
   Planned
@@ -205,6 +215,8 @@ model PianoPiece {
   monthLearned  DateTime?
 }
 
+// -------- Sports --------
+
 model Hike {
   id                 Int      @id @default(autoincrement())
   userId             Int
@@ -220,6 +232,65 @@ model Hike {
   images             String[]
   googleMapsUrl      String
 }
+
+model GymExerciseType {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: NoAction)
+  name        String
+  description String
+  exercises   GymExercise[]
+}
+
+model GymSession {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime
+  note      String
+  exercises GymExercise[]
+}
+
+model GymExercise {
+  id        Int             @id @default(autoincrement())
+  typeId    Int
+  type      GymExerciseType @relation(fields: [typeId], references: [id], onDelete: NoAction)
+  sessionId Int
+  session   GymSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  weight    Float
+  sets      Int
+  reps      Int
+  note      String
+}
+
+model Run {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          DateTime
+  description   String
+  distance      Float
+  duration      Float
+  elevationGain Float
+}
+
+model Swim {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime
+  description String
+}
+
+model VolleyballGame {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime
+  description String
+}
+
+// -------- Video Games --------
 
 enum VideoGameType {
   Online

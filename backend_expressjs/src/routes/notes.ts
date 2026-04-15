@@ -69,8 +69,10 @@ router.get('/', async (req: Request, res: Response) => {
   const categoryId = categoryIdStr ? parseInt(categoryIdStr) : undefined;
   const notes = await prisma.note.findMany({
     where: {
-      userId: req.user.id,
-      categoryId: categoryId,
+      category: {
+        userId: req.user.id,
+        ...(categoryId ? { id: categoryId } : {})
+      },
       OR: [
         { category: { name: { contains: searchText, mode: "insensitive" } } },
         { title: { contains: searchText, mode: "insensitive" } },
@@ -105,7 +107,6 @@ router.post('/', async (req: Request, res: Response) => {
   const newDate = new Date();
   const note = await prisma.note.create({
     data: {
-      user: { connect: { id: req.user.id } },
       title,
       content,
       category: { connect: { id: categoryId } },

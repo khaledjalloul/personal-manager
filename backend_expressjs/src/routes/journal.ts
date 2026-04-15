@@ -171,10 +171,9 @@ router.post('/sections', async (req: Request, res: Response) => {
   const { name, categoryId } = req.body;
   const section = await prisma.journalSection.create({
     data: {
-      user: { connect: { id: req.user.id } },
       name,
-      order: await prisma.journalSection.count({ where: { userId: req.user.id } }),
-      category: categoryId && { connect: { id: categoryId } }
+      order: await prisma.journalSection.count({ where: { categoryId } }),
+      category: { connect: { id: categoryId } }
     }
   });
   res.json(section);
@@ -189,7 +188,7 @@ router.post('/sections/:id', async (req: Request, res: Response) => {
     if (order < sectionToUpdate!.order) {
       await prisma.journalSection.updateMany({
         where: {
-          userId: req.user.id,
+          categoryId: sectionToUpdate!.categoryId,
           order: {
             gte: order,
             lt: sectionToUpdate!.order
@@ -204,7 +203,7 @@ router.post('/sections/:id', async (req: Request, res: Response) => {
     } else if (order > sectionToUpdate!.order) {
       await prisma.journalSection.updateMany({
         where: {
-          userId: req.user.id,
+          categoryId: sectionToUpdate!.categoryId,
           order: {
             gt: sectionToUpdate!.order,
             lte: order
@@ -233,7 +232,7 @@ router.delete('/sections/:id', async (req: Request, res: Response) => {
 
   await prisma.journalSection.updateMany({
     where: {
-      userId: req.user.id,
+      categoryId: deletedSection.categoryId,
       order: { gt: deletedSection.order }
     },
     data: {
@@ -254,7 +253,6 @@ router.get('/', async (req: Request, res: Response) => {
 
   const entries = await prisma.journalEntry.findMany({
     where: {
-      userId: req.user.id,
       sections: { some: { id: { in: sectionIds } } },
       OR: [
         { content: { contains: searchText, mode: 'insensitive' } },
@@ -291,9 +289,11 @@ router.post('/', async (req: Request, res: Response) => {
 
   const entry = await prisma.journalEntry.create({
     data: {
-      user: { connect: { id: req.user.id } },
       date,
       content,
+      sections: {
+        connect: sectionIds.map((id: number) => ({ id }))
+      },
       subEntries: {
         createMany: {
           data: subEntries.map((subEntry: string) => ({
@@ -301,9 +301,6 @@ router.post('/', async (req: Request, res: Response) => {
           }))
         }
       },
-      sections: {
-        connect: sectionIds.map((id: number) => ({ id }))
-      }
     },
   });
   res.json(entry);
@@ -320,9 +317,12 @@ router.post('/:id', async (req: Request, res: Response) => {
   const entry = await prisma.journalEntry.update({
     where: { id: entryId },
     data: {
-      userId: req.user.id,
       date,
       content,
+      sections: {
+        connect: sectionIds.map((id: number) => ({ id })),
+        disconnect: sectionIdsToRemove?.map((id: number) => ({ id }))
+      },
       subEntries: {
         createMany: {
           data: subEntries.map((subEntry: string) => ({
@@ -330,10 +330,6 @@ router.post('/:id', async (req: Request, res: Response) => {
           }))
         }
       },
-      sections: {
-        connect: sectionIds.map((id: number) => ({ id })),
-        disconnect: sectionIdsToRemove?.map((id: number) => ({ id }))
-      }
     },
   });
   res.json(entry);

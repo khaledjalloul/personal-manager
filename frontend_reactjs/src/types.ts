@@ -7,6 +7,8 @@ export type User = {
   fundKeywords: string[];
 };
 
+// -------- Expenses --------
+
 export type ExpensesCategory = {
   id: number;
   name: string;
@@ -39,6 +41,8 @@ export type Fund = {
   type: ExpenseType;
 };
 
+// -------- Diary --------
+
 export enum DiaryEntryType {
   Daily = "Daily",
   Monthly = "Monthly"
@@ -51,6 +55,8 @@ export type DiaryEntry = {
   workContent: string;
   type: DiaryEntryType;
 };
+
+// -------- Journal --------
 
 export type JournalCategory = {
   id: number;
@@ -84,6 +90,8 @@ export type JournalSubEntry = {
   content: string;
 };
 
+// -------- Calendar --------
+
 export type CalendarEntry = {
   id: number;
   title: string;
@@ -92,6 +100,8 @@ export type CalendarEntry = {
   startDate: Date;
   endDate: Date;
 }
+
+// -------- To-Dos --------
 
 export type ToDoMilestone = {
   id: number;
@@ -114,6 +124,8 @@ export type ToDoTask = {
   status: ToDoTaskStatus;
 };
 
+// -------- Notes --------
+
 export type NoteCategory = {
   id: number;
   name: string;
@@ -128,6 +140,8 @@ export type Note = {
   content: string;
   tags: string[];
 };
+
+// -------- Piano --------
 
 export enum PianoPieceStatus {
   Planned = "Planned",
@@ -148,6 +162,8 @@ export type PianoPiece = {
   monthLearned?: Date;
 };
 
+// -------- Sports --------
+
 export type Hike = {
   id: number;
   date: Date;
@@ -161,6 +177,66 @@ export type Hike = {
   images: string[];
   googleMapsUrl: string;
 };
+
+
+export type GymExerciseType = {
+  id: number;
+  userId: number;
+  user: User;
+  name: string;
+  description: string;
+  exercises: GymExercise[]
+}
+
+export type GymSession = {
+  id: number;
+  userId: number;
+  user: User;
+  date: Date;
+  note: string;
+  exercises: GymExercise[]
+}
+
+export type GymExercise = {
+  id: number;
+  typeId: number;
+  type: GymExerciseType;
+  sessionId: number;
+  session: GymSession
+  weight: number;
+  sets: number;
+  reps: number;
+  note: string;
+}
+
+export type Run = {
+  id: number;
+  userId: number;
+  user: User;
+  date: Date;
+  description: string;
+  distance: number;
+  duration: number;
+  elevationGain: number;
+}
+
+export type Swim = {
+  id: number;
+  userId: number;
+  user: User;
+  date: Date;
+  description: string;
+}
+
+export type VolleyballGame = {
+  id: number;
+  userId: number;
+  user: User;
+  date: Date;
+  description: string;
+}
+
+// -------- Video Games --------
 
 export enum VideoGameType {
   Online = "Online",

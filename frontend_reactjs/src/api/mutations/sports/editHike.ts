@@ -3,7 +3,7 @@ import client from "../../client";
 import { AxiosError } from "axios";
 import { Hike } from "../../../types";
 
-const ENDPOINT = "hikes";
+const ENDPOINT = "sports/hikes";
 
 export type EditHikeRequestBody = {
   id: number;

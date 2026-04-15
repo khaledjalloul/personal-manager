@@ -11,7 +11,7 @@ import calendarRoutes from './routes/calendar';
 import toDoRoutes from './routes/todo';
 import notesRoutes from './routes/notes';
 import pianoRoutes from './routes/piano';
-import hikesRoutes from './routes/hikes';
+import sportsRoutes from './routes/sports';
 import videoGamesRoutes from './routes/video-games';
 
 dotenv.config({ path: '.env' });
@@ -35,7 +35,7 @@ app.use('/journal', authMiddleware, journalRoutes);
 app.use('/todo', authMiddleware, toDoRoutes);
 app.use('/notes', authMiddleware, notesRoutes);
 app.use('/piano', authMiddleware, pianoRoutes);
-app.use('/hikes', authMiddleware, hikesRoutes);
+app.use('/sports', authMiddleware, sportsRoutes);
 app.use('/video-games', authMiddleware, videoGamesRoutes);
 
 app.listen(PORT, () => {

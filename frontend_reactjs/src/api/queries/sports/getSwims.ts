@@ -1,17 +1,17 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Hike } from "../../../types";
+import { Swim } from "../../../types";
 import client from "../../client";
 
-const ENDPOINT = "hikes";
+const ENDPOINT = "sports/swims";
 
-export type GetHikesRequestParams = {
+export type GetSwimsRequestParams = {
   searchText: string;
 };
 
-const queryFn = (params: GetHikesRequestParams) => async () => {
+const queryFn = (params: GetSwimsRequestParams) => async () => {
   const queryParams = Object.keys(params)
-    .filter((key) => params[key as keyof GetHikesRequestParams] !== undefined)
-    .map((key) => `${key}=${params[key as keyof GetHikesRequestParams]}`)
+    .filter((key) => params[key as keyof GetSwimsRequestParams] !== undefined)
+    .map((key) => `${key}=${params[key as keyof GetSwimsRequestParams]}`)
     .join("&");
 
   return await client
@@ -23,11 +23,11 @@ const queryFn = (params: GetHikesRequestParams) => async () => {
     });
 };
 
-export const useHikes = (params: GetHikesRequestParams) =>
-  useQuery<Hike[]>({
+export const useSwims = (params: GetSwimsRequestParams) =>
+  useQuery<Swim[]>({
     queryKey: [ENDPOINT, params],
     queryFn: queryFn(params),
     select: (data) =>
-      data.map((hike) => ({ ...hike, date: new Date(hike.date) })),
+      data.map((swim) => ({ ...swim, date: new Date(swim.date) })),
     placeholderData: keepPreviousData,
   });

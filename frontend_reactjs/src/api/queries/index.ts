@@ -6,5 +6,5 @@ export * from "./journal";
 export * from "./todo";
 export * from "./notes";
 export * from "./piano";
-export * from "./hikes";
+export * from "./sports";
 export * from "./video-games";
