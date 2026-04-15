@@ -116,29 +116,41 @@ export const Journal = () => {
           gap: { xs: 2, sm: 1 }
         }}
       >
-        <Typography variant="h5">
-          Journal ({allEntries?.length || 0})
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h5" sx={{ whiteSpace: 'nowrap' }}>
+            Journal ({allEntries?.length || 0})
+          </Typography>
 
-        <IconButton onClick={() => setIsAddingEntry(true)}>
-          <Add />
-        </IconButton>
+          <IconButton onClick={() => setIsAddingEntry(true)}>
+            <Add />
+          </IconButton>
+        </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: { xs: 0, sm: 'auto' } }}>
-          <Typography>Group by Section</Typography>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          ml: { xs: 0, sm: 'auto' },
+          mr: { xs: 0, sm: 2 }
+        }}>
+          <Typography sx={{
+            whiteSpace: 'nowrap',
+            fontSize: { xs: '1rem', sm: '0.9rem', md: '1rem' },
+
+          }}>Group by Section</Typography>
           <Switch
             checked={groupBySection}
             onChange={(e) => setGroupBySection(e.target.checked)}
           />
+
+          <IconButton
+            size="small"
+            onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+          >
+            {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+          </IconButton>
         </Box>
 
-        <IconButton
-          size="small"
-          sx={{ mr: 2 }}
-          onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
-        >
-          {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
-        </IconButton>
 
         <TextField
           sx={{

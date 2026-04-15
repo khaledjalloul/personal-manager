@@ -126,11 +126,11 @@ export const ExpenseTableRow = ({
         <TableCell>
           {!isEditing ? (
             category?.name ? (
-              <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+              <Typography variant="body2" sx={{ whiteSpace: 'nowrap', color: category.color }}>
                 <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
               </Typography>
             ) : (
-              <Typography color={!editable ? 'gray' : 'text.primary'} variant="body2">
+              <Typography color="gray" variant="body2">
                 <em>Uncategorized</em>
               </Typography>
             )

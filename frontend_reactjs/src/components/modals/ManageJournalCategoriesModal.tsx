@@ -250,7 +250,8 @@ const CategoryCard = ({
           bottom: 0,
           left: 0,
           right: 0,
-          zIndex: 1
+          zIndex: 1,
+          backgroundColor: '#00000055'
         }}
         onClick={() => setColorPickerOpen(false)}
       />
@@ -259,7 +260,9 @@ const CategoryCard = ({
         sx={{
           display: colorPickerOpen ? 'block' : 'none',
           position: "absolute",
-          zIndex: 2
+          zIndex: 2,
+          top: '25%',
+          left: '25%',
         }}>
         <SketchPicker
           color={color}
@@ -309,60 +312,77 @@ export const ManageJournalCategoriesModal = ({
     }
   }, [createSuccess]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setNewCategoryName("");
+      setNewCategoryColor("#000000");
+      setColorPickerOpen(false);
+    }
+  }, [isOpen]);
+
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
       <Wrapper>
-        <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="h6">Manage Journal Categories</Typography>
+        <Typography variant="h6" ml={'24px'} mr={'24px'} mb={1}>
+          Manage Journal Categories
+        </Typography>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {categories?.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                setSelectedSections={setSelectedSections}
-                categoriesLength={categories.length}
-              />
-            ))}
-
-            <TextField
-              variant="standard"
-              value={newCategoryName}
-              placeholder="Add new category"
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              sx={{ mb: '24px' }}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                      <Box
-                        sx={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: '50%',
-                          backgroundColor: newCategoryColor,
-                          mr: 1,
-                          cursor: 'pointer',
-                          border: '1px solid gray'
-                        }}
-                        onClick={() => setColorPickerOpen(true)}
-                      />
-                      <IconButton
-                        size="small"
-                        color="success"
-                        disabled={!newCategoryName.trim()}
-                        loading={createLoading}
-                        onClick={add}
-                      >
-                        <Add fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  ),
-                },
-              }}
+        <Box sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          overflowY: "auto",
+          p: '24px',
+          pt: 0,
+        }}>
+          {categories?.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              setSelectedSections={setSelectedSections}
+              categoriesLength={categories.length}
             />
-          </Box>
+          ))}
+
+          <TextField
+            variant="standard"
+            value={newCategoryName}
+            placeholder="Add new category"
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            sx={{ mb: '24px' }}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: '50%',
+                        backgroundColor: newCategoryColor,
+                        mr: 1,
+                        cursor: 'pointer',
+                        border: '1px solid gray'
+                      }}
+                      onClick={() => setColorPickerOpen(true)}
+                    />
+                    <IconButton
+                      size="small"
+                      color="success"
+                      disabled={!newCategoryName.trim()}
+                      loading={createLoading}
+                      onClick={add}
+                    >
+                      <Add fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ),
+              },
+            }}
+          />
         </Box>
+
         <Box
           sx={{
             display: colorPickerOpen ? 'block' : 'none',
@@ -371,7 +391,8 @@ export const ManageJournalCategoriesModal = ({
             bottom: 0,
             left: 0,
             right: 0,
-            zIndex: 1
+            zIndex: 1,
+            backgroundColor: '#00000055'
           }}
           onClick={() => setColorPickerOpen(false)}
         />
@@ -380,7 +401,9 @@ export const ManageJournalCategoriesModal = ({
           sx={{
             display: colorPickerOpen ? 'block' : 'none',
             position: "absolute",
-            zIndex: 2
+            left: '25%',
+            top: '25%',
+            zIndex: 2,
           }}>
           <SketchPicker
             color={newCategoryColor}
@@ -398,10 +421,10 @@ const Wrapper = styled(Box)`
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
   background-color: ${({ theme }) => theme.palette.background.default};
-  padding: 24px;
+  padding-top: 24px;
   border-radius: 8px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
   outline: none;
   height: 70vh;
