@@ -4,12 +4,13 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  Switch,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Add,
   ArrowDownward,
@@ -40,6 +41,7 @@ export const Journal = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedSections, setSelectedSections] = useState<JournalSection[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(userData?.journalSortOrder || "desc");
+  const [groupBySection, setGroupBySection] = useState(userData?.journalGroupBySection || false);
   const [isAddingEntry, setIsAddingEntry] = useState(false);
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
 
@@ -58,18 +60,49 @@ export const Journal = () => {
     sortOrder
   });
 
+  const journalEntriesGroupped = useMemo(() => {
+    if (!groupBySection || !allSections) return { "": journalEntries || [] };
+
+    // Create a separate map from allSections to update the grouped section names in case they are changed
+    const sectionNameMap = new Map(allSections.map(s => [s.id, `${s.category.name}: ${s.name}`]));
+    const grouped: Record<string, JournalEntry[]> = {};
+
+    // Initialize grouped object in the same order of allSections
+    allSections.forEach(section => {
+      if (!selectedSections.some(s => s.id === section.id)) return;
+      const sectionName = sectionNameMap.get(section.id) || section.name;
+      grouped[sectionName] = [];
+    });
+
+    journalEntries?.forEach(entry => {
+      entry.sections.forEach(section => {
+        const sectionName = sectionNameMap.get(section.id) || section.name;
+        if (grouped[sectionName])
+          grouped[sectionName].push(entry);
+      });
+    });
+
+    return grouped;
+
+  }, [journalEntries, groupBySection, allSections]);
+
   useEffect(() => {
     if (userData && allSections)
-      setUserData({ ...userData, lastSelectedJournalSectionIds: selectedSections.map(s => s.id), journalSortOrder: sortOrder });
-  }, [selectedSections, sortOrder]);
+      setUserData({
+        ...userData,
+        journalLastSelectedSectionIds: selectedSections.map(s => s.id),
+        journalSortOrder: sortOrder,
+        journalGroupBySection: groupBySection,
+      });
+  }, [selectedSections, sortOrder, groupBySection]);
 
   useEffect(() => {
     if (!allSections) return;
 
     if (searchTextQuery)
       setSelectedSections(allSections);
-    else if (userData?.lastSelectedJournalSectionIds) {
-      const lastSelected = allSections.filter(s => userData.lastSelectedJournalSectionIds?.includes(s.id));
+    else if (userData?.journalLastSelectedSectionIds) {
+      const lastSelected = allSections.filter(s => userData.journalLastSelectedSectionIds?.includes(s.id));
       setSelectedSections(lastSelected);
     }
   }, [searchTextQuery, allSections]);
@@ -91,9 +124,17 @@ export const Journal = () => {
           <Add />
         </IconButton>
 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: { xs: 0, sm: 'auto' } }}>
+          <Typography>Group by Section</Typography>
+          <Switch
+            checked={groupBySection}
+            onChange={(e) => setGroupBySection(e.target.checked)}
+          />
+        </Box>
+
         <IconButton
           size="small"
-          sx={{ ml: { xs: 0, sm: 'auto' }, mr: 2 }}
+          sx={{ mr: 2 }}
           onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
         >
           {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
@@ -199,7 +240,22 @@ export const Journal = () => {
             />
           )}
 
-          {journalEntries?.map(entry => (
+          {groupBySection && Object.entries(journalEntriesGroupped).map(([sectionName, entries], index) => (
+            <Box key={index} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="h6" sx={{ mt: 2 }}>{sectionName}</Typography>
+              {entries.map(entry => (
+                <JournalEntryContainer
+                  key={entry.id}
+                  entry={entry}
+                  searchText={searchTextQuery}
+                  isAddingEntry={false}
+                  setIsAddingEntry={setIsAddingEntry}
+                />
+              ))}
+            </Box>
+          ))}
+
+          {!groupBySection && journalEntries?.map(entry => (
             <JournalEntryContainer
               key={entry.id}
               entry={entry}

@@ -3,11 +3,12 @@ import { createContext } from "react";
 export type UserData = {
   token: string;
   showPrivateContent?: boolean;
-  lastOpenedNoteId?: number;
-  lastSelectedJournalSectionIds?: number[];
+  calendarLastSelectedDate?: Date;
+  diaryLastSelectedDate?: Date;
   journalSortOrder?: "asc" | "desc";
-  lastSelectedCalendarDate?: Date;
-  lastSelectedDiaryDate?: Date;
+  journalGroupBySection?: boolean;
+  journalLastSelectedSectionIds?: number[];
+  notesLastOpenedId?: number;
 } | null;
 
 export const UserContext = createContext<{

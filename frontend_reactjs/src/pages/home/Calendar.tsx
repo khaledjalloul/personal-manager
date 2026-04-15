@@ -18,7 +18,7 @@ export const Calendar = () => {
 
   const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
 
-  const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedCalendarDate).startOf('week').add(1, 'day'));
+  const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.calendarLastSelectedDate).startOf('week').add(1, 'day'));
   const setSelectedDate = (date: Dayjs) => setSelectedDateOg(date.subtract(1, 'day').startOf('week').add(1, 'day'));
   const [searchText, setSearchText] = useState<string>("");
   const [searchIndex, setSearchIndex] = useState<number>(0);
@@ -45,7 +45,7 @@ export const Calendar = () => {
     if (userData)
       setUserData({
         ...userData,
-        lastSelectedCalendarDate: selectedDate.toDate(),
+        calendarLastSelectedDate: selectedDate.toDate(),
       });
   }, [selectedDate]);
 

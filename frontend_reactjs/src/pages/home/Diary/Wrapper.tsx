@@ -25,7 +25,7 @@ export const DiaryWrapper = () => {
 
   const { routedDate } = location.state as { routedDate?: Date } || { routedDate: undefined };
 
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.lastSelectedDiaryDate));
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.diaryLastSelectedDate));
   const [searchText, setSearchText] = useState("");
 
   const { data: dailyEntries } = useDailyDiaryEntries({
@@ -47,7 +47,7 @@ export const DiaryWrapper = () => {
     if (userData)
       setUserData({
         ...userData,
-        lastSelectedDiaryDate: selectedDate.toDate(),
+        diaryLastSelectedDate: selectedDate.toDate(),
       });
   }, [selectedDate]);
 

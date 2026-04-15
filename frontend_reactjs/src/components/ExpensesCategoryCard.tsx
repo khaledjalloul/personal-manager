@@ -263,7 +263,6 @@ export const ExpensesCategoryCard = ({
           sx={{
             display: colorPickerOpen ? 'block' : 'none',
             position: "absolute",
-            backgroundColor: "pink",
             zIndex: 2
           }}>
           <SketchPicker

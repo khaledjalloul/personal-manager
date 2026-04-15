@@ -96,7 +96,7 @@ export const Notes = () => {
       setSelectedNoteCategory(selectedNote.category);
       setSelectedNoteContent(selectedNote.content);
       if (userData)
-        setUserData({ ...userData, lastOpenedNoteId: selectedNote.id });
+        setUserData({ ...userData, notesLastOpenedId: selectedNote.id });
     } else {
       setSelectedNoteTitle("");
       setSelectedNoteCategory(undefined);
@@ -129,8 +129,8 @@ export const Notes = () => {
         setSelectedNote(routedNote);
         routedNoteIdRef.current = undefined;
       }
-      else if (!searchText.trim() && userData && userData.lastOpenedNoteId) {
-        const lastOpenNote = notes.find(note => note.id === userData.lastOpenedNoteId);
+      else if (!searchText.trim() && userData && userData.notesLastOpenedId) {
+        const lastOpenNote = notes.find(note => note.id === userData.notesLastOpenedId);
         if (lastOpenNote)
           setSelectedNote(lastOpenNote);
       } else if (searchText.trim()) {

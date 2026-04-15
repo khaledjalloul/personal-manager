@@ -259,7 +259,6 @@ const CategoryCard = ({
         sx={{
           display: colorPickerOpen ? 'block' : 'none',
           position: "absolute",
-          backgroundColor: "pink",
           zIndex: 2
         }}>
         <SketchPicker
@@ -381,7 +380,6 @@ export const ManageJournalCategoriesModal = ({
           sx={{
             display: colorPickerOpen ? 'block' : 'none',
             position: "absolute",
-            backgroundColor: "pink",
             zIndex: 2
           }}>
           <SketchPicker
