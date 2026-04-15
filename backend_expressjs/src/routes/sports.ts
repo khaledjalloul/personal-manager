@@ -70,8 +70,15 @@ router.get('/gym/exercise-types', async (req: Request, res: Response) => {
   const exerciseTypes = await prisma.gymExerciseType.findMany({
     where: {
       userId: req.user.id,
-      name: { contains: searchText, mode: 'insensitive' },
-      description: { contains: searchText, mode: 'insensitive' },
+      OR: [
+        { name: { contains: searchText, mode: 'insensitive' } },
+        { description: { contains: searchText, mode: 'insensitive' } },
+      ]
+    },
+    include: {
+      _count: {
+        select: { exercises: true },
+      },
     },
     orderBy: { name: 'asc' },
   });
@@ -171,6 +178,7 @@ router.delete('/gym/exercises/:id', async (req: Request, res: Response) => {
 
 router.get('/gym/sessions', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
+  const sortOrder = (req.query.sortOrder as string) === 'desc' ? 'desc' : 'asc';
 
   const sessions = await prisma.gymSession.findMany({
     where: {
@@ -182,7 +190,18 @@ router.get('/gym/sessions', async (req: Request, res: Response) => {
         { exercises: { some: { type: { description: { contains: searchText, mode: 'insensitive' } } } } },
       ]
     },
-    orderBy: { date: 'asc' },
+    include: {
+      exercises: {
+        include: {
+          type: {
+            select: {
+              id: true,
+            }
+          }
+        }
+      },
+    },
+    orderBy: { date: sortOrder },
   });
   res.json(sessions);
 });
@@ -196,7 +215,7 @@ router.post('/gym/sessions', async (req: Request, res: Response) => {
       note: data.note,
       exercises: {
         create: data.exercises.map((exercise: any) => ({
-          type: { connect: { id: exercise.typeId } },
+          type: { connect: { id: exercise.type.id } },
           weight: exercise.weight,
           sets: exercise.sets,
           reps: exercise.reps,
@@ -219,7 +238,7 @@ router.post('/gym/sessions/:id', async (req: Request, res: Response) => {
       exercises: {
         deleteMany: {},
         create: exercises.map((exercise: any) => ({
-          type: { connect: { id: exercise.typeId } },
+          type: { connect: { id: exercise.type.id } },
           weight: exercise.weight,
           sets: exercise.sets,
           reps: exercise.reps,

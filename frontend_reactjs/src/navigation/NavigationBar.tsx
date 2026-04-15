@@ -23,7 +23,7 @@ var toolbarButtons = [
   { label: "To Do", path: "/todo" },
   { label: "Notes", path: "/notes" },
   { label: "Piano Pieces", path: "/piano" },
-  { label: "Hikes", path: "/hikes" },
+  { label: "Sports", path: "/sports" },
   { label: "Video Games", path: "/games" },
   // { label: "Recipes", path: "/recipes" },
 ];

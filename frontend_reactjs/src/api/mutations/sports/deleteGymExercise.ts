@@ -27,6 +27,9 @@ export const useDeleteGymExercise = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["sports/gym/exercise-types"],
+      });
     },
   });
 };

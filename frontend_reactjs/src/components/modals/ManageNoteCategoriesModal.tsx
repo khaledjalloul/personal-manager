@@ -19,18 +19,29 @@ const CategoryCard = ({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: notesInCategory } = useNotes({ searchText: "", categoryId: category.id });
+
+  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateNoteCategory();
   const { mutate: editCategory, isPending: editLoading } = useEditNoteCategory();
   const { mutate: deleteCategory, isPending: deleteLoading, isSuccess: deleteSuccess } = useDeleteNoteCategoy();
 
   const save = () => {
     if (!name.trim() || name.trim() === category.name) return;
-    editCategory({
-      id: category.id,
-      name: name.trim()
-    });
+
+    if (category.id === -1)
+      createCategory({ name: name.trim() });
+    else
+      editCategory({
+        id: category.id,
+        name: name.trim()
+      });
   };
 
   useCtrlS(save);
+
+  useEffect(() => {
+    if (createSuccess)
+      setName("");
+  }, [createSuccess]);
 
   useEffect(() => {
     if (deleteSuccess) setSelectedNote(undefined);
@@ -40,6 +51,7 @@ const CategoryCard = ({
     <Fragment>
       <TextField
         variant="standard"
+        placeholder={category.id === -1 ? "Add New Category" : "Category Name"}
         value={name}
         onChange={(e) => setName(e.target.value)}
         slotProps={{
@@ -49,13 +61,14 @@ const CategoryCard = ({
                 <IconButton
                   size="small"
                   color="success"
-                  loading={editLoading}
+                  loading={createLoading || editLoading}
                   onClick={save}
                   disabled={!name.trim() || name.trim() === category.name}
                 >
-                  <Save fontSize="small" />
+                  {category.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
                 </IconButton>
                 <IconButton
+                  sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
                   color="error"
                   loading={deleteLoading}
@@ -92,20 +105,6 @@ export const ManageNoteCategoriesModal = ({
 }) => {
 
   const { data: categories } = useNoteCategories({ searchText: "" });
-  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateNoteCategory();
-
-  const [newCategoryName, setNewCategoryName] = useState("")
-
-  const add = () => {
-    if (!newCategoryName.trim()) return;
-    createCategory({ name: newCategoryName.trim() });
-  }
-
-  useCtrlS(add);
-
-  useEffect(() => {
-    if (createSuccess) setNewCategoryName("");
-  }, [createSuccess]);
 
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
@@ -122,26 +121,9 @@ export const ManageNoteCategoriesModal = ({
               />
             ))}
 
-            <TextField
-              variant="standard"
-              value={newCategoryName}
-              placeholder="Add new category"
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <IconButton
-                      size="small"
-                      color="success"
-                      disabled={!newCategoryName.trim()}
-                      loading={createLoading}
-                      onClick={add}
-                    >
-                      <Add fontSize="small" />
-                    </IconButton>
-                  ),
-                },
-              }}
+            <CategoryCard
+              category={{ id: -1, name: "" }}
+              setSelectedNote={setSelectedNote}
             />
           </Box>
         </Box>

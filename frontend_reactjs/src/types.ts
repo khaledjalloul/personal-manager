@@ -181,17 +181,16 @@ export type Hike = {
 
 export type GymExerciseType = {
   id: number;
-  userId: number;
-  user: User;
   name: string;
   description: string;
-  exercises: GymExercise[]
+  exercises?: GymExercise[]
+  _count?: {
+    exercises: number;
+  };
 }
 
 export type GymSession = {
   id: number;
-  userId: number;
-  user: User;
   date: Date;
   note: string;
   exercises: GymExercise[]
@@ -199,9 +198,7 @@ export type GymSession = {
 
 export type GymExercise = {
   id: number;
-  typeId: number;
   type: GymExerciseType;
-  sessionId: number;
   session: GymSession
   weight: number;
   sets: number;
@@ -211,8 +208,6 @@ export type GymExercise = {
 
 export type Run = {
   id: number;
-  userId: number;
-  user: User;
   date: Date;
   description: string;
   distance: number;
@@ -222,16 +217,12 @@ export type Run = {
 
 export type Swim = {
   id: number;
-  userId: number;
-  user: User;
   date: Date;
   description: string;
 }
 
 export type VolleyballGame = {
   id: number;
-  userId: number;
-  user: User;
   date: Date;
   description: string;
 }

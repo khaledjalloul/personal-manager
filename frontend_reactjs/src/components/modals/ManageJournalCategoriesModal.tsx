@@ -31,18 +31,31 @@ const SectionCard = ({
   const [name, setName] = useState(section.name);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const { mutate: createSection, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalSection();
   const { mutate: editSection, isPending: editLoading } = useEditJournalSection();
   const { mutate: deleteSection, isPending: deleteLoading, isSuccess: deleteSuccess } = useDeleteJournalSection();
 
   const save = () => {
     if (!name.trim() || name.trim() === section.name) return;
-    editSection({
-      id: section.id,
-      name: name.trim(),
-    });
+
+    if (section.id === -1)
+      createSection({
+        name: name.trim(),
+        categoryId: section.category.id
+      });
+    else
+      editSection({
+        id: section.id,
+        name: name.trim(),
+      });
   };
 
   useCtrlS(save);
+
+  useEffect(() => {
+    if (createSuccess)
+      setName("");
+  }, [createSuccess]);
 
   useEffect(() => {
     if (deleteSuccess)
@@ -53,9 +66,10 @@ const SectionCard = ({
     <Fragment>
       <TextField
         variant="standard"
+        placeholder={section.id === -1 ? "Add New Section" : "Section Name"}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        sx={{ ml: 3 }}
+        sx={{ ml: 3, mb: section.id === -1 ? 3 : 0 }}
         slotProps={{
           input: {
             endAdornment: (
@@ -63,13 +77,14 @@ const SectionCard = ({
                 <IconButton
                   size="small"
                   color="success"
-                  loading={editLoading}
+                  loading={createLoading || editLoading}
                   onClick={save}
                   disabled={!name.trim() || name.trim() === section.name}
                 >
-                  <Save fontSize="small" />
+                  {section.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
                 </IconButton>
                 <IconButton
+                  sx={{ display: section.id === -1 ? 'none' : 'block' }}
                   size="small"
                   color="error"
                   loading={deleteLoading}
@@ -79,6 +94,7 @@ const SectionCard = ({
                   <Delete fontSize="small" />
                 </IconButton>
                 <IconButton
+                  sx={{ display: section.id === -1 ? 'none' : 'block' }}
                   size="small"
                   onClick={() => editSection({ id: section.id, order: section.order - 1 })}
                   disabled={section.order === 0}
@@ -86,6 +102,7 @@ const SectionCard = ({
                   <ExpandLess fontSize="small" />
                 </IconButton>
                 <IconButton
+                  sx={{ display: section.id === -1 ? 'none' : 'block' }}
                   size="small"
                   onClick={() => editSection({ id: section.id, order: section.order + 1 })}
                   disabled={section.order === sectionsLength - 1}
@@ -126,37 +143,40 @@ const CategoryCard = ({
 
   const { data: sections } = useJournalSections({ categoryId: category.id, searchText: "" });
 
-  const { mutate: createSection, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalSection();
+  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalCategory();
   const { mutate: editCategory, isPending: editLoading } = useEditJournalCategory();
   const { mutate: deleteCategory, isPending: deleteLoading } = useDeleteJournalCategory();
 
-  const [newSectionName, setNewSectionName] = useState("")
-
-  const addSection = () => {
-    if (!newSectionName.trim()) return;
-    createSection({ name: newSectionName.trim(), categoryId: category.id });
-  }
-
   const save = () => {
     if (!name.trim() || (name.trim() === category.name && color === category.color)) return;
-    editCategory({
-      id: category.id,
-      name: name.trim(),
-      color,
-    });
+
+    if (category.id === -1)
+      createCategory({
+        name: name.trim(),
+        color
+      });
+    else
+      editCategory({
+        id: category.id,
+        name: name.trim(),
+        color,
+      });
   };
 
   useCtrlS(save);
-  useCtrlS(addSection);
 
   useEffect(() => {
-    if (createSuccess) setNewSectionName("");
+    if (createSuccess) {
+      setName("");
+      setColor("#000000");
+    }
   }, [createSuccess]);
 
   return (
     <Fragment>
       <TextField
         variant="standard"
+        placeholder={category.id === -1 ? "Add New Category" : "Category Name"}
         value={name}
         onChange={(e) => setName(e.target.value)}
         slotProps={{
@@ -178,13 +198,14 @@ const CategoryCard = ({
                 <IconButton
                   size="small"
                   color="success"
-                  loading={editLoading}
+                  loading={createLoading || editLoading}
                   onClick={save}
                   disabled={!name.trim() || (name.trim() === category.name && color === category.color)}
                 >
-                  <Save fontSize="small" />
+                  {category.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
                 </IconButton>
                 <IconButton
+                  sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
                   color="error"
                   loading={deleteLoading}
@@ -194,6 +215,7 @@ const CategoryCard = ({
                   <Delete fontSize="small" />
                 </IconButton>
                 <IconButton
+                  sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
                   onClick={() => editCategory({ id: category.id, order: category.order - 1 })}
                   disabled={category.order === 0}
@@ -201,6 +223,7 @@ const CategoryCard = ({
                   <ExpandLess fontSize="small" />
                 </IconButton>
                 <IconButton
+                  sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
                   onClick={() => editCategory({ id: category.id, order: category.order + 1 })}
                   disabled={category.order === categoriesLength - 1}
@@ -220,28 +243,13 @@ const CategoryCard = ({
           sectionsLength={sections.length}
         />
       ))}
-      <TextField
-        variant="standard"
-        value={newSectionName}
-        placeholder="Add new section"
-        onChange={(e) => setNewSectionName(e.target.value)}
-        sx={{ ml: 3, mb: '24px' }}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <IconButton
-                size="small"
-                color="success"
-                disabled={!newSectionName.trim()}
-                loading={createLoading}
-                onClick={addSection}
-              >
-                <Add fontSize="small" />
-              </IconButton>
-            ),
-          },
-        }}
-      />
+      {category.id !== -1 && (
+        <SectionCard
+          section={{ id: -1, name: "", category, order: sections ? sections.length : 0 }}
+          setSelectedSections={setSelectedSections}
+          sectionsLength={sections ? sections.length + 1 : 1}
+        />
+      )}
       <Box
         sx={{
           display: colorPickerOpen ? 'block' : 'none',
@@ -292,33 +300,6 @@ export const ManageJournalCategoriesModal = ({
 }) => {
 
   const { data: categories } = useJournalCategories({ searchText: "" });
-  const { mutate: createCategory, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalCategory();
-
-  const [newCategoryName, setNewCategoryName] = useState("")
-  const [newCategoryColor, setNewCategoryColor] = useState("#000000");
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
-
-  const add = () => {
-    if (!newCategoryName.trim()) return;
-    createCategory({ name: newCategoryName.trim(), color: newCategoryColor });
-  }
-
-  useCtrlS(add);
-
-  useEffect(() => {
-    if (createSuccess) {
-      setNewCategoryName("");
-      setNewCategoryColor("#000000");
-    }
-  }, [createSuccess]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setNewCategoryName("");
-      setNewCategoryColor("#000000");
-      setColorPickerOpen(false);
-    }
-  }, [isOpen]);
 
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
@@ -344,70 +325,10 @@ export const ManageJournalCategoriesModal = ({
               categoriesLength={categories.length}
             />
           ))}
-
-          <TextField
-            variant="standard"
-            value={newCategoryName}
-            placeholder="Add new category"
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            sx={{ mb: '24px' }}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Box
-                      sx={{
-                        width: 16,
-                        height: 16,
-                        borderRadius: '50%',
-                        backgroundColor: newCategoryColor,
-                        mr: 1,
-                        cursor: 'pointer',
-                        border: '1px solid gray'
-                      }}
-                      onClick={() => setColorPickerOpen(true)}
-                    />
-                    <IconButton
-                      size="small"
-                      color="success"
-                      disabled={!newCategoryName.trim()}
-                      loading={createLoading}
-                      onClick={add}
-                    >
-                      <Add fontSize="small" />
-                    </IconButton>
-                  </Box>
-                ),
-              },
-            }}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            display: colorPickerOpen ? 'block' : 'none',
-            position: "fixed",
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1,
-            backgroundColor: '#00000055'
-          }}
-          onClick={() => setColorPickerOpen(false)}
-        />
-
-        <Box
-          sx={{
-            display: colorPickerOpen ? 'block' : 'none',
-            position: "absolute",
-            left: '25%',
-            top: '25%',
-            zIndex: 2,
-          }}>
-          <SketchPicker
-            color={newCategoryColor}
-            onChange={(color) => setNewCategoryColor(color.hex)}
+          <CategoryCard
+            category={{ id: -1, name: "", color: "#000000", order: categories ? categories.length : 0 }}
+            setSelectedSections={setSelectedSections}
+            categoriesLength={categories ? categories.length + 1 : 1}
           />
         </Box>
       </Wrapper>

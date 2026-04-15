@@ -15,3 +15,5 @@ export * from './JournalEntryContainer';
 export * from './SearchTextHighlight';
 export * from './ToDoTaskContainer';
 export * from './Calendar';
+export * from './GymExerciseTypeContainer';
+export * from './GymSessionTableRow';

@@ -9,6 +9,7 @@ export type UserData = {
   journalGroupBySection?: boolean;
   journalLastSelectedSectionIds?: number[];
   notesLastOpenedId?: number;
+  sportsLastSelectedPath?: string;
 } | null;
 
 export const UserContext = createContext<{

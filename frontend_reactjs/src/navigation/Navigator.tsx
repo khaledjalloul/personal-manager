@@ -18,7 +18,12 @@ import {
   ToDoWrapper,
   GeneralToDo,
   ToDoMilestones,
-  Calendar
+  Calendar,
+  SportsWrapper,
+  Gym,
+  Volleyball,
+  Swimming,
+  Running
 } from "../pages";
 import { PageNotFound } from "./404";
 import { Authenticator } from "./Authenticator";
@@ -100,8 +105,30 @@ export const Navigator = () => {
           element: <Piano />,
         },
         {
-          path: "/hikes",
-          element: <Hikes />,
+          path: "/sports",
+          element: <SportsWrapper />,
+          children: [
+            {
+              path: "/sports/hikes",
+              element: <Hikes />,
+            },
+            {
+              path: "/sports/gym",
+              element: <Gym />,
+            },
+            {
+              path: "/sports/volleyball",
+              element: <Volleyball />,
+            },
+            {
+              path: "/sports/swimming",
+              element: <Swimming />,
+            },
+            {
+              path: "/sports/running",
+              element: <Running />,
+            },
+          ],
         },
         {
           path: "/games",

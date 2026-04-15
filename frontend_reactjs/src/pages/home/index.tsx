@@ -6,7 +6,7 @@ export * from "./Journal";
 export * from "./ToDo";
 export * from "./Notes";
 export * from "./Piano";
-export * from "./Hikes";
+export * from "./Sports";
 export * from "./VideoGames";
 export * from "./Account";
 export * from "./Recipes";

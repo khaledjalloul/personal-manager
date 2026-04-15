@@ -31,6 +31,9 @@ export const useEditGymSession = () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
+      queryClient.refetchQueries({
+        queryKey: ["sports/gym/exercise-types"],
+      });
     },
   });
 };
