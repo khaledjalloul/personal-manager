@@ -7,11 +7,12 @@ const ENDPOINT = "users/backup";
 
 export type BackUpDataRequestParams = {
   dataType: string;
+  includePrivateContent: boolean;
 };
 
 const mutationFn = async (params: BackUpDataRequestParams) => {
   return await client
-    .get(`/${ENDPOINT}/${params.dataType}`, {
+    .get(`/${ENDPOINT}/${params.dataType}?includePrivateContent=${params.includePrivateContent}`, {
       responseType: 'blob'
     })
     .then((res) => res.data)

@@ -18,7 +18,7 @@ const dataTypes: {
   "to-do": "To Do",
   notes: "Notes",
   piano: "Piano Pieces",
-  hikes: "Hikes",
+  sports: "Sports",
   "video-games": "Video Games"
 };
 
@@ -27,6 +27,7 @@ const BackupButton = ({
 }: {
   dataType: string;
 }) => {
+  const { userData } = useContext(UserContext);
   const { mutate: backupData, isPending } = useBackupData();
 
   const text = dataType === 'all' ? 'All Data' : "";
@@ -37,7 +38,10 @@ const BackupButton = ({
       loading={isPending}
       sx={{ flexGrow: 1 }}
       startIcon={<Download />}
-      onClick={() => backupData({ dataType })}
+      onClick={() => backupData({
+        dataType,
+        includePrivateContent: userData?.showPrivateContent ?? false
+      })}
     >
       Back Up {text}
     </Button>
@@ -253,7 +257,10 @@ export const Account = () => {
             </Box>
 
             <Grid container spacing={2}>
-              {Object.entries(dataTypes).map(([dataType, displayedValue]) => (
+              {Object.entries(dataTypes).filter(([dataType]) => (
+                userData?.showPrivateContent ||
+                (dataType !== 'diary' && dataType !== 'journal')
+              )).map(([dataType, displayedValue]) => (
                 <Grid size={{ xs: 12, sm: 6, lg: 4, xl: 3 }} key={dataType}>
                   <Box
                     component={"fieldset"}

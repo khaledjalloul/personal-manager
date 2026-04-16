@@ -20,21 +20,22 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Backup
 
-// TODO: Add new sports backup and restore
-
 router.get('/backup/:dataType', async (req: Request, res: Response) => {
   const userId = req.user.id;
   const { dataType } = req.params
+  const { includePrivateContent } = req.query as { includePrivateContent?: string };
+  const includePrivate = includePrivateContent === 'true';
 
   const dataTypes = dataType === 'all' ?
-    ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'hikes', 'video-games'] :
+    ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'sports', 'video-games'] :
     [dataType];
   let data: any = {};
 
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        data.expensesCategories = await prisma.expensesCategory.findMany({
+        data.expenses = {};
+        data.expenses.categories = await prisma.expensesCategory.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           include: {
@@ -47,12 +48,12 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
             name: 'asc'
           }
         });
-        data.uncategorizedExpenses = await prisma.expense.findMany({
+        data.expenses.uncategorized = await prisma.expense.findMany({
           where: { userId, category: null },
           omit: { id: true, userId: true, categoryId: true },
           orderBy: { date: 'asc' }
         });
-        data.funds = await prisma.fund.findMany({
+        data.expenses.funds = await prisma.fund.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           orderBy: { date: 'asc' }
@@ -61,12 +62,12 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
           where: { id: req.user.id },
           select: { fundKeywords: true, wallet: true }
         })
-        data.fundKeywords = user?.fundKeywords.sort();
-        data.wallet = user?.wallet;
+        data.expenses.fundKeywords = user?.fundKeywords.sort();
+        data.expenses.wallet = user?.wallet;
         break;
 
       case 'calendar':
-        data.calendarEntries = await prisma.calendarEntry.findMany({
+        data.calendar = await prisma.calendarEntry.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           orderBy: { startDate: 'asc' }
@@ -74,6 +75,8 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         break;
 
       case 'diary':
+        if (!includePrivate)
+          break;
         data.diary = await prisma.diaryEntry.findMany({
           where: { userId },
           omit: { id: true, userId: true },
@@ -82,7 +85,9 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         break;
 
       case 'journal':
-        data.journalCategories = await prisma.journalCategory.findMany({
+        if (!includePrivate)
+          break;
+        data.journal = await prisma.journalCategory.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           include: {
@@ -108,17 +113,19 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         break;
 
       case 'to-do':
-        data.toDoMilestones = await prisma.toDoMilestone.findMany({
-          where: { userId },
-          omit: { id: true, userId: true },
-          include: {
-            tasks: {
-              omit: { id: true, userId: true, milestoneId: true },
-              orderBy: { id: 'asc' }
+        data.toDo = {};
+        if (includePrivate)
+          data.toDo.milestones = await prisma.toDoMilestone.findMany({
+            where: { userId },
+            omit: { id: true, userId: true },
+            include: {
+              tasks: {
+                omit: { id: true, userId: true, milestoneId: true },
+                orderBy: { id: 'asc' }
+              }
             }
-          }
-        });
-        data.toDoTasks = await prisma.toDoTask.findMany({
+          });
+        data.toDo.tasks = await prisma.toDoTask.findMany({
           where: { userId, milestone: null },
           omit: { id: true, userId: true, milestoneId: true },
           orderBy: { dateCreated: 'asc' }
@@ -126,7 +133,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         break;
 
       case 'notes':
-        data.noteCategories = await prisma.noteCategory.findMany({
+        data.notes = await prisma.noteCategory.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           include: {
@@ -140,15 +147,51 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
         break;
 
       case 'piano':
-        data.pianoPieces = await prisma.pianoPiece.findMany({
+        data.piano = await prisma.pianoPiece.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           orderBy: { monthLearned: 'asc' }
         });
         break;
 
-      case 'hikes':
-        data.hikes = await prisma.hike.findMany({
+      case 'sports':
+        data.sports = {};
+        data.sports.hikes = await prisma.hike.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
+        });
+
+        data.sports.gymSessions = await prisma.gymSession.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' },
+          include: {
+            exercises: {
+              omit: { id: true, sessionId: true, typeId: true },
+              orderBy: { id: 'asc' },
+              include: {
+                type: {
+                  omit: { id: true, userId: true },
+                }
+              }
+            }
+          }
+        });
+
+        data.sports.volleyballGames = await prisma.volleyballGame.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
+        });
+
+        data.sports.swims = await prisma.swim.findMany({
+          where: { userId },
+          omit: { id: true, userId: true },
+          orderBy: { date: 'asc' }
+        });
+
+        data.sports.runs = await prisma.run.findMany({
           where: { userId },
           omit: { id: true, userId: true },
           orderBy: { date: 'asc' }
@@ -191,7 +234,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   }
 
   const dataTypes = dataType === 'all'
-    ? ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'hikes', 'video-games']
+    ? ['expenses', 'calendar', 'diary', 'journal', 'to-do', 'notes', 'piano', 'sports', 'video-games']
     : [dataType];
 
 
@@ -199,40 +242,58 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        if (!inputData.expensesCategories ||
-          !inputData.uncategorizedExpenses ||
-          !inputData.funds ||
-          !inputData.fundKeywords ||
-          inputData.wallet === undefined)
+        if (!inputData.expenses.categories ||
+          !inputData.expenses.uncategorized ||
+          !inputData.expenses.funds ||
+          !inputData.expenses.fundKeywords ||
+          inputData.expenses.wallet === undefined)
           return res.status(400).json({ error: "Invalid expenses data" });
         break;
       case 'calendar':
-        if (!inputData.calendarEntries)
+        if (!inputData.calendar)
           return res.status(400).json({ error: "Invalid calendar data" });
         break;
       case 'diary':
-        if (!inputData.diary)
-          return res.status(400).json({ error: "Invalid diary data" });
+        if (!inputData.diary) {
+          if (dataType === 'diary')
+            return res.status(400).json({ error: "Invalid diary data" });
+          else
+            inputData.diary = []; // Possible to not exist if private content is not included in the backup
+        }
         break;
       case 'journal':
-        if (!inputData.journalCategories)
-          return res.status(400).json({ error: "Invalid journal data" });
+        if (!inputData.journal) {
+          if (dataType === 'journal')
+            return res.status(400).json({ error: "Invalid journal data" });
+          else
+            inputData.journal = []; // Possible to not exist
+        }
         break;
       case 'to-do':
-        if (!inputData.toDoMilestones || !inputData.toDoTasks)
+        if (!inputData.toDo.tasks)
           return res.status(400).json({ error: "Invalid todo data" });
+        if (!inputData.toDo.milestones) {
+          if (dataType === 'to-do')
+            return res.status(400).json({ error: "Invalid todo data" });
+          else
+            inputData.toDo.milestones = []; // Possible to not exist
+        }
         break;
       case 'notes':
-        if (!inputData.noteCategories)
+        if (!inputData.notes)
           return res.status(400).json({ error: "Invalid notes data" });
         break;
       case 'piano':
-        if (!inputData.pianoPieces)
-          return res.status(400).json({ error: "Invalid piano pieces data" });
+        if (!inputData.piano)
+          return res.status(400).json({ error: "Invalid piano data" });
         break;
-      case 'hikes':
-        if (!inputData.hikes)
-          return res.status(400).json({ error: "Invalid hikes data" });
+      case 'sports':
+        if (!inputData.sports.hikes ||
+          !inputData.sports.gymSessions ||
+          !inputData.sports.volleyballGames ||
+          !inputData.sports.swims ||
+          !inputData.sports.runs)
+          return res.status(400).json({ error: "Invalid sports data" });
         break;
       case 'video-games':
         if (!inputData.videoGames)
@@ -250,7 +311,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.fund.deleteMany({ where: { userId } });
         await prisma.expensesCategory.deleteMany({ where: { userId } });
 
-        for (const cat of inputData.expensesCategories) {
+        for (const cat of inputData.expenses.categories) {
           const { expenses, ...catData } = cat;
           const createdCat = await prisma.expensesCategory.create({
             data: { ...catData, userId },
@@ -266,16 +327,16 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           }
         }
         await prisma.expense.createMany({
-          data: inputData.uncategorizedExpenses.map((e: Expense) => ({ ...e, userId })),
+          data: inputData.expenses.uncategorized.map((e: Expense) => ({ ...e, userId })),
         });
         await prisma.fund.createMany({
-          data: inputData.funds.map((f: Fund) => ({ ...f, userId })),
+          data: inputData.expenses.funds.map((f: Fund) => ({ ...f, userId })),
         });
         await prisma.user.update({
           where: { id: req.user.id },
           data: {
-            wallet: inputData.wallet,
-            fundKeywords: inputData.fundKeywords
+            wallet: inputData.expenses.wallet,
+            fundKeywords: inputData.expenses.fundKeywords
           }
         })
         break;
@@ -283,7 +344,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
       case 'calendar':
         await prisma.calendarEntry.deleteMany({ where: { userId } });
         await prisma.calendarEntry.createMany({
-          data: inputData.calendarEntries.map((e: CalendarEntry) => ({ ...e, userId })),
+          data: inputData.calendar.map((e: CalendarEntry) => ({ ...e, userId })),
         });
         break;
 
@@ -299,19 +360,36 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.journalSection.deleteMany({ where: { category: { userId } } });
         await prisma.journalCategory.deleteMany({ where: { userId } });
 
-        for (const cat of inputData.journalCategories) {
-          const { sections, ...catData } = cat;
-          const createdCat = await prisma.journalCategory.create({
+        for (const category of inputData.journal) {
+          const { sections, ...catData } = category;
+          const createdCategory = await prisma.journalCategory.create({
             data: { ...catData, userId },
           });
           if (sections && sections.length) {
             for (const section of sections) {
               const { entries, ...sectionData } = section;
               const createdSection = await prisma.journalSection.create({
-                data: { ...sectionData, categoryId: createdCat.id },
+                data: { ...sectionData, categoryId: createdCategory.id },
               });
               if (entries && entries.length) {
                 for (const entry of entries) {
+                  const existingEntry = await prisma.journalEntry.findFirst({
+                    where: {
+                      date: entry.date,
+                      content: entry.content,
+                    }
+                  });
+                  if (existingEntry) {
+                    await prisma.journalSection.update({
+                      where: { id: createdSection.id },
+                      data: {
+                        entries: {
+                          connect: { id: existingEntry.id }
+                        }
+                      }
+                    });
+                    continue;
+                  }
                   const { subEntries, ...entryData } = entry;
                   const createdEntry = await prisma.journalEntry.create({
                     data: { ...entryData, sections: { connect: { id: createdSection.id } } },
@@ -335,7 +413,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.toDoTask.deleteMany({ where: { userId } });
         await prisma.toDoMilestone.deleteMany({ where: { userId } });
 
-        for (const milestone of inputData.toDoMilestones) {
+        for (const milestone of inputData.toDo.milestones) {
           const { tasks, ...milestoneData } = milestone;
           const createdMilestone = await prisma.toDoMilestone.create({
             data: { ...milestoneData, userId },
@@ -351,7 +429,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           }
         }
         await prisma.toDoTask.createMany({
-          data: inputData.toDoTasks.map((t: ToDoTask) => ({ ...t, userId })),
+          data: inputData.toDo.tasks.map((t: ToDoTask) => ({ ...t, userId })),
         });
         break;
 
@@ -359,14 +437,14 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         await prisma.note.deleteMany({ where: { category: { userId } } });
         await prisma.noteCategory.deleteMany({ where: { userId } });
 
-        for (const cat of inputData.noteCategories) {
-          const { notes, ...catData } = cat;
-          const createdCat = await prisma.noteCategory.create({
+        for (const category of inputData.notes) {
+          const { notes, ...catData } = category;
+          const createdCategory = await prisma.noteCategory.create({
             data: { ...catData, userId },
           });
           if (notes && notes.length) {
             await prisma.note.createMany({
-              data: notes.map((n: Note) => ({ ...n, categoryId: createdCat.id })),
+              data: notes.map((n: Note) => ({ ...n, categoryId: createdCategory.id })),
             });
           }
         }
@@ -375,14 +453,62 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
       case 'piano':
         await prisma.pianoPiece.deleteMany({ where: { userId } });
         await prisma.pianoPiece.createMany({
-          data: inputData.pianoPieces.map((p: PianoPiece) => ({ ...p, userId })),
+          data: inputData.piano.map((p: PianoPiece) => ({ ...p, userId })),
         });
         break;
 
-      case 'hikes':
+      case 'sports':
         await prisma.hike.deleteMany({ where: { userId } });
         await prisma.hike.createMany({
-          data: inputData.hikes.map((h: Hike) => ({ ...h, userId })),
+          data: inputData.sports.hikes.map((h: Hike) => ({ ...h, userId })),
+        });
+
+        await prisma.gymSession.deleteMany({ where: { userId } }); // Cascades to gym exercises
+        await prisma.gymExerciseType.deleteMany({ where: { userId } });
+        for (const session of inputData.sports.gymSessions) {
+          const { exercises, ...sessionData } = session;
+          const createdSession = await prisma.gymSession.create({
+            data: { ...sessionData, userId },
+          });
+          if (exercises && exercises.length) {
+            for (const exercise of exercises) {
+              const { type, ...exerciseData } = exercise;
+              let typeId: number | null = null;
+              const existingType = await prisma.gymExerciseType.findFirst({
+                where: { userId, name: type.name, description: type.description }
+              });
+              if (existingType)
+                typeId = existingType.id;
+              else {
+                const createdType = await prisma.gymExerciseType.create({
+                  data: { ...type, userId },
+                });
+                typeId = createdType.id;
+              }
+              await prisma.gymExercise.create({
+                data: {
+                  ...exerciseData,
+                  sessionId: createdSession.id,
+                  typeId
+                }
+              });
+            }
+          }
+        }
+
+        await prisma.volleyballGame.deleteMany({ where: { userId } });
+        await prisma.volleyballGame.createMany({
+          data: inputData.sports.volleyballGames.map((g: any) => ({ ...g, userId })),
+        });
+
+        await prisma.swim.deleteMany({ where: { userId } });
+        await prisma.swim.createMany({
+          data: inputData.sports.swims.map((s: any) => ({ ...s, userId })),
+        });
+
+        await prisma.run.deleteMany({ where: { userId } });
+        await prisma.run.createMany({
+          data: inputData.sports.runs.map((r: any) => ({ ...r, userId })),
         });
         break;
 

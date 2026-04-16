@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, IconButton, Typography } from "@mui/material";
 import { useHikes } from "../../../api";
 import { HikeCard } from "../../../components";
 import { Add } from "@mui/icons-material";
@@ -36,51 +36,20 @@ export const Hikes = () => {
 
   return (
     <Box sx={{ overflowY: 'auto', p: '32px', pt: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <Typography variant="h5">
+          Hikes ({hikes?.length ?? 0})
+        </Typography>
+
+        <IconButton onClick={() => setIsAddingHike(true)}>
+          <Add />
+        </IconButton>
+      </Box>
+
       {!isAddingHike && hikes?.length === 0 && (
         <Typography align="center" mt={7}>No hikes.</Typography>
       )}
       <Grid container spacing={3}>
-        {hikes?.map((hike) => (
-          <Grid
-            key={hike.id}
-            size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
-            sx={{ display: 'flex' }}
-          >
-            <HikeCard
-              hike={hike}
-              searchText={searchText}
-              isAddingHike={isAddingHike}
-              setIsAddingHike={setIsAddingHike}
-            />
-          </Grid>
-        ))}
-        {!isAddingHike && !searchText.trim() && (
-          <Grid
-            size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
-          >
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 2,
-              height: '100%',
-              border: 'dashed 2px',
-              borderColor: 'grey.700',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              color: 'text.primary',
-              transitionDuration: '0.1s',
-              ":hover": {
-                borderColor: 'text.primary',
-              }
-            }}
-              onClick={() => setIsAddingHike(true)}
-            >
-              <Add />
-              <Typography variant="h6">Add Hike</Typography>
-            </Box>
-          </Grid>
-        )}
         {isAddingHike && !searchText.trim() && (
           <Grid
             key={emptyHike.id}
@@ -95,6 +64,20 @@ export const Hikes = () => {
             />
           </Grid>
         )}
+        {hikes?.map((hike) => (
+          <Grid
+            key={hike.id}
+            size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}
+            sx={{ display: 'flex' }}
+          >
+            <HikeCard
+              hike={hike}
+              searchText={searchText}
+              isAddingHike={isAddingHike}
+              setIsAddingHike={setIsAddingHike}
+            />
+          </Grid>
+        ))}
       </Grid>
     </Box>
   )
