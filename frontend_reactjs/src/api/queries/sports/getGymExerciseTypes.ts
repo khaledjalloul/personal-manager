@@ -6,6 +6,7 @@ const ENDPOINT = "sports/gym/exercise-types";
 
 export type GetGymExerciseTypesRequestParams = {
   searchText: string;
+  searchInGymSessions: boolean;
 };
 
 const queryFn = (params: GetGymExerciseTypesRequestParams) => async () => {

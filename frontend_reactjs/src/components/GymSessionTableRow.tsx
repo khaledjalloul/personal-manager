@@ -41,7 +41,7 @@ const ExerciseTableCell = ({
             placeholder="Amount"
             value={weight}
             onChange={(e) => {
-              const newWeight = parseInt(e.target.value);
+              const newWeight = parseFloat(e.target.value);
               setWeight(isNaN(newWeight) ? 0 : newWeight); // Update displayed value
               exercise.weight = isNaN(newWeight) ? 0 : newWeight; // Update the exercise object
             }}
@@ -91,7 +91,7 @@ export const GymSessionTableRow = ({
   const [exercises, setExercises] = useState(session.exercises);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: "" });
+  const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
 
   const { mutate: createSession, isPending: createLoading, isSuccess: createSuccess } = useCreateGymSession();
   const { mutate: editSession, isPending: editLoading, isSuccess: editSuccess } = useEditGymSession();

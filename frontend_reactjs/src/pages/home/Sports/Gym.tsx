@@ -11,8 +11,8 @@ export const Gym = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isAddingSession, setIsAddingSession] = useState(false);
 
-  const { data: exerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim() });
-  const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: "" });
+  const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: false });
+  const { data: exerciseTypesInTable } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
   const { data: sessions } = useGymSessions({ searchText: searchText.trim(), sortOrder });
 
   return (
@@ -35,68 +35,69 @@ export const Gym = () => {
         </IconButton>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table
-          size="small"
-          stickyHeader
-          sx={{
-            '& th': {
-              backgroundColor: "primary.main",
-              color: "primary.contrastText"
-            }
-          }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>
-                <TableSortLabel
-                  active
-                  onClick={() => setSortOrder((prev) => prev === 'asc' ? 'desc' : 'asc')}
-                  direction={sortOrder}
-                >
-                  Date
-                </TableSortLabel>
-              </TableCell>
-              {allExerciseTypes?.map((type) => (
-                <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }} key={type.id}>
-                  {type.name}
+      <Box>
+        <TableContainer component={Paper}>
+          <Table
+            size="small"
+            stickyHeader
+            sx={{
+              '& th': {
+                backgroundColor: "primary.main",
+                color: "primary.contrastText"
+              }
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>
+                  <TableSortLabel
+                    active
+                    onClick={() => setSortOrder((prev) => prev === 'asc' ? 'desc' : 'asc')}
+                    direction={sortOrder}
+                  >
+                    Date
+                  </TableSortLabel>
                 </TableCell>
+                {exerciseTypesInTable?.map((type) => (
+                  <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }} key={type.id}>
+                    {type.name}
+                  </TableCell>
+                ))}
+                <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {isAddingSession && (
+                <GymSessionTableRow
+                  key={-1}
+                  session={{
+                    id: -1,
+                    date: new Date(),
+                    note: "",
+                    exercises: []
+                  }}
+                  index={-1}
+                  searchText={searchText}
+                  isAddingSession={isAddingSession}
+                  setIsAddingSession={setIsAddingSession}
+                />
+              )}
+              {sessions?.map((session, index) => (
+                <GymSessionTableRow
+                  key={session.id}
+                  session={session}
+                  index={index}
+                  searchText={searchText}
+                />
               ))}
-              <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {isAddingSession && (
-              <GymSessionTableRow
-                key={-1}
-                session={{
-                  id: -1,
-                  date: new Date(),
-                  note: "",
-                  exercises: []
-                }}
-                index={-1}
-                searchText={searchText}
-                isAddingSession={isAddingSession}
-                setIsAddingSession={setIsAddingSession}
-              />
-            )}
-            {sessions?.map((session, index) => (
-              <GymSessionTableRow
-                key={session.id}
-                session={session}
-                index={index}
-                searchText={searchText}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
       <Typography variant="h5" sx={{ mt: 3 }}>
-        Exercise Types ({exerciseTypes?.length ?? 0})
+        Exercise Types ({allExerciseTypes?.length ?? 0})
       </Typography>
 
       <Box sx={{
@@ -104,7 +105,7 @@ export const Gym = () => {
         flexDirection: 'column',
         gap: 1
       }}>
-        {exerciseTypes?.map((type) => (
+        {allExerciseTypes?.map((type) => (
           <GymExerciseTypeContainer key={type.id} exerciseType={type} />
         ))}
         <GymExerciseTypeContainer exerciseType={{ id: -1, name: "", description: "" }} />

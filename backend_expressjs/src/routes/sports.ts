@@ -66,6 +66,7 @@ router.delete('/hikes/:id', async (req: Request, res: Response) => {
 
 router.get('/gym/exercise-types', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
+  const searchInGymSessions = (req.query.searchInGymSessions as string) === 'true';
 
   const exerciseTypes = await prisma.gymExerciseType.findMany({
     where: {
@@ -73,6 +74,7 @@ router.get('/gym/exercise-types', async (req: Request, res: Response) => {
       OR: [
         { name: { contains: searchText, mode: 'insensitive' } },
         { description: { contains: searchText, mode: 'insensitive' } },
+        searchInGymSessions ? { exercises: { some: { note: { contains: searchText, mode: 'insensitive' } } } } : {}
       ]
     },
     include: {
