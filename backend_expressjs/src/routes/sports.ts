@@ -74,6 +74,7 @@ router.get('/gym/exercise-types', async (req: Request, res: Response) => {
       OR: [
         { name: { contains: searchText, mode: 'insensitive' } },
         { description: { contains: searchText, mode: 'insensitive' } },
+        searchInGymSessions ? { exercises: { some: { session: { note: { contains: searchText, mode: 'insensitive' } } } } } : {},
         searchInGymSessions ? { exercises: { some: { note: { contains: searchText, mode: 'insensitive' } } } } : {}
       ]
     },

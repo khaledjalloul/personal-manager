@@ -20,10 +20,12 @@ import { SearchTextHighlight } from "./SearchTextHighlight";
 
 const ExerciseTableCell = ({
   exercise,
+  searchText,
   isEditing,
   setExercises
 }: {
   exercise: GymExercise,
+  searchText: string,
   isEditing: boolean,
   setExercises: Dispatch<SetStateAction<GymExercise[]>>
 }) => {
@@ -33,7 +35,10 @@ const ExerciseTableCell = ({
   return (
     <TableCell>
       {!isEditing ?
-        <Typography variant="body2">{weight} kg{note ? ` (${note})` : ""}</Typography>
+        <Typography variant="body2">
+          <SearchTextHighlight text={weight.toString()} searchText={searchText.trim()} />{" "}kg
+          <SearchTextHighlight text={note ? ` (${note})` : ""} searchText={searchText.trim()} />
+        </Typography>
         :
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
           <TextField
@@ -91,7 +96,7 @@ export const GymSessionTableRow = ({
   const [exercises, setExercises] = useState(session.exercises);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
+  const { data: exerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
 
   const { mutate: createSession, isPending: createLoading, isSuccess: createSuccess } = useCreateGymSession();
   const { mutate: editSession, isPending: editLoading, isSuccess: editSuccess } = useEditGymSession();
@@ -154,11 +159,12 @@ export const GymSessionTableRow = ({
           }
         </TableCell>
 
-        {allExerciseTypes?.map((exerciseType, index) => (
+        {exerciseTypes?.map((exerciseType, index) => (
           exercises.find((ex) => ex.type.id === exerciseType.id) ?
             <ExerciseTableCell
               key={index}
               exercise={exercises.find((ex) => ex.type.id === exerciseType.id)!}
+              searchText={searchText.trim()}
               isEditing={isEditing}
               setExercises={setExercises}
             />
