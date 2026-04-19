@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import prisma from '../utils/prisma';
+import { JournalSubEntry } from '@prisma/client';
 
 const router = Router();
 
@@ -261,7 +262,7 @@ router.get('/', async (req: Request, res: Response) => {
     },
     include: {
       subEntries: {
-        orderBy: { id: 'asc' },
+        orderBy: { date: 'asc' },
       },
       sections: {
         select: {
@@ -296,8 +297,9 @@ router.post('/', async (req: Request, res: Response) => {
       },
       subEntries: {
         createMany: {
-          data: subEntries.map((subEntry: string) => ({
-            content: subEntry
+          data: subEntries.map((subEntry: JournalSubEntry) => ({
+            date: subEntry.date,
+            content: subEntry.content
           }))
         }
       },
@@ -310,10 +312,6 @@ router.post('/:id', async (req: Request, res: Response) => {
   const entryId = parseInt(req.params.id);
   const { date, content, subEntries, sectionIds, sectionIdsToRemove } = req.body;
 
-  await prisma.journalSubEntry.deleteMany({
-    where: { entryId }
-  });
-
   const entry = await prisma.journalEntry.update({
     where: { id: entryId },
     data: {
@@ -324,9 +322,11 @@ router.post('/:id', async (req: Request, res: Response) => {
         disconnect: sectionIdsToRemove?.map((id: number) => ({ id }))
       },
       subEntries: {
+        deleteMany: {},
         createMany: {
-          data: subEntries.map((subEntry: string) => ({
-            content: subEntry
+          data: subEntries.map((subEntry: JournalSubEntry) => ({
+            date: subEntry.date,
+            content: subEntry.content
           }))
         }
       },

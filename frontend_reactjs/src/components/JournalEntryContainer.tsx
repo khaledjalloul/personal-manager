@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { JournalEntry } from "../types";
 import { Box, Grid, IconButton, MenuItem, Select, Typography, useTheme } from "@mui/material";
 import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
@@ -28,7 +28,7 @@ export const JournalEntryContainer = ({
   const [date, setDate] = useState(dayjs(entry.date));
   const [sections, setSections] = useState(entry.sections);
   const [content, setContent] = useState(entry.content);
-  const [subEntries, setSubEntries] = useState(entry.subEntries.map(se => se.content));
+  const [subEntries, setSubEntries] = useState(entry.subEntries);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: allSections } = useJournalSections({ searchText: "" });
@@ -47,14 +47,14 @@ export const JournalEntryContainer = ({
         sectionIdsToRemove: entry.sections.map(s => s.id).filter(id => !sections.some(s => s.id === id)),
         date: date.toDate(),
         content: content.trim(),
-        subEntries: subEntries.map(se => se.trim())
+        subEntries: subEntries.map((se) => ({ ...se, content: se.content.trim() }))
       });
     else if (sections.length)
       createEntry({
         sectionIds: sections.map(s => s.id),
         date: date.toDate(),
         content: content.trim(),
-        subEntries: subEntries.map(se => se.trim())
+        subEntries: subEntries.map(se => ({ ...se, content: se.content.trim() }))
       });
   };
 
@@ -67,6 +67,10 @@ export const JournalEntryContainer = ({
   useEffect(() => {
     if (editSuccess) setIsEditing(false);
   }, [editSuccess]);
+
+  useEffect(() => {
+    setSubEntries(entry.subEntries);
+  }, [entry.subEntries]);
 
   return (
     <Grid container onDoubleClick={() => setIsEditing(true)}>
@@ -177,7 +181,10 @@ export const JournalEntryContainer = ({
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <IconButton
-                  onClick={() => setSubEntries([...subEntries, ""])}
+                  onClick={() => setSubEntries([
+                    ...subEntries,
+                    { id: Date.now(), entryId: entry.id, date: new Date(), content: "" }
+                  ])}
                 >
                   <Add fontSize="small" />
                 </IconButton>
@@ -206,7 +213,7 @@ export const JournalEntryContainer = ({
                       setSections(entry.sections);
                       setDate(dayjs(entry.date));
                       setContent(entry.content);
-                      setSubEntries(entry.subEntries.map(se => se.content));
+                      setSubEntries(entry.subEntries);
                       setIsEditing(false);
                     } else {
                       setIsAddingEntry(false);
@@ -253,36 +260,80 @@ export const JournalEntryContainer = ({
         </Box>
       </Grid>
 
-      <Grid size={2} sx={{ display: { xs: 'none', lg: subEntries.length ? 'flex' : 'none' } }} />
+      {subEntries.map((subEntry, index) => (
+        <Fragment key={index}>
+          <Grid
+            size={{ xs: 12, lg: 2 }}
+            sx={{
+              display: subEntries.length ? 'flex' : 'none',
+              justifyContent: { xs: 'center', lg: 'end' },
+              alignItems: 'start'
+            }}
+          >
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+              borderRadius: '8px',
+              backgroundColor: 'primary.light',
+              p: 1,
+              pl: isEditing ? 2 : 1,
+              mt: { xs: 2, lg: 1 },
+              mr: { xs: 0, lg: 1 },
+              mb: { xs: 1, lg: 0 },
+              border: `solid 1px ${palette.grey[700]}`,
+            }}>
+              {!isEditing ? (
+                <Typography variant="body2">
+                  {dayjs(subEntry.date).format("DD.MM.YYYY")}
+                </Typography>
+              ) : (
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={dayjs(subEntry.date)}
+                    onChange={(newValue) => setSubEntries(subEntries.map((se, i) => ({ ...se, date: i === index ? (newValue ?? dayjs()).toDate() : se.date })))}
+                    enableAccessibleFieldDOMStructure={false}
+                    format="DD.MM.YYYY"
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                        variant: "standard",
+                        placeholder: "Date",
+                      }
+                    }}
+                  />
+                </LocalizationProvider>
+              )}
 
-      <Grid size={{ xs: 12, lg: 10 }} sx={{ display: subEntries.length ? 'flex' : 'none' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            flexGrow: 1,
-            mt: 1,
-            ml: 1
-          }}>
-          {subEntries.map((subEntry, index) => (
+              {isEditing && (
+                <IconButton
+                  color="error"
+                  size="small"
+                  onClick={() => setSubEntries(subEntries.filter((_, i) => i !== index))}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 12, lg: 10 }} sx={{ display: subEntries.length ? 'flex' : 'none' }}>
             <Box
-              key={index}
               sx={{
                 flexGrow: 1,
                 borderRadius: '8px',
                 backgroundColor: 'primary.light',
+                mt: { xs: 0, lg: 1 },
                 p: 1,
                 border: `solid 1px ${palette.grey[700]}`,
-                position: 'relative'
               }}>
               {!isEditing ? (
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                  <SearchTextHighlight text={subEntry} searchText={searchText.trim()} />
+                  <SearchTextHighlight text={subEntry.content} searchText={searchText.trim()} />
                 </Typography>
               ) : (
                 <textarea
-                  value={subEntry}
+                  value={subEntry.content}
                   rows={10}
                   placeholder="Sub-Entry"
                   style={{
@@ -295,32 +346,13 @@ export const JournalEntryContainer = ({
                     borderTopLeftRadius: '8px',
                     borderBottomLeftRadius: '8px',
                   }}
-                  onChange={(e) => setSubEntries(subEntries.map((se, i) => i === index ? e.target.value : se))}
+                  onChange={(e) => setSubEntries(subEntries.map((se, i) => ({ ...se, content: i === index ? e.target.value : se.content })))}
                 />
               )}
-
-              {isEditing && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: { xs: 0, sm: '8px', lg: 0 },
-                    bottom: { xs: 0, sm: 'auto', lg: 0 },
-                    left: { xs: '-38px', sm: 'auto', lg: '-48px' },
-                    right: { xs: 'auto', sm: '16px', lg: 'auto' },
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
-                  <IconButton
-                    color="error"
-                    onClick={() => setSubEntries(subEntries.filter((_, i) => i !== index))}>
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </Box>
-              )}
             </Box>
-          ))}
-        </Box>
-      </Grid>
+          </Grid>
+        </Fragment>
+      ))}
 
       <ConfirmDeleteDialog
         isOpen={confirmDeleteOpen}

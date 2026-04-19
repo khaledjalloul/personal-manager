@@ -397,8 +397,9 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
                   if (subEntries && subEntries.length) {
                     await prisma.journalSubEntry.createMany({
                       data: subEntries.map((se: JournalSubEntry) => ({
+                        entryId: createdEntry.id,
+                        date: se.date,
                         content: se.content,
-                        entryId: createdEntry.id
                       }))
                     });
                   }

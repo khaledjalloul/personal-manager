@@ -178,7 +178,7 @@ export const journalSections: JournalSection[] = [
 export const journalEntries: JournalEntry[] = [
     {
         id: 1, sections: [journalSections[0]], date: new Date(), content: 'Good day.',
-        subEntries: [{ id: 1, entryId: 1, content: 'sub 1' }, { id: 2, entryId: 1, content: 'sub 2' }]
+        subEntries: [{ id: 1, entryId: 1, date: new Date(), content: 'sub 1' }, { id: 2, entryId: 1, date: new Date(), content: 'sub 2' }]
     },
     { id: 2, sections: [journalSections[1], journalSections[3]], date: new Date(), content: 'New project idea: a personal finance tracker.', subEntries: [] },
     { id: 3, sections: [journalSections[2]], date: new Date(), content: 'Meeting with the team went well.', subEntries: [] },

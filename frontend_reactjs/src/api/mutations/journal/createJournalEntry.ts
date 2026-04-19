@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { AxiosError } from "axios";
-import { JournalEntry } from "../../../types";
+import { JournalEntry, JournalSubEntry } from "../../../types";
 
 const ENDPOINT = "journal";
 
@@ -9,7 +9,7 @@ export type CreateJournalEntryRequestBody = {
   sectionIds: number[];
   date: Date;
   content: string;
-  subEntries: string[];
+  subEntries: JournalSubEntry[];
 };
 
 const mutationFn = async (data: CreateJournalEntryRequestBody) => {

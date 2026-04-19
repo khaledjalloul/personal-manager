@@ -77,12 +77,13 @@ export const Gym = () => {
     }}>
 
       <Typography variant="h5">
-        Progress
+        Gym Exercise Progress
       </Typography>
 
-      <FormControl sx={{ alignSelf: 'center' }}>
+      <FormControl sx={{ alignSelf: 'center', mb: 2 }}>
         <RadioGroup
           row
+          sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
           value={graphExerciseType}
           onChange={(e) => setGraphExerciseType(parseInt(e.target.value))}
         >
@@ -93,82 +94,85 @@ export const Gym = () => {
       </FormControl>
 
       {sessions &&
-        <Box sx={{ width: '75%', alignSelf: 'center' }}>
-          <Line
-            data={{
-              labels: sessionsAsc.map((s) => dayjs(s.date).format('DD.MM.YYYY')),
-              datasets: allExerciseTypes?.find((t) => t.id === graphExerciseType) ? [{
-                label: allExerciseTypes?.find((t) => t.id === graphExerciseType)?.name,
-                data: sessionsAsc.map((session) => session.exercises.find((e) => e.type.id === graphExerciseType)?.weight),
+        <Box sx={{
+          width: '100%',
+          alignSelf: 'center',
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          justifyContent: { xs: 'start', lg: 'space-around' },
+          gap: { xs: 5, lg: 0 }
+        }}>
+          <Box sx={{ width: { xs: '100%', lg: '45%' } }}>
+            <Line
+              data={{
+                labels: sessionsAsc.map((s) => dayjs(s.date).format('DD.MM.YYYY')),
+                datasets: allExerciseTypes?.find((t) => t.id === graphExerciseType) ? [{
+                  label: allExerciseTypes?.find((t) => t.id === graphExerciseType)?.name,
+                  data: sessionsAsc.map((session) => session.exercises.find((e) => e.type.id === graphExerciseType)?.weight),
+                  backgroundColor: palette.primary.main,
+                  borderColor: palette.primary.main,
+                }] : [],
+              }}
+              options={{
+                scales: {
+                  y: {
+                    ticks: {
+                      callback: (value) => `${value} kg`,
+                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                      stepSize: 5
+                    },
+                    beginAtZero: true,
+                  },
+                  x: {
+                    ticks: {
+                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                    }
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: false
+                  },
+                }
+              }} />
+          </Box>
+
+          <Box sx={{ width: { xs: '100%', lg: '45%' } }}>
+            <Bar data={{
+              labels: allExerciseTypes?.map(t => t.name) ?? [],
+              datasets: [{
+                label: 'Exercise Count',
+                data: allExerciseTypes?.map(type => type._count?.exercises),
                 backgroundColor: palette.primary.main,
-                borderColor: palette.primary.main,
-              }] : [],
+              }],
             }}
-            options={{
-              scales: {
-                y: {
-                  ticks: {
-                    callback: (value) => `${value} kg`,
-                    color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                    stepSize: 5
+              options={{
+                scales: {
+                  y: {
+                    ticks: {
+                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                    },
+                    beginAtZero: true,
                   },
-                  beginAtZero: true,
-                },
-                x: {
-                  ticks: {
-                    color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                  x: {
+                    ticks: {
+                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
+                    }
                   }
-                }
-              },
-              plugins: {
-                legend: {
-                  display: false
                 },
-              }
-            }} />
+                plugins: {
+                  legend: {
+                    display: false
+                  },
+                }
+              }} />
+          </Box>
         </Box>
       }
 
-      <Typography variant="h5" sx={{ mt: 3 }}>
-        Exercise Count
-      </Typography>
-
-      {sessions &&
-        <Box sx={{ width: '75%', alignSelf: 'center' }}>
-          <Bar data={{
-            labels: allExerciseTypes?.map(t => t.name) ?? [],
-            datasets: [{
-              label: 'Exercise Count',
-              data: allExerciseTypes?.map(type => type._count?.exercises),
-              backgroundColor: palette.primary.main,
-            }],
-          }}
-            options={{
-              scales: {
-                y: {
-                  ticks: {
-                    color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                  },
-                  beginAtZero: true,
-                },
-                x: {
-                  ticks: {
-                    color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                  }
-                }
-              },
-              plugins: {
-                legend: {
-                  display: false
-                },
-              }
-            }} />
-        </Box>
-      }
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 3 }}>
         <Typography variant="h5">
-          Sessions ({sessions?.length ?? 0})
+          Gym Sessions ({sessions?.length ?? 0})
         </Typography>
 
         <IconButton onClick={() => setIsAddingSession(true)}>
@@ -238,7 +242,7 @@ export const Gym = () => {
       </Box>
 
       <Typography variant="h5" sx={{ mt: 3 }}>
-        Exercise Types ({allExerciseTypes?.length ?? 0})
+        Gym Exercise Types ({allExerciseTypes?.length ?? 0})
       </Typography>
 
       <Box sx={{

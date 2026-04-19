@@ -124,6 +124,7 @@ model JournalEntry {
 
 model JournalSubEntry {
   id      Int          @id @default(autoincrement())
+  date    DateTime
   content String
   entryId Int
   entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)

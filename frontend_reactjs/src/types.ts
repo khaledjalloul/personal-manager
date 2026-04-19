@@ -87,6 +87,7 @@ export type JournalEntry = {
 export type JournalSubEntry = {
   id: number;
   entryId: number;
+  date: Date;
   content: string;
 };
 
