@@ -1,10 +1,13 @@
 {
     "name": "Personal Manager",
-    "dockerComposeFile": "compose.yaml",
+    "dockerComposeFile": [
+        "../docker/compose.yaml",
+        "compose.yaml"
+    ],
     "service": "personal-manager",
     "workspaceFolder": "/workspace/personal-manager",
     "postCreateCommand": "bash .devcontainer/post_create.bash",
-    "initializeCommand": "docker compose -f .devcontainer/compose.yaml down",
+    "initializeCommand": "docker compose -f docker/compose.yaml down",
     "customizations": {
         "vscode": {
             "extensions": [

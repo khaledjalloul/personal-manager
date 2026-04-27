@@ -1,0 +1,35 @@
+services:
+  personal-manager:
+    image: khaledjalloul/personal-manager
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+      - "3007:3007"
+    container_name: personal-manager
+    command: bash
+    volumes:
+      # Bind source code
+      - type: bind
+        source: ..
+        target: /workspace/personal-manager
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: volume
+        source: personal-manager-postgres
+        target: /var/lib/postgresql/data
+
+volumes:
+  personal-manager-postgres:
+    # Override default compose volume name
+    name: personal-manager-postgres
