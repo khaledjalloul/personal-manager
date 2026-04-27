@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Check for changes in frontend source
+        run: |
+          if [ -n "$(git diff --name-only HEAD~1 HEAD frontend_reactjs/)" ]; then
+            echo "FRONTEND_CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "FRONTEND_CHANGED=false" >> $GITHUB_ENV
+          fi
+
+      - name: Pull docker image
+        if: env.FRONTEND_CHANGED == 'true'
+        run: docker pull khaledjalloul/personal-manager
+
+      - name: Install frontend dependencies
+        if: env.FRONTEND_CHANGED == 'true'
+        run: docker compose -f docker/compose.yaml run --user root personal-manager npm --prefix frontend_reactjs install
+
+      - name: Build frontend
+        if: env.FRONTEND_CHANGED == 'true'
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+        run: |
+          printf "%s\n" \
+            "REACT_APP_API_URL=$REACT_APP_API_URL" \
+            "WDS_SOCKET_PORT=0" \
+            > frontend_reactjs/.env.local
+          docker compose -f docker/compose.yaml run --user root personal-manager npm --prefix frontend_reactjs run build
+
+      - name: Deploy to GitHub Pages
+        if: env.FRONTEND_CHANGED == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          publish_dir: frontend_reactjs/build

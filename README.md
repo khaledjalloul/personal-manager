@@ -29,8 +29,10 @@ npm start
 ## Deployment
 
 Frontend:
-  - Set the `REACT_APP_API_URL` in `frontend_reactjs/.env.local` to the deployed one.
-  - Trigger rebuild using `npm run deploy`.
+  - Deployment is automatically triggered on commit using GitHub Actions.
+  - To deploy manually:
+    - Set the `REACT_APP_API_URL` in `frontend_reactjs/.env.local` to the deployed one.
+    - Trigger rebuild using `npm run deploy`.
 
 Backend:
   - Rebuild is automatically triggered on commit.
