@@ -10,6 +10,7 @@ router.get('/daily', async (req: Request, res: Response) => {
   const year = parseInt(req.query.year as string) ?? new Date().getFullYear();
   const month = parseInt(req.query.month as string) ?? new Date().getMonth();
   const searchText = (req.query.searchText as string) ?? "";
+  const sortOrder = (req.query.sortOrder as string) === "asc" ? "asc" : "desc";
 
   const entries = await prisma.diaryEntry.findMany({
     where: {
@@ -29,7 +30,7 @@ router.get('/daily', async (req: Request, res: Response) => {
         }
       )
     },
-    orderBy: { date: 'asc' },
+    orderBy: { date: sortOrder },
   });
 
   res.json(entries);

@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Clear, Today, ViewList } from "@mui/icons-material";
+import { ArrowDownward, ArrowLeft, ArrowRight, ArrowUpward, Clear, Today, ViewList } from "@mui/icons-material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -27,6 +27,7 @@ export const DiaryWrapper = () => {
 
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs(routedDate ?? userData?.diaryLastSelectedDate));
   const [searchText, setSearchText] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const { data: dailyEntries } = useDailyDiaryEntries({
     year: selectedDate.year(),
@@ -35,6 +36,7 @@ export const DiaryWrapper = () => {
     // Encoded search text to allow special characters
     // Intentionally untrimmed to search for words with spaces
     searchText: searchText.length >= 3 ? encodeURIComponent(searchText) : "",
+    sortOrder
   });
   const { data: monthlyDiary } = useMonthlyDiaryEntries({
     year: selectedDate.year(),
@@ -138,32 +140,51 @@ export const DiaryWrapper = () => {
           </Button>
         </Box>
 
-        <TextField
-          sx={{
-            ml: { xs: 0, lg: "auto" },
-            minWidth: { xs: 0, lg: "35vw" },
-          }}
-          label="Search diary"
-          placeholder="Content, work content"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          slotProps={{
-            input: {
-              endAdornment: searchText.length > 0 && (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setSearchText("")}
-                  >
-                    <Clear />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }
-          }}
-        />
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column-reverse', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: 2,
+          ml: { xs: 0, lg: 'auto' },
+        }}>
+          <IconButton
+            size="small"
+            sx={{
+              display: isDaily && searchText.length >= 3 ? 'block' : 'none',
+              alignSelf: 'center',
+            }}
+            onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
+          >
+            {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+          </IconButton>
+
+          <TextField
+            sx={{
+              minWidth: { xs: 0, lg: "35vw" },
+              flexGrow: 1,
+            }}
+            label="Search diary"
+            placeholder="Content, work content"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            slotProps={{
+              input: {
+                endAdornment: searchText.length > 0 && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setSearchText("")}
+                    >
+                      <Clear />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }
+            }}
+          />
+        </Box>
       </Box>
 
-      <Outlet context={{ searchText, selectedDate }} />
+      <Outlet context={{ searchText, selectedDate, sortOrder }} />
 
     </Wrapper>
   );

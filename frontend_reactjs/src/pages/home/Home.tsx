@@ -56,7 +56,8 @@ const DiaryContainer = () => {
   const { data: diaryEntries } = useDailyDiaryEntries({
     year: today.year(),
     month: today.month(),
-    searchText: ""
+    searchText: "",
+    sortOrder: "asc"
   });
 
   const { mutate: createDiaryEntry, isPending: createDiaryLoading } = useCreateDiaryEntry();

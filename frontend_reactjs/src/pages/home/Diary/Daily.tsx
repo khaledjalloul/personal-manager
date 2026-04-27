@@ -1,5 +1,5 @@
 import { Box, Typography, } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDailyDiaryEntries } from "../../../api";
 import { DiaryEntryContainer } from "../../../components";
 import dayjs, { Dayjs } from 'dayjs';
@@ -8,7 +8,7 @@ import { useOutletContext } from "react-router-dom";
 
 export const DailyDiary = () => {
 
-  const { searchText, selectedDate } = useOutletContext<{ searchText: string, selectedDate: Dayjs }>();
+  const { searchText, selectedDate, sortOrder } = useOutletContext<{ searchText: string, selectedDate: Dayjs, sortOrder: "asc" | "desc" }>();
 
   const { data: diaryEntries, isFetched } = useDailyDiaryEntries({
     year: selectedDate.year(),
@@ -17,6 +17,7 @@ export const DailyDiary = () => {
     // Encoded search text to allow special characters
     // Intentionally untrimmed to search for words with spaces
     searchText: searchText.length >= 3 ? encodeURIComponent(searchText) : "",
+    sortOrder
   });
 
   const displayedEntries: DiaryEntry[] | undefined = useMemo(() => {
@@ -43,16 +44,25 @@ export const DailyDiary = () => {
     });
   }, [selectedDate, searchText, JSON.stringify(diaryEntries)])
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isFetched && searchText.length >= 3)
+      containerRef.current?.scrollTo({ top: 0 });
+  }, [isFetched, searchText]);
+
   return (
-    <Box sx={{
-      overflowY: { xs: 'unset', sm: 'auto' },
-      p: '32px',
-      pr: '24px', // Adjusting for scrollbar
-      pt: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: { xs: 3, md: 1 }
-    }}>
+    <Box
+      ref={containerRef}
+      sx={{
+        overflowY: { xs: 'unset', sm: 'auto' },
+        p: '32px',
+        pr: '24px', // Adjusting for scrollbar
+        pt: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: { xs: 3, md: 1 }
+      }}>
       {displayedEntries?.length === 0 && (
         <Typography align="center" mt={7}>No diary entries.</Typography>
       )}

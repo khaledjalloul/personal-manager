@@ -55,9 +55,9 @@ export const DiaryEntryContainer = ({
   const entryRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (dataFetched && selectedDate.isSame(entry.date, 'day'))
+    if (dataFetched && searchText.length < 3 && selectedDate.isSame(entry.date, 'day'))
       entryRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [dataFetched, selectedDate]);
+  }, [dataFetched, selectedDate, searchText]);
 
   useEffect(() => {
     if (createSuccess || editSuccess) setIsEditing(false);

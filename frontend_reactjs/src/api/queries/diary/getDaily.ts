@@ -8,6 +8,7 @@ export type GetDailyDiaryEntriesRequestParams = {
   year: number;
   month: number;
   searchText: string;
+  sortOrder: "asc" | "desc";
 };
 
 const queryFn = (params: GetDailyDiaryEntriesRequestParams) => async () => {
