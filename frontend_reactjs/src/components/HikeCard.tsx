@@ -60,7 +60,6 @@ export const HikeCard = ({
   const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
   const [coverImage, setCoverImage] = useState(hike.coverImage); // TODO: Add image upload
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createHike, isPending: createLoading, isSuccess: createSuccess } = useCreateHike();
   const { mutate: editHike, isPending: editLoading, isSuccess: editSuccess } = useEditHike();
@@ -169,13 +168,17 @@ export const HikeCard = ({
           )}
 
           {isEditing && !isAddingHike && (
-            <IconButton
-              color="error"
-              loading={deleteLoading}
-              onClick={() => setConfirmDeleteOpen(true)}
+            <ConfirmDeleteDialog
+              itemName={`hike: ${description}`}
+              deleteFn={() => deleteHike({ id: hike.id })}
             >
-              <Delete fontSize="small" />
-            </IconButton>
+              <IconButton
+                color="error"
+                loading={deleteLoading}
+              >
+                <Delete fontSize="small" />
+              </IconButton>
+            </ConfirmDeleteDialog>
           )}
 
           {isEditing && (
@@ -396,12 +399,6 @@ export const HikeCard = ({
 
         </Grid>
       </ContentBox>
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`hike: ${description}`}
-        deleteFn={() => deleteHike({ id: hike.id })}
-      />
     </Wrapper >
   )
 }

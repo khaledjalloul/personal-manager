@@ -41,7 +41,6 @@ export const ManageCalendarEntryModal = ({
   const [startDate, setStartDate] = useState(dayjs(entry.startDate));
   const [endDate, setEndDate] = useState(dayjs(entry.endDate));
   const [repeatUntilDate, setRepeatUntilDate] = useState<Dayjs>();
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createEntry, isPending: createLoading, isSuccess: createSuccess } = useCreateCalendarEntry();
   const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditCalendarEntry();
@@ -71,9 +70,6 @@ export const ManageCalendarEntryModal = ({
   };
 
   useCtrlS(save);
-  useKeybinding("d", () => {
-    setConfirmDeleteOpen(true);
-  });
 
   useEffect(() => {
     if (repeatUntilDate)
@@ -220,13 +216,17 @@ export const ManageCalendarEntryModal = ({
               </IconButton>
 
               {!isNew && (
-                <IconButton
-                  color="error"
-                  loading={deleteLoading}
-                  onClick={() => setConfirmDeleteOpen(true)}
+                <ConfirmDeleteDialog
+                  deleteFn={() => deleteEntry({ id: entry.id })}
+                  itemName={`calendary entry: ${entry.title}`}
                 >
-                  <Delete />
-                </IconButton>
+                  <IconButton
+                    color="error"
+                    loading={deleteLoading}
+                  >
+                    <Delete />
+                  </IconButton>
+                </ConfirmDeleteDialog>
               )}
 
               <IconButton
@@ -237,13 +237,6 @@ export const ManageCalendarEntryModal = ({
             </Box>
           </Box>
         </LocalizationProvider>
-
-        <ConfirmDeleteDialog
-          isOpen={confirmDeleteOpen}
-          setIsOpen={setConfirmDeleteOpen}
-          deleteFn={() => deleteEntry({ id: entry.id })}
-          itemName={`calendary entry: ${entry.title}`}
-        />
 
       </Wrapper>
     </Modal>

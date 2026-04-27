@@ -35,7 +35,6 @@ export const ToDoMilestoneContainer = ({
   const [isEditing, setIsEditing] = useState(isAddingMilestone);
   const [date, setDate] = useState(milestone.date && dayjs(milestone.date));
   const [description, setDescription] = useState(milestone.description);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: tasks } = useToDoTasks({
     milestoneId: milestone.id,
@@ -126,13 +125,17 @@ export const ToDoMilestoneContainer = ({
           </IconButton>
 
           {!isAddingMilestone && (
-            <IconButton
-              onClick={() => setConfirmDeleteOpen(true)}
-              loading={deleteMilestoneLoading}
-              color="error"
+            <ConfirmDeleteDialog
+              itemName={`milestone (and all its tasks): ${milestone.description}`}
+              deleteFn={() => deleteMilestone({ id: milestone.id })}
             >
-              <Delete fontSize="small" />
-            </IconButton>
+              <IconButton
+                loading={deleteMilestoneLoading}
+                color="error"
+              >
+                <Delete fontSize="small" />
+              </IconButton>
+            </ConfirmDeleteDialog>
           )}
 
           <IconButton
@@ -191,13 +194,6 @@ export const ToDoMilestoneContainer = ({
           />
         ))}
       </Box>
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`milestone (and all its tasks): ${milestone.description}`}
-        deleteFn={() => deleteMilestone({ id: milestone.id })}
-      />
     </Box>
   )
 }

@@ -10,7 +10,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { ExpenseType, Fund } from "../types";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -42,7 +42,6 @@ export const FundTableRow = ({
 	const [source, setSource] = useState(fund.source);
 	const [amount, setAmount] = useState(fund.amount);
 	const [type, setType] = useState(fund.type);
-	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
 	const { mutate: createFund, isPending: createLoading, isSuccess: createSuccess } = useCreateFund();
 	const { mutate: editFund, isPending: editLoading, isSuccess: editSuccess } = useEditFund();
@@ -78,151 +77,147 @@ export const FundTableRow = ({
 	}, [editSuccess]);
 
 	return (
-		<Fragment>
-			<TableRow
-				sx={{
-					backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
-					":hover": editable ? { backgroundColor: "action.hover" } : {}
-				}}
-				onDoubleClick={editable ? () => setIsEditing(true) : undefined}
-			>
+		<TableRow
+			sx={{
+				backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
+				":hover": editable ? { backgroundColor: "action.hover" } : {}
+			}}
+			onDoubleClick={editable ? () => setIsEditing(true) : undefined}
+		>
+			<TableCell>
+				{!isEditing ? date.format("DD.MM.YYYY") :
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DatePicker
+							value={date}
+							onChange={(newValue) => setDate(newValue ?? dayjs())}
+							enableAccessibleFieldDOMStructure={false}
+							format="DD.MM.YYYY"
+							slotProps={{
+								textField: {
+									size: "small",
+									variant: "standard",
+									placeholder: "Date",
+								}
+							}}
+							sx={{ minWidth: 130 }}
+						/>
+					</LocalizationProvider>
+				}
+			</TableCell>
+
+			{!editable && (
 				<TableCell>
-					{!isEditing ? date.format("DD.MM.YYYY") :
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<DatePicker
-								value={date}
-								onChange={(newValue) => setDate(newValue ?? dayjs())}
-								enableAccessibleFieldDOMStructure={false}
-								format="DD.MM.YYYY"
-								slotProps={{
-									textField: {
-										size: "small",
-										variant: "standard",
-										placeholder: "Date",
-									}
-								}}
-								sx={{ minWidth: 130 }}
-							/>
-						</LocalizationProvider>
-					}
+					<Typography variant="body2">Funds</Typography>
 				</TableCell>
+			)}
 
-				{!editable && (
-					<TableCell>
-						<Typography variant="body2">Funds</Typography>
-					</TableCell>
-				)}
+			<TableCell width={"40%"}>
+				{!isEditing ? <SearchTextHighlight text={source} searchText={searchText.trim()} /> :
+					<TextField
+						variant="standard"
+						placeholder="Source"
+						value={source}
+						onChange={(e) => setSource(e.target.value)}
+						sx={{ width: "100%" }}
+					/>
+				}
+			</TableCell>
 
-				<TableCell width={"40%"}>
-					{!isEditing ? <SearchTextHighlight text={source} searchText={searchText.trim()} /> :
+			{!editable && <TableCell />}
+
+			<TableCell>
+				{!isEditing ?
+					<Typography variant="body2" sx={{
+						color: editable ? "text.primary" : (
+							amount >= 0 ? "success.main" : "error.main"
+						)
+					}}>
+						{!editable ?
+							(amount >= 0 ? `+${Math.abs(amount).toFixed(2)}` : `-${Math.abs(amount).toFixed(2)}`) :
+							amount.toFixed(2)
+						}
+						{type === ExpenseType.Cash && " (Cash)"}
+					</Typography> :
+					<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
 						<TextField
 							variant="standard"
-							placeholder="Source"
-							value={source}
-							onChange={(e) => setSource(e.target.value)}
-							sx={{ width: "100%" }}
-						/>
-					}
-				</TableCell>
-
-				{!editable && <TableCell />}
-
-				<TableCell>
-					{!isEditing ?
-						<Typography variant="body2" sx={{
-							color: editable ? "text.primary" : (
-								amount >= 0 ? "success.main" : "error.main"
-							)
-						}}>
-							{!editable ?
-								(amount >= 0 ? `+${Math.abs(amount).toFixed(2)}` : `-${Math.abs(amount).toFixed(2)}`) :
-								amount.toFixed(2)
-							}
-							{type === ExpenseType.Cash && " (Cash)"}
-						</Typography> :
-						<Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
-							<TextField
-								variant="standard"
-								placeholder="Amount"
-								value={amount.toFixed(2)}
-								onChange={(e) => {
-									const newAmount = parseFloat(e.target.value);
-									setAmount(isNaN(newAmount) ? amount : newAmount);
-								}}
-								slotProps={{
-									input: {
-										endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
-									}
-								}}
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size="small"
-										sx={{ p: 0, pr: 0.5 }}
-										checked={type === ExpenseType.Cash}
-										onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
-									/>
+							placeholder="Amount"
+							value={amount.toFixed(2)}
+							onChange={(e) => {
+								const newAmount = parseFloat(e.target.value);
+								setAmount(isNaN(newAmount) ? amount : newAmount);
+							}}
+							slotProps={{
+								input: {
+									endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
 								}
-								label={<Typography variant="body2">Cash</Typography>}
-								sx={{ m: 0, ml: 1 }}
-							/>
-						</Box>
-					}
-				</TableCell>
+							}}
+						/>
+						<FormControlLabel
+							control={
+								<Checkbox
+									size="small"
+									sx={{ p: 0, pr: 0.5 }}
+									checked={type === ExpenseType.Cash}
+									onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
+								/>
+							}
+							label={<Typography variant="body2">Cash</Typography>}
+							sx={{ m: 0, ml: 1 }}
+						/>
+					</Box>
+				}
+			</TableCell>
 
-				{editable && (
-					!isEditing ? (
-						<TableCell>
-							<IconButton size="small"
-								onClick={() => setIsEditing(true)}
-							>
-								<Edit fontSize="small" />
-							</IconButton>
-						</TableCell>
-					) : (
-						<TableCell sx={{ display: 'flex', gap: 1 }}>
-							<IconButton
-								size="small"
-								color="success"
-								loading={createLoading || editLoading}
-								disabled={!source.trim()}
-								onClick={save}>
-								<Save fontSize="small" />
-							</IconButton>
+			{editable && (
+				!isEditing ? (
+					<TableCell>
+						<IconButton size="small"
+							onClick={() => setIsEditing(true)}
+						>
+							<Edit fontSize="small" />
+						</IconButton>
+					</TableCell>
+				) : (
+					<TableCell sx={{ display: 'flex', gap: 1 }}>
+						<IconButton
+							size="small"
+							color="success"
+							loading={createLoading || editLoading}
+							disabled={!source.trim()}
+							onClick={save}>
+							<Save fontSize="small" />
+						</IconButton>
 
-							{!isAddingFund && (
+						{!isAddingFund && (
+							<ConfirmDeleteDialog
+								itemName={`fund: ${fund.source}`}
+								deleteFn={() => deleteFund({ id: fund.id })} >
 								<IconButton
 									size="small"
 									color="error"
 									loading={deleteLoading}
-									onClick={() => setConfirmDeleteOpen(true)}
 								>
 									<Delete fontSize="small" />
 								</IconButton>
-							)}
+							</ConfirmDeleteDialog>
+						)}
 
-							<IconButton size="small" onClick={() => {
-								if (!isAddingFund) {
-									setDate(dayjs(fund.date));
-									setSource(fund.source);
-									setAmount(fund.amount);
-									setIsEditing(false)
-								} else if (setIsAddingFund) {
-									setIsAddingFund(false);
-								}
-							}}>
-								<Clear fontSize="small" />
-							</IconButton>
-						</TableCell>
-					)
-				)}
-			</TableRow>
-			<ConfirmDeleteDialog
-				isOpen={confirmDeleteOpen}
-				setIsOpen={setConfirmDeleteOpen}
-				itemName={`fund: ${fund.source}`}
-				deleteFn={() => deleteFund({ id: fund.id })} />
-		</Fragment>
+						<IconButton size="small" onClick={() => {
+							if (!isAddingFund) {
+								setDate(dayjs(fund.date));
+								setSource(fund.source);
+								setAmount(fund.amount);
+								setIsEditing(false)
+							} else if (setIsAddingFund) {
+								setIsAddingFund(false);
+							}
+						}}>
+							<Clear fontSize="small" />
+						</IconButton>
+					</TableCell>
+				)
+			)}
+		</TableRow>
 	)
 }

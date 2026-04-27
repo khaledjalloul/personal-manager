@@ -29,7 +29,6 @@ const SectionCard = ({
 }) => {
 
   const [name, setName] = useState(section.name);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createSection, isPending: createLoading, isSuccess: createSuccess } = useCreateJournalSection();
   const { mutate: editSection, isPending: editLoading } = useEditJournalSection();
@@ -63,66 +62,64 @@ const SectionCard = ({
   }, [deleteSuccess]);
 
   return (
-    <Fragment>
-      <TextField
-        variant="standard"
-        placeholder={section.id === -1 ? "Add New Section" : "Section Name"}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        sx={{ ml: 3, mb: section.id === -1 ? 3 : 0 }}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <IconButton
-                  size="small"
-                  color="success"
-                  loading={createLoading || editLoading}
-                  onClick={save}
-                  disabled={!name.trim() || name.trim() === section.name}
-                >
-                  {section.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
-                </IconButton>
+    <TextField
+      variant="standard"
+      placeholder={section.id === -1 ? "Add New Section" : "Section Name"}
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      sx={{ ml: 3, mb: section.id === -1 ? 3 : 0 }}
+      slotProps={{
+        input: {
+          endAdornment: (
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton
+                size="small"
+                color="success"
+                loading={createLoading || editLoading}
+                onClick={save}
+                disabled={!name.trim() || name.trim() === section.name}
+              >
+                {section.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
+              </IconButton>
+
+              <ConfirmDeleteDialog
+                itemName={`section: ${section.name}`}
+                deleteFn={() => {
+                  deleteSection({ id: section.id });
+                }}
+              >
                 <IconButton
                   sx={{ display: section.id === -1 ? 'none' : 'block' }}
                   size="small"
                   color="error"
                   loading={deleteLoading}
-                  onClick={() => setConfirmDeleteOpen(true)}
                   disabled={section._count?.entries ? section._count.entries > 0 : false}
                 >
                   <Delete fontSize="small" />
                 </IconButton>
-                <IconButton
-                  sx={{ display: section.id === -1 ? 'none' : 'block' }}
-                  size="small"
-                  onClick={() => editSection({ id: section.id, order: section.order - 1 })}
-                  disabled={section.order === 0}
-                >
-                  <ExpandLess fontSize="small" />
-                </IconButton>
-                <IconButton
-                  sx={{ display: section.id === -1 ? 'none' : 'block' }}
-                  size="small"
-                  onClick={() => editSection({ id: section.id, order: section.order + 1 })}
-                  disabled={section.order === sectionsLength - 1}
-                >
-                  <ExpandMore fontSize="small" />
-                </IconButton>
-              </Box>
-            ),
-          },
-        }}
-      />
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`section: ${section.name}`}
-        deleteFn={() => {
-          deleteSection({ id: section.id });
-        }}
-      />
-    </Fragment>
+              </ConfirmDeleteDialog>
+
+              <IconButton
+                sx={{ display: section.id === -1 ? 'none' : 'block' }}
+                size="small"
+                onClick={() => editSection({ id: section.id, order: section.order - 1 })}
+                disabled={section.order === 0}
+              >
+                <ExpandLess fontSize="small" />
+              </IconButton>
+              <IconButton
+                sx={{ display: section.id === -1 ? 'none' : 'block' }}
+                size="small"
+                onClick={() => editSection({ id: section.id, order: section.order + 1 })}
+                disabled={section.order === sectionsLength - 1}
+              >
+                <ExpandMore fontSize="small" />
+              </IconButton>
+            </Box>
+          ),
+        },
+      }}
+    />
   )
 }
 
@@ -139,7 +136,6 @@ const CategoryCard = ({
   const [name, setName] = useState(category.name);
   const [color, setColor] = useState(category.color);
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: sections } = useJournalSections({ categoryId: category.id, searchText: "" });
 
@@ -204,16 +200,24 @@ const CategoryCard = ({
                 >
                   {category.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
                 </IconButton>
-                <IconButton
-                  sx={{ display: category.id === -1 ? 'none' : 'block' }}
-                  size="small"
-                  color="error"
-                  loading={deleteLoading}
-                  onClick={() => setConfirmDeleteOpen(true)}
-                  disabled={sections ? sections.length > 0 : false}
+
+                <ConfirmDeleteDialog
+                  itemName={`category: ${category.name}`}
+                  deleteFn={() => {
+                    deleteCategory({ id: category.id });
+                  }}
                 >
-                  <Delete fontSize="small" />
-                </IconButton>
+                  <IconButton
+                    sx={{ display: category.id === -1 ? 'none' : 'block' }}
+                    size="small"
+                    color="error"
+                    loading={deleteLoading}
+                    disabled={sections ? sections.length > 0 : false}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </ConfirmDeleteDialog>
+
                 <IconButton
                   sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
@@ -277,14 +281,6 @@ const CategoryCard = ({
           onChange={(color) => setColor(color.hex)}
         />
       </Box>
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`category: ${category.name}`}
-        deleteFn={() => {
-          deleteCategory({ id: category.id });
-        }}
-      />
     </Fragment>
   )
 }

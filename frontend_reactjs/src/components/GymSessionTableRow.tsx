@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { GymExercise, GymSession } from "../types";
 import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useCreateGymSession, useDeleteGymSession, useEditGymSession, useGymExerciseTypes } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -94,7 +94,6 @@ export const GymSessionTableRow = ({
   const [date, setDate] = useState(dayjs(session.date));
   const [note, setNote] = useState(session.note);
   const [exercises, setExercises] = useState(session.exercises);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: exerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
 
@@ -130,126 +129,122 @@ export const GymSessionTableRow = ({
   }, [editSuccess]);
 
   return (
-    <Fragment>
-      <TableRow
-        sx={{
-          backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
-          ":hover": { backgroundColor: "action.hover" }
-        }}
-        onDoubleClick={() => setIsEditing(true)}
-      >
-        <TableCell>
-          {!isEditing ? date.format("DD.MM.YYYY") :
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={date}
-                onChange={(newValue) => setDate(newValue ?? dayjs())}
-                enableAccessibleFieldDOMStructure={false}
-                format="DD.MM.YYYY"
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    variant: "standard",
-                    placeholder: "Date",
-                  }
-                }}
-                sx={{ minWidth: 130 }}
-              />
-            </LocalizationProvider>
-          }
-        </TableCell>
-
-        {exerciseTypes?.map((exerciseType, index) => (
-          exercises.find((ex) => ex.type.id === exerciseType.id) ?
-            <ExerciseTableCell
-              key={index}
-              exercise={exercises.find((ex) => ex.type.id === exerciseType.id)!}
-              searchText={searchText.trim()}
-              isEditing={isEditing}
-              setExercises={setExercises}
+    <TableRow
+      sx={{
+        backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
+        ":hover": { backgroundColor: "action.hover" }
+      }}
+      onDoubleClick={() => setIsEditing(true)}
+    >
+      <TableCell>
+        {!isEditing ? date.format("DD.MM.YYYY") :
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={date}
+              onChange={(newValue) => setDate(newValue ?? dayjs())}
+              enableAccessibleFieldDOMStructure={false}
+              format="DD.MM.YYYY"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  variant: "standard",
+                  placeholder: "Date",
+                }
+              }}
+              sx={{ minWidth: 130 }}
             />
-            : <TableCell key={index}>
-              {isEditing && <IconButton
-                size="small"
-                onClick={() => setExercises([...exercises, {
-                  id: -1,
-                  type: exerciseType,
-                  session: {} as any,
-                  weight: 0,
-                  sets: 0,
-                  reps: 0,
-                  note: ""
-                }])}>
-                <Add />
-              </IconButton>}
-            </TableCell>
-        ))}
+          </LocalizationProvider>
+        }
+      </TableCell>
 
-        <TableCell>
-          {!isEditing ?
-            <SearchTextHighlight text={note} searchText={searchText.trim()} />
-            :
-            <TextField
-              variant="standard"
-              placeholder="Note"
-              value={note}
-              sx={{ width: "100%" }}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          }
-        </TableCell>
-
-        {!isEditing ? (
-          <TableCell>
-            <IconButton
+      {exerciseTypes?.map((exerciseType, index) => (
+        exercises.find((ex) => ex.type.id === exerciseType.id) ?
+          <ExerciseTableCell
+            key={index}
+            exercise={exercises.find((ex) => ex.type.id === exerciseType.id)!}
+            searchText={searchText.trim()}
+            isEditing={isEditing}
+            setExercises={setExercises}
+          />
+          : <TableCell key={index}>
+            {isEditing && <IconButton
               size="small"
-              onClick={() => setIsEditing(true)}
-            >
-              <Edit fontSize="small" />
-            </IconButton>
+              onClick={() => setExercises([...exercises, {
+                id: -1,
+                type: exerciseType,
+                session: {} as any,
+                weight: 0,
+                sets: 0,
+                reps: 0,
+                note: ""
+              }])}>
+              <Add />
+            </IconButton>}
           </TableCell>
-        ) : (
-          <TableCell sx={{ display: 'flex', gap: 1 }}>
-            <IconButton
-              size="small"
-              color="success"
-              loading={createLoading || editLoading}
-              onClick={save}>
-              <Save fontSize="small" />
-            </IconButton>
+      ))}
 
-            {!isAddingSession && (
+      <TableCell>
+        {!isEditing ?
+          <SearchTextHighlight text={note} searchText={searchText.trim()} />
+          :
+          <TextField
+            variant="standard"
+            placeholder="Note"
+            value={note}
+            sx={{ width: "100%" }}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        }
+      </TableCell>
+
+      {!isEditing ? (
+        <TableCell>
+          <IconButton
+            size="small"
+            onClick={() => setIsEditing(true)}
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+        </TableCell>
+      ) : (
+        <TableCell sx={{ display: 'flex', gap: 1 }}>
+          <IconButton
+            size="small"
+            color="success"
+            loading={createLoading || editLoading}
+            onClick={save}>
+            <Save fontSize="small" />
+          </IconButton>
+
+          {!isAddingSession && (
+            <ConfirmDeleteDialog
+              itemName={`gym session on ${date.format("DD.MM.YYYY")}`}
+              deleteFn={() => deleteSession({ id: session.id })}
+            >
               <IconButton
                 size="small"
                 color="error"
                 loading={deleteLoading}
-                onClick={() => setConfirmDeleteOpen(true)}
               >
                 <Delete fontSize="small" />
               </IconButton>
-            )}
+            </ConfirmDeleteDialog>
+          )}
 
-            <IconButton size="small" onClick={() => {
-              if (!isAddingSession) {
-                setDate(dayjs(session.date));
-                setNote(session.note);
-                setExercises(session.exercises);
-                setIsEditing(false);
-              } else if (setIsAddingSession) {
-                setIsAddingSession(false);
-              }
-            }}>
-              <Clear fontSize="small" />
-            </IconButton>
-          </TableCell>
-        )}
-      </TableRow>
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`gym session on ${date.format("DD.MM.YYYY")}`}
-        deleteFn={() => deleteSession({ id: session.id })}
-      />
-    </Fragment>
+          <IconButton size="small" onClick={() => {
+            if (!isAddingSession) {
+              setDate(dayjs(session.date));
+              setNote(session.note);
+              setExercises(session.exercises);
+              setIsEditing(false);
+            } else if (setIsAddingSession) {
+              setIsAddingSession(false);
+            }
+          }}>
+            <Clear fontSize="small" />
+          </IconButton>
+        </TableCell>
+      )}
+    </TableRow>
   )
 }

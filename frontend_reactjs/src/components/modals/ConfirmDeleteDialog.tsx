@@ -1,41 +1,48 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useContext } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import styled from "styled-components";
 import { ThemeContext } from "../../utils";
 
 export const ConfirmDeleteDialog = ({
   itemName,
   deleteFn,
-  isOpen,
-  setIsOpen,
+  children
 }: {
   itemName: string;
   deleteFn: () => void;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  children: React.ReactElement;
 }) => {
 
   const { themeData } = useContext(ThemeContext);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const ChildButton = React.cloneElement(children, {
+    onClick: () => setIsOpen(true)
+  });
+
   return (
-    <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-      <Wrapper>
-        <Typography variant="h6">Confirm Delete</Typography>
-        <Typography>Are you sure you want to delete {itemName}?</Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
-          <Button onClick={() => setIsOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant={themeData.darkMode ? "outlined" : "contained"}
-            color="error"
-            onClick={() => { deleteFn(); setIsOpen(false); }}
-          >
-            Delete
-          </Button>
-        </Box>
-      </Wrapper>
-    </Modal>
+    <Fragment>
+      {ChildButton}
+      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+        <Wrapper>
+          <Typography variant="h6">Confirm Delete</Typography>
+          <Typography>Are you sure you want to delete {itemName}?</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 1 }}>
+            <Button onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant={themeData.darkMode ? "outlined" : "contained"}
+              color="error"
+              onClick={() => { deleteFn(); setIsOpen(false); }}
+            >
+              Delete
+            </Button>
+          </Box>
+        </Wrapper>
+      </Modal>
+    </Fragment>
   );
 };
 

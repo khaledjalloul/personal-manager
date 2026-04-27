@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Expense, ExpenseType } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useCreateExpense, useDeleteExpense, useEditExpense, useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -46,7 +46,6 @@ export const ExpenseTableRow = ({
   const [vendor, setVendor] = useState(expense.vendor);
   const [amount, setAmount] = useState(expense.amount);
   const [type, setType] = useState(expense.type);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: expensesCategories } = useExpensesCategories();
 
@@ -94,190 +93,187 @@ export const ExpenseTableRow = ({
   }, [editSuccess]);
 
   return (
-    <Fragment>
-      <TableRow
-        sx={{
-          backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
-          ":hover": editable ? { backgroundColor: "action.hover" } : {}
-        }}
-        onDoubleClick={editable ? () => setIsEditing(true) : undefined}
-      >
-        <TableCell>
-          {!isEditing ? date.format("DD.MM.YYYY") :
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={date}
-                onChange={(newValue) => setDate(newValue ?? dayjs())}
-                enableAccessibleFieldDOMStructure={false}
-                format="DD.MM.YYYY"
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    variant: "standard",
-                    placeholder: "Date",
-                  }
-                }}
-                sx={{ minWidth: 130 }}
-              />
-            </LocalizationProvider>
-          }
-        </TableCell>
-
-        <TableCell>
-          {!isEditing ? (
-            category?.name ? (
-              <Typography variant="body2" sx={{ whiteSpace: 'nowrap', color: category.color }}>
-                <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
-              </Typography>
-            ) : (
-              <Typography color="gray" variant="body2">
-                <em>Uncategorized</em>
-              </Typography>
-            )
-          ) :
-            <Select
-              variant="standard"
-              value={category?.id ?? "uncategorized"}
-              sx={{ width: "100%" }}
-              onChange={(e) => setCategory(expensesCategories?.find(cat => cat.id === e.target.value) ?? category)}
-            >
-              {!category && (
-                <MenuItem value="uncategorized" disabled>
-                  <em>Uncategorized</em>
-                </MenuItem>
-              )}
-              {expensesCategories?.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-        </TableCell>
-
-        <TableCell width={"35%"}>
-          {!isEditing ?
-            <SearchTextHighlight text={description} searchText={searchText.trim()} />
-            :
-            <TextField
-              variant="standard"
-              placeholder="Description"
-              value={description}
-              sx={{ width: "100%" }}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          }
-        </TableCell>
-
-        <TableCell>
-          {!isEditing ?
-            <SearchTextHighlight text={vendor} searchText={searchText.trim()} />
-            :
-            <TextField
-              variant="standard"
-              placeholder="Vendor"
-              value={vendor}
-              onChange={(e) => setVendor(e.target.value)}
-            />
-          }
-        </TableCell>
-
-        <TableCell>
-          {!isEditing ?
-            <Typography variant="body2">
-              {!editable ?
-                (amount >= 0 ? `-${Math.abs(amount).toFixed(2)}` : `+${Math.abs(amount).toFixed(2)}`) :
-                amount.toFixed(2)}
-              {type === ExpenseType.Cash && " (Cash)"}
-            </Typography>
-            :
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
-              <TextField
-                variant="standard"
-                placeholder="Amount"
-                value={amount.toFixed(2)}
-                onChange={(e) => {
-                  const newAmount = parseFloat(e.target.value);
-                  setAmount(isNaN(newAmount) ? amount : newAmount);
-                }}
-                slotProps={{
-                  input: {
-                    endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
-                  }
-                }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    sx={{ p: 0, pr: 0.5 }}
-                    checked={type === ExpenseType.Cash}
-                    onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
-                  />
+    <TableRow
+      sx={{
+        backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
+        ":hover": editable ? { backgroundColor: "action.hover" } : {}
+      }}
+      onDoubleClick={editable ? () => setIsEditing(true) : undefined}
+    >
+      <TableCell>
+        {!isEditing ? date.format("DD.MM.YYYY") :
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={date}
+              onChange={(newValue) => setDate(newValue ?? dayjs())}
+              enableAccessibleFieldDOMStructure={false}
+              format="DD.MM.YYYY"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  variant: "standard",
+                  placeholder: "Date",
                 }
-                label={<Typography variant="body2">Cash</Typography>}
-                sx={{ m: 0, ml: 1 }}
-              />
-            </Box>
-          }
-        </TableCell>
+              }}
+              sx={{ minWidth: 130 }}
+            />
+          </LocalizationProvider>
+        }
+      </TableCell>
 
-        {editable && (
-          !isEditing ? (
-            <TableCell>
-              <IconButton
-                size="small"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit fontSize="small" />
-              </IconButton>
-            </TableCell>
+      <TableCell>
+        {!isEditing ? (
+          category?.name ? (
+            <Typography variant="body2" sx={{ whiteSpace: 'nowrap', color: category.color }}>
+              <SearchTextHighlight text={category.name} searchText={searchText.trim()} />
+            </Typography>
           ) : (
-            <TableCell sx={{ display: 'flex', gap: 1 }}>
-              <IconButton
-                size="small"
-                color="success"
-                loading={createLoading || editLoading}
-                disabled={!description.trim()}
-                onClick={save}>
-                <Save fontSize="small" />
-              </IconButton>
+            <Typography color="gray" variant="body2">
+              <em>Uncategorized</em>
+            </Typography>
+          )
+        ) :
+          <Select
+            variant="standard"
+            value={category?.id ?? "uncategorized"}
+            sx={{ width: "100%" }}
+            onChange={(e) => setCategory(expensesCategories?.find(cat => cat.id === e.target.value) ?? category)}
+          >
+            {!category && (
+              <MenuItem value="uncategorized" disabled>
+                <em>Uncategorized</em>
+              </MenuItem>
+            )}
+            {expensesCategories?.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </Select>
+        }
+      </TableCell>
 
-              {!isAddingExpense && (
+      <TableCell width={"35%"}>
+        {!isEditing ?
+          <SearchTextHighlight text={description} searchText={searchText.trim()} />
+          :
+          <TextField
+            variant="standard"
+            placeholder="Description"
+            value={description}
+            sx={{ width: "100%" }}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        }
+      </TableCell>
+
+      <TableCell>
+        {!isEditing ?
+          <SearchTextHighlight text={vendor} searchText={searchText.trim()} />
+          :
+          <TextField
+            variant="standard"
+            placeholder="Vendor"
+            value={vendor}
+            onChange={(e) => setVendor(e.target.value)}
+          />
+        }
+      </TableCell>
+
+      <TableCell>
+        {!isEditing ?
+          <Typography variant="body2">
+            {!editable ?
+              (amount >= 0 ? `-${Math.abs(amount).toFixed(2)}` : `+${Math.abs(amount).toFixed(2)}`) :
+              amount.toFixed(2)}
+            {type === ExpenseType.Cash && " (Cash)"}
+          </Typography>
+          :
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
+            <TextField
+              variant="standard"
+              placeholder="Amount"
+              value={amount.toFixed(2)}
+              onChange={(e) => {
+                const newAmount = parseFloat(e.target.value);
+                setAmount(isNaN(newAmount) ? amount : newAmount);
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: <InputAdornment position="end">CHF</InputAdornment>,
+                }
+              }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  sx={{ p: 0, pr: 0.5 }}
+                  checked={type === ExpenseType.Cash}
+                  onChange={(e) => setType(e.target.checked ? ExpenseType.Cash : ExpenseType.Bank_Manual)}
+                />
+              }
+              label={<Typography variant="body2">Cash</Typography>}
+              sx={{ m: 0, ml: 1 }}
+            />
+          </Box>
+        }
+      </TableCell>
+
+      {editable && (
+        !isEditing ? (
+          <TableCell>
+            <IconButton
+              size="small"
+              onClick={() => setIsEditing(true)}
+            >
+              <Edit fontSize="small" />
+            </IconButton>
+          </TableCell>
+        ) : (
+          <TableCell sx={{ display: 'flex', gap: 1 }}>
+            <IconButton
+              size="small"
+              color="success"
+              loading={createLoading || editLoading}
+              disabled={!description.trim()}
+              onClick={save}>
+              <Save fontSize="small" />
+            </IconButton>
+
+            {!isAddingExpense && (
+
+              <ConfirmDeleteDialog
+                itemName={`expense: ${description}`}
+                deleteFn={() => deleteExpense({ id: expense.id })}
+              >
                 <IconButton
                   size="small"
                   color="error"
                   loading={deleteLoading}
-                  onClick={() => setConfirmDeleteOpen(true)}
                 >
                   <Delete fontSize="small" />
                 </IconButton>
-              )}
+              </ConfirmDeleteDialog>
+            )}
 
-              <IconButton size="small" onClick={() => {
-                if (!isAddingExpense) {
-                  setDate(dayjs(expense.date));
-                  setCategory(expense.category);
-                  setDescription(expense.description);
-                  setVendor(expense.vendor);
-                  setAmount(expense.amount);
-                  setIsEditing(false);
-                } else if (setIsAddingExpense) {
-                  setIsAddingExpense(false);
-                }
-              }}>
-                <Clear fontSize="small" />
-              </IconButton>
-            </TableCell>
-          )
-        )}
-      </TableRow>
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`expense: ${description}`}
-        deleteFn={() => deleteExpense({ id: expense.id })}
-      />
-    </Fragment>
+            <IconButton size="small" onClick={() => {
+              if (!isAddingExpense) {
+                setDate(dayjs(expense.date));
+                setCategory(expense.category);
+                setDescription(expense.description);
+                setVendor(expense.vendor);
+                setAmount(expense.amount);
+                setIsEditing(false);
+              } else if (setIsAddingExpense) {
+                setIsAddingExpense(false);
+              }
+            }}>
+              <Clear fontSize="small" />
+            </IconButton>
+          </TableCell>
+        )
+      )}
+    </TableRow>
   )
 }

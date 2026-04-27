@@ -14,8 +14,6 @@ export const GymExerciseTypeContainer = ({
   const [name, setName] = useState(exerciseType.name);
   const [description, setDescription] = useState(exerciseType.description);
 
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-
   const { mutate: createExerciseType, isPending: createLoading, isSuccess: createSuccess } = useCreateGymExerciseType();
   const { mutate: editExerciseType, isPending: editLoading } = useEditGymExerciseType();
   const { mutate: deleteExerciseType, isPending: deleteLoading } = useDeleteGymExerciseType();
@@ -72,25 +70,23 @@ export const GymExerciseTypeContainer = ({
       >
         {exerciseType.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
       </IconButton>
-      <IconButton
-        sx={{ display: exerciseType.id === -1 ? 'none' : 'block' }}
-        size="small"
-        color="error"
-        loading={deleteLoading}
-        onClick={() => setConfirmDeleteOpen(true)}
-        disabled={(exerciseType._count?.exercises ?? 0) > 0}
-      >
-        <Delete fontSize="small" />
-      </IconButton>
 
       <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
         itemName={`exercise type: ${exerciseType.name}`}
         deleteFn={() => {
           deleteExerciseType({ id: exerciseType.id });
         }}
-      />
+      >
+        <IconButton
+          sx={{ display: exerciseType.id === -1 ? 'none' : 'block' }}
+          size="small"
+          color="error"
+          loading={deleteLoading}
+          disabled={(exerciseType._count?.exercises ?? 0) > 0}
+        >
+          <Delete fontSize="small" />
+        </IconButton>
+      </ConfirmDeleteDialog>
     </Box>
   )
 };

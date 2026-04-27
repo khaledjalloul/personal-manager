@@ -29,7 +29,6 @@ export const JournalEntryContainer = ({
   const [sections, setSections] = useState(entry.sections);
   const [content, setContent] = useState(entry.content);
   const [subEntries, setSubEntries] = useState(entry.subEntries);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: allSections } = useJournalSections({ searchText: "" });
 
@@ -199,12 +198,17 @@ export const JournalEntryContainer = ({
                 </IconButton>
 
                 {!isAddingEntry && (
-                  <IconButton
-                    color="error"
-                    loading={deleteLoading}
-                    onClick={() => setConfirmDeleteOpen(true)}>
-                    <Delete fontSize="small" />
-                  </IconButton>
+                  <ConfirmDeleteDialog
+                    itemName={`journal entry of date: ${dayjs(entry.date).format("DD.MM.YYYY")}`}
+                    deleteFn={() => deleteEntry({ id: entry.id })}
+                  >
+                    <IconButton
+                      color="error"
+                      loading={deleteLoading}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </ConfirmDeleteDialog>
                 )}
 
                 <IconButton
@@ -353,13 +357,6 @@ export const JournalEntryContainer = ({
           </Grid>
         </Fragment>
       ))}
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`journal entry of date: ${dayjs(entry.date).format("DD.MM.YYYY")}`}
-        deleteFn={() => deleteEntry({ id: entry.id })}
-      />
     </Grid>
   )
 }

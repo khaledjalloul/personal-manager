@@ -121,7 +121,6 @@ export const Account = () => {
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false);
   const [nameClickCounter, setNameClickCounter] = useState(0);
   const [newPassClickCounter, setNewPassClickCounter] = useState(0);
 
@@ -229,15 +228,22 @@ export const Account = () => {
               />
             </Box>
 
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => setConfirmDeleteDialogOpen(true)}
-              loading={deleteUserLoading}
-              sx={{ mt: 2 }}
+            <ConfirmDeleteDialog
+              itemName="your account"
+              deleteFn={() => {
+                if (user)
+                  deleteUser({ id: user.id });
+              }}
             >
-              Delete Account
-            </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                loading={deleteUserLoading}
+                sx={{ mt: 2 }}
+              >
+                Delete Account
+              </Button>
+            </ConfirmDeleteDialog>
           </Box>
         </Grid>
 
@@ -288,16 +294,6 @@ export const Account = () => {
           </Box>
         </Grid>
       </Grid>
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteDialogOpen}
-        setIsOpen={setConfirmDeleteDialogOpen}
-        itemName="your account"
-        deleteFn={() => {
-          if (user)
-            deleteUser({ id: user.id });
-        }}
-      />
     </Wrapper>
   );
 };

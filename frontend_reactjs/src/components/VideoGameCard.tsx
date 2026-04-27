@@ -62,7 +62,6 @@ export const VideoGameCard = ({
   const [extraPurchases, setExtraPurchases] = useState(game.extraPurchases);
   const [storeUrl, setStoreUrl] = useState(game.storeUrl);
   const [coverImage, setCoverImage] = useState(game.coverImage);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { mutate: createGame, isPending: createLoading, isSuccess: createSuccess } = useCreateVideoGame();
   const { mutate: editGame, isPending: editLoading, isSuccess: editSuccess } = useEditVideoGame();
@@ -161,13 +160,17 @@ export const VideoGameCard = ({
           )}
 
           {isEditing && !isAddingGame && (
-            <IconButton
-              color="error"
-              loading={deleteLoading}
-              onClick={() => setConfirmDeleteOpen(true)}
+            <ConfirmDeleteDialog
+              itemName={`video game: ${name}`}
+              deleteFn={() => deleteGame({ id: game.id })}
             >
-              <Delete fontSize="small" />
-            </IconButton>
+              <IconButton
+                color="error"
+                loading={deleteLoading}
+              >
+                <Delete fontSize="small" />
+              </IconButton>
+            </ConfirmDeleteDialog>
           )}
 
           {isEditing && (
@@ -362,12 +365,6 @@ export const VideoGameCard = ({
           )}
         </Grid>
       </ContentBox>
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`video game: ${name}`}
-        deleteFn={() => deleteGame({ id: game.id })}
-      />
     </Wrapper>
   )
 }

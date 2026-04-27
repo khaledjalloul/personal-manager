@@ -28,7 +28,6 @@ export const ToDoTaskContainer = ({
   const [content, setContent] = useState(task.content);
   const [status, setStatus] = useState(task.status);
   const [isEditing, setIsEditing] = useState(isAddingTask);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const statusRef = useRef<ToDoTaskStatus>(task.status);
 
@@ -140,13 +139,17 @@ export const ToDoTaskContainer = ({
               </IconButton>
 
               {!isAddingTask && (
-                <IconButton
-                  onClick={() => setConfirmDeleteOpen(true)}
-                  loading={deleteTaskLoading}
-                  color="error"
+                <ConfirmDeleteDialog
+                  itemName={`task: ${task.content}`}
+                  deleteFn={() => deleteTask({ id: task.id })}
                 >
-                  <Delete fontSize="small" />
-                </IconButton>
+                  <IconButton
+                    loading={deleteTaskLoading}
+                    color="error"
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </ConfirmDeleteDialog>
               )}
 
               <IconButton onClick={() => {
@@ -244,13 +247,6 @@ export const ToDoTaskContainer = ({
           />
         )
       }
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`task: ${task.content}`}
-        deleteFn={() => deleteTask({ id: task.id })}
-      />
     </Box>
   )
 };

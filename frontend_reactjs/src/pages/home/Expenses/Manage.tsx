@@ -66,7 +66,6 @@ export const ManageExpenses = () => {
   const [isAddingFund, setIsAddingFund] = useState(false);
   const [isAddingExpense, setIsAddingExpense] = useState(false);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: user } = useCurrentUser();
   const { data: categories } = useExpensesCategories();
@@ -248,15 +247,19 @@ export const ManageExpenses = () => {
           </Button>
         </label>
 
-        <Button
-          variant="outlined"
-          color="error"
-          loading={deleteAutoExpensesLoading}
-          onClick={() => setConfirmDeleteOpen(true)}
-          sx={{ mt: '16px' }}
+        <ConfirmDeleteDialog
+          itemName={"all imported expenses and funds"}
+          deleteFn={() => deleteAutoExpenses()}
         >
-          Delete Automated Expenses & Funds
-        </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            loading={deleteAutoExpensesLoading}
+            sx={{ mt: '16px' }}
+          >
+            Delete Automated Expenses & Funds
+          </Button>
+        </ConfirmDeleteDialog>
       </CSVFileUploadWrapper>
 
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, mt: 2 }}>
@@ -293,14 +296,6 @@ export const ManageExpenses = () => {
           />
         ))}
       </Grid>
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={"all imported expenses and funds"}
-        deleteFn={() => deleteAutoExpenses()}
-      />
-
     </Wrapper>
   );
 };

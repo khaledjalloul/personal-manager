@@ -1,5 +1,5 @@
 import { Box, IconButton, Modal, TextField, Typography } from "@mui/material";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Add, Delete, Save } from "@mui/icons-material";
 import { useCreateNoteCategory, useDeleteNoteCategoy, useEditNoteCategory, useNoteCategories, useNotes } from "../../api";
@@ -16,7 +16,6 @@ const CategoryCard = ({
 }) => {
 
   const [name, setName] = useState(category.name);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: notesInCategory } = useNotes({ searchText: "", categoryId: category.id });
 
@@ -48,49 +47,44 @@ const CategoryCard = ({
   }, [deleteSuccess]);
 
   return (
-    <Fragment>
-      <TextField
-        variant="standard"
-        placeholder={category.id === -1 ? "Add New Category" : "Category Name"}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <IconButton
-                  size="small"
-                  color="success"
-                  loading={createLoading || editLoading}
-                  onClick={save}
-                  disabled={!name.trim() || name.trim() === category.name}
-                >
-                  {category.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
-                </IconButton>
+    <TextField
+      variant="standard"
+      placeholder={category.id === -1 ? "Add New Category" : "Category Name"}
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      slotProps={{
+        input: {
+          endAdornment: (
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <IconButton
+                size="small"
+                color="success"
+                loading={createLoading || editLoading}
+                onClick={save}
+                disabled={!name.trim() || name.trim() === category.name}
+              >
+                {category.id === -1 ? <Add fontSize="small" /> : <Save fontSize="small" />}
+              </IconButton>
+
+              <ConfirmDeleteDialog
+                itemName={`category: ${category.name}`}
+                deleteFn={() => deleteCategory({ id: category.id })}
+              >
                 <IconButton
                   sx={{ display: category.id === -1 ? 'none' : 'block' }}
                   size="small"
                   color="error"
                   loading={deleteLoading}
-                  onClick={() => setConfirmDeleteOpen(true)}
                   disabled={notesInCategory && notesInCategory.length > 0}
                 >
                   <Delete fontSize="small" />
                 </IconButton>
-              </Box>
-            ),
-          },
-        }}
-      />
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`category: ${category.name}`}
-        deleteFn={() => {
-          deleteCategory({ id: category.id });
-        }}
-      />
-    </Fragment>
+              </ConfirmDeleteDialog>
+            </Box>
+          ),
+        },
+      }}
+    />
   )
 }
 

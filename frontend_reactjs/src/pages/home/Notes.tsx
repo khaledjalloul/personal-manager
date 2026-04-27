@@ -45,7 +45,6 @@ export const Notes = () => {
   const [selectedNoteTitle, setSelectedNoteTitle] = useState("");
   const [selectedNoteCategory, setSelectedNoteCategory] = useState<NoteCategory>();
   const [selectedNoteContent, setSelectedNoteContent] = useState("");
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const { data: notes } = useNotes({ searchText: searchText.trim() });
   const { data: allNoteCategories } = useNoteCategories({ searchText: "" });
@@ -85,10 +84,6 @@ export const Notes = () => {
 
   useCtrlS(save);
   useKeybinding("e", () => setIsEditing(!isEditing));
-  useKeybinding("d", () => {
-    if (selectedNote)
-      setConfirmDeleteOpen(true);
-  });
 
   useEffect(() => {
     if (selectedNote) {
@@ -277,19 +272,22 @@ export const Notes = () => {
                 <Download fontSize="small" />
               </IconButton>
 
-              <IconButton
-                sx={{ display: { xs: 'flex', sm: 'none' } }}
-                color="error"
-                disabled={!selectedNote}
-                loading={deleteNoteLoading}
-                onClick={() => {
-                  if (selectedNote) {
-                    setConfirmDeleteOpen(true);
-                  }
+              <ConfirmDeleteDialog
+                itemName={`note: ${selectedNote?.title}`}
+                deleteFn={() => {
+                  if (selectedNote)
+                    deleteNote({ id: selectedNote.id });
                 }}
               >
-                <Delete fontSize="small" />
-              </IconButton>
+                <IconButton
+                  sx={{ display: { xs: 'flex', sm: 'none' } }}
+                  color="error"
+                  disabled={!selectedNote}
+                  loading={deleteNoteLoading}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </ConfirmDeleteDialog>
             </Box>
 
             <TextField
@@ -336,19 +334,22 @@ export const Notes = () => {
               <Download fontSize="small" />
             </IconButton>
 
-            <IconButton
-              sx={{ display: { xs: 'none', sm: 'flex' }, ml: -1 }}
-              color="error"
-              disabled={!selectedNote}
-              loading={deleteNoteLoading}
-              onClick={() => {
-                if (selectedNote) {
-                  setConfirmDeleteOpen(true);
-                }
+            <ConfirmDeleteDialog
+              itemName={`note: ${selectedNote?.title}`}
+              deleteFn={() => {
+                if (selectedNote)
+                  deleteNote({ id: selectedNote.id });
               }}
             >
-              <Delete />
-            </IconButton>
+              <IconButton
+                sx={{ display: { xs: 'none', sm: 'flex' }, ml: -1 }}
+                color="error"
+                disabled={!selectedNote}
+                loading={deleteNoteLoading}
+              >
+                <Delete />
+              </IconButton>
+            </ConfirmDeleteDialog>
           </Box>
 
           {isEditing ? (
@@ -414,16 +415,6 @@ export const Notes = () => {
         isOpen={isCategoriesModalOpen}
         setIsOpen={setIsCategoriesModalOpen}
         setSelectedNote={setSelectedNote}
-      />
-
-      <ConfirmDeleteDialog
-        isOpen={confirmDeleteOpen}
-        setIsOpen={setConfirmDeleteOpen}
-        itemName={`note: ${selectedNote?.title}`}
-        deleteFn={() => {
-          if (selectedNote)
-            deleteNote({ id: selectedNote.id });
-        }}
       />
     </Wrapper>
   );
