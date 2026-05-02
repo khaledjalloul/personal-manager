@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { GymExercise } from "../../../types";
-import client from "../../client";
+import { GymExercise } from "../../../../types";
+import client from "../../../client";
 
 const ENDPOINT = "sports/gym/exercises";
 

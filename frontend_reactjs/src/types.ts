@@ -200,7 +200,7 @@ export type GymSession = {
 export type GymExercise = {
   id: number;
   type: GymExerciseType;
-  session: GymSession
+  session: GymSession;
   weight: number;
   sets: number;
   reps: number;

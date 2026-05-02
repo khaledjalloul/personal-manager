@@ -1,17 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
-import { GymExercise, GymSession } from "../../../types";
+import { GymExercise } from "../../../../types";
 
-const ENDPOINT = "sports/gym/sessions";
+const ENDPOINT = "sports/gym/exercises";
 
-export type CreateGymSessionRequestBody = {
-  date: Date;
+export type CreateGymExerciseRequestBody = {
+  typeId: number;
+  sessionId: number;
+  weight: number;
+  sets: number;
+  reps: number;
   note: string;
-  exercises: GymExercise[];
 };
 
-const mutationFn = async (data: CreateGymSessionRequestBody) => {
+const mutationFn = async (data: CreateGymExerciseRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -21,10 +24,10 @@ const mutationFn = async (data: CreateGymSessionRequestBody) => {
     });
 };
 
-export const useCreateGymSession = () => {
+export const useCreateGymExercise = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<GymSession, AxiosError<{ message: string }>, CreateGymSessionRequestBody>({
+  return useMutation<GymExercise, AxiosError<{ message: string }>, CreateGymExerciseRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({

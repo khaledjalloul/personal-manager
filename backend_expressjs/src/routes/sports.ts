@@ -73,7 +73,7 @@ router.get('/gym/exercise-types', async (req: Request, res: Response) => {
       userId: req.user.id,
       OR: [
         { name: { contains: searchText, mode: 'insensitive' } },
-        { description: { contains: searchText, mode: 'insensitive' } },
+        searchInGymSessions ? {} : { description: { contains: searchText, mode: 'insensitive' } },
         searchInGymSessions ? { exercises: { some: { session: { note: { contains: searchText, mode: 'insensitive' } } } } } : {},
         searchInGymSessions ? { exercises: { some: { note: { contains: searchText, mode: 'insensitive' } } } } : {}
       ]
@@ -190,7 +190,6 @@ router.get('/gym/sessions', async (req: Request, res: Response) => {
         { note: { contains: searchText, mode: 'insensitive' } },
         { exercises: { some: { note: { contains: searchText, mode: 'insensitive' } } } },
         { exercises: { some: { type: { name: { contains: searchText, mode: 'insensitive' } } } } },
-        { exercises: { some: { type: { description: { contains: searchText, mode: 'insensitive' } } } } },
       ]
     },
     include: {
@@ -259,6 +258,35 @@ router.delete('/gym/sessions/:id', async (req: Request, res: Response) => {
     where: { id: sessionId },
   });
   res.json({ message: 'Gym session deleted successfully' });
+});
+
+router.get('/gym/last-exercises', async (req: Request, res: Response) => {
+  const lastExercises = await prisma.gymExerciseType.findMany({
+    where: {
+      userId: req.user.id,
+    },
+    include: {
+      exercises: {
+        orderBy: { session: { date: 'desc' } },
+        take: 1,
+        include: {
+          session: {
+            select: {
+              date: true,
+            }
+          }
+        }
+      }
+    },
+  });
+
+  const sortedLastExercises = lastExercises.sort((a, b) => {
+    const dateA = a.exercises[0]?.session.date ?? new Date(0);
+    const dateB = b.exercises[0]?.session.date ?? new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  res.json(sortedLastExercises);
 });
 
 router.get('/runs', async (req: Request, res: Response) => {

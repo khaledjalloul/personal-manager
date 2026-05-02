@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
 
 const ENDPOINT = "sports/gym/exercise-types";
@@ -26,6 +26,9 @@ export const useDeleteGymExerciseType = () => {
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["sports/gym/last-exercises"],
       });
     },
   });

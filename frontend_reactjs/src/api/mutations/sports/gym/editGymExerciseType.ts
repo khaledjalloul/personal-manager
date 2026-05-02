@@ -1,21 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
-import { GymExercise } from "../../../types";
+import { GymExerciseType } from "../../../../types";
 
-const ENDPOINT = "sports/gym/exercises";
+const ENDPOINT = "sports/gym/exercise-types";
 
-export type EditGymExerciseRequestBody = {
+export type EditGymExerciseTypeRequestBody = {
   id: number;
-  typeId?: number;
-  sessionId?: number;
-  weight?: number;
-  sets?: number;
-  reps?: number;
-  note?: string;
+  name?: string;
+  description?: string;
 };
 
-const mutationFn = async (data: EditGymExerciseRequestBody) => {
+const mutationFn = async (data: EditGymExerciseTypeRequestBody) => {
   return await client
     .post(`/${ENDPOINT}/${data.id}`, data)
     .then((res) => res.data)
@@ -25,17 +21,17 @@ const mutationFn = async (data: EditGymExerciseRequestBody) => {
     });
 };
 
-export const useEditGymExercise = () => {
+export const useEditGymExerciseType = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<GymExercise, AxiosError<{ message: string }>, EditGymExerciseRequestBody>({
+  return useMutation<GymExerciseType, AxiosError<{ message: string }>, EditGymExerciseTypeRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
         queryKey: [ENDPOINT],
       });
       queryClient.refetchQueries({
-        queryKey: ["sports/gym/exercise-types"],
+        queryKey: ["sports/gym/last-exercises"],
       });
     },
   });

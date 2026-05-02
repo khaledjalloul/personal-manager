@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
-import { GymExercise, GymSession } from "../../../types";
+import { GymExercise, GymSession } from "../../../../types";
 
 const ENDPOINT = "sports/gym/sessions";
 
@@ -33,6 +33,9 @@ export const useEditGymSession = () => {
       });
       queryClient.refetchQueries({
         queryKey: ["sports/gym/exercise-types"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["sports/gym/last-exercises"],
       });
     },
   });

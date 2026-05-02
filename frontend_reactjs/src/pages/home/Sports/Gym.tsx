@@ -17,7 +17,7 @@ import {
   useTheme
 } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
-import { useGymExerciseTypes, useGymSessions } from "../../../api";
+import { useGymExerciseTypes, useGymLastExercises, useGymSessions } from "../../../api";
 import { GymExerciseTypeContainer, GymSessionTableRow } from "../../../components";
 import { useContext, useEffect, useState } from "react";
 import { Add } from "@mui/icons-material";
@@ -58,6 +58,7 @@ export const Gym = () => {
   const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: false });
   const { data: exerciseTypesInTable } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
   const { data: sessions } = useGymSessions({ searchText: searchText.trim(), sortOrder });
+  const { data: lastExercises } = useGymLastExercises();
 
   const sessionsAsc = (sortOrder === 'asc' ? sessions : sessions?.slice().reverse()) ?? [];
 
@@ -77,7 +78,51 @@ export const Gym = () => {
     }}>
 
       <Typography variant="h5">
-        Gym Exercise Progress
+        Last Exercises
+      </Typography>
+
+      <Box>
+        <TableContainer component={Paper}>
+          <Table
+            size="small"
+            stickyHeader
+            sx={{
+              '& th': {
+                backgroundColor: "primary.main",
+                color: "primary.contrastText"
+              }
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Weight</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {lastExercises?.map((exerciseType, index) => {
+                const hasExercises = exerciseType.exercises && exerciseType.exercises.length > 0;
+                return <TableRow
+                  key={exerciseType.id}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
+                  }}
+                >
+                  <TableCell>{exerciseType.name}</TableCell>
+                  <TableCell>{hasExercises ? `${exerciseType.exercises![0].weight} kg` : '-'}</TableCell>
+                  <TableCell>{hasExercises ? dayjs(exerciseType.exercises![0].session.date).format("MMMM DD, YYYY") : '-'}</TableCell>
+                  <TableCell>{hasExercises ? exerciseType.exercises![0].note : '-'}</TableCell>
+                </TableRow>
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      <Typography variant="h5" mt={3}>
+        Exercise Progress
       </Typography>
 
       <FormControl sx={{ alignSelf: 'center', mb: 2 }}>
@@ -172,7 +217,7 @@ export const Gym = () => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 3 }}>
         <Typography variant="h5">
-          Gym Sessions ({sessions?.length ?? 0})
+          Sessions ({sessions?.length ?? 0})
         </Typography>
 
         <IconButton onClick={() => setIsAddingSession(true)}>
@@ -242,7 +287,7 @@ export const Gym = () => {
       </Box>
 
       <Typography variant="h5" sx={{ mt: 3 }}>
-        Gym Exercise Types ({allExerciseTypes?.length ?? 0})
+        Exercise Types ({allExerciseTypes?.length ?? 0})
       </Typography>
 
       <Box sx={{
