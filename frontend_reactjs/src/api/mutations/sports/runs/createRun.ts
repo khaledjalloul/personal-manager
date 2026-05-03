@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
-import { Run } from "../../../types";
+import { Run } from "../../../../types";
 
 const ENDPOINT = "sports/runs";
 

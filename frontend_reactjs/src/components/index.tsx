@@ -17,3 +17,4 @@ export * from './ToDoTaskContainer';
 export * from './Calendar';
 export * from './GymExerciseTypeContainer';
 export * from './GymSessionTableRow';
+export * from './RunningTableRow';

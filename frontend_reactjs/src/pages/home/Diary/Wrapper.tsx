@@ -155,7 +155,7 @@ export const DiaryWrapper = () => {
             }}
             onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
           >
-            {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+            {sortOrder === "asc" ? <ArrowUpward /> : <ArrowDownward />}
           </IconButton>
 
           <TextField

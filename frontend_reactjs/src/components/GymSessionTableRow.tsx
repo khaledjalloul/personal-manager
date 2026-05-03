@@ -43,7 +43,7 @@ const ExerciseTableCell = ({
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
           <TextField
             variant="standard"
-            placeholder="Amount"
+            placeholder="Weight"
             value={weight}
             onChange={(e) => {
               const newWeight = parseFloat(e.target.value);

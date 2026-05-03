@@ -147,7 +147,7 @@ export const Journal = () => {
             size="small"
             onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
           >
-            {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+            {sortOrder === "asc" ? <ArrowUpward /> : <ArrowDownward />}
           </IconButton>
         </Box>
 

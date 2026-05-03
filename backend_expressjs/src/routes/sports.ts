@@ -1,8 +1,22 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import prisma from '../utils/prisma';
+import multer from 'multer';
+import FitParser from 'fit-file-parser';
+import { Run } from '@prisma/client';
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+const runningFitParser = new FitParser({
+  force: true,
+  speedUnit: 'km/h',
+  lengthUnit: 'km',
+  temperatureUnit: 'celsius',
+  pressureUnit: 'bar',
+  elapsedRecordField: true,
+  mode: 'cascade',
+})
 
 router.get('/hikes', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
@@ -291,13 +305,16 @@ router.get('/gym/last-exercises', async (req: Request, res: Response) => {
 
 router.get('/runs', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
+  var orderBy = (req.query.orderBy as string) ?? 'date';
+  orderBy = orderBy === 'pace' ? 'duration' : orderBy; // handle 'pace' as a special case since it's not a real field in the database
+  const orderDirection = (req.query.orderDirection as string) === 'asc' ? 'asc' : 'desc';
 
   const runs = await prisma.run.findMany({
     where: {
       userId: req.user.id,
       description: { contains: searchText, mode: 'insensitive' }
     },
-    orderBy: { date: 'asc' },
+    orderBy: { [orderBy]: orderDirection },
   });
   res.json(runs);
 });
@@ -315,6 +332,29 @@ router.post('/runs', async (req: Request, res: Response) => {
     },
   });
   res.json(newRun);
+});
+
+router.post('/runs/upload', upload.single('file'), async (req: Request, res: Response) => {
+  if (!req.file)
+    return res.status(400).send('No file uploaded.');
+
+  // @ts-ignore
+  const fitObject = await runningFitParser.parseAsync(req.file.buffer);
+  if (!fitObject.activity || !fitObject.activity.sessions || fitObject.activity.sessions.length === 0)
+    return res.status(400).send('Invalid FIT file: no activity sessions found.');
+
+  const session = fitObject.activity.sessions[0];
+  const runObject: Run = {
+    id: -1,
+    userId: req.user.id,
+    date: new Date(session.start_time),
+    description: "",
+    distance: session.total_distance ?? 0,
+    duration: session.total_timer_time ?? 0,
+    elevationGain: (session.total_ascent ?? 0) * 1000,
+  }
+
+  res.json(runObject);
 });
 
 router.post('/runs/:id', async (req: Request, res: Response) => {

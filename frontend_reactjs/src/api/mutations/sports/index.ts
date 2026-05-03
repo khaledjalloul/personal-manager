@@ -4,9 +4,7 @@ export * from "./createHike";
 export * from "./editHike";
 export * from "./deleteHike";
 
-export * from "./createRun";
-export * from "./editRun";
-export * from "./deleteRun";
+export * from "./runs";
 
 export * from "./createSwim";
 export * from "./editSwim";

@@ -270,9 +270,9 @@ model Run {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date          DateTime
   description   String
-  distance      Float
+  distance      Float // in kilometers
   duration      Float
-  elevationGain Float
+  elevationGain Float // in meters
 }
 
 model Swim {

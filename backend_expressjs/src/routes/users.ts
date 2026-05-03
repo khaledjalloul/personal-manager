@@ -242,7 +242,8 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
   for (const type of dataTypes) {
     switch (type) {
       case 'expenses':
-        if (!inputData.expenses.categories ||
+        if (!inputData.expenses ||
+          !inputData.expenses.categories ||
           !inputData.expenses.uncategorized ||
           !inputData.expenses.funds ||
           !inputData.expenses.fundKeywords ||
@@ -270,7 +271,7 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
         }
         break;
       case 'to-do':
-        if (!inputData.toDo.tasks)
+        if (!inputData.toDo || !inputData.toDo.tasks)
           return res.status(400).json({ error: "Invalid todo data" });
         if (!inputData.toDo.milestones) {
           if (dataType === 'to-do')
@@ -288,7 +289,8 @@ router.post('/restore/:dataType', upload.single('file'), async (req: Request, re
           return res.status(400).json({ error: "Invalid piano data" });
         break;
       case 'sports':
-        if (!inputData.sports.hikes ||
+        if (!inputData.sports ||
+          !inputData.sports.hikes ||
           !inputData.sports.gymSessions ||
           !inputData.sports.volleyballGames ||
           !inputData.sports.swims ||

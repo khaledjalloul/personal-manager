@@ -6,6 +6,8 @@ const ENDPOINT = "sports/runs";
 
 export type GetRunsRequestParams = {
   searchText: string;
+  orderBy: keyof Run | 'pace';
+  orderDirection: 'asc' | 'desc';
 };
 
 const queryFn = (params: GetRunsRequestParams) => async () => {
