@@ -12,6 +12,7 @@ export type EditRunRequestBody = {
   distance?: number;
   duration?: number;
   elevationGain?: number;
+  stravaUrl?: string;
 };
 
 const mutationFn = async (data: EditRunRequestBody) => {

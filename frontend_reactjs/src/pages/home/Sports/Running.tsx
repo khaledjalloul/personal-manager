@@ -119,6 +119,7 @@ export const Running = () => {
                     Elevation Gain
                   </TableSortLabel>
                 </TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Strava URL</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -133,6 +134,7 @@ export const Running = () => {
                     distance: 0,
                     duration: 0,
                     elevationGain: 0,
+                    stravaUrl: "",
                   }}
                   index={-1}
                   searchText={searchText}

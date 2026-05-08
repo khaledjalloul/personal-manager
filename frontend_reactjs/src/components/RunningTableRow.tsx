@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Run } from "../types";
-import { Clear, Delete, Edit, Save, Upload } from "@mui/icons-material";
+import { Clear, Delete, Edit, Link, Save, Upload } from "@mui/icons-material";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useCreateRun, useDeleteRun, useEditRun, useUploadRunFitFile } from "../api";
 import dayjs from "dayjs";
@@ -36,6 +36,7 @@ export const RunningTableRow = ({
   const [distance, setDistance] = useState(run.distance);
   const [duration, setDuration] = useState(run.duration);
   const [elevationGain, setElevationGain] = useState(run.elevationGain);
+  const [stravaUrl, setStravaUrl] = useState(run.stravaUrl);
 
   const pace = distance > 0 ? duration / distance : 0;
 
@@ -53,7 +54,8 @@ export const RunningTableRow = ({
         description: description.trim(),
         distance,
         duration,
-        elevationGain
+        elevationGain,
+        stravaUrl: stravaUrl.trim(),
       });
     else if (setIsAddingRun)
       createRun({
@@ -61,7 +63,8 @@ export const RunningTableRow = ({
         description: description.trim(),
         distance,
         duration,
-        elevationGain
+        elevationGain,
+        stravaUrl: stravaUrl.trim(),
       });
   };
 
@@ -182,6 +185,26 @@ export const RunningTableRow = ({
                 endAdornment: <InputAdornment position="end">m</InputAdornment>,
               }
             }}
+          />
+        }
+      </TableCell>
+
+      <TableCell>
+        {!isEditing ?
+          <IconButton
+            size="small"
+            disabled={!stravaUrl.trim()}
+            onClick={() => window.open(run.stravaUrl, "_blank")}
+          >
+            <Link fontSize="small" />
+          </IconButton>
+          :
+          <TextField
+            variant="standard"
+            placeholder="Strava URL"
+            value={stravaUrl}
+            sx={{ width: "100%" }}
+            onChange={(e) => setStravaUrl(e.target.value)}
           />
         }
       </TableCell>

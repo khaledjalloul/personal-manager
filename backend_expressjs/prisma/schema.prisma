@@ -273,6 +273,7 @@ model Run {
   distance      Float // in kilometers
   duration      Float
   elevationGain Float // in meters
+  stravaUrl     String
 }
 
 model Swim {

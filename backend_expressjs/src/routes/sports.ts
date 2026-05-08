@@ -329,6 +329,7 @@ router.post('/runs', async (req: Request, res: Response) => {
       distance: data.distance,
       duration: data.duration,
       elevationGain: data.elevationGain,
+      stravaUrl: data.stravaUrl
     },
   });
   res.json(newRun);
@@ -352,6 +353,7 @@ router.post('/runs/upload', upload.single('file'), async (req: Request, res: Res
     distance: session.total_distance ?? 0,
     duration: session.total_timer_time ?? 0,
     elevationGain: (session.total_ascent ?? 0) * 1000,
+    stravaUrl: "",
   }
 
   res.json(runObject);
@@ -359,7 +361,7 @@ router.post('/runs/upload', upload.single('file'), async (req: Request, res: Res
 
 router.post('/runs/:id', async (req: Request, res: Response) => {
   const runId = parseInt(req.params.id);
-  const { description, date, distance, duration, elevationGain } = req.body;
+  const { description, date, distance, duration, elevationGain, stravaUrl } = req.body;
   const updatedRun = await prisma.run.update({
     where: { id: runId },
     data: {
@@ -367,7 +369,8 @@ router.post('/runs/:id', async (req: Request, res: Response) => {
       description,
       distance,
       duration,
-      elevationGain
+      elevationGain,
+      stravaUrl
     }
   });
   res.json(updatedRun);

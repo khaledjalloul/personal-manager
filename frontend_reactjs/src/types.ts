@@ -214,6 +214,7 @@ export type Run = {
   distance: number;
   duration: number;
   elevationGain: number;
+  stravaUrl: string;
 }
 
 export type Swim = {

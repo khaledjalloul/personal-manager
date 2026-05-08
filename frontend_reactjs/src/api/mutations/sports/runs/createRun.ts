@@ -11,6 +11,7 @@ export type CreateRunRequestBody = {
   distance: number;
   duration: number;
   elevationGain: number;
+  stravaUrl: string;
 };
 
 const mutationFn = async (data: CreateRunRequestBody) => {
