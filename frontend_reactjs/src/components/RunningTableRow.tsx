@@ -4,10 +4,12 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { Run } from "../types";
 import { Clear, Delete, Edit, Link, Save, Upload } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useCreateRun, useDeleteRun, useEditRun, useUploadRunFitFile } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -15,20 +17,25 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+import { useNavigate } from "react-router-dom";
+import styled, { DefaultTheme, keyframes } from "styled-components";
 
 export const RunningTableRow = ({
   run,
   index,
   searchText,
+  highlightedId,
   isAddingRun,
   setIsAddingRun,
 }: {
   run: Run;
   index: number;
   searchText: string;
+  highlightedId?: number;
   isAddingRun?: boolean;
   setIsAddingRun?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(isAddingRun ?? false);
   const [date, setDate] = useState(dayjs(run.date));
@@ -70,6 +77,13 @@ export const RunningTableRow = ({
 
   useCtrlS(save);
 
+  const runRef = useRef<HTMLTableRowElement | null>(null);
+
+  useEffect(() => {
+    if (highlightedId === run.id)
+      runRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedId]);
+
   useEffect(() => {
     if (createSuccess && setIsAddingRun) setIsAddingRun(false);
   }, [createSuccess]);
@@ -88,21 +102,27 @@ export const RunningTableRow = ({
   }, [uploadFitFileSuccess, uploadFitFileData]);
 
   return (
-    <TableRow
-      sx={{
-        backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
-        ":hover": { backgroundColor: "action.hover" }
-      }}
+    <TableRowWithHighlight
+      isHighlighted={highlightedId === run.id}
+      index={index}
+      ref={runRef}
       onDoubleClick={() => setIsEditing(true)}
     >
       <TableCell>
-        {!isEditing ? date.format("dddd, MMMM D, YYYY | hh:mm A") :
+        {!isEditing ?
+          <Typography
+            variant="body2"
+            sx={{ width: 'fit-content', cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+            onClick={() => navigate("/calendar", { state: { routedDate: run.date } })}>
+            {date.format("DD.MM.YYYY hh:mm A")}
+          </Typography>
+          :
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={date}
               onChange={(newValue) => setDate(newValue ?? dayjs())}
               enableAccessibleFieldDOMStructure={false}
-              format="DD.MM.YYYY | hh:mm A"
+              format="DD.MM.YYYY hh:mm A"
               slotProps={{
                 textField: {
                   size: "small",
@@ -110,7 +130,7 @@ export const RunningTableRow = ({
                   placeholder: "Date",
                 }
               }}
-              sx={{ minWidth: 130 }}
+              sx={{ minWidth: 100 }}
             />
           </LocalizationProvider>
         }
@@ -168,7 +188,9 @@ export const RunningTableRow = ({
         }
       </TableCell>
 
-      <TableCell>{Math.floor(pace / 60).toString().padStart(2, '0')}:{(pace % 60).toFixed(0).padStart(2, '0')} / km</TableCell>
+      <TableCell sx={{ textWrap: "nowrap" }}>
+        {Math.floor(pace / 60).toString().padStart(2, '0')}:{(pace % 60).toFixed(0).padStart(2, '0')} / km
+      </TableCell>
 
       <TableCell>
         {!isEditing ? `${elevationGain.toFixed(0)} m` :
@@ -272,6 +294,7 @@ export const RunningTableRow = ({
               setDescription(run.description);
               setDistance(run.distance);
               setDuration(run.duration);
+              setStravaUrl(run.stravaUrl);
               setElevationGain(run.elevationGain);
               setIsEditing(false);
             } else if (setIsAddingRun) {
@@ -282,6 +305,25 @@ export const RunningTableRow = ({
           </IconButton>
         </TableCell>
       )}
-    </TableRow>
+    </TableRowWithHighlight>
   )
 }
+
+const highlightAnimation = ({ theme, index }: { theme: DefaultTheme, index: number }) => keyframes`
+  0% {
+    background-color: ${theme.palette.warning.dark};
+  }
+  100% {
+    background-color: ${index % 2 === 0 ? theme.palette.background.default : theme.palette.primary.light};
+  }
+`;
+
+const TableRowWithHighlight = styled(TableRow) <{ isHighlighted: boolean, index: number }>`
+  background-color: ${({ theme, index }) => index % 2 === 0 ? theme.palette.background.default : theme.palette.primary.light};
+  animation-name: ${({ isHighlighted }) => (isHighlighted ? highlightAnimation : 'none')};
+  animation-duration: 3s;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.palette.action.hover};
+  }
+`;

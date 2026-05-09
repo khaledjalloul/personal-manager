@@ -33,7 +33,6 @@ export const NavigationBar = () => {
   const location = useLocation();
 
   const { userData, setUserData } = useContext(UserContext);
-  const { themeData, setThemeData } = useContext(ThemeContext);
 
   const [accountMenuAnchor, setAccountMenuAnchor] = useState<null | HTMLElement>(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState<null | HTMLElement>(null);
@@ -94,12 +93,12 @@ export const NavigationBar = () => {
               <MenuItem onClick={() => { navigate("/account"); setAccountMenuAnchor(null); }}>
                 <Typography variant="body2">Account</Typography>
               </MenuItem>
-              <MenuItem onClick={e => setThemeData({ darkMode: !themeData.darkMode })}>
+              <MenuItem onClick={userData ? (e) => setUserData({ ...userData, darkMode: !userData.darkMode }) : undefined}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="body2">Dark Mode</Typography>
                   <Switch
                     size="small"
-                    checked={themeData.darkMode}
+                    checked={userData?.darkMode}
                   />
                 </Box>
               </MenuItem>
@@ -149,12 +148,12 @@ export const NavigationBar = () => {
               }}>
                 <Typography variant="body2">Account</Typography>
               </MenuItem>
-              <MenuItem onClick={e => setThemeData({ darkMode: !themeData.darkMode })}>
+              <MenuItem onClick={userData ? (e) => setUserData({ ...userData, darkMode: !userData.darkMode }) : undefined}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="body2">Dark Mode</Typography>
                   <Switch
                     size="small"
-                    checked={themeData.darkMode}
+                    checked={userData?.darkMode}
                   />
                 </Box>
               </MenuItem>

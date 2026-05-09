@@ -7,6 +7,7 @@ const ENDPOINT = "sports/gym/sessions";
 
 export type CreateGymSessionRequestBody = {
   date: Date;
+  location: string;
   note: string;
   exercises: GymExercise[];
 };

@@ -14,7 +14,6 @@ const SportTypeButton = ({
   path: string;
   icon: React.ReactNode;
 }) => {
-  const { userData, setUserData } = useContext(UserContext);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,10 +37,7 @@ const SportTypeButton = ({
         backgroundColor: isSelected ? 'primary.main' : 'primary.dark',
       },
     }}
-    onClick={!isSelected && userData ? () => {
-      setUserData({ ...userData, sportsLastSelectedPath: path })
-      navigate(path)
-    } : undefined}
+    onClick={!isSelected ? () => navigate(path) : undefined}
   >
     {icon}
     <Typography sx={{ fontSize: '16px' }}>{name}</Typography>
@@ -49,14 +45,17 @@ const SportTypeButton = ({
 };
 
 export const SportsWrapper = () => {
-  const { userData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [searchText, setSearchText] = useState("");
+  const { routedHighlightId } = location.state as { routedHighlightId?: number } || { routedHighlightId: undefined };
 
-  const searchLabel = location.pathname.includes("hikes") ? "hikes" :
+  const [searchText, setSearchText] = useState("");
+  const [highlightedId] = useState<number | undefined>(routedHighlightId);
+
+  const searchLabel = location.pathname.includes("hiking") ? "hiking" :
     location.pathname.includes("gym") ? "gym" :
       location.pathname.includes("volleyball") ? "volleyball games" :
         location.pathname.includes("swimming") ? "swims" :
@@ -64,10 +63,16 @@ export const SportsWrapper = () => {
   const searchPlaceholder = location.pathname.includes("gym") ? "Exercise types, notes, session notes" : "Description";
 
   useEffect(() => {
-    if (userData?.sportsLastSelectedPath) {
+    if (userData && location.pathname !== "/sports") // Don't save path if on the main sports page, as it's not a meaningful page to return to
+      setUserData({ ...userData, sportsLastSelectedPath: location.pathname })
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // If routed from another page, select the routed path instead of the last selected one 
+    if (userData?.sportsLastSelectedPath && !routedHighlightId) {
       navigate(userData.sportsLastSelectedPath);
     }
-  }, [userData?.sportsLastSelectedPath]);
+  }, [userData?.sportsLastSelectedPath, routedHighlightId]);
 
 
   return (
@@ -89,7 +94,7 @@ export const SportsWrapper = () => {
         </Box>
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: { xs: 'start', md: 'center' } }}>
-          <SportTypeButton name="Hikes" path="hikes" icon={<Landscape />} />
+          <SportTypeButton name="Hiking" path="hiking" icon={<Landscape />} />
           <SportTypeButton name="Gym" path="gym" icon={<FitnessCenter />} />
           <SportTypeButton name="Volleyball" path="volleyball" icon={<SportsVolleyball />} />
           <SportTypeButton name="Swimming" path="swimming" icon={<Pool />} />
@@ -120,7 +125,7 @@ export const SportsWrapper = () => {
         />
       </Box>
 
-      <Outlet context={{ searchText }} />
+      <Outlet context={{ searchText, highlightedId }} />
 
     </Wrapper>
   );

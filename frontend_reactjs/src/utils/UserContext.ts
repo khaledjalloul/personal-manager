@@ -2,6 +2,7 @@ import { createContext } from "react";
 
 export type UserData = {
   token: string;
+  darkMode: boolean;
   showPrivateContent?: boolean;
   calendarLastSelectedDate?: Date;
   diaryLastSelectedDate?: Date;

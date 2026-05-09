@@ -20,7 +20,7 @@ import { Run } from "../../../types";
 
 
 export const Running = () => {
-  const { searchText } = useOutletContext<{ searchText: string }>();
+  const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
   const [isAddingRun, setIsAddingRun] = useState(false);
   const [orderBy, setOrderBy] = useState<keyof Run | 'pace'>('date');
@@ -138,6 +138,7 @@ export const Running = () => {
                   }}
                   index={-1}
                   searchText={searchText}
+                  highlightedId={highlightedId}
                   isAddingRun={isAddingRun}
                   setIsAddingRun={setIsAddingRun}
                 />
@@ -148,6 +149,7 @@ export const Running = () => {
                   run={run}
                   index={index}
                   searchText={searchText}
+                  highlightedId={highlightedId}
                 />
               ))}
             </TableBody>

@@ -193,6 +193,7 @@ export type GymExerciseType = {
 export type GymSession = {
   id: number;
   date: Date;
+  location: string;
   note: string;
   exercises: GymExercise[]
 }

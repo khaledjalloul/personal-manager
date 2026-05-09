@@ -8,7 +8,12 @@ import { useOutletContext } from "react-router-dom";
 
 export const DailyDiary = () => {
 
-  const { searchText, selectedDate, sortOrder } = useOutletContext<{ searchText: string, selectedDate: Dayjs, sortOrder: "asc" | "desc" }>();
+  const { searchText, selectedDate, routedDate, sortOrder } = useOutletContext<{
+    searchText: string,
+    selectedDate: Dayjs,
+    routedDate?: Date,
+    sortOrder: "asc" | "desc"
+  }>();
 
   const { data: diaryEntries, isFetched } = useDailyDiaryEntries({
     year: selectedDate.year(),
@@ -72,6 +77,7 @@ export const DailyDiary = () => {
           entry={entry}
           searchText={searchText}
           selectedDate={selectedDate}
+          routedDate={routedDate}
           dataFetched={isFetched}
         />
       ))}

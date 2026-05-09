@@ -20,8 +20,8 @@ const emptyHike: Hike = {
   images: []
 }
 
-export const Hikes = () => {
-  const { searchText } = useOutletContext<{ searchText: string }>();
+export const Hiking = () => {
+  const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
   const [isAddingHike, setIsAddingHike] = useState(false);
 
@@ -59,6 +59,7 @@ export const Hikes = () => {
             <HikeCard
               hike={emptyHike}
               searchText={searchText}
+              highlightedId={highlightedId}
               isAddingHike={isAddingHike}
               setIsAddingHike={setIsAddingHike}
             />
@@ -73,6 +74,7 @@ export const Hikes = () => {
             <HikeCard
               hike={hike}
               searchText={searchText}
+              highlightedId={highlightedId}
               isAddingHike={isAddingHike}
               setIsAddingHike={setIsAddingHike}
             />

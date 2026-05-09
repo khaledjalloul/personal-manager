@@ -1,13 +1,12 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import styled, { createGlobalStyle } from "styled-components";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from "@fullcalendar/interaction";
 import { EventInput } from "@fullcalendar/core";
 import momentPlugin from '@fullcalendar/moment';
-import { useCalendarEntries } from "../api"
 import { ManageCalendarEntryModal } from ".";
 import { CalendarEntry } from "../types";
 import { useNavigate } from "react-router-dom";
@@ -23,16 +22,20 @@ const emptyEntry: CalendarEntry = {
 };
 
 export const Calendar = ({
+  events,
   selectedDate,
   setSelectedDate,
-  searchText,
+  trimmedSearchText,
   searchIndex,
+  routedDate,
   isHomePage = false,
 }: {
+  events: EventInput[],
   selectedDate: Dayjs,
   setSelectedDate: (date: Dayjs) => void,
-  searchText: string,
+  trimmedSearchText: string,
   searchIndex: number,
+  routedDate?: Date,
   isHomePage?: boolean,
 }) => {
 
@@ -43,24 +46,9 @@ export const Calendar = ({
 
   const [modalEntry, setModalEntry] = useState<CalendarEntry>();
 
-  const { data: calendarEntries } = useCalendarEntries({
-    date: selectedDate.toDate(),
-    // Only consider search text with 3 or more characters to avoid rapid frontend update and freezing
-    searchText: searchText.trim().length >= 3 ? searchText.trim() : "",
-  });
+  events = events.map((event, index) => !isHomePage && trimmedSearchText.length > 0 && searchIndex === index ? { ...event, color: theme.palette.warning.dark } : event);
 
   const calendarRef = useRef<FullCalendar>(null);
-  const isSearchMode = searchText.trim().length >= 3;
-
-  const events = useMemo((): EventInput[] => {
-    return calendarEntries?.map((entry, index) => ({
-      id: entry.id.toString(),
-      start: entry.startDate,
-      end: entry.endDate,
-      title: `${entry.title}${entry.description ? ` - ${entry.description}` : ''}${entry.location ? ` (${entry.location})` : ''}`,
-      color: isSearchMode && index === searchIndex ? theme.palette.warning.dark : ""
-    })) ?? [];
-  }, [calendarEntries, isSearchMode]);
 
   useEffect(() => {
     if (calendarRef.current)
@@ -114,6 +102,14 @@ export const Calendar = ({
                 borderRadius: 1,
               }} />
             )}
+            {!isHomePage && routedDate && dayjs(routedDate).isSame(date, 'day') && (
+              <Box sx={{
+                backgroundColor: "warning.main",
+                width: 8,
+                height: 8,
+                borderRadius: 1,
+              }} />
+            )}
             <Typography variant="body2">
               {dayjs(date).format(isBreakpointSm && !isHomePage ?
                 "dd DD.MM" :
@@ -137,15 +133,28 @@ export const Calendar = ({
             endDate: newEvent.end
           })
         }}
-        eventChange={isHomePage ? undefined : ({ event }) => {
-          const entry = calendarEntries?.find(e => e.id === parseInt(event.id));
-          if (entry && event.start && event.end)
-            setModalEntry({ ...entry, startDate: event.start, endDate: event.end });
+        eventChange={isHomePage ? undefined : ({ event, revert }) => {
+          if (event.id.startsWith("calendar-")) {
+            // @ts-ignore
+            const entry: CalendarEntry | undefined = events?.find(e => e.id === event.id)?.entry;
+            if (entry && event.start && event.end)
+              setModalEntry({ ...entry, startDate: event.start, endDate: event.end });
+          }
+          revert();
         }}
         eventClick={isHomePage ? undefined : ({ event }) => {
-          const entry = calendarEntries?.find(e => e.id === parseInt(event.id));
-          if (entry)
-            setModalEntry(entry);
+          if (event.id.startsWith("hike-")) {
+            navigate("/sports/hiking", { state: { routedHighlightId: parseInt(event.id.replace("hike-", "")) } });
+          } else if (event.id.startsWith("gym-"))
+            navigate("/sports/gym", { state: { routedHighlightId: parseInt(event.id.replace("gym-", "")) } });
+          else if (event.id.startsWith("run-"))
+            navigate("/sports/running", { state: { routedHighlightId: parseInt(event.id.replace("run-", "")) } });
+          else if (event.id.startsWith("calendar-")) {
+            // @ts-ignore
+            const entry: CalendarEntry | undefined = events?.find(e => e.id === event.id)?.entry;
+            if (entry)
+              setModalEntry(entry);
+          }
         }}
       />
 

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { GymExercise, GymSession } from "../types";
 import { Add, Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useCreateGymSession, useDeleteGymSession, useEditGymSession, useGymExerciseTypes } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -17,17 +17,17 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+import { useNavigate } from "react-router-dom";
+import styled, { DefaultTheme, keyframes } from "styled-components";
 
 const ExerciseTableCell = ({
   exercise,
   searchText,
   isEditing,
-  setExercises
 }: {
   exercise: GymExercise,
   searchText: string,
   isEditing: boolean,
-  setExercises: Dispatch<SetStateAction<GymExercise[]>>
 }) => {
   const [weight, setWeight] = useState(exercise.weight);
   const [note, setNote] = useState(exercise.note);
@@ -40,7 +40,7 @@ const ExerciseTableCell = ({
           <SearchTextHighlight text={note ? ` (${note})` : ""} searchText={searchText.trim()} />
         </Typography>
         :
-        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center', minWidth: 170 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
           <TextField
             variant="standard"
             placeholder="Weight"
@@ -52,9 +52,10 @@ const ExerciseTableCell = ({
             }}
             slotProps={{
               input: {
-                endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                endAdornment: <InputAdornment position="end" style={{ padding: 0, margin: 0, marginLeft: 2 }}>kg</InputAdornment>,
               }
             }}
+            style={{ minWidth: 60, maxWidth: 60 }}
           />
           <TextField
             variant="standard"
@@ -65,11 +66,6 @@ const ExerciseTableCell = ({
               exercise.note = e.target.value;
             }}
           />
-          <IconButton size="small" onClick={() => {
-            setExercises(exs => exs.filter((ex) => ex.type.id !== exercise.type.id));
-          }}>
-            <Clear fontSize="small" />
-          </IconButton>
         </Box>
       }
     </TableCell>
@@ -80,18 +76,22 @@ export const GymSessionTableRow = ({
   session,
   index,
   searchText,
+  highlightedId,
   isAddingSession,
   setIsAddingSession,
 }: {
   session: GymSession;
   index: number;
   searchText: string;
+  highlightedId?: number;
   isAddingSession?: boolean;
   setIsAddingSession?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(isAddingSession ?? false);
   const [date, setDate] = useState(dayjs(session.date));
+  const [location, setLocation] = useState(session.location);
   const [note, setNote] = useState(session.note);
   const [exercises, setExercises] = useState(session.exercises);
 
@@ -107,18 +107,28 @@ export const GymSessionTableRow = ({
       editSession({
         id: session.id,
         date: date.toDate(),
+        location: location.trim(),
         note: note.trim(),
-        exercises
+        exercises: exercises.filter((ex) => ex.weight > 0 || ex.note.trim().length > 0)
       });
     else if (setIsAddingSession)
       createSession({
         date: date.toDate(),
+        location: location.trim(),
         note: note.trim(),
-        exercises
+        exercises: exercises.filter((ex) => ex.weight > 0 || ex.note.trim().length > 0)
       });
   };
 
   useCtrlS(save);
+
+  const sessionRef = useRef<HTMLTableRowElement | null>(null);
+
+  useEffect(() => {
+    if (highlightedId === session.id)
+      sessionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedId]);
+
 
   useEffect(() => {
     if (createSuccess && setIsAddingSession) setIsAddingSession(false);
@@ -129,21 +139,27 @@ export const GymSessionTableRow = ({
   }, [editSuccess]);
 
   return (
-    <TableRow
-      sx={{
-        backgroundColor: index % 2 === 0 ? "background.default" : "primary.light",
-        ":hover": { backgroundColor: "action.hover" }
-      }}
+    <TableRowWithHighlight
+      isHighlighted={highlightedId === session.id}
+      index={index}
+      ref={sessionRef}
       onDoubleClick={() => setIsEditing(true)}
     >
-      <TableCell>
-        {!isEditing ? date.format("DD.MM.YYYY") :
+      <TableCell style={{ textWrap: "nowrap" }}>
+        {!isEditing ?
+          <Typography
+            variant="body2"
+            sx={{ width: 'fit-content', cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+            onClick={() => navigate("/calendar", { state: { routedDate: session.date } })}>
+            {date.format("DD.MM.YYYY hh:mm A")}
+          </Typography>
+          :
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={date}
               onChange={(newValue) => setDate(newValue ?? dayjs())}
               enableAccessibleFieldDOMStructure={false}
-              format="DD.MM.YYYY"
+              format="DD.MM.YYYY hh:mm A"
               slotProps={{
                 textField: {
                   size: "small",
@@ -151,7 +167,7 @@ export const GymSessionTableRow = ({
                   placeholder: "Date",
                 }
               }}
-              sx={{ minWidth: 130 }}
+              sx={{ minWidth: 200, maxWidth: 200 }}
             />
           </LocalizationProvider>
         }
@@ -164,7 +180,6 @@ export const GymSessionTableRow = ({
             exercise={exercises.find((ex) => ex.type.id === exerciseType.id)!}
             searchText={searchText.trim()}
             isEditing={isEditing}
-            setExercises={setExercises}
           />
           : <TableCell key={index}>
             {isEditing && <IconButton
@@ -182,6 +197,20 @@ export const GymSessionTableRow = ({
             </IconButton>}
           </TableCell>
       ))}
+
+      <TableCell>
+        {!isEditing ?
+          <SearchTextHighlight text={location} searchText={searchText.trim()} />
+          :
+          <TextField
+            variant="standard"
+            placeholder="Location"
+            value={location}
+            sx={{ width: "100%" }}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        }
+      </TableCell>
 
       <TableCell>
         {!isEditing ?
@@ -207,7 +236,7 @@ export const GymSessionTableRow = ({
           </IconButton>
         </TableCell>
       ) : (
-        <TableCell sx={{ display: 'flex', gap: 1 }}>
+        <TableCell sx={{ display: 'flex' }}>
           <IconButton
             size="small"
             color="success"
@@ -234,6 +263,7 @@ export const GymSessionTableRow = ({
           <IconButton size="small" onClick={() => {
             if (!isAddingSession) {
               setDate(dayjs(session.date));
+              setLocation(session.location);
               setNote(session.note);
               setExercises(session.exercises);
               setIsEditing(false);
@@ -245,6 +275,25 @@ export const GymSessionTableRow = ({
           </IconButton>
         </TableCell>
       )}
-    </TableRow>
+    </TableRowWithHighlight>
   )
 }
+
+const highlightAnimation = ({ theme, index }: { theme: DefaultTheme, index: number }) => keyframes`
+  0% {
+    background-color: ${theme.palette.warning.dark};
+  }
+  100% {
+    background-color: ${index % 2 === 0 ? theme.palette.background.default : theme.palette.primary.light};
+  }
+`;
+
+const TableRowWithHighlight = styled(TableRow) <{ isHighlighted: boolean, index: number }>`
+  background-color: ${({ theme, index }) => index % 2 === 0 ? theme.palette.background.default : theme.palette.primary.light};
+  animation-name: ${({ isHighlighted }) => (isHighlighted ? highlightAnimation : 'none')};
+  animation-duration: 3s;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.palette.action.hover};
+  }
+`;

@@ -201,6 +201,7 @@ router.get('/gym/sessions', async (req: Request, res: Response) => {
     where: {
       userId: req.user.id,
       OR: [
+        { location: { contains: searchText, mode: 'insensitive' } },
         { note: { contains: searchText, mode: 'insensitive' } },
         { exercises: { some: { note: { contains: searchText, mode: 'insensitive' } } } },
         { exercises: { some: { type: { name: { contains: searchText, mode: 'insensitive' } } } } },
@@ -228,6 +229,7 @@ router.post('/gym/sessions', async (req: Request, res: Response) => {
     data: {
       user: { connect: { id: req.user.id } },
       date: new Date(data.date),
+      location: data.location,
       note: data.note,
       exercises: {
         create: data.exercises.map((exercise: any) => ({
@@ -245,11 +247,12 @@ router.post('/gym/sessions', async (req: Request, res: Response) => {
 
 router.post('/gym/sessions/:id', async (req: Request, res: Response) => {
   const sessionId = parseInt(req.params.id);
-  const { date, note, exercises } = req.body;
+  const { date, location, note, exercises } = req.body;
   const updatedSession = await prisma.gymSession.update({
     where: { id: sessionId },
     data: {
       date: new Date(date),
+      location,
       note,
       exercises: {
         deleteMany: {},

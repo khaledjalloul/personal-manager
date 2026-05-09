@@ -8,6 +8,7 @@ const ENDPOINT = "sports/gym/sessions";
 export type EditGymSessionRequestBody = {
   id: number;
   date?: Date;
+  location?: string;
   note?: string;
   exercises?: GymExercise[];
 };

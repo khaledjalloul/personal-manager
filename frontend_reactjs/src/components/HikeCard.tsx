@@ -1,5 +1,5 @@
 import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
-import styled from "styled-components";
+import styled, { DefaultTheme, keyframes } from "styled-components";
 import { Hike } from "../types";
 import {
   AccessTime,
@@ -15,7 +15,7 @@ import {
   Clear,
   AddPhotoAlternate
 } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,6 +23,7 @@ import { useCreateHike, useDeleteHike, useEditHike } from "../api";
 import { ConfirmDeleteDialog } from "./modals";
 import { useCtrlS } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+import { useNavigate } from "react-router-dom";
 
 const GoogleMapsIcon = ({ disabled = false }: { disabled?: boolean }) => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -41,14 +42,17 @@ const GoogleMapsIcon = ({ disabled = false }: { disabled?: boolean }) => (
 export const HikeCard = ({
   hike,
   searchText,
+  highlightedId,
   isAddingHike,
   setIsAddingHike
 }: {
   hike: Hike,
   searchText: string,
+  highlightedId?: number,
   isAddingHike: boolean,
   setIsAddingHike: Dispatch<SetStateAction<boolean>>
 }) => {
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(isAddingHike);
   const [date, setDate] = useState(dayjs(hike.date));
@@ -70,6 +74,8 @@ export const HikeCard = ({
 
   const durationWithBreaksHours = Math.floor(hike.durationWithBreaks);
   const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
+
+  const isHighlighted = highlightedId === hike.id;
 
   const save = () => {
     if (!isEditing || !description.trim()) return;
@@ -103,6 +109,13 @@ export const HikeCard = ({
 
   useCtrlS(save);
 
+  const hikeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isHighlighted)
+      hikeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [isHighlighted]);
+
   useEffect(() => {
     if (createSuccess) setIsAddingHike(false);
   }, [createSuccess]);
@@ -113,7 +126,8 @@ export const HikeCard = ({
 
   return (
     <Wrapper
-      sx={{ backgroundColor: 'primary.light' }}
+      ref={hikeRef}
+      isHightlighted={isHighlighted}
       onDoubleClick={() => setIsEditing(true)}
     >
       <Box sx={{ width: '100%', aspectRatio: '16/9', position: 'relative' }} >
@@ -143,6 +157,7 @@ export const HikeCard = ({
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              sx={{ flexGrow: 1 }}
             />
           )}
 
@@ -218,11 +233,15 @@ export const HikeCard = ({
         </Box>
 
         <Grid container rowSpacing={1} columnSpacing={2}>
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: isEditing ? 7 : 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Today sx={{ color: "text.primary" }} />
             {!isEditing ? (
-              <Typography variant="body1">
-                {date.format("DD.MM.YYYY")}
+              <Typography
+                variant="body1"
+                sx={{ width: 'fit-content', cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+                onClick={() => navigate("/calendar", { state: { routedDate: hike.date } })}
+              >
+                {date.format("DD.MM.YYYY hh:mm A")}
               </Typography>
             ) : (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -230,7 +249,7 @@ export const HikeCard = ({
                   value={date}
                   onChange={(newValue) => setDate(newValue ?? dayjs())}
                   enableAccessibleFieldDOMStructure={false}
-                  format="DD.MM.YYYY"
+                  format="DD.MM.YYYY hh:mm A"
                   slotProps={{
                     textField: {
                       size: "small",
@@ -243,7 +262,7 @@ export const HikeCard = ({
             )}
           </Grid>
 
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid size={{ xs: isEditing ? 5 : 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Straighten sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
@@ -403,12 +422,24 @@ export const HikeCard = ({
   )
 }
 
-const Wrapper = styled(Box)`
+const highlightAnimation = ({ theme }: { theme: DefaultTheme }) => keyframes`
+  0% {
+    background-color: ${theme.palette.warning.dark};
+  }
+  100% {
+    background-color: ${theme.palette.primary.light};
+  }
+`;
+
+const Wrapper = styled(Box) <{ isHightlighted: boolean }>`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   border-radius: 8px;
-  border: ${({ theme }) => `solid 1px ${theme.palette.grey[700]}}`};
+  background-color: ${({ theme }) => theme.palette.primary.light};
+  animation-name: ${({ isHightlighted }) => (isHightlighted ? highlightAnimation : 'none')};
+  animation-duration: 3s;
+  border: ${({ theme }) => `solid 1px ${theme.palette.grey[700]}}`};  
 `;
 
 const CoverImage = styled.img`

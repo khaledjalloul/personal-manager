@@ -1,15 +1,16 @@
-import { Box, Button, IconButton, InputAdornment, TextField, Typography, } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, TextField, Typography, useTheme, } from "@mui/material";
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeft, ArrowRight, Clear } from "@mui/icons-material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useCalendarEntries } from "../../api";
+import { useCalendarEntries, useGymSessions, useHikes, useRuns } from "../../api";
 import { Calendar as CalendarComponent } from "../../components";
 import { useLocation } from "react-router-dom";
 import { UserContext } from "../../utils";
+import { EventInput } from "@fullcalendar/core";
 
 export const Calendar = () => {
 
@@ -18,28 +19,81 @@ export const Calendar = () => {
 
   const { routedDate } = state as { routedDate?: Date } || { routedDate: undefined };
 
-  const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.calendarLastSelectedDate).startOf('week').add(1, 'day'));
+  const [selectedDate, setSelectedDateOg] = useState<Dayjs>(dayjs(routedDate ?? userData?.calendarLastSelectedDate).subtract(1, 'day').startOf('week').add(1, 'day'));
   const setSelectedDate = (date: Dayjs) => setSelectedDateOg(date.subtract(1, 'day').startOf('week').add(1, 'day'));
   const [searchText, setSearchText] = useState<string>("");
   const [searchIndex, setSearchIndex] = useState<number>(0);
 
+  const trimmedSearchText = searchText.trim().length >= 3 ? searchText.trim() : "";
+  const isSearchMode = trimmedSearchText.length > 0;
+
   const { data: calendarEntries } = useCalendarEntries({
     date: selectedDate.toDate(),
     // Only consider search text with 3 or more characters to avoid rapid frontend update and freezing
-    searchText: searchText.trim().length >= 3 ? searchText.trim() : "",
+    searchText: trimmedSearchText,
+  });
+  const { data: hikes } = useHikes({
+    searchText: trimmedSearchText.toLowerCase().replaceAll("hike", "")
+  });
+  const { data: gymSessions } = useGymSessions({
+    searchText: trimmedSearchText.toLowerCase().replaceAll("gym", "")
+  });
+  const { data: runs } = useRuns({
+    searchText: trimmedSearchText.toLowerCase().replaceAll("run", ""),
+    orderBy: "date",
+    orderDirection: "asc"
   });
 
-  const isSearchMode = searchText.trim().length >= 3;
+  const events = useMemo((): EventInput[] => {
+    var events: EventInput[] = [];
+    events = events.concat(calendarEntries?.map((entry) => ({
+      id: `calendar-${entry.id}`,
+      start: entry.startDate,
+      end: entry.endDate,
+      title: `${entry.title}${entry.description ? ` - ${entry.description}` : ''}${entry.location ? ` (${entry.location})` : ''}`,
+      color: "",
+      entry,
+    })) ?? []);
+    events = events.concat(hikes?.map((hike) => ({
+      id: `hike-${hike.id}`,
+      start: hike.date,
+      end: dayjs(hike.date).add(hike.durationWithBreaks, 'hours').toDate(),
+      title: `Hike${hike.description ? ` - ${hike.description}` : ''}`,
+      color: "",
+    })) ?? []);
+    events = events.concat(gymSessions?.map((session) => ({
+      id: `gym-${session.id}`,
+      start: session.date,
+      end: dayjs(session.date).add(1, 'hour').toDate(),
+      title: `Gym${session.note ? ` - ${session.note}` : ''}${session.location ? ` (${session.location})` : ''}`,
+      color: "",
+    })) ?? []);
+    events = events.concat(runs?.map((run) => ({
+      id: `run-${run.id}`,
+      start: run.date,
+      end: dayjs(run.date).add(Math.max(run.duration, 60 * 60), 'seconds').toDate(),
+      title: `Run${run.description ? ` - ${run.description}` : ''}`,
+      color: "",
+    })) ?? []);
+    events.sort((a, b) => {
+      if (a.start && b.start) {
+        return dayjs(a.start.toString()).diff(dayjs(b.start.toString()));
+      } else {
+        return 0;
+      }
+    });
+    return events;
+  }, [calendarEntries, hikes, gymSessions, runs, isSearchMode]);
 
   useEffect(() => {
-    if (isSearchMode && calendarEntries) {
+    if (isSearchMode && events) {
       setSearchIndex(0);
-      if (calendarEntries.length > 0) {
-        const firstDate = dayjs(calendarEntries[0].startDate);
+      if (events.length > 0) {
+        const firstDate = dayjs(events[0].start?.toString());
         setSelectedDate(firstDate);
       }
     }
-  }, [JSON.stringify(calendarEntries), isSearchMode]);
+  }, [JSON.stringify(events), isSearchMode]);
 
   useEffect(() => {
     if (userData)
@@ -95,28 +149,28 @@ export const Calendar = () => {
         ) : (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <IconButton
-              disabled={!calendarEntries || calendarEntries.length === 0}
+              disabled={!events || events.length === 0}
               onClick={() => {
-                if (!calendarEntries) return;
-                const newIndex = searchIndex === 0 ? calendarEntries.length - 1 : searchIndex - 1;
+                if (!events) return;
+                const newIndex = searchIndex === 0 ? events.length - 1 : searchIndex - 1;
                 setSearchIndex(newIndex);
-                setSelectedDate(dayjs(calendarEntries[newIndex].startDate));
+                setSelectedDate(dayjs(events[newIndex].start?.toString()));
               }}
             >
               <ArrowLeft />
             </IconButton>
 
             <Typography>
-              {calendarEntries && calendarEntries.length > 0 ? searchIndex + 1 : 0} / {calendarEntries?.length} search entries
+              {events && events.length > 0 ? searchIndex + 1 : 0} / {events?.length} search entries
             </Typography>
 
             <IconButton
-              disabled={!calendarEntries || calendarEntries.length === 0}
+              disabled={!events || events.length === 0}
               onClick={() => {
-                if (!calendarEntries) return;
-                const newIndex = searchIndex === calendarEntries.length - 1 ? 0 : searchIndex + 1;
+                if (!events) return;
+                const newIndex = searchIndex === events.length - 1 ? 0 : searchIndex + 1;
                 setSearchIndex(newIndex);
-                setSelectedDate(dayjs(calendarEntries[newIndex].startDate));
+                setSelectedDate(dayjs(events[newIndex].start?.toString()));
               }}
             >
               <ArrowRight />
@@ -163,10 +217,13 @@ export const Calendar = () => {
       </Header>
 
       <CalendarComponent
+        events={events}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
-        searchText={searchText}
-        searchIndex={searchIndex} />
+        trimmedSearchText={trimmedSearchText}
+        routedDate={routedDate}
+        searchIndex={searchIndex}
+      />
 
     </Wrapper>
   );

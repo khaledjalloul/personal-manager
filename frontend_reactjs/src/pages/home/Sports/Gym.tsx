@@ -49,7 +49,7 @@ export const Gym = () => {
   const { palette } = useTheme();
   const { themeData } = useContext(ThemeContext);
 
-  const { searchText } = useOutletContext<{ searchText: string }>();
+  const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isAddingSession, setIsAddingSession] = useState(false);
@@ -253,6 +253,7 @@ export const Gym = () => {
                     {type.name}
                   </TableCell>
                 ))}
+                <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
@@ -264,11 +265,13 @@ export const Gym = () => {
                   session={{
                     id: -1,
                     date: new Date(),
+                    location: "",
                     note: "",
                     exercises: []
                   }}
                   index={-1}
                   searchText={searchText}
+                  highlightedId={highlightedId}
                   isAddingSession={isAddingSession}
                   setIsAddingSession={setIsAddingSession}
                 />
@@ -279,6 +282,7 @@ export const Gym = () => {
                   session={session}
                   index={index}
                   searchText={searchText}
+                  highlightedId={highlightedId}
                 />
               ))}
             </TableBody>

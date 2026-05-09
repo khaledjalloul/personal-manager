@@ -2,11 +2,15 @@ import { Box, Grid, IconButton, MenuItem, Select, TextField, Typography, useThem
 import styled from "styled-components";
 import { ToDoTaskContainer, Calendar } from "../../components";
 import {
+  useCalendarEntries,
   useCreateDiaryEntry,
   useCreateNote,
   useDailyDiaryEntries,
   useEditDiaryEntry,
+  useGymSessions,
+  useHikes,
   useNoteCategories,
+  useRuns,
   useToDoTasks
 } from "../../api";
 import { ChevronRight, Save } from "@mui/icons-material";
@@ -15,6 +19,7 @@ import dayjs from "dayjs";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { DiaryEntry, DiaryEntryType, NoteCategory } from "../../types";
 import { useCtrlS, UserContext } from "../../utils";
+import { EventInput } from "@fullcalendar/core";
 
 const NavigationTitle = ({
   title,
@@ -339,6 +344,51 @@ export const Home = () => {
     isArchived: false,
     searchText: "",
   });
+  const { data: calendarEntries } = useCalendarEntries({ date: new Date(), searchText: "" });
+  const { data: hikes } = useHikes({ searchText: "" });
+  const { data: gymSessions } = useGymSessions({ searchText: "" });
+  const { data: runs } = useRuns({ searchText: "", orderBy: "date", orderDirection: "asc" });
+
+  const calendarEvents = useMemo((): EventInput[] => {
+    var events: EventInput[] = [];
+    events = events.concat(calendarEntries?.map((entry) => ({
+      id: `calendar-${entry.id}`,
+      start: entry.startDate,
+      end: entry.endDate,
+      title: `${entry.title}${entry.description ? ` - ${entry.description}` : ''}${entry.location ? ` (${entry.location})` : ''}`,
+      color: "",
+      entry,
+    })) ?? []);
+    events = events.concat(hikes?.map((hike) => ({
+      id: `hike-${hike.id}`,
+      start: hike.date,
+      end: dayjs(hike.date).add(hike.durationWithBreaks, 'hours').toDate(),
+      title: `Hike${hike.description ? ` - ${hike.description}` : ''}`,
+      color: "",
+    })) ?? []);
+    events = events.concat(gymSessions?.map((session) => ({
+      id: `gym-${session.id}`,
+      start: session.date,
+      end: dayjs(session.date).add(1, 'hour').toDate(),
+      title: `Gym${session.note ? ` - ${session.note}` : ''}${session.location ? ` (${session.location})` : ''}`,
+      color: "",
+    })) ?? []);
+    events = events.concat(runs?.map((run) => ({
+      id: `run-${run.id}`,
+      start: run.date,
+      end: dayjs(run.date).add(Math.max(run.duration, 60 * 60), 'seconds').toDate(),
+      title: `Run${run.description ? ` - ${run.description}` : ''}`,
+      color: "",
+    })) ?? []);
+    events.sort((a, b) => {
+      if (a.start && b.start) {
+        return dayjs(a.start.toString()).diff(dayjs(b.start.toString()));
+      } else {
+        return 0;
+      }
+    });
+    return events;
+  }, [calendarEntries, hikes, gymSessions, runs]);
 
   return (
     <Wrapper>
@@ -360,9 +410,10 @@ export const Home = () => {
           <NavigationTitle title="Calendar" link="/calendar" />
 
           <Calendar
+            events={calendarEvents}
             selectedDate={dayjs()}
             setSelectedDate={() => { }}
-            searchText=""
+            trimmedSearchText=""
             searchIndex={0}
             isHomePage
           />

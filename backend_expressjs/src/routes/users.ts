@@ -14,6 +14,7 @@ import { Request, Response, Router } from "express";
 import multer from "multer";
 import prisma from '../utils/prisma';
 import bcrypt from 'bcrypt';
+import dayjs from "dayjs";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -210,7 +211,7 @@ router.get('/backup/:dataType', async (req: Request, res: Response) => {
     }
   }
 
-  const fileName = `backup=${dataType}-${new Date().toISOString()}.json`;
+  const fileName = `backup=${dataType}-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.json`;
 
   res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
   res.setHeader('Content-Type', 'application/json');

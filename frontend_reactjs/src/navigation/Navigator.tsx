@@ -5,7 +5,7 @@ import {
   DailyDiary,
   Journal,
   Notes,
-  Hikes,
+  Hiking,
   VideoGames,
   Recipes,
   Piano,
@@ -109,8 +109,8 @@ export const Navigator = () => {
           element: <SportsWrapper />,
           children: [
             {
-              path: "/sports/hikes",
-              element: <Hikes />,
+              path: "/sports/hiking",
+              element: <Hiking />,
             },
             {
               path: "/sports/gym",

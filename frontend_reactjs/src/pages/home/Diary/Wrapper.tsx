@@ -124,7 +124,10 @@ export const DiaryWrapper = () => {
               width: { xs: 'auto', sm: 105 },
               textWrap: 'nowrap',
             }}
-            onClick={() => setSelectedDate(dayjs())}
+            onClick={() => {
+              setSelectedDate(dayjs());
+              routedDate?.setTime(dayjs().valueOf());
+            }}
             disabled={Boolean(searchText.trim()) || dayjs().isSame(selectedDate, 'day')}
           >
             {isDaily ? "Today" : "This Year"}
@@ -184,7 +187,7 @@ export const DiaryWrapper = () => {
         </Box>
       </Box>
 
-      <Outlet context={{ searchText, selectedDate, sortOrder }} />
+      <Outlet context={{ searchText, selectedDate, routedDate, sortOrder }} />
 
     </Wrapper>
   );

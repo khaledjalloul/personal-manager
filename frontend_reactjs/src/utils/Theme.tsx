@@ -23,7 +23,8 @@ const lightPalette: ThemeOptions["palette"] = {
   },
   warning: {
     main: "#ed6c02",
-    dark: "#994a00"
+    dark: "#bc5b00",
+    "900": "#a95200"
   }
 }
 
@@ -46,11 +47,13 @@ const darkPalette: ThemeOptions["palette"] = {
   },
   success: {
     main: "#66bb6a",
-    dark: "#215324"
+    dark: "#215324",
+    "900": "#173b1a"
   },
   warning: {
     main: "#ed6c02",
-    dark: "#683200"
+    dark: "#683200",
+    "900": "#4b2400",
   }
 }
 

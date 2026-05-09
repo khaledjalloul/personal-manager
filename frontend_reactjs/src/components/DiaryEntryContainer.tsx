@@ -7,16 +7,19 @@ import { useCreateDiaryEntry, useEditDiaryEntry } from "../api";
 import { useCtrlS } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
 import { useNavigate } from "react-router-dom";
+import styled, { DefaultTheme, keyframes } from "styled-components";
 
 export const DiaryEntryContainer = ({
   entry,
   searchText,
   selectedDate,
+  routedDate,
   dataFetched
 }: {
   entry: DiaryEntry
   searchText: string
   selectedDate: Dayjs
+  routedDate?: Date
   dataFetched: boolean
 }) => {
 
@@ -31,6 +34,8 @@ export const DiaryEntryContainer = ({
   const { mutate: editEntry, isPending: editLoading, isSuccess: editSuccess } = useEditDiaryEntry(entry.type);
 
   const isDaily = entry.type === DiaryEntryType.Daily;
+  const isSelected = searchText.length < 3 && selectedDate.isSame(entry.date, 'day');
+  const isHighlighted = dayjs(routedDate).isSame(entry.date, 'day'); // Routed date if defined, otherwise today's date
 
   const save = () => {
     if (!isEditing) return;
@@ -55,9 +60,9 @@ export const DiaryEntryContainer = ({
   const entryRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (dataFetched && searchText.length < 3 && selectedDate.isSame(entry.date, 'day'))
-      entryRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [dataFetched, selectedDate, searchText]);
+    if (dataFetched && isSelected)
+      entryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [dataFetched, isSelected]);
 
   useEffect(() => {
     if (createSuccess || editSuccess) setIsEditing(false);
@@ -66,19 +71,21 @@ export const DiaryEntryContainer = ({
   return (
     <Grid ref={entryRef} container onDoubleClick={() => setIsEditing(true)}>
       <Grid size={{ xs: 12, md: 2, xl: 1.5 }} sx={{ display: 'flex' }}>
-        <Box sx={{
-          flexGrow: 1,
-          borderRadius: '8px',
-          backgroundColor: 'primary.light',
-          p: 1,
-          pl: 2,
-          mr: { xs: 0, md: 1 },
-          mb: { xs: 1, md: 0 },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          border: `solid 1px ${palette.grey[700]}`
-        }}>
+        <BoxWithHighlight
+          isHighlighted={isHighlighted}
+          sx={{
+            flexGrow: 1,
+            borderRadius: '8px',
+            backgroundColor: 'primary.light',
+            p: 1,
+            pl: 2,
+            mr: { xs: 0, md: 1 },
+            mb: { xs: 1, md: 0 },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            border: `solid 1px ${palette.grey[700]}`
+          }}>
           <Box sx={{
             display: 'flex',
             flexDirection: { xs: 'row', md: 'column' },
@@ -147,22 +154,24 @@ export const DiaryEntryContainer = ({
               </IconButton>
             </Box>
           )}
-        </Box>
+        </BoxWithHighlight>
       </Grid>
 
       <Grid size={{ xs: 12, md: ((isEditing || workContent.trim()) ? 7 : 10), xl: ((isEditing || workContent.trim()) ? 7.5 : 10.5) }} sx={{ display: 'flex' }}>
-        <Box sx={{
-          flexGrow: 1,
-          borderTopLeftRadius: '8px',
-          borderBottomLeftRadius: { xs: (isEditing || workContent.trim()) ? 0 : '8px', md: '8px' },
-          borderTopRightRadius: { xs: '8px', md: (isEditing || workContent.trim()) ? 0 : '8px' },
-          borderBottomRightRadius: (isEditing || workContent.trim()) ? 0 : '8px',
-          backgroundColor: 'primary.light',
-          p: 2,
-          border: `solid 1px ${palette.grey[700]}`,
-          borderRight: { xs: `solid 1px ${palette.grey[700]}`, md: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}` },
-          borderBottom: { xs: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}`, md: `solid 1px ${palette.grey[700]}` },
-        }}>
+        <BoxWithHighlight
+          isHighlighted={isHighlighted}
+          sx={{
+            flexGrow: 1,
+            borderTopLeftRadius: '8px',
+            borderBottomLeftRadius: { xs: (isEditing || workContent.trim()) ? 0 : '8px', md: '8px' },
+            borderTopRightRadius: { xs: '8px', md: (isEditing || workContent.trim()) ? 0 : '8px' },
+            borderBottomRightRadius: (isEditing || workContent.trim()) ? 0 : '8px',
+            backgroundColor: 'primary.light',
+            p: 2,
+            border: `solid 1px ${palette.grey[700]}`,
+            borderRight: { xs: `solid 1px ${palette.grey[700]}`, md: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}` },
+            borderBottom: { xs: (isEditing || workContent.trim()) ? 'none' : `solid 1px ${palette.grey[700]}`, md: `solid 1px ${palette.grey[700]}` },
+          }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
               <SearchTextHighlight text={content} searchText={searchText} />
@@ -186,7 +195,7 @@ export const DiaryEntryContainer = ({
               onChange={(e) => setContent(e.target.value)}
             />
           )}
-        </Box>
+        </BoxWithHighlight>
       </Grid>
 
       <Grid
@@ -196,15 +205,17 @@ export const DiaryEntryContainer = ({
           overflow: 'hidden'
         }}
       >
-        <Box sx={{
-          flexGrow: 1,
-          borderTopRightRadius: { xs: 0, md: '8px' },
-          borderBottomRightRadius: '8px',
-          borderBottomLeftRadius: { xs: '8px', md: 0 },
-          backgroundColor: 'primary.light',
-          p: 2,
-          border: `solid 1px ${palette.grey[700]}`,
-        }}>
+        <BoxWithHighlight
+          isHighlighted={isHighlighted}
+          sx={{
+            flexGrow: 1,
+            borderTopRightRadius: { xs: 0, md: '8px' },
+            borderBottomRightRadius: '8px',
+            borderBottomLeftRadius: { xs: '8px', md: 0 },
+            backgroundColor: 'primary.light',
+            p: 2,
+            border: `solid 1px ${palette.grey[700]}`,
+          }}>
           {!isEditing ? (
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
               <SearchTextHighlight text={workContent} searchText={searchText} />
@@ -227,8 +238,22 @@ export const DiaryEntryContainer = ({
               onChange={(e) => setWorkContent(e.target.value)}
             />
           )}
-        </Box>
+        </BoxWithHighlight>
       </Grid>
     </Grid>
   )
 }
+
+const highlightAnimation = ({ theme }: { theme: DefaultTheme }) => keyframes`
+  0% {
+    background-color: ${theme.palette.warning.dark};
+  }
+  100% {
+    background-color: ${theme.palette.primary.light};
+  }
+`;
+
+const BoxWithHighlight = styled(Box) <{ isHighlighted: boolean }>`
+  animation-name: ${({ isHighlighted }) => (isHighlighted ? highlightAnimation : 'none')};
+  animation-duration: 5s;
+`;

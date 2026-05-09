@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [userData, setUserData] = useState<UserData>();
-  const [themeData, setThemeData] = useState<ThemeData>({ darkMode: true })
+  const [themeData, setThemeData] = useState<ThemeData>({ darkMode: userData?.darkMode ?? false });
   const [mockReady, setMockReady] = useState(false);
 
   const contextData = {
@@ -25,6 +25,7 @@ const App = () => {
         client.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${userData?.token}`;
+        setThemeData({ darkMode: userData.darkMode ?? true });
 
         client.interceptors.response.use(
           (res) => res,

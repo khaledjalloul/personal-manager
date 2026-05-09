@@ -227,8 +227,8 @@ model Hike {
   distance           Float
   ascent             Float
   descent            Float
-  duration           Float
-  durationWithBreaks Float
+  duration           Float // in hours
+  durationWithBreaks Float // in hours
   coverImage         String
   images             String[]
   googleMapsUrl      String
@@ -248,6 +248,7 @@ model GymSession {
   userId    Int
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime
+  location  String
   note      String
   exercises GymExercise[]
 }
@@ -271,7 +272,7 @@ model Run {
   date          DateTime
   description   String
   distance      Float // in kilometers
-  duration      Float
+  duration      Float // in seconds
   elevationGain Float // in meters
   stravaUrl     String
 }
