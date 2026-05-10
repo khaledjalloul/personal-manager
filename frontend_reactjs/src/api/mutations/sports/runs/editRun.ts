@@ -10,9 +10,11 @@ export type EditRunRequestBody = {
   date?: Date;
   description?: string;
   distance?: number;
-  duration?: number;
+  movingTime?: number;
+  elapsedTime?: number;
   elevationGain?: number;
-  stravaUrl?: string;
+  stravaActivityId?: string;
+  mapPolyline?: string;
 };
 
 const mutationFn = async (data: EditRunRequestBody) => {

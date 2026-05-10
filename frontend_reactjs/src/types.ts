@@ -213,9 +213,11 @@ export type Run = {
   date: Date;
   description: string;
   distance: number;
-  duration: number;
+  movingTime: number;
+  elapsedTime: number;
   elevationGain: number;
-  stravaUrl: string;
+  stravaActivityId: string;
+  mapPolyline: string;
 }
 
 export type Swim = {

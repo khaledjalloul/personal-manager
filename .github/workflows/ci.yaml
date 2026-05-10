@@ -36,10 +36,14 @@ jobs:
       - name: Build frontend
         if: env.FRONTEND_CHANGED == 'true'
         env:
+          REACT_APP_CLIENT_URL: ${{ secrets.REACT_APP_CLIENT_URL }}
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_STRAVA_CLIENT_ID: ${{ secrets.REACT_APP_STRAVA_CLIENT_ID }}
         run: |
           printf "%s\n" \
+            "REACT_APP_CLIENT_URL=$REACT_APP_CLIENT_URL" \
             "REACT_APP_API_URL=$REACT_APP_API_URL" \
+            "REACT_APP_STRAVA_CLIENT_ID=$REACT_APP_STRAVA_CLIENT_ID" \
             "WDS_SOCKET_PORT=0" \
             > frontend_reactjs/.env.local
           docker compose -f docker/compose.yaml run --user root personal-manager npm --prefix frontend_reactjs run build

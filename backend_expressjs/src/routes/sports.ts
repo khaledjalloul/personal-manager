@@ -309,7 +309,7 @@ router.get('/gym/last-exercises', async (req: Request, res: Response) => {
 router.get('/runs', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
   var orderBy = (req.query.orderBy as string) ?? 'date';
-  orderBy = orderBy === 'pace' ? 'duration' : orderBy; // handle 'pace' as a special case since it's not a real field in the database
+  orderBy = orderBy === 'pace' ? 'date' : orderBy; // handle 'pace' as a special case since it's not a real field in the database
   const orderDirection = (req.query.orderDirection as string) === 'asc' ? 'asc' : 'desc';
 
   const runs = await prisma.run.findMany({
@@ -330,9 +330,11 @@ router.post('/runs', async (req: Request, res: Response) => {
       date: new Date(data.date),
       description: data.description,
       distance: data.distance,
-      duration: data.duration,
+      movingTime: data.movingTime,
+      elapsedTime: data.elapsedTime,
       elevationGain: data.elevationGain,
-      stravaUrl: data.stravaUrl
+      stravaActivityId: data.stravaActivityId,
+      mapPolyline: data.mapPolyline
     },
   });
   res.json(newRun);
@@ -354,26 +356,88 @@ router.post('/runs/upload', upload.single('file'), async (req: Request, res: Res
     date: new Date(session.start_time),
     description: "",
     distance: session.total_distance ?? 0,
-    duration: session.total_timer_time ?? 0,
+    movingTime: session.total_timer_time ?? 0,
+    elapsedTime: session.total_elapsed_time ?? 0,
     elevationGain: (session.total_ascent ?? 0) * 1000,
-    stravaUrl: "",
+    stravaActivityId: "",
+    mapPolyline: "",
   }
 
   res.json(runObject);
 });
 
+router.post('/runs/sync', async (req: Request, res: Response) => {
+  const { authorizationCode } = req.body;
+
+  const oath_params = {
+    "client_id": process.env.STRAVA_CLIENT_ID,
+    "client_secret": process.env.STRAVA_CLIENT_SECRET,
+    "code": authorizationCode,
+    "grant_type": "authorization_code",
+  }
+
+  const access_token = await fetch("https://www.strava.com/oauth/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(oath_params),
+  }).then(res => res.json()).then(data => data.access_token).catch(err => {
+    console.error("Error exchanging authorization code for access token:", err);
+    throw err;
+  });
+
+  const strava_activities = await fetch("https://www.strava.com/api/v3/athlete/activities", {
+    headers: {
+      "Authorization": `Bearer ${access_token}`,
+    },
+  }).then(res => res.json()).catch(err => {
+    console.error("Error fetching activities from Strava API:", err);
+    throw err;
+  })
+
+  strava_activities.forEach(async (activity: any) => {
+    if (activity.type !== "Run") return;
+
+    const existingRun = await prisma.run.findFirst({
+      where: {
+        userId: req.user.id,
+        stravaActivityId: activity.id.toString(),
+      }
+    });
+    if (existingRun) return;
+
+    await prisma.run.create({
+      data: {
+        user: { connect: { id: req.user.id } },
+        date: new Date(activity.start_date),
+        description: activity.name,
+        distance: activity.distance / 1000,
+        movingTime: activity.moving_time,
+        elapsedTime: activity.elapsed_time,
+        elevationGain: activity.total_elevation_gain,
+        stravaActivityId: activity.id.toString(),
+        mapPolyline: activity.map?.summary_polyline ?? "",
+      },
+    })
+  });
+  res.json({ message: 'Strava sync successful' });
+});
+
 router.post('/runs/:id', async (req: Request, res: Response) => {
   const runId = parseInt(req.params.id);
-  const { description, date, distance, duration, elevationGain, stravaUrl } = req.body;
+  const { description, date, distance, movingTime, elapsedTime, elevationGain, stravaActivityId, mapPolyline } = req.body;
   const updatedRun = await prisma.run.update({
     where: { id: runId },
     data: {
       date: new Date(date),
       description,
       distance,
-      duration,
+      movingTime,
+      elapsedTime,
       elevationGain,
-      stravaUrl
+      stravaActivityId,
+      mapPolyline
     }
   });
   res.json(updatedRun);

@@ -41,11 +41,13 @@ export const RunningTableRow = ({
   const [date, setDate] = useState(dayjs(run.date));
   const [description, setDescription] = useState(run.description);
   const [distance, setDistance] = useState(run.distance);
-  const [duration, setDuration] = useState(run.duration);
+  const [movingTime, setMovingTime] = useState(run.movingTime);
+  const [elapsedTime, setElapsedTime] = useState(run.elapsedTime);
   const [elevationGain, setElevationGain] = useState(run.elevationGain);
-  const [stravaUrl, setStravaUrl] = useState(run.stravaUrl);
+  const [stravaActivityId, setStravaActivityId] = useState(run.stravaActivityId);
+  const [mapPolyline, setMapPolyline] = useState(run.mapPolyline);
 
-  const pace = distance > 0 ? duration / distance : 0;
+  const pace = distance > 0 ? movingTime / distance : 0;
 
   const { mutate: createRun, isPending: createLoading, isSuccess: createSuccess } = useCreateRun();
   const { mutate: editRun, isPending: editLoading, isSuccess: editSuccess } = useEditRun();
@@ -60,18 +62,22 @@ export const RunningTableRow = ({
         date: date.toDate(),
         description: description.trim(),
         distance,
-        duration,
+        movingTime,
+        elapsedTime,
         elevationGain,
-        stravaUrl: stravaUrl.trim(),
+        stravaActivityId: stravaActivityId.trim(),
+        mapPolyline: mapPolyline.trim(),
       });
     else if (setIsAddingRun)
       createRun({
         date: date.toDate(),
         description: description.trim(),
         distance,
-        duration,
+        movingTime,
+        elapsedTime,
         elevationGain,
-        stravaUrl: stravaUrl.trim(),
+        stravaActivityId: stravaActivityId.trim(),
+        mapPolyline: mapPolyline.trim(),
       });
   };
 
@@ -96,7 +102,8 @@ export const RunningTableRow = ({
     if (uploadFitFileSuccess && uploadFitFileData) {
       setDate(dayjs(uploadFitFileData.date));
       setDistance(uploadFitFileData.distance);
-      setDuration(uploadFitFileData.duration);
+      setMovingTime(uploadFitFileData.movingTime);
+      setElapsedTime(uploadFitFileData.elapsedTime);
       setElevationGain(uploadFitFileData.elevationGain);
     }
   }, [uploadFitFileSuccess, uploadFitFileData]);
@@ -170,18 +177,37 @@ export const RunningTableRow = ({
       </TableCell>
 
       <TableCell>
-        {!isEditing ? `${Math.floor(duration / 60).toString().padStart(2, '0')}:${(duration % 60).toFixed(0).padStart(2, '0')}` :
+        {!isEditing ? `${Math.floor(movingTime / 60).toString().padStart(2, '0')}:${(movingTime % 60).toFixed(0).padStart(2, '0')}` :
           <TextField
             variant="standard"
-            placeholder="Duration"
-            value={duration}
+            placeholder="Moving Time"
+            value={movingTime}
             onChange={(e) => {
-              const newDuration = parseFloat(e.target.value);
-              setDuration(isNaN(newDuration) ? 0 : newDuration);
+              const newMovingTime = parseFloat(e.target.value);
+              setMovingTime(isNaN(newMovingTime) ? 0 : newMovingTime);
             }}
             slotProps={{
               input: {
-                endAdornment: <InputAdornment position="end">sec ({Math.floor(duration / 60).toString().padStart(2, '0')}:{(duration % 60).toFixed(0).padStart(2, '0')})</InputAdornment>,
+                endAdornment: <InputAdornment position="end">sec ({Math.floor(movingTime / 60).toString().padStart(2, '0')}:{(movingTime % 60).toFixed(0).padStart(2, '0')})</InputAdornment>,
+              }
+            }}
+          />
+        }
+      </TableCell>
+
+      <TableCell>
+        {!isEditing ? `${Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:${(elapsedTime % 60).toFixed(0).padStart(2, '0')}` :
+          <TextField
+            variant="standard"
+            placeholder="Elapsed Time"
+            value={elapsedTime}
+            onChange={(e) => {
+              const newElapsedTime = parseFloat(e.target.value);
+              setElapsedTime(isNaN(newElapsedTime) ? 0 : newElapsedTime);
+            }}
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="end">sec ({Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toFixed(0).padStart(2, '0')})</InputAdornment>,
               }
             }}
           />
@@ -215,18 +241,18 @@ export const RunningTableRow = ({
         {!isEditing ?
           <IconButton
             size="small"
-            disabled={!stravaUrl.trim()}
-            onClick={() => window.open(run.stravaUrl, "_blank")}
+            disabled={!stravaActivityId.trim()}
+            onClick={() => window.open(`https://www.strava.com/activities/${run.stravaActivityId}`, "_blank")}
           >
             <Link fontSize="small" />
           </IconButton>
           :
           <TextField
             variant="standard"
-            placeholder="Strava URL"
-            value={stravaUrl}
+            placeholder="Strava Activity ID"
+            value={stravaActivityId}
             sx={{ width: "100%" }}
-            onChange={(e) => setStravaUrl(e.target.value)}
+            onChange={(e) => setStravaActivityId(e.target.value)}
           />
         }
       </TableCell>
@@ -293,9 +319,11 @@ export const RunningTableRow = ({
               setDate(dayjs(run.date));
               setDescription(run.description);
               setDistance(run.distance);
-              setDuration(run.duration);
-              setStravaUrl(run.stravaUrl);
+              setMovingTime(run.movingTime);
+              setElapsedTime(run.elapsedTime);
               setElevationGain(run.elevationGain);
+              setStravaActivityId(run.stravaActivityId);
+              setMapPolyline(run.mapPolyline);
               setIsEditing(false);
             } else if (setIsAddingRun) {
               setIsAddingRun(false);

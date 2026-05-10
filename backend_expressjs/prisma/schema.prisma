@@ -266,15 +266,17 @@ model GymExercise {
 }
 
 model Run {
-  id            Int      @id @default(autoincrement())
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date          DateTime
-  description   String
-  distance      Float // in kilometers
-  duration      Float // in seconds
-  elevationGain Float // in meters
-  stravaUrl     String
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime
+  description      String
+  distance         Float // in kilometers
+  movingTime       Float // in seconds
+  elapsedTime      Float // in seconds
+  elevationGain    Float // in meters
+  stravaActivityId String
+  mapPolyline      String
 }
 
 model Swim {

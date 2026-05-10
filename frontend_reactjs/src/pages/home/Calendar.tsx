@@ -71,7 +71,7 @@ export const Calendar = () => {
     events = events.concat(runs?.map((run) => ({
       id: `run-${run.id}`,
       start: run.date,
-      end: dayjs(run.date).add(Math.max(run.duration, 60 * 60), 'seconds').toDate(),
+      end: dayjs(run.date).add(Math.max(run.elapsedTime, 60 * 60), 'seconds').toDate(),
       title: `Run${run.description ? ` - ${run.description}` : ''}`,
       color: "",
     })) ?? []);

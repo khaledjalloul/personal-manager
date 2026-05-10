@@ -11,15 +11,17 @@ import {
   TableSortLabel,
   Typography
 } from "@mui/material";
-import { useOutletContext } from "react-router-dom";
-import { useRuns } from "../../../api";
-import { useMemo, useState } from "react";
+import { useLocation, useOutletContext } from "react-router-dom";
+import { useRuns, useSyncRuns, STRAVA_AUTH_URL } from "../../../api";
+import { useEffect, useMemo, useState } from "react";
 import { RunningTableRow } from "../../../components";
-import { Add } from "@mui/icons-material";
+import { Add, Sync } from "@mui/icons-material";
 import { Run } from "../../../types";
 
 
 export const Running = () => {
+  const location = useLocation();
+
   const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
   const [isAddingRun, setIsAddingRun] = useState(false);
@@ -27,6 +29,7 @@ export const Running = () => {
   const [orderDirection, setOrderDirection] = useState<'asc' | 'desc'>('desc');
 
   const { data: runs } = useRuns({ searchText: searchText.trim(), orderBy, orderDirection });
+  const { mutate: syncRuns, isPending: syncLoading } = useSyncRuns();
 
   const handleSortClick = (field: keyof Run | 'pace') => {
     if (orderBy === field) {
@@ -39,13 +42,22 @@ export const Running = () => {
   const runsSorted = useMemo(() => {
     if (orderBy === 'pace' && runs) {
       return runs.slice().sort((a, b) => {
-        const paceA = a.duration / (a.distance || 1); // avoid division by zero
-        const paceB = b.duration / (b.distance || 1);
+        const paceA = a.movingTime / (a.distance || 1); // avoid division by zero
+        const paceB = b.movingTime / (b.distance || 1);
         return orderDirection === 'asc' ? paceA - paceB : paceB - paceA;
       });
     }
     return runs;
-  }, [orderBy, runs]);
+  }, [orderBy, orderDirection, runs]);
+
+  useEffect(() => {
+    if (location.search.includes("code")) {
+      const params = new URLSearchParams(location.search);
+      const code = params.get("code");
+      if (code)
+        syncRuns({ authorizationCode: code });
+    }
+  }, [location.search]);
 
   return (
     <Box sx={{ overflowY: 'auto', p: '32px', pt: 0 }}>
@@ -56,6 +68,10 @@ export const Running = () => {
 
         <IconButton onClick={() => setIsAddingRun(true)}>
           <Add />
+        </IconButton>
+
+        <IconButton href={STRAVA_AUTH_URL} loading={syncLoading}>
+          <Sync />
         </IconButton>
       </Box>
 
@@ -94,11 +110,20 @@ export const Running = () => {
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>
                   <TableSortLabel
-                    active={orderBy === 'duration'}
-                    onClick={() => handleSortClick('duration')}
+                    active={orderBy === 'movingTime'}
+                    onClick={() => handleSortClick('movingTime')}
                     direction={orderDirection}
                   >
-                    Duration
+                    Moving Time
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>
+                  <TableSortLabel
+                    active={orderBy === 'elapsedTime'}
+                    onClick={() => handleSortClick('elapsedTime')}
+                    direction={orderDirection}
+                  >
+                    Elapsed Time
                   </TableSortLabel>
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>
@@ -119,7 +144,7 @@ export const Running = () => {
                     Elevation Gain
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Strava URL</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Strava Link</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -132,9 +157,11 @@ export const Running = () => {
                     date: new Date(),
                     description: "",
                     distance: 0,
-                    duration: 0,
+                    movingTime: 0,
+                    elapsedTime: 0,
                     elevationGain: 0,
-                    stravaUrl: "",
+                    stravaActivityId: "",
+                    mapPolyline: ""
                   }}
                   index={-1}
                   searchText={searchText}
