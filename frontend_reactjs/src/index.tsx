@@ -1,10 +1,9 @@
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Theme, ThemeContext, ThemeData, UserContext, UserData } from "./utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Navigator } from "./navigation";
 import client from "./api/client";
-import { worker } from './mocks/browser'
 import { HttpStatusCode } from "axios";
 
 const queryClient = new QueryClient();
@@ -12,7 +11,6 @@ const queryClient = new QueryClient();
 const App = () => {
   const [userData, setUserData] = useState<UserData>();
   const [themeData, setThemeData] = useState<ThemeData>({ darkMode: userData?.darkMode ?? false });
-  const [mockReady, setMockReady] = useState(false);
 
   const contextData = {
     userData,
@@ -43,22 +41,12 @@ const App = () => {
     },
   };
 
-  useEffect(() => {
-    const waitForMock = async () => {
-      if (process.env.REACT_APP_MOCK_API === "true")
-        return worker.start()
-    }
-    waitForMock().then(() => {
-      setMockReady(true);
-    });
-  }, []);
-
   return (
     <UserContext.Provider value={contextData}>
       <ThemeContext.Provider value={{ themeData, setThemeData }}>
         <QueryClientProvider client={queryClient}>
           <Theme themeData={themeData}>
-            {mockReady ? <Navigator /> : <div />}
+            <Navigator />
           </Theme>
         </QueryClientProvider>
       </ThemeContext.Provider>
