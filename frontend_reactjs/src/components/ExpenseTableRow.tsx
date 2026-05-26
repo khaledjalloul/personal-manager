@@ -13,14 +13,15 @@ import {
 } from "@mui/material";
 import { Expense, ExpenseType } from "../types";
 import { Clear, Delete, Edit, Save } from "@mui/icons-material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useCreateExpense, useDeleteExpense, useEditExpense, useExpensesCategories } from "../api";
 import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ConfirmDeleteDialog } from "./modals";
-import { useCtrlS } from "../utils";
+import { useCtrlS, UserContext } from "../utils";
 import { SearchTextHighlight } from "./SearchTextHighlight";
+import { useNavigate } from "react-router-dom";
 
 
 export const ExpenseTableRow = ({
@@ -38,6 +39,8 @@ export const ExpenseTableRow = ({
   isAddingExpense?: boolean;
   setIsAddingExpense?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const navigate = useNavigate();
+  const { userData } = useContext(UserContext);
 
   const [isEditing, setIsEditing] = useState(isAddingExpense);
   const [date, setDate] = useState(dayjs(expense.date));
@@ -101,7 +104,14 @@ export const ExpenseTableRow = ({
       onDoubleClick={editable ? () => setIsEditing(true) : undefined}
     >
       <TableCell>
-        {!isEditing ? date.format("DD.MM.YYYY") :
+        {!isEditing ? <Typography variant="body2"
+          sx={editable || !userData?.showPrivateContent ? {} : { cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+          onClick={editable || !userData?.showPrivateContent ? undefined : () => {
+            navigate("/diary", { state: { routedDate: date } });
+          }}
+        >
+          {date.format("DD.MM.YYYY")}
+        </Typography> :
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={date}

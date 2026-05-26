@@ -264,7 +264,7 @@ export const ExpensesStatistics = () => {
                     {category.total.toFixed(2)} CHF
                   </TableCell>
                 ))}
-                <TableCell>{statistics.monthlyAverageExpenses.toFixed(2)} CHF</TableCell>
+                <TableCell>{Object.values(statistics.categories).reduce((sum, cat) => sum + cat.total, 0).toFixed(2)} CHF</TableCell>
               </TableRow>
             </TableBody>
           </Table>
