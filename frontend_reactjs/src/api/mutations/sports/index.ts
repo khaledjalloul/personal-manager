@@ -1,9 +1,5 @@
 export * from "./gym";
-
-export * from "./createHike";
-export * from "./editHike";
-export * from "./deleteHike";
-
+export * from "./hikes";
 export * from "./runs";
 
 export * from "./createSwim";

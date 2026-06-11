@@ -219,19 +219,21 @@ model PianoPiece {
 // -------- Sports --------
 
 model Hike {
-  id                 Int      @id @default(autoincrement())
-  userId             Int
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date               DateTime
-  description        String
-  distance           Float
-  ascent             Float
-  descent            Float
-  duration           Float // in hours
-  durationWithBreaks Float // in hours
-  coverImage         String
-  images             String[]
-  googleMapsUrl      String
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime
+  description      String
+  distance         Float // in kilometers
+  ascent           Float // in meters
+  descent          Float // in meters
+  movingTime       Float // in seconds
+  elapsedTime      Float // in seconds
+  coverImage       String
+  images           String[]
+  googleMapsUrl    String
+  stravaActivityId String
+  mapPolyline      String
 }
 
 model GymExerciseType {

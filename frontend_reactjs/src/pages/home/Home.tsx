@@ -362,7 +362,7 @@ export const Home = () => {
     events = events.concat(hikes?.map((hike) => ({
       id: `hike-${hike.id}`,
       start: hike.date,
-      end: dayjs(hike.date).add(hike.durationWithBreaks, 'hours').toDate(),
+      end: dayjs(hike.date).add(hike.elapsedTime, 'seconds').toDate(),
       title: `Hike${hike.description ? ` - ${hike.description}` : ''}`,
       color: "",
     })) ?? []);

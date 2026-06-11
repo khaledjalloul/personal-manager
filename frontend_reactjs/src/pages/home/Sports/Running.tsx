@@ -12,7 +12,7 @@ import {
   Typography
 } from "@mui/material";
 import { useLocation, useOutletContext } from "react-router-dom";
-import { useRuns, useSyncRuns, STRAVA_AUTH_URL } from "../../../api";
+import { useRuns, useSyncRuns, getStravaAuthUrl } from "../../../api";
 import { useEffect, useMemo, useState } from "react";
 import { RunningTableRow } from "../../../components";
 import { Add, Sync } from "@mui/icons-material";
@@ -70,7 +70,7 @@ export const Running = () => {
           <Add />
         </IconButton>
 
-        <IconButton href={STRAVA_AUTH_URL} loading={syncLoading}>
+        <IconButton href={getStravaAuthUrl("/sports/running")} loading={syncLoading}>
           <Sync />
         </IconButton>
       </Box>

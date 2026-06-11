@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "../../client";
+import client from "../../../client";
 import { AxiosError } from "axios";
-import { Hike } from "../../../types";
+import { Hike } from "../../../../types";
 
 const ENDPOINT = "sports/hikes";
 
@@ -11,11 +11,13 @@ export type CreateHikeRequestBody = {
   distance: number;
   ascent: number;
   descent: number;
-  duration: number;
-  durationWithBreaks: number;
+  movingTime: number;
+  elapsedTime: number;
   coverImage: string;
   images: string[];
   googleMapsUrl: string;
+  stravaActivityId: string;
+  mapPolyline: string;
 };
 
 const mutationFn = async (data: CreateHikeRequestBody) => {

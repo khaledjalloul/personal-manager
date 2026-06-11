@@ -4,13 +4,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../../client";
 import { AxiosError } from "axios";
 
-const ENDPOINT = "sports/runs/sync";
+const ENDPOINT = "sports/hikes/sync";
 
-export type SyncRunsRequestBody = {
+export type SyncHikesRequestBody = {
   authorizationCode: string;
 };
 
-const mutationFn = async (data: SyncRunsRequestBody) => {
+const mutationFn = async (data: SyncHikesRequestBody) => {
   return await client
     .post(`/${ENDPOINT}`, data)
     .then((res) => res.data)
@@ -20,14 +20,14 @@ const mutationFn = async (data: SyncRunsRequestBody) => {
     });
 };
 
-export const useSyncRuns = () => {
+export const useSyncHikes = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, AxiosError<{ message: string }>, SyncRunsRequestBody>({
+  return useMutation<void, AxiosError<{ message: string }>, SyncHikesRequestBody>({
     mutationFn,
     onSuccess: (data) => {
       queryClient.refetchQueries({
-        queryKey: ["sports/runs"],
+        queryKey: ["sports/hikes"],
       });
     },
   });

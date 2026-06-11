@@ -60,20 +60,14 @@ export const HikeCard = ({
   const [distance, setDistance] = useState(hike.distance);
   const [ascent, setAscent] = useState(hike.ascent);
   const [descent, setDescent] = useState(hike.descent);
-  const [duration, setDuration] = useState(hike.duration);
-  const [durationWithBreaks, setDurationWithBreaks] = useState(hike.durationWithBreaks);
+  const [movingTime, setMovingTime] = useState(hike.movingTime);
+  const [elapsedTime, setElapsedTime] = useState(hike.elapsedTime);
   const [googleMapsUrl, setGoogleMapsUrl] = useState(hike.googleMapsUrl);
   const [coverImage, setCoverImage] = useState(hike.coverImage); // TODO: Add image upload
 
   const { mutate: createHike, isPending: createLoading, isSuccess: createSuccess } = useCreateHike();
   const { mutate: editHike, isPending: editLoading, isSuccess: editSuccess } = useEditHike();
   const { mutate: deleteHike, isPending: deleteLoading } = useDeleteHike();
-
-  const durationHours = Math.floor(hike.duration);
-  const durationMinutes = Math.round((hike.duration - durationHours) * 60);
-
-  const durationWithBreaksHours = Math.floor(hike.durationWithBreaks);
-  const durationWithBreaksMinutes = Math.round((hike.durationWithBreaks - durationWithBreaksHours) * 60);
 
   const isHighlighted = highlightedId === hike.id;
 
@@ -87,8 +81,8 @@ export const HikeCard = ({
         distance,
         ascent,
         descent,
-        duration,
-        durationWithBreaks,
+        movingTime,
+        elapsedTime,
         googleMapsUrl: googleMapsUrl.trim(),
         coverImage: coverImage?.trim()
       });
@@ -99,11 +93,13 @@ export const HikeCard = ({
         distance,
         ascent,
         descent,
-        duration,
-        durationWithBreaks,
+        movingTime,
+        elapsedTime,
         googleMapsUrl: googleMapsUrl.trim(),
         coverImage: coverImage?.trim(),
-        images: []
+        images: [],
+        stravaActivityId: "",
+        mapPolyline: "",
       });
   };
 
@@ -204,8 +200,8 @@ export const HikeCard = ({
                 setDistance(hike.distance);
                 setAscent(hike.ascent);
                 setDescent(hike.descent);
-                setDuration(hike.duration);
-                setDurationWithBreaks(hike.durationWithBreaks);
+                setMovingTime(hike.movingTime);
+                setElapsedTime(hike.elapsedTime);
                 setGoogleMapsUrl(hike.googleMapsUrl);
                 setIsEditing(false);
               } else {
@@ -266,7 +262,7 @@ export const HikeCard = ({
             <Straighten sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
-                {distance} km
+                {distance.toFixed(2)} km
               </Typography>
             ) : (
               <TextField
@@ -286,17 +282,19 @@ export const HikeCard = ({
             )}
           </Grid>
 
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid
+            size={{ xs: (descent || isEditing) ? 6 : 12 }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TrendingUp sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
-                {ascent} m
+                {ascent.toFixed(0)} m
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Ascent"
-                value={ascent.toFixed(2)}
+                value={ascent}
                 onChange={(e) => {
                   const newAscent = parseFloat(e.target.value);
                   setAscent(isNaN(newAscent) ? ascent : newAscent);
@@ -310,17 +308,23 @@ export const HikeCard = ({
             )}
           </Grid>
 
-          <Grid size={{ xs: 6 }} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Grid
+            size={{ xs: 6 }}
+            sx={{
+              display: (descent || isEditing) ? 'flex' : 'none',
+              alignItems: 'center',
+              gap: 1
+            }}>
             <TrendingDown sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
-                {descent} m
+                {descent.toFixed(0)} m
               </Typography>
             ) : (
               <TextField
                 variant="standard"
                 placeholder="Descent"
-                value={descent.toFixed(2)}
+                value={descent}
                 onChange={(e) => {
                   const newDescent = parseFloat(e.target.value);
                   setDescent(isNaN(newDescent) ? descent : newDescent);
@@ -338,20 +342,20 @@ export const HikeCard = ({
             <AccessTime sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
-                {durationHours} h {durationMinutes} m
+                {Math.floor(movingTime / 3600).toString().padStart(2, '0')} h {(movingTime % 3600 / 60).toFixed(0).padStart(2, '0')} m
               </Typography>
             ) : (
               <TextField
                 variant="standard"
-                placeholder="Duration (without breaks)"
-                value={duration.toFixed(2)}
+                placeholder="Moving Time"
+                value={movingTime}
                 onChange={(e) => {
-                  const newDuration = parseFloat(e.target.value);
-                  setDuration(isNaN(newDuration) ? duration : newDuration);
+                  const newMovingTime = parseFloat(e.target.value);
+                  setMovingTime(isNaN(newMovingTime) ? 0 : newMovingTime);
                 }}
                 slotProps={{
                   input: {
-                    endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">sec ({Math.floor(movingTime / 3600).toString().padStart(2, '0')}h{(movingTime % 3600 / 60).toFixed(0).padStart(2, '0')}m)</InputAdornment>,
                   }
                 }}
               />
@@ -362,20 +366,20 @@ export const HikeCard = ({
             <MoreTime sx={{ color: "text.primary" }} />
             {!isEditing ? (
               <Typography variant="body1">
-                {durationWithBreaksHours} h {durationWithBreaksMinutes} m
+                {Math.floor(elapsedTime / 3600).toString().padStart(2, '0')} h {(elapsedTime % 3600 / 60).toFixed(0).padStart(2, '0')} m
               </Typography>
             ) : (
               <TextField
                 variant="standard"
-                placeholder="Duration (with breaks)"
-                value={durationWithBreaks.toFixed(2)}
+                placeholder="Elapsed Time"
+                value={elapsedTime}
                 onChange={(e) => {
-                  const newDurationWithBreaks = parseFloat(e.target.value);
-                  setDurationWithBreaks(isNaN(newDurationWithBreaks) ? durationWithBreaks : newDurationWithBreaks);
+                  const newElapsedTime = parseFloat(e.target.value);
+                  setElapsedTime(isNaN(newElapsedTime) ? 0 : newElapsedTime);
                 }}
                 slotProps={{
                   input: {
-                    endAdornment: <InputAdornment position="end">h</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">sec ({Math.floor(elapsedTime / 3600).toString().padStart(2, '0')}h{(elapsedTime % 3600 / 60).toFixed(0).padStart(2, '0')}m)</InputAdornment>,
                   }
                 }}
               />

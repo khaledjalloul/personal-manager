@@ -172,11 +172,13 @@ export type Hike = {
   distance: number;
   ascent: number;
   descent: number;
-  duration: number;
-  durationWithBreaks: number;
+  movingTime: number;
+  elapsedTime: number;
   coverImage: string;
   images: string[];
   googleMapsUrl: string;
+  stravaActivityId: string;
+  mapPolyline: string;
 };
 
 

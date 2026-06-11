@@ -1,10 +1,10 @@
 import { Box, Grid, IconButton, Typography } from "@mui/material";
-import { useHikes } from "../../../api";
+import { getStravaAuthUrl, useHikes, useSyncHikes } from "../../../api";
 import { HikeCard } from "../../../components";
-import { Add } from "@mui/icons-material";
+import { Add, Sync } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Hike } from "../../../types";
-import { useOutletContext } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 
 const emptyHike: Hike = {
   id: -1,
@@ -13,14 +13,18 @@ const emptyHike: Hike = {
   ascent: 0,
   descent: 0,
   distance: 0,
-  duration: 0,
-  durationWithBreaks: 0,
+  movingTime: 0,
+  elapsedTime: 0,
   coverImage: "",
   googleMapsUrl: "",
-  images: []
+  images: [],
+  stravaActivityId: "",
+  mapPolyline: "",
 }
 
 export const Hiking = () => {
+  const location = useLocation();
+
   const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
   const [isAddingHike, setIsAddingHike] = useState(false);
@@ -28,11 +32,21 @@ export const Hiking = () => {
   const { data: hikes } = useHikes({
     searchText: searchText.trim(),
   });
+  const { mutate: syncHikes, isPending: syncLoading } = useSyncHikes();
 
   useEffect(() => {
     if (searchText.trim().length > 0 && isAddingHike)
       setIsAddingHike(false);
   }, [searchText]);
+
+  useEffect(() => {
+    if (location.search.includes("code")) {
+      const params = new URLSearchParams(location.search);
+      const code = params.get("code");
+      if (code)
+        syncHikes({ authorizationCode: code });
+    }
+  }, [location.search]);
 
   return (
     <Box sx={{ overflowY: 'auto', p: '32px', pt: 0 }}>
@@ -43,6 +57,10 @@ export const Hiking = () => {
 
         <IconButton onClick={() => setIsAddingHike(true)}>
           <Add />
+        </IconButton>
+
+        <IconButton href={getStravaAuthUrl("/sports/hiking")} loading={syncLoading}>
+          <Sync />
         </IconButton>
       </Box>
 

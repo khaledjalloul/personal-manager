@@ -8,6 +8,38 @@ import { Run } from '@prisma/client';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const syncFromStrava = async (authorizationCode: string, sportType: string) => {
+
+  const oath_params = {
+    "client_id": process.env.STRAVA_CLIENT_ID,
+    "client_secret": process.env.STRAVA_CLIENT_SECRET,
+    "code": authorizationCode,
+    "grant_type": "authorization_code",
+  }
+
+  const access_token = await fetch("https://www.strava.com/oauth/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(oath_params),
+  }).then(res => res.json()).then(data => data.access_token).catch(err => {
+    console.error("Error exchanging authorization code for access token:", err);
+    throw err;
+  });
+
+  const strava_activities = await fetch("https://www.strava.com/api/v3/athlete/activities", {
+    headers: {
+      "Authorization": `Bearer ${access_token}`,
+    },
+  }).then(res => res.json()).catch(err => {
+    console.error("Error fetching activities from Strava API:", err);
+    throw err;
+  })
+
+  return strava_activities.filter((activity: any) => activity.type === sportType);
+};
+
 const runningFitParser = new FitParser({
   force: true,
   speedUnit: 'km/h',
@@ -41,13 +73,53 @@ router.post('/hikes', async (req: Request, res: Response) => {
       distance: data.distance,
       ascent: data.ascent,
       descent: data.descent,
-      duration: data.duration,
-      durationWithBreaks: data.durationWithBreaks,
+      movingTime: data.movingTime,
+      elapsedTime: data.elapsedTime,
       coverImage: data.coverImage,
-      googleMapsUrl: data.googleMapsUrl
+      googleMapsUrl: data.googleMapsUrl,
+      stravaActivityId: data.stravaActivityId,
+      mapPolyline: data.mapPolyline,
     },
   });
   res.json(newHike);
+});
+
+
+router.post('/hikes/sync', async (req: Request, res: Response) => {
+  const { authorizationCode } = req.body;
+
+  const strava_activities = await syncFromStrava(authorizationCode, 'Hike').catch(err => {
+    console.error("Error syncing from Strava:", err);
+    return res.status(500).json({ message: 'Error syncing from Strava' });
+  });
+
+  strava_activities.forEach(async (activity: any) => {
+    const existingHike = await prisma.hike.findFirst({
+      where: {
+        userId: req.user.id,
+        stravaActivityId: activity.id.toString(),
+      }
+    });
+    if (existingHike) return;
+
+    await prisma.hike.create({
+      data: {
+        user: { connect: { id: req.user.id } },
+        date: new Date(activity.start_date),
+        description: activity.name,
+        distance: activity.distance / 1000, // km
+        ascent: activity.total_elevation_gain,
+        descent: 0,
+        movingTime: activity.moving_time,
+        elapsedTime: activity.elapsed_time,
+        coverImage: "",
+        googleMapsUrl: "",
+        stravaActivityId: activity.id.toString(),
+        mapPolyline: activity.map?.summary_polyline ?? "",
+      },
+    });
+  });
+  res.json({ message: 'Strava sync successful' });
 });
 
 router.post('/hikes/:id', async (req: Request, res: Response) => {
@@ -61,10 +133,12 @@ router.post('/hikes/:id', async (req: Request, res: Response) => {
       distance: data.distance,
       ascent: data.ascent,
       descent: data.descent,
-      duration: data.duration,
-      durationWithBreaks: data.durationWithBreaks,
+      movingTime: data.movingTime,
+      elapsedTime: data.elapsedTime,
       coverImage: data.coverImage,
-      googleMapsUrl: data.googleMapsUrl
+      googleMapsUrl: data.googleMapsUrl,
+      stravaActivityId: data.stravaActivityId,
+      mapPolyline: data.mapPolyline,
     }
   });
   res.json(updatedHike);
@@ -369,36 +443,12 @@ router.post('/runs/upload', upload.single('file'), async (req: Request, res: Res
 router.post('/runs/sync', async (req: Request, res: Response) => {
   const { authorizationCode } = req.body;
 
-  const oath_params = {
-    "client_id": process.env.STRAVA_CLIENT_ID,
-    "client_secret": process.env.STRAVA_CLIENT_SECRET,
-    "code": authorizationCode,
-    "grant_type": "authorization_code",
-  }
-
-  const access_token = await fetch("https://www.strava.com/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(oath_params),
-  }).then(res => res.json()).then(data => data.access_token).catch(err => {
-    console.error("Error exchanging authorization code for access token:", err);
-    throw err;
+  const strava_activities = await syncFromStrava(authorizationCode, 'Run').catch(err => {
+    console.error("Error syncing from Strava:", err);
+    return res.status(500).json({ message: 'Error syncing from Strava' });
   });
 
-  const strava_activities = await fetch("https://www.strava.com/api/v3/athlete/activities", {
-    headers: {
-      "Authorization": `Bearer ${access_token}`,
-    },
-  }).then(res => res.json()).catch(err => {
-    console.error("Error fetching activities from Strava API:", err);
-    throw err;
-  })
-
   strava_activities.forEach(async (activity: any) => {
-    if (activity.type !== "Run") return;
-
     const existingRun = await prisma.run.findFirst({
       where: {
         userId: req.user.id,
@@ -412,14 +462,14 @@ router.post('/runs/sync', async (req: Request, res: Response) => {
         user: { connect: { id: req.user.id } },
         date: new Date(activity.start_date),
         description: activity.name,
-        distance: activity.distance / 1000,
+        distance: activity.distance / 1000, // km
         movingTime: activity.moving_time,
         elapsedTime: activity.elapsed_time,
         elevationGain: activity.total_elevation_gain,
         stravaActivityId: activity.id.toString(),
         mapPolyline: activity.map?.summary_polyline ?? "",
       },
-    })
+    });
   });
   res.json({ message: 'Strava sync successful' });
 });
