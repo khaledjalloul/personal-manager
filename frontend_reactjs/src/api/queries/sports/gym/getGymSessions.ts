@@ -6,7 +6,6 @@ const ENDPOINT = "sports/gym/sessions";
 
 export type GetGymSessionsRequestParams = {
   searchText: string;
-  sortOrder?: "asc" | "desc";
 };
 
 const queryFn = (params: GetGymSessionsRequestParams) => async () => {

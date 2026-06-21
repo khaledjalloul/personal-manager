@@ -1,71 +1,32 @@
 import {
   Box,
-  FormControl,
-  FormControlLabel,
   IconButton,
   Paper,
-  Radio,
-  RadioGroup,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TableSortLabel,
   Typography,
-  useTheme
 } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { useGymExerciseTypes, useGymLastExercises, useGymSessions } from "../../../api";
-import { GymExerciseTypeContainer, GymSessionTableRow } from "../../../components";
-import { useContext, useEffect, useState } from "react";
+import { GymExerciseProgressGraphs, GymExerciseTypeContainer, GymSessionContainer } from "../../../components";
+import { useState } from "react";
 import { Add } from "@mui/icons-material";
-import { Bar, Line } from "react-chartjs-2";
-import { ThemeContext } from "../../../utils";
 import dayjs from "dayjs";
-import {
-  Chart as ChartJS, Tooltip, Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 export const Gym = () => {
-  const { palette } = useTheme();
-  const { themeData } = useContext(ThemeContext);
 
   const { searchText, highlightedId } = useOutletContext<{ searchText: string; highlightedId?: number }>();
 
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isAddingSession, setIsAddingSession] = useState(false);
-  const [graphExerciseType, setGraphExerciseType] = useState<number>(-1);
 
   const { data: allExerciseTypes } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: false });
-  const { data: exerciseTypesInTable } = useGymExerciseTypes({ searchText: searchText.trim(), searchInGymSessions: true });
-  const { data: sessions } = useGymSessions({ searchText: searchText.trim(), sortOrder });
+  const { data: sessions } = useGymSessions({ searchText: searchText.trim() });
   const { data: lastExercises } = useGymLastExercises();
 
-  const sessionsAsc = (sortOrder === 'asc' ? sessions : sessions?.slice().reverse()) ?? [];
-
-  useEffect(() => {
-    if (allExerciseTypes && allExerciseTypes.length > 0)
-      setGraphExerciseType(allExerciseTypes[0].id);
-  }, [allExerciseTypes]);
 
   return (
     <Box sx={{
@@ -96,6 +57,8 @@ export const Gym = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Sets</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Reps</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Weight</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
@@ -111,6 +74,8 @@ export const Gym = () => {
                   }}
                 >
                   <TableCell>{exerciseType.name}</TableCell>
+                  <TableCell>{hasExercises ? `${exerciseType.exercises![0].sets}` : '-'}</TableCell>
+                  <TableCell>{hasExercises ? `${exerciseType.exercises![0].reps}` : '-'}</TableCell>
                   <TableCell>{hasExercises ? `${exerciseType.exercises![0].weight} kg` : '-'}</TableCell>
                   <TableCell>{hasExercises ? dayjs(exerciseType.exercises![0].session.date).format("MMMM DD, YYYY") : '-'}</TableCell>
                   <TableCell>{hasExercises ? exerciseType.exercises![0].note : '-'}</TableCell>
@@ -125,95 +90,7 @@ export const Gym = () => {
         Exercise Progress
       </Typography>
 
-      <FormControl sx={{ alignSelf: 'center', mb: 2 }}>
-        <RadioGroup
-          row
-          sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
-          value={graphExerciseType}
-          onChange={(e) => setGraphExerciseType(parseInt(e.target.value))}
-        >
-          {allExerciseTypes?.map((type) => (
-            <FormControlLabel key={type.id} value={type.id} control={<Radio />} label={type.name} />
-          ))}
-        </RadioGroup>
-      </FormControl>
-
-      {sessions &&
-        <Box sx={{
-          width: '100%',
-          alignSelf: 'center',
-          display: 'flex',
-          flexDirection: { xs: 'column', lg: 'row' },
-          justifyContent: { xs: 'start', lg: 'space-around' },
-          gap: { xs: 5, lg: 0 }
-        }}>
-          <Box sx={{ width: { xs: '100%', lg: '45%' } }}>
-            <Line
-              data={{
-                labels: sessionsAsc.map((s) => dayjs(s.date).format('DD.MM.YYYY')),
-                datasets: allExerciseTypes?.find((t) => t.id === graphExerciseType) ? [{
-                  label: allExerciseTypes?.find((t) => t.id === graphExerciseType)?.name,
-                  data: sessionsAsc.map((session) => session.exercises.find((e) => e.type.id === graphExerciseType)?.weight),
-                  backgroundColor: palette.primary.main,
-                  borderColor: palette.primary.main,
-                }] : [],
-              }}
-              options={{
-                scales: {
-                  y: {
-                    ticks: {
-                      callback: (value) => `${value} kg`,
-                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                      stepSize: 5
-                    },
-                    beginAtZero: true,
-                  },
-                  x: {
-                    ticks: {
-                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                    }
-                  }
-                },
-                plugins: {
-                  legend: {
-                    display: false
-                  },
-                }
-              }} />
-          </Box>
-
-          <Box sx={{ width: { xs: '100%', lg: '45%' } }}>
-            <Bar data={{
-              labels: allExerciseTypes?.map(t => t.name) ?? [],
-              datasets: [{
-                label: 'Exercise Count',
-                data: allExerciseTypes?.map(type => type._count?.exercises),
-                backgroundColor: palette.primary.main,
-              }],
-            }}
-              options={{
-                scales: {
-                  y: {
-                    ticks: {
-                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                    },
-                    beginAtZero: true,
-                  },
-                  x: {
-                    ticks: {
-                      color: themeData.darkMode ? palette.grey[400] : palette.grey[700],
-                    }
-                  }
-                },
-                plugins: {
-                  legend: {
-                    display: false
-                  },
-                }
-              }} />
-          </Box>
-        </Box>
-      }
+      <GymExerciseProgressGraphs searchText={searchText} />
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 3 }}>
         <Typography variant="h5">
@@ -225,69 +102,31 @@ export const Gym = () => {
         </IconButton>
       </Box>
 
-      <Box>
-        <TableContainer component={Paper}>
-          <Table
-            size="small"
-            stickyHeader
-            sx={{
-              '& th': {
-                backgroundColor: "primary.main",
-                color: "primary.contrastText"
-              }
+      <Box sx={{ display: 'flex', flexDirection: 'column', marginX: '-32px' }}>
+        {isAddingSession && (
+          <GymSessionContainer
+            key={-1}
+            session={{
+              id: -1,
+              date: new Date(),
+              location: "",
+              note: "",
+              exercises: []
             }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <TableSortLabel
-                    active
-                    onClick={() => setSortOrder((prev) => prev === 'asc' ? 'desc' : 'asc')}
-                    direction={sortOrder}
-                  >
-                    Date
-                  </TableSortLabel>
-                </TableCell>
-                {exerciseTypesInTable?.map((type) => (
-                  <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }} key={type.id}>
-                    {type.name}
-                  </TableCell>
-                ))}
-                <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Note</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {isAddingSession && (
-                <GymSessionTableRow
-                  key={-1}
-                  session={{
-                    id: -1,
-                    date: new Date(),
-                    location: "",
-                    note: "",
-                    exercises: []
-                  }}
-                  index={-1}
-                  searchText={searchText}
-                  highlightedId={highlightedId}
-                  isAddingSession={isAddingSession}
-                  setIsAddingSession={setIsAddingSession}
-                />
-              )}
-              {sessions?.map((session, index) => (
-                <GymSessionTableRow
-                  key={session.id}
-                  session={session}
-                  index={index}
-                  searchText={searchText}
-                  highlightedId={highlightedId}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            searchText={searchText}
+            highlightedId={highlightedId}
+            isAddingSession={isAddingSession}
+            setIsAddingSession={setIsAddingSession}
+          />
+        )}
+        {sessions?.slice().reverse().map((session) => (
+          <GymSessionContainer
+            key={session.id}
+            session={session}
+            searchText={searchText}
+            highlightedId={highlightedId}
+          />
+        ))}
       </Box>
 
       <Typography variant="h5" sx={{ mt: 3 }}>

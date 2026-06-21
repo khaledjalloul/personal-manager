@@ -269,7 +269,6 @@ router.delete('/gym/exercises/:id', async (req: Request, res: Response) => {
 
 router.get('/gym/sessions', async (req: Request, res: Response) => {
   const searchText = (req.query.searchText as string) ?? "";
-  const sortOrder = (req.query.sortOrder as string) === 'desc' ? 'desc' : 'asc';
 
   const sessions = await prisma.gymSession.findMany({
     where: {
@@ -284,15 +283,12 @@ router.get('/gym/sessions', async (req: Request, res: Response) => {
     include: {
       exercises: {
         include: {
-          type: {
-            select: {
-              id: true,
-            }
-          }
-        }
+          type: true,
+        },
+        orderBy: { type: { name: "asc" } }
       },
     },
-    orderBy: { date: sortOrder },
+    orderBy: { date: "asc" },
   });
   res.json(sessions);
 });
