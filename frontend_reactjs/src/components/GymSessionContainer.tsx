@@ -141,7 +141,7 @@ const Exercise = ({
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="caption" sx={{ color: "grey.300" }}>Weight</Typography>
           {!isEditing ? (
-            <Typography>{weight}</Typography>
+            <Typography>{weight} kg</Typography>
           ) : (
             <TextField
               variant="standard"
@@ -260,7 +260,9 @@ export const GymSessionContainer = ({
       <Box sx={{
         display: 'flex',
         flexDirection: 'row',
-        gap: 4,
+        columnGap: 4,
+        rowGap: 1,
+        flexWrap: 'wrap',
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Today fontSize="small" sx={{ color: "text.primary" }} />
@@ -380,7 +382,7 @@ export const GymSessionContainer = ({
         )}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
         {exercises.map((exercise, index) => (
           <Exercise
             key={index}
