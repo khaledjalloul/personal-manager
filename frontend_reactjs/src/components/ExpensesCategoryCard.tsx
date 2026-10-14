@@ -16,8 +16,8 @@ export const ExpensesCategoryCard = ({
 }: {
   category: ExpensesCategory,
   searchText: string,
-  isAddingCategory: boolean,
-  setIsAddingCategory: Dispatch<SetStateAction<boolean>>
+  isAddingCategory?: boolean,
+  setIsAddingCategory?: Dispatch<SetStateAction<boolean>>
 
 }) => {
 
@@ -67,7 +67,7 @@ export const ExpensesCategoryCard = ({
   useKeybinding("Enter", addKeyword, false);
 
   useEffect(() => {
-    if (createSuccess) setIsAddingCategory(false);
+    if (createSuccess && setIsAddingCategory) setIsAddingCategory(false);
   }, [createSuccess]);
 
   useEffect(() => {
@@ -163,7 +163,7 @@ export const ExpensesCategoryCard = ({
             if (!isAddingCategory) {
               setName(category.name);
               setIsEditing(false);
-            } else {
+            } else if (setIsAddingCategory) {
               setIsAddingCategory(false);
             }
           }}>

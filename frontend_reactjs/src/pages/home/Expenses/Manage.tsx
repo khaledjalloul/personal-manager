@@ -283,16 +283,12 @@ export const ManageExpenses = () => {
           key={fundsCategory.id}
           category={{ ...fundsCategory, keywords: fundKeywords }}
           searchText={searchText}
-          isAddingCategory={isAddingCategory}
-          setIsAddingCategory={setIsAddingCategory}
         />
         {categories?.map((category) => (
           <ExpensesCategoryCard
             key={category.id}
             category={category}
             searchText={searchText}
-            isAddingCategory={isAddingCategory}
-            setIsAddingCategory={setIsAddingCategory}
           />
         ))}
       </Grid>

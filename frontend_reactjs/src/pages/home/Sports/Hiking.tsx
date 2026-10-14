@@ -93,8 +93,6 @@ export const Hiking = () => {
               hike={hike}
               searchText={searchText}
               highlightedId={highlightedId}
-              isAddingHike={isAddingHike}
-              setIsAddingHike={setIsAddingHike}
             />
           </Grid>
         ))}

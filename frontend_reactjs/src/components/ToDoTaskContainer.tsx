@@ -19,8 +19,8 @@ export const ToDoTaskContainer = ({
 }: {
   task: ToDoTask,
   searchText: string;
-  isAddingTask: boolean;
-  setIsAddingTask: Dispatch<SetStateAction<boolean>>;
+  isAddingTask?: boolean;
+  setIsAddingTask?: Dispatch<SetStateAction<boolean>>;
   editable?: boolean;
 }) => {
 
@@ -56,7 +56,7 @@ export const ToDoTaskContainer = ({
   useCtrlS(save);
 
   useEffect(() => {
-    if (createTaskSuccess) setIsAddingTask(false);
+    if (createTaskSuccess && setIsAddingTask) setIsAddingTask(false);
   }, [createTaskSuccess]);
 
   useEffect(() => {
@@ -157,7 +157,7 @@ export const ToDoTaskContainer = ({
                   setContent(task.content);
                   setStatus(task.status);
                   setIsEditing(false);
-                } else {
+                } else if (setIsAddingTask) {
                   setIsAddingTask(false);
                 }
               }}>

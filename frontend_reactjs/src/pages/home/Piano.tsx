@@ -185,8 +185,6 @@ export const Piano = () => {
                 pianoPiece={piece}
                 index={index}
                 searchText={searchText}
-                isAddingPiece={isAddingPiece}
-                setIsAddingPiece={setIsAddingPiece}
               />
             ))}
           </TableBody>

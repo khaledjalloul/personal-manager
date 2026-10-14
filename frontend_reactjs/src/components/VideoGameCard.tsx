@@ -48,8 +48,8 @@ export const VideoGameCard = ({
 }: {
   game: VideoGame,
   searchText: string,
-  isAddingGame: boolean,
-  setIsAddingGame: Dispatch<SetStateAction<boolean>>
+  isAddingGame?: boolean,
+  setIsAddingGame?: Dispatch<SetStateAction<boolean>>
 }) => {
 
   const [isEditing, setIsEditing] = useState(isAddingGame);
@@ -99,7 +99,7 @@ export const VideoGameCard = ({
   useCtrlS(save);
 
   useEffect(() => {
-    if (createSuccess) setIsAddingGame(false);
+    if (createSuccess && setIsAddingGame) setIsAddingGame(false);
   }, [createSuccess]);
 
   useEffect(() => {
@@ -186,7 +186,7 @@ export const VideoGameCard = ({
                 setStoreUrl(game.storeUrl);
                 setCoverImage(game.coverImage);
                 setIsEditing(false);
-              } else {
+              } else if (setIsAddingGame) {
                 setIsAddingGame(false);
               }
             }}>

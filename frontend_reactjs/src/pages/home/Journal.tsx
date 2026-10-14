@@ -260,8 +260,6 @@ export const Journal = () => {
                   key={entry.id}
                   entry={entry}
                   searchText={searchTextQuery}
-                  isAddingEntry={false}
-                  setIsAddingEntry={setIsAddingEntry}
                 />
               ))}
             </Box>
@@ -272,8 +270,6 @@ export const Journal = () => {
               key={entry.id}
               entry={entry}
               searchText={searchTextQuery}
-              isAddingEntry={false}
-              setIsAddingEntry={setIsAddingEntry}
             />
           ))}
         </Grid>

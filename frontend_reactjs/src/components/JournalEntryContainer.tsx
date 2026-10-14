@@ -18,8 +18,8 @@ export const JournalEntryContainer = ({
 }: {
   entry: JournalEntry
   searchText: string
-  isAddingEntry: boolean
-  setIsAddingEntry: Dispatch<SetStateAction<boolean>>;
+  isAddingEntry?: boolean
+  setIsAddingEntry?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
   const { palette } = useTheme();
@@ -60,16 +60,17 @@ export const JournalEntryContainer = ({
   useCtrlS(save);
 
   useEffect(() => {
-    if (createSuccess) setIsAddingEntry(false);
+    if (createSuccess && setIsAddingEntry) setIsAddingEntry(false);
   }, [createSuccess]);
 
   useEffect(() => {
     if (editSuccess) setIsEditing(false);
   }, [editSuccess]);
 
-  useEffect(() => {
-    setSubEntries(entry.subEntries);
-  }, [entry.subEntries]);
+  // TODO: Check if this needs to be uncommented.
+  // useEffect(() => {
+  //   setSubEntries(entry.subEntries);
+  // }, [entry.subEntries]);
 
   return (
     <Grid container onDoubleClick={() => setIsEditing(true)}>
@@ -219,7 +220,7 @@ export const JournalEntryContainer = ({
                       setContent(entry.content);
                       setSubEntries(entry.subEntries);
                       setIsEditing(false);
-                    } else {
+                    } else if (setIsAddingEntry) {
                       setIsAddingEntry(false);
                     }
                   }}>

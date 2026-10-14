@@ -27,8 +27,8 @@ export const ToDoMilestoneContainer = ({
 }: {
   milestone: ToDoMilestone
   searchText: string
-  isAddingMilestone: boolean
-  setIsAddingMilestone: Dispatch<SetStateAction<boolean>>
+  isAddingMilestone?: boolean
+  setIsAddingMilestone?: Dispatch<SetStateAction<boolean>>
 }) => {
 
   const [isAddingTask, setIsAddingTask] = useState(false);
@@ -66,7 +66,7 @@ export const ToDoMilestoneContainer = ({
   useCtrlS(save);
 
   useEffect(() => {
-    if (createMilestoneSuccess) setIsAddingMilestone(false);
+    if (createMilestoneSuccess && setIsAddingMilestone) setIsAddingMilestone(false);
   }, [createMilestoneSuccess]);
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export const ToDoMilestoneContainer = ({
                 setDescription(milestone.description);
                 setDate(dayjs(milestone.date));
                 setIsEditing(false);
-              } else {
+              } else if (setIsAddingMilestone) {
                 setIsAddingMilestone(false);
               }
             }}

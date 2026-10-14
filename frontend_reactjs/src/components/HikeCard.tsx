@@ -49,8 +49,8 @@ export const HikeCard = ({
   hike: Hike,
   searchText: string,
   highlightedId?: number,
-  isAddingHike: boolean,
-  setIsAddingHike: Dispatch<SetStateAction<boolean>>
+  isAddingHike?: boolean,
+  setIsAddingHike?: Dispatch<SetStateAction<boolean>>
 }) => {
   const navigate = useNavigate();
 
@@ -113,7 +113,7 @@ export const HikeCard = ({
   }, [isHighlighted]);
 
   useEffect(() => {
-    if (createSuccess) setIsAddingHike(false);
+    if (createSuccess && setIsAddingHike) setIsAddingHike(false);
   }, [createSuccess]);
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export const HikeCard = ({
                 setElapsedTime(hike.elapsedTime);
                 setGoogleMapsUrl(hike.googleMapsUrl);
                 setIsEditing(false);
-              } else {
+              } else if (setIsAddingHike) {
                 setIsAddingHike(false);
               }
             }}>

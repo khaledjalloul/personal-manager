@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { CalendarEntry, Note } from "../../../types";
+import { CalendarEntry } from "../../../types";
 import client from "../../client";
 
 const ENDPOINT = "calendar";

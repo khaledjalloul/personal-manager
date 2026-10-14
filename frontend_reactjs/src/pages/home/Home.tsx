@@ -446,8 +446,6 @@ export const Home = () => {
                 key={task.id}
                 task={task}
                 searchText=""
-                isAddingTask={false}
-                setIsAddingTask={() => { }}
               />
             ))}
           </Box>

@@ -332,7 +332,7 @@ export const GymSessionContainer = ({
         </Box>
 
         {!isEditing ? (
-          <Box sx={{ marginLeft: 'auto' }}>
+          <Box sx={{ ml: 'auto' }}>
             <IconButton
               size="small"
               onClick={() => setIsEditing(true)}
@@ -341,12 +341,14 @@ export const GymSessionContainer = ({
             </IconButton>
           </Box>
         ) : (
-          <Box sx={{ marginLeft: 'auto' }}>
+          <Box sx={{ ml: 'auto' }}>
             <IconButton
               size="small"
               color="success"
               loading={createLoading || editLoading}
-              onClick={save}>
+              onClick={save}
+              sx={{ mr: isAddingSession ? 4 : 0 }} // To avoid accidental click on clear button
+            >
               <Save fontSize="small" />
             </IconButton>
 

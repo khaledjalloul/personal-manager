@@ -35,8 +35,8 @@ export const PianoPieceTableRow = ({
   pianoPiece: PianoPiece;
   index: number;
   searchText: string;
-  isAddingPiece: boolean;
-  setIsAddingPiece: Dispatch<SetStateAction<boolean>>;
+  isAddingPiece?: boolean;
+  setIsAddingPiece?: Dispatch<SetStateAction<boolean>>;
 }) => {
 
   const [isEditing, setIsEditing] = useState(isAddingPiece);
@@ -81,7 +81,7 @@ export const PianoPieceTableRow = ({
   useCtrlS(save);
 
   useEffect(() => {
-    if (createSuccess) setIsAddingPiece(false);
+    if (createSuccess && setIsAddingPiece) setIsAddingPiece(false);
   }, [createSuccess]);
 
   useEffect(() => {
@@ -275,7 +275,7 @@ export const PianoPieceTableRow = ({
                 setYoutubeUrl(pianoPiece.youtubeUrl);
                 setSheetMusicUrl(pianoPiece.sheetMusicUrl);
                 setIsEditing(false);
-              } else {
+              } else if (setIsAddingPiece) {
                 setIsAddingPiece(false);
               }
             }}>

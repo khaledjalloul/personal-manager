@@ -148,8 +148,6 @@ export const VideoGames = () => {
               <VideoGameCard
                 game={game}
                 searchText={searchText}
-                isAddingGame={isAddingGame}
-                setIsAddingGame={setIsAddingGame}
               />
             </Grid>
           ))}

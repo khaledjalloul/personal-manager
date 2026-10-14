@@ -60,8 +60,6 @@ export const ToDoMilestones = () => {
           key={milestone.id}
           milestone={milestone}
           searchText={searchText}
-          isAddingMilestone={isAddingMilestone}
-          setIsAddingMilestone={setIsAddingMilestone}
         />
       ))}
     </Box>

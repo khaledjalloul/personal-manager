@@ -65,8 +65,6 @@ export const GeneralToDo = () => {
           key={task.id}
           task={task}
           searchText={searchText}
-          isAddingTask={isAddingTask}
-          setIsAddingTask={setIsAddingTask}
           editable
         />
       ))}
