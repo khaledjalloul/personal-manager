@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { Settings, Insights, Clear, Today, ViewList } from "@mui/icons-material";
+import { Insights, Clear, ViewList, AutoMode, ReceiptLong } from "@mui/icons-material";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useExpensesCategories } from "../../../api";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -99,10 +99,18 @@ export const ExpensesWrapper = () => {
             )}
           </NavLink>
 
-          <NavLink to="/expenses/manage">
+          <NavLink to="/expenses/manage-auto">
             {({ isActive }) => (
-              <Button startIcon={<Settings />} variant={isActive ? "contained" : "outlined"} fullWidth>
-                Manage
+              <Button startIcon={<AutoMode />} variant={isActive ? "contained" : "outlined"} fullWidth>
+                Automatic
+              </Button>
+            )}
+          </NavLink>
+
+          <NavLink to="/expenses/manage-manual">
+            {({ isActive }) => (
+              <Button startIcon={<ReceiptLong />} variant={isActive ? "contained" : "outlined"} fullWidth>
+                Manual
               </Button>
             )}
           </NavLink>

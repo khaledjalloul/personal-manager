@@ -302,9 +302,9 @@ type FundWithoutId = Omit<Fund, 'id'>;
 type ExpenseWithoutId = Omit<Expense, 'id'>;
 
 
-router.post("/auto", upload.single('file'), async (req: Request, res: Response) => {
-  if (!req.file)
-    return res.status(400).send('No file uploaded.');
+router.post("/auto", upload.array('files'), async (req: Request, res: Response) => {
+  if (!req.files || req.files.length === 0)
+    return res.status(400).send('No files uploaded.');
 
   const expensesCategories = await prisma.expensesCategory.findMany({
     where: { userId: req.user.id },
@@ -317,88 +317,94 @@ router.post("/auto", upload.single('file'), async (req: Request, res: Response) 
   }))?.fundKeywords || [];
 
   const results: AutoEntry[] = [];
-  const stream = Readable.from(req.file.buffer);
 
-  stream
-    .pipe(csv({
-      separator: ";",
-      mapHeaders: ({ header }) => header.includes("Date") ? "Date" : header
-    }))
-    .on('data', (data) => {
-      results.push({
-        date: dayjs(data[csvKeys.date], 'DD.MM.YYYY').toDate(),
-        bookingText: data[csvKeys.bookingText],
-        curr: data[csvKeys.curr],
-        amountDetails: data[csvKeys.amountDetails],
-        zkbReference: data[csvKeys.zkbReference],
-        referenceNumber: data[csvKeys.referenceNumber],
-        debitCHF: parseFloat(data[csvKeys.debitCHF]),
-        creditCHF: parseFloat(data[csvKeys.creditCHF]),
-        valueDate: dayjs(data[csvKeys.valueDate], 'DD.MM.YYYY').toDate(),
-        balanceCHF: parseFloat(data[csvKeys.balanceCHF]),
-        paymentPurpose: data[csvKeys.paymentPurpose],
-        details: data[csvKeys.details]
-      });
-    })
-    .on('end', async () => {
-      const funds: FundWithoutId[] = [];
-      const expenses: ExpenseWithoutId[] = [];
-
-      results.forEach(entry => {
-        const hasAmount = entry.debitCHF || entry.creditCHF;
-        const isFund = fundKeywords.some(keyword =>
-          entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
-        );
-
-        if (isFund && hasAmount) {
-          const amount = entry.creditCHF || -entry.debitCHF;
-          funds.push({
-            date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
-            source: entry.bookingText,
-            amount,
-            type: ExpenseType.Bank_Auto,
-            userId: req.user.id
-          })
-        } else {
-          const category = expensesCategories.find(cat =>
-            cat.keywords.some(keyword =>
-              entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
-            )
-          );
-
-          var bookingTextArr = entry.bookingText.split(":").map(s => s.trim());
-          if (bookingTextArr.length === 1) {
-            bookingTextArr = entry.bookingText.split(",").map(s => s.trim());
-            if (bookingTextArr.length === 1) {
-              bookingTextArr.push("");
-            }
-          }
-
-          const description = bookingTextArr.slice(0, -1).join(", ");
-          const vendor = bookingTextArr[bookingTextArr.length - 1] || "";
-          const amount = entry.debitCHF || -entry.creditCHF || 0;
-
-          expenses.push({
-            userId: req.user.id,
-            date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
-            categoryId: (amount !== 0 && category) ? category.id : null,
-            description,
-            vendor,
-            amount,
-            type: ExpenseType.Bank_Auto,
-            tags: []
+  for (const file of req.files as Express.Multer.File[]) {
+    const stream = Readable.from(file.buffer);
+    await new Promise<void>((resolve, reject) => {
+      stream
+        .pipe(csv({
+          separator: ";",
+          mapHeaders: ({ header }) => header.includes("Date") ? "Date" : header
+        }))
+        .on('data', (data) => {
+          results.push({
+            date: dayjs(data[csvKeys.date], 'DD.MM.YYYY').toDate(),
+            bookingText: data[csvKeys.bookingText],
+            curr: data[csvKeys.curr],
+            amountDetails: data[csvKeys.amountDetails],
+            zkbReference: data[csvKeys.zkbReference],
+            referenceNumber: data[csvKeys.referenceNumber],
+            debitCHF: parseFloat(data[csvKeys.debitCHF]),
+            creditCHF: parseFloat(data[csvKeys.creditCHF]),
+            valueDate: dayjs(data[csvKeys.valueDate], 'DD.MM.YYYY').toDate(),
+            balanceCHF: parseFloat(data[csvKeys.balanceCHF]),
+            paymentPurpose: data[csvKeys.paymentPurpose],
+            details: data[csvKeys.details]
           });
-        }
-      })
-      await prisma.fund.createMany({ data: funds });
-      await prisma.expense.createMany({ data: expenses });
-
-      res.json({ message: 'CSV processed successfully', data: results });
-    })
-    .on('error', (err) => {
-      console.error('Error parsing CSV:', err);
-      res.status(500).send('Error parsing CSV.');
+        })
+        .on('end', () => resolve())
+        .on('error', (err) => reject(err));
+    }).catch((err) => {
+      console.error('Error processing CSV file(s):', err);
+      res.status(500).send('Error processing CSV file(s).');
+      return;
     });
+  }
+
+  const funds: FundWithoutId[] = [];
+  const expenses: ExpenseWithoutId[] = [];
+
+  results.forEach(entry => {
+    const hasAmount = entry.debitCHF || entry.creditCHF;
+    const isFund = fundKeywords.some(keyword =>
+      entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
+    );
+
+    if (isFund && hasAmount) {
+      const amount = entry.creditCHF || -entry.debitCHF;
+      funds.push({
+        date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
+        source: entry.bookingText,
+        amount,
+        type: ExpenseType.Bank_Auto,
+        userId: req.user.id
+      })
+    } else {
+      const category = expensesCategories.find(cat =>
+        cat.keywords.some(keyword =>
+          entry.bookingText.toLowerCase().includes(keyword.toLowerCase())
+        )
+      );
+
+      var bookingTextArr = entry.bookingText.split(":").map(s => s.trim());
+      if (bookingTextArr.length === 1) {
+        bookingTextArr = entry.bookingText.split(",").map(s => s.trim());
+        if (bookingTextArr.length === 1) {
+          bookingTextArr.push("");
+        }
+      }
+
+      const description = bookingTextArr.slice(0, -1).join(", ");
+      const vendor = bookingTextArr[bookingTextArr.length - 1] || "";
+      const amount = entry.debitCHF || -entry.creditCHF || 0;
+
+      expenses.push({
+        userId: req.user.id,
+        date: isNaN(entry.valueDate.getTime()) ? new Date() : entry.valueDate,
+        categoryId: (amount !== 0 && category) ? category.id : null,
+        description,
+        vendor,
+        amount,
+        type: ExpenseType.Bank_Auto,
+        tags: []
+      });
+    }
+  });
+
+  await prisma.fund.createMany({ data: funds });
+  await prisma.expense.createMany({ data: expenses });
+
+  res.json({ message: 'CSV file(s) processed successfully', data: results });
 });
 
 router.delete("/auto", async (req: Request, res: Response) => {

@@ -13,7 +13,8 @@ import {
   Account,
   ExpensesStatistics,
   ExpensesDetails,
-  ManageExpenses,
+  ManageAutoExpenses,
+  ManageManualExpenses,
   MonthlyDiary,
   ToDoWrapper,
   GeneralToDo,
@@ -55,8 +56,12 @@ export const Navigator = () => {
               element: <ExpensesDetails />
             },
             {
-              path: "/expenses/manage",
-              element: <ManageExpenses />
+              path: "/expenses/manage-auto",
+              element: <ManageAutoExpenses />
+            },
+            {
+              path: "/expenses/manage-manual",
+              element: <ManageManualExpenses />
             }
           ]
         },
