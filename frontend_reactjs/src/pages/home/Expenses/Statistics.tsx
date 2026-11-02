@@ -293,7 +293,9 @@ export const ExpensesStatistics = () => {
                     {category.name}
                   </TableCell>
                 ))}
-                <TableCell sx={{ fontWeight: 'bold' }}>Total</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Total Expenses</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Funds</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Net Income</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -330,8 +332,30 @@ export const ExpensesStatistics = () => {
                       {monthlyExpenses[month][category.name]?.toFixed(2)} CHF
                     </TableCell>
                   ))}
-                  <TableCell>
+                  <TableCell
+                    sx={{ cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+                    onClick={() => navigate("/expenses/details", {
+                      state: {
+                        routedDateFrom: dayjs(month).startOf('month').startOf('day').toDate(),
+                        routedDateTo: dayjs(month).endOf('month').endOf('day').toDate(),
+                        routedFilterCategoryIds: [-1],
+                      }
+                    })}>
                     {monthlyExpenses[month].total.toFixed(2)} CHF
+                  </TableCell>
+                  <TableCell
+                    sx={{ cursor: 'pointer', ":hover": { textDecoration: 'underline' } }}
+                    onClick={() => navigate("/expenses/details", {
+                      state: {
+                        routedDateFrom: dayjs(month).startOf('month').startOf('day').toDate(),
+                        routedDateTo: dayjs(month).endOf('month').endOf('day').toDate(),
+                        routedFilterCategoryIds: [-2],
+                      }
+                    })}>
+                    {monthlyExpenses[month].funds.toFixed(2)} CHF
+                  </TableCell>
+                  <TableCell sx={{ color: monthlyExpenses[month].funds - monthlyExpenses[month].total < 0 ? palette.error.main : palette.success.main }}>
+                    {monthlyExpenses[month].funds - monthlyExpenses[month].total < 0 ? '-' : '+'}{Math.abs(monthlyExpenses[month].funds - monthlyExpenses[month].total).toFixed(2)} CHF
                   </TableCell>
                 </TableRow>
               ))}

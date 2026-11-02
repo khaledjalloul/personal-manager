@@ -7,6 +7,7 @@ const ENDPOINT = "expenses/monthly";
 export type GetMonthlyExpensesResponse = {
   [month: string]: {
     [category: string]: number;
+    funds: number;
     total: number;
   };
 };

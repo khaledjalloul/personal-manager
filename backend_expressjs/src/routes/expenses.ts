@@ -125,6 +125,7 @@ router.get('/monthly', async (req: Request, res: Response) => {
   const monthlyExpenses: {
     [month: string]: {
       [category: string]: number;
+      funds: number;
       total: number;
     };
   } = {};
@@ -141,24 +142,41 @@ router.get('/monthly', async (req: Request, res: Response) => {
     include: { category: true },
   });
 
-  expenses.forEach(expense => {
-    const dayjsDate = dayjs(expense.date);
-    if (!dayjsDate.format("MMMM YYYY").toLowerCase().includes(searchText.toLowerCase()))
-      return;
+  const funds = await prisma.fund.findMany({
+    where: { userId: req.user.id },
+    orderBy: { date: 'desc' },
+  });
 
-    const monthStr = `${expense.date.getFullYear()}-${String(expense.date.getMonth() + 1).padStart(2, '0')}`;
+  const onCategory = (expenseOrFund: Expense | Fund): string => {
+    const dayjsDate = dayjs(expenseOrFund.date);
+    if (!dayjsDate.format("MMMM YYYY").toLowerCase().includes(searchText.toLowerCase()))
+      return '';
+
+    const monthStr = `${expenseOrFund.date.getFullYear()}-${String(expenseOrFund.date.getMonth() + 1).padStart(2, '0')}`;
 
     if (!monthlyExpenses[monthStr]) {
-      monthlyExpenses[monthStr] = { total: 0 };
+      monthlyExpenses[monthStr] = { total: 0, funds: 0 };
       for (const category of categoryNames) {
         monthlyExpenses[monthStr][category] = 0;
       }
     }
 
+    return monthStr;
+  };
+
+  expenses.forEach(expense => {
+    const monthStr = onCategory(expense);
+    if (!monthStr) return;
     if (expense.category) {
       monthlyExpenses[monthStr][expense.category.name] += expense.amount;
       monthlyExpenses[monthStr].total += expense.amount;
     }
+  });
+
+  funds.forEach(fund => {
+    const monthStr = onCategory(fund);
+    if (!monthStr) return;
+    monthlyExpenses[monthStr].funds += fund.amount;
   });
 
   res.json(monthlyExpenses);
