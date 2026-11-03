@@ -8,6 +8,7 @@ const ENDPOINT = "todo";
 export type EditToDoTaskRequestBody = {
   id: number;
   date?: Date;
+  hasPriority?: boolean;
   content?: string;
   status?: ToDoTaskStatus;
 };

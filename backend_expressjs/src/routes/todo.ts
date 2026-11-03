@@ -21,7 +21,7 @@ router.get('/milestones', async (req: Request, res: Response) => {
               OR: [
                 { content: { contains: searchText, mode: 'insensitive' } },
               ]
-            }
+            },
           }
         }
       ]
@@ -80,7 +80,11 @@ router.get('/', async (req: Request, res: Response) => {
           { content: { contains: searchText, mode: "insensitive" } },
         ]
       },
-      orderBy: { id: 'asc' }
+      orderBy: [
+        { status: 'asc' },
+        { hasPriority: 'desc' },
+        { id: 'asc' },
+      ],
     });
   } else {
     const statusesWhere = !isArchived ?
@@ -96,7 +100,10 @@ router.get('/', async (req: Request, res: Response) => {
         status: { in: statusesWhere },
         content: { contains: searchText, mode: "insensitive" }
       },
-      orderBy: { dateModified: 'desc' }
+      orderBy: [
+        { hasPriority: 'desc' },
+        { dateModified: 'desc' },
+      ],
     });
   }
   res.json(tasks);
@@ -109,6 +116,8 @@ router.post('/', async (req: Request, res: Response) => {
       user: { connect: { id: req.user.id } },
       dateCreated: date,
       dateModified: date,
+      hasPriority: false,
+      status: ToDoTaskStatus.Pending,
       content,
       milestone: milestoneId !== undefined ? { connect: { id: milestoneId } } : undefined,
     },
@@ -118,11 +127,18 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.post('/:id', async (req: Request, res: Response) => {
   const taskId = parseInt(req.params.id);
-  const { date, content, status } = req.body;
+  const { date, hasPriority, content, status } = req.body;
+
+  let newHasPriority = hasPriority;
+  if (status === ToDoTaskStatus.Completed || status === ToDoTaskStatus.NotCompleted) {
+    newHasPriority = false;
+  }
+
   const task = await prisma.toDoTask.update({
     where: { id: taskId },
     data: {
       dateModified: date,
+      hasPriority: newHasPriority,
       content,
       status
     },

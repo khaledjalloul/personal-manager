@@ -1,7 +1,7 @@
 import { Box, IconButton, TextField, Typography } from "@mui/material"
 import { ToDoTask, ToDoTaskStatus } from "../types";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { CheckBox, CheckBoxOutlineBlank, Clear, Delete, DisabledByDefault, Edit, KeyboardDoubleArrowRight, Save } from "@mui/icons-material";
+import { CheckBox, CheckBoxOutlineBlank, Clear, Delete, DisabledByDefault, Edit, KeyboardDoubleArrowRight, Save, Star, StarOutlineOutlined } from "@mui/icons-material";
 import { SearchTextHighlight } from "./SearchTextHighlight";
 import { useCreateToDoTask, useDeleteToDoTask, useEditToDoTask } from "../api";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -25,6 +25,7 @@ export const ToDoTaskContainer = ({
 }) => {
 
   const [date, setDate] = useState(task.dateModified && dayjs(task.dateModified));
+  const [hasPriority, setHasPriority] = useState(task.hasPriority);
   const [content, setContent] = useState(task.content);
   const [status, setStatus] = useState(task.status);
   const [isEditing, setIsEditing] = useState(isAddingTask);
@@ -114,8 +115,23 @@ export const ToDoTaskContainer = ({
               <CheckBoxOutlineBlank color="action" />
             )}
           </IconButton>
-        )
-        }
+        )}
+
+        {!isEditing && task.status === ToDoTaskStatus.Pending && (
+          <IconButton
+            loading={editTaskLoading}
+            onClick={() => {
+              setHasPriority(!hasPriority);
+              editTask({ id: task.id, hasPriority: !hasPriority });
+            }}
+          >
+            {hasPriority ? (
+              <Star color="warning" />
+            ) : (
+              <StarOutlineOutlined />
+            )}
+          </IconButton>
+        )}
 
         {editable && (
           !isEditing ? (

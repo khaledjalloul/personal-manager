@@ -15,6 +15,7 @@ const emptyTask: ToDoTask = {
   id: -1,
   dateCreated: new Date(),
   dateModified: new Date(),
+  hasPriority: false,
   content: "",
   status: ToDoTaskStatus.Pending
 };

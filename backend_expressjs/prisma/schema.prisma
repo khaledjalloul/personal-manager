@@ -168,8 +168,9 @@ model ToDoTask {
   milestone    ToDoMilestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
   dateCreated  DateTime
   dateModified DateTime
+  hasPriority  Boolean
   content      String
-  status       ToDoTaskStatus @default(Pending)
+  status       ToDoTaskStatus
 }
 
 // -------- Notes --------

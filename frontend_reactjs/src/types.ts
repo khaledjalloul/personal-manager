@@ -121,6 +121,7 @@ export type ToDoTask = {
   milestoneId?: number;
   dateCreated: Date;
   dateModified: Date;
+  hasPriority: boolean;
   content: string;
   status: ToDoTaskStatus;
 };
